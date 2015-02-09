@@ -1,0 +1,22 @@
+Kravspesifikasjon
+
+Funksjonelle krav:
+- SSL
+- Innlogging ikke bare for beboere (bruker != beboer)
+- Regiportalintegrasjon
+- Epostleserintegrasjon (for de med verv)
+- Beboerliste (med og uten innlogging)
+- "Singbasen"-integrasjon (ny)
+- Brannkart?
+- Kryssing vin/øl (sammen?)
+- Åpmandsverv
+- Lenke til SingWiki
+- Kalender m/bursdager
+- Skjema for utflytting
+- Vakt
+
+Ikke-funksjonelle krav:
+- Epost-klasse
+- Databaser for ulike bruksområder
+- Migrasjonsskript gammel->ny database
+- 
