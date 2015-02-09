@@ -14,9 +14,11 @@ Funksjonelle krav:
 - Kalender m/bursdager
 - Skjema for utflytting
 - Vakt
+- Samling av admin.singsaker.no og dev.singsaker.no
+- Øl/vin-graf (ikke så viktig)
 
 Ikke-funksjonelle krav:
 - Epost-klasse
 - Databaser for ulike bruksområder
 - Migrasjonsskript gammel->ny database
-- 
+- PostgreSQL -> MySQL
