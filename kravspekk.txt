@@ -22,3 +22,4 @@ Ikke-funksjonelle krav:
 - Databaser for ulike bruksområder
 - Migrasjonsskript gammel->ny database
 - PostgreSQL -> MySQL
+- Ikke referere til andre deler av internsida (f.eks. fra regisammenheng til vaktsammenheng) pga lettere vedlikehold
