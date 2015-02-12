@@ -16,6 +16,8 @@ Funksjonelle krav:
 - Vakt
 - Samling av admin.singsaker.no og dev.singsaker.no
 - Øl/vin-graf (ikke så viktig)
+- Helga-gjesteinvitasjoner
+- Veteranside?
 
 Ikke-funksjonelle krav:
 - Epost-klasse
