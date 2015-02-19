@@ -17,6 +17,7 @@ Funksjonelle krav:
 - Samling av admin.singsaker.no og dev.singsaker.no
 - Øl/vin-graf (ikke så viktig)
 - Helga-gjesteinvitasjoner
+  - VIP-gjester (ikke beboer-gjester) må med
 - Veteranside?
 
 Ikke-funksjonelle krav:
