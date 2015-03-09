@@ -1,6 +1,6 @@
 <?php
 
-namespace intern3\kjerne;
+namespace intern3\modell;
 
 class Floy {
 
