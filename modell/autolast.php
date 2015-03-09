@@ -1,6 +1,6 @@
 <?php
 
-namespace intern3\kjerne;
+namespace intern3\modell;
 
 if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 
@@ -8,14 +8,11 @@ spl_autoload_register(function($klasse) {
 	if (strpos($klasse, __NAMESPACE__ . '\\') !== 0) {
 		return;
 	}
-	foreach (array('modell', 'kontroller', 'ressurs') as $mappe) {
-		$sti = dirname(__FILE__) . DS . $mappe . DS . $klasse . '.php';
-		if (file_exists($sti)) {
-			require_once($sti);
-			return;
-		}
+	$sti = dirname(__FILE__) . DS . $klasse . '.php';
+	if (!file_exists($sti)) {
+		throw new Exception('Kan ikke laste ' . $klasse);
 	}
-	throw new Exception('Kan ikke laste ' . $klasse);
+	require_once($sti);
 });
 
 ?>
