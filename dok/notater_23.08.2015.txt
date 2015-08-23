@@ -1,0 +1,11 @@
+Agenda:
+- Se gjennom kravspekk
+- Bestemme framgangsmåte (språk etc)
+--- Norsk
+--- PHP!
+--- Rammeverk: jQuery
+--- Kodestil: TAB-innrykk
+- Info om repo
+--- Git
+- Databaseskjema
+- Noe mer?

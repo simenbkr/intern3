@@ -3,8 +3,8 @@ Kravspesifikasjon
 Funksjonelle krav:
 - SSL
 - Innlogging ikke bare for beboere (bruker != beboer)
+- Ett domene, én innlogging
 - Regiportalintegrasjon
-- Epostleserintegrasjon (for de med verv)
 - Beboerliste (med og uten innlogging)
 - "Singbasen"-integrasjon (ny)
 - Brannkart?
@@ -14,11 +14,14 @@ Funksjonelle krav:
 - Kalender m/bursdager
 - Skjema for utflytting
 - Vakt
+  - Maks 2 nattevakter
 - Samling av admin.singsaker.no og dev.singsaker.no
 - Øl/vin-graf (ikke så viktig)
 - Helga-gjesteinvitasjoner
   - VIP-gjester (ikke beboer-gjester) må med
+	- Ikke sende epost to ganger / sende til hver enkelt
 - Veteranside?
+- Storhybelliste
 
 Ikke-funksjonelle krav:
 - Epost-klasse
