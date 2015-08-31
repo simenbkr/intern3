@@ -22,6 +22,7 @@ Funksjonelle krav:
 	- Ikke sende epost to ganger / sende til hver enkelt
 - Veteranside?
 - Storhybelliste
+- Forside med beskjeder, viktige datoer og regi/vakt
 
 Ikke-funksjonelle krav:
 - Epost-klasse
