@@ -1,6 +1,6 @@
 <?php
 
-namespace intern3\modell;
+namespace intern3;
 
 class Studie {
 
