@@ -4,6 +4,7 @@
 		<meta charset="utf-8">
 		<title>Intern3.0</title>
 		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/stilark.css">
 		<script src="js/jquery-2.1.4.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 	</head>
