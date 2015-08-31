@@ -3,18 +3,22 @@
 namespace intern3;
 
 class CtrlData {
-	private $sider;
-	public function __construct($sider) {
-		$this->sider = $sider;
+	private $arg;
+	public function __construct($arg) {
+		$this->arg = (array) $arg;
 	}
-	public function getDenneSide() {
-		$len = count($this->sider);
-		return $len > 0 ? $this->sider[$len - 1] : null;
+	public function getForsteArg() {
+		$len = count($this->arg);
+		return $len > 0 ? $this->arg[0] : null;
 	}
-	public function addSide($side) {
-		$sider = $this->sider;
-		array_push($sider, $side);
-		return new self($sider);
+	public function getSisteArg() {
+		$len = count($this->arg);
+		return $len > 0 ? $this->arg[$len - 1] : null;
+	}
+	public function addArg($nyttArg) {
+		$arg = $this->arg;
+		array_push($arg, $nyttArg);
+		return new self($arg);
 	}
 }
 

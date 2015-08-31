@@ -4,8 +4,8 @@ namespace intern3;
 
 class DiverseCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
-		$dok = new Visning('diverse.php');
-		$dok->vis();
+		$dok = new Visning($this->cd);
+		$dok->vis('diverse.php');
 	}
 }
 

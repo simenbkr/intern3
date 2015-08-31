@@ -19,26 +19,48 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="?s=hoved">Intern3.0</a>
+						<a class="navbar-brand" href="?a=diverse">intern.singsaker.no</a>
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-							<li class="active"><a href="?s=hoved">Hoved <span class="sr-only">(current)</span></a></li>
-							<li><a href="?s=beboer">Beboere</a></li>
-							<li><a href="?s=vakt">Vakt</a></li>
-							<li><a href="?s=regi">Regi</a></li>
-							<li><a href="?s=verv">Verv</a></li>
-							<li><a href="?s=kryss">Kryss</a></li>
-							<li><a href="?s=wiki">Wiki</a></li>
+<?php
+
+$menyvalg = array(
+		'vakt' => 'Vakt',
+		'regi' => 'Regi',
+		'verv' => 'Verv',
+		'kryss' => 'Kryss',
+		'wiki' => 'Wiki',
+		'helga' => '(Helga)',
+		'rombytte' => '(Rombytte)'
+);
+
+$forsteArg = $cd->getForsteArg();
+
+foreach ($menyvalg as $adr => $navn) {
+	if ($adr == $forsteArg) {
+		?>
+							<li class="active"><a href="?a=<?php echo $adr; ?>"><?php echo $navn; ?> <span class="sr-only">(du er her)</span></a></li>
+<?php
+	}
+	else {
+		?>
+							<li><a href="?a=<?php echo $adr; ?>"><?php echo $navn; ?></a></li>
+<?php
+	}
+}
+
+?>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navn Navnesen <span class="caret"></span></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fritz Müller <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li><a href="?s=profil">Profil</a></li>
-									<li><a href="?s=utflytting">Utflytting</a></li>
+									<li><a href="?a=profil">Profil</a></li>
+									<li><a href="?a=romskjema">Romskjema (060)</a></li>
+									<li><a href="?a=utflytting">Utflytting</a></li>
 									<li role="separator" class="divider"></li>
-									<li><a href="?s=logginn/loggut">Logg ut</a></li>
+									<li><a href="?a=logginn/loggut&amp;ref=<?php echo $_SERVER['REQUEST_URI']; ?>">Logg ut</a></li>
 								</ul>
 							</li>
 						</ul>

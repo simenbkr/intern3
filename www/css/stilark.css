@@ -1,3 +1,7 @@
+html {
+overflow-y: scroll;
+}
+
 #topp .container-fluid, #innhold, #bunn {
 margin: auto;
 max-width: 1200px;
