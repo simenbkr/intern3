@@ -10,7 +10,7 @@ class DB extends PDO {
 		}
 		return self::$__instance;
 	}
-	private function DB() {
+	private function __construct() {
 		// vi har en tulledatabase for utvikling: bruk den unntatt når vi er den offisielle internsida:
 		$tullesuffiks = ($_SERVER['SERVER_NAME'] == 'intern.singsaker.no') ? '' : '_dev';
 
