@@ -21,18 +21,22 @@
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-						<li><a href="#">Link</a></li>
+						<li class="active"><a href="?s=diverse">Diverse <span class="sr-only">(current)</span></a></li>
+						<li><a href="?s=beboer">Beboere</a></li>
+						<li><a href="?s=vakt">Vakt</a></li>
+						<li><a href="?s=regi">Regi</a></li>
+						<li><a href="?s=verv">Verv</a></li>
+						<li><a href="?s=kryss">Kryss</a></li>
+						<li><a href="?s=wiki">Wiki</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navn Navnesen <span class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a href="#">Homo</a></li>
-								<li><a href="#">Enda en Homo</a></li>
-								<li><a href="#">Indøk?</a></li>
+								<li><a href="?s=profil">Profil</a></li>
+								<li><a href="?s=utflytting">Utflytting</a></li>
 								<li role="separator" class="divider"></li>
-								<li><a href="#">Vet du hvorfor homser er så pent kledd?</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">Fordi de brukte så lang tid i skapet</a></li>
+								<li><a href="?s=logginn/loggut">Logg ut</a></li>
 							</ul>
 						</li>
 					</ul>
