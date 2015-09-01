@@ -1,3 +1,5 @@
+<!-- / innhold -->
+
 			</div>
 		</div>
 	</body>

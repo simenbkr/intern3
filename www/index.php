@@ -1,5 +1,7 @@
 <?php
 
+setlocale(LC_ALL, 'no_NB.utf-8');
+
 $arg = isset($_GET['a']) ? explode('/', $_GET['a']) : array();
 
 require_once('../ink/autolast.php');

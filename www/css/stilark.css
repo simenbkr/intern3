@@ -6,3 +6,12 @@ overflow-y: scroll;
 margin: auto;
 max-width: 1200px;
 }
+
+#innhold div h1 {
+margin-top: 0;
+}
+
+h1 {
+font-size: 25px;
+font-weight: normal;
+}

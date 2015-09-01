@@ -89,3 +89,5 @@ foreach ($menyvalg as $adr => $navn) {
 				</div>
 			</nav>
 			<div id="innhold">
+
+<!-- innhold -->
