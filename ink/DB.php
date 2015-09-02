@@ -2,7 +2,7 @@
 
 namespace intern3;
 
-class DB extends PDO {
+class DB extends \PDO {
 	private static $__instance = null;
 	public static function getDB() {
 		if (self::$__instance == null) {
@@ -10,7 +10,7 @@ class DB extends PDO {
 		}
 		return self::$__instance;
 	}
-	private function __construct() {
+	public function __construct() {
 		// vi har en tulledatabase for utvikling: bruk den unntatt når vi er den offisielle internsida:
 		$tullesuffiks = ($_SERVER['SERVER_NAME'] == 'intern.singsaker.no') ? '' : '_dev';
 
@@ -20,7 +20,7 @@ class DB extends PDO {
 		// hvis ikke my.cnf har [client].default-character-set=utf8:
 		//parent::__construct($domene, $brukernavn, $passord, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 		parent::__construct($domene, $brukernavn, $passord);
-		parent::setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		parent::setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
 	}
 }
 

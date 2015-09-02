@@ -4,7 +4,7 @@ require_once('topp.php');
 
 ?>
 
-<div class="col-md-6 col-sm-12">
+<div class="col-sm-6 col-xs-12">
 	<h1>Datoer framover</h1>
 	<p><span style="color: #0A0;">Du skal ikke sitte vakter</span>, evt <span style="color: #0A0;">Dine vakter</span>, <span style="color: #00A;">Ledige vakter</span>, <span style="color: #AA0;">Bursdager</span>, <span style="color: #A00;">Andre viktige datoer</span></p>
 	<table class="table-bordered table">
@@ -58,7 +58,7 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	</table>
 </div>
 
-<div class="col-md-6 col-sm-12">
+<div class="col-sm-6 col-xs-12">
 	<h1>Regioppgaver</h1>
 	<table class="table-bordered table">
 	
