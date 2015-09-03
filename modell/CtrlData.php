@@ -4,8 +4,10 @@ namespace intern3;
 
 class CtrlData {
 	private $arg;
-	public function __construct($arg) {
+	private $pos;
+	public function __construct($arg, $pos = 0) {
 		$this->arg = (array) $arg;
+		$this->pos = $pos;
 	}
 	public function getForsteArg() {
 		$len = count($this->arg);
@@ -15,10 +17,8 @@ class CtrlData {
 		$len = count($this->arg);
 		return $len > 0 ? $this->arg[$len - 1] : null;
 	}
-	public function addArg($nyttArg) {
-		$arg = $this->arg;
-		array_push($arg, $nyttArg);
-		return new self($arg);
+	public function skiftArg() {
+		return new self($this->arg, $this->pos + 1);
 	}
 }
 

@@ -2,18 +2,25 @@
 
 namespace intern3;
 
-class Studie {
+class Rom {
 
 	private $id;
-	private $skoleId;
 	private $navn;
 
 	public static function medId($id) {
-		$st = DB::getDB()->prepare('SELECT * FROM studie WHERE id=:id;');
+		$st = DB::getDB()->prepare('SELECT * FROM rom WHERE id=:id;');
 		$st->bindParam(':id', $id);
 		$st->execute();
 		return self::init($st);
 	}
+
+	public static function medNavn($navn) {
+		$st = DB::getDB()->prepare('SELECT * FROM rom WHERE navn=:navn;');
+		$st->bindParam(':navn', $navn);
+		$st->execute();
+		return self::init($st);
+	}
+
 	private static function init(\PDOStatement $st) {
 		$row = $st->fetch();
 		if ($row == null) {
@@ -21,17 +28,12 @@ class Studie {
 		}
 		$instance = new self();
 		$instance->id = $row['id'];
-		$instance->skoleId = $row['skole_id'];
 		$instance->navn = $row['navn'];
 		return $instance;
 	}
 
 	public function getId() {
 		return $this->id;
-	}
-
-	public function getSkoleId() {
-		return $this->skoleId;
 	}
 
 	public function getNavn() {

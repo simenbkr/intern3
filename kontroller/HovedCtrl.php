@@ -4,14 +4,16 @@ namespace intern3;
 
 class HovedCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
-		$sisteArg = $this->cd->getSisteArg();
-		switch ($sisteArg) {
+		switch ($this->cd->getForsteArg()) {
+			case 'beboer':
+				$valgtCtrl = new BeboerCtrl($this->cd->skiftArg());
+				break;
 			case 'vakt':
-				$valgtCtrl = new VaktCtrl($this->cd->addArg($sisteArg));
+				$valgtCtrl = new VaktCtrl($this->cd->skiftArg());
 				break;
 			case 'diverse':
 			default:
-				$valgtCtrl = new DiverseCtrl($this->cd->addArg($sisteArg));
+				$valgtCtrl = new DiverseCtrl($this->cd->skiftArg());
 				break;
 		}
 		$valgtCtrl->bestemHandling();

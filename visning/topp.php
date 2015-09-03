@@ -26,6 +26,7 @@
 <?php
 
 $menyvalg = array(
+		'beboer' => 'Beboere',
 		'vakt' => 'Vakt',
 		'regi' => 'Regi',
 		'verv' => 'Verv',

@@ -15,7 +15,7 @@ class Visning extends AbstraktCtrl {
 		if (!is_string($mal)) {
 			throw new \Exception('Inndata må være en streng.');
 		}
-		$sti = '../visning/' . $mal;
+		$sti = __DIR__ . DS . '..' . DS . 'visning' . DS . $mal;
 		if (!file_exists($sti)) {
 			throw new \Exception('Kan ikke vise ' . $mal);
 		}

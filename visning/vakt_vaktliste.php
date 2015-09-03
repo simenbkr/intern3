@@ -7,9 +7,6 @@ require_once('topp.php');
 	<h1>Vaktliste</h1>
 <?php
 
-$denneUka = date('W');
-$detteAret = date('Y');
-
 foreach (range($denneUka, $denneUka > 26 ? 52 : 26) as $uke){
 ?>
 	<table class="table-bordered table">

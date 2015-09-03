@@ -5,11 +5,12 @@
 namespace intern3\Romhistorikk;
 
 class Periode {
-	public $rom_id;
+	public $romId;
 	public $innflyttet;
 	public $utflyttet;
-	public function __construct($rom_id, $innflyttet, $utflyttet) {
-		$this->rom_id = $rom_id;
+
+	public function __construct($romId, $innflyttet, $utflyttet) {
+		$this->romId = $romId;
 		$this->innflyttet = $innflyttet;
 		$this->utflyttet = $utflyttet;
 	}
@@ -19,14 +20,38 @@ namespace intern3;
 
 class Romhistorikk {
 	public $romHistorikk;
+
 	public function __construct() {
 		$this->romHistorikk = array();
 	}
-	public function addPeriode($rom_id, $innflyttet, $utflyttet) {
-		$this->romHistorikk[] = new Romhistorikk\Periode($rom_id, $innflyttet, $utflyttet);
+
+	public function addPeriode($romId, $innflyttet, $utflyttet) {
+		$this->romHistorikk[] = new Romhistorikk\Periode($romId, $innflyttet, $utflyttet);
 	}
-	public function toJson() {
+
+	public function tilJson() {
 		return json_encode($this->romHistorikk);
+	}
+
+	public static function fraJson($json) {
+		$strukt = json_decode($json);
+		$objekt = new self();
+		foreach ($strukt as $periode) {
+			$objekt->addPeriode(
+					$periode->romId,
+					$periode->innflyttet,
+					$periode->utflyttet
+			);
+		}
+		return $objekt;
+	}
+
+	public function getAktivRomId() {
+		$len = count($this->romHistorikk);
+		if ($len == 0) {
+			return null;
+		}
+		return $this->romHistorikk[$len - 1]->romId;
 	}
 }
 

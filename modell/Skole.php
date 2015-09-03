@@ -5,10 +5,9 @@ namespace intern3;
 class Skole {
 
 	private $id;
-	private $brukernavn;
-	private $passfrase;
+	private $navn;
 
-	public static function byId($id) {
+	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM skole WHERE id=:id;');
 		$st->bindParam(':id', $id);
 		$st->execute();
@@ -21,17 +20,16 @@ class Skole {
 		}
 		$instance = new self();
 		$instance->id = $row['id'];
-		$instance->brukernavn = $row['brukernavn'];
-		$instance->passfrase = $row['passfrase'];
+		$instance->navn = $row['navn'];
 		return $instance;
 	}
 
-	public function giId() {
+	public function getId() {
 		return $this->id;
 	}
 
-	public function giBrukernavn() {
-		return $this->brukernavn;
+	public function getNavn() {
+		return $this->navn;
 	}
 
 }

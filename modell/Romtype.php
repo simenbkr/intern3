@@ -7,7 +7,7 @@ class Romtype {
 	private $id;
 	private $navn;
 
-	public static function byId($id) {
+	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM romtype WHERE id=:id;');
 		$st->bindParam(':id', $id);
 		$st->execute();
@@ -24,11 +24,11 @@ class Romtype {
 		return $instance;
 	}
 
-	public function giId() {
+	public function getId() {
 		return $this->id;
 	}
 
-	public function giNavn() {
+	public function getNavn() {
 		return $this->navn;
 	}
 
