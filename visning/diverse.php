@@ -22,7 +22,7 @@ require_once('topp.php');
 
 $denneManed = date('m');
 $detteAr = date('Y');
-$manedSlutt = strtotime('this month, midnight');
+$manedSlutt = strtotime('first day of this month, midnight');
 
 foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	$manedStart = $manedSlutt;
