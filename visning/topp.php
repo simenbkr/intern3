@@ -36,7 +36,7 @@ $menyvalg = array(
 		'rombytte' => '(Rombytte)'
 );
 
-$forsteArg = $cd->getForsteArg();
+$forsteArg = $cd->getAktueltArg();
 
 foreach ($menyvalg as $adr => $navn) {
 	if ($adr == $forsteArg) {

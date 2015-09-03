@@ -3,6 +3,7 @@
 require_once('topp.php');
 
 ?>
+
 <div class="col-md-12">
 	<h1>Beboerliste</h1>
 	<table class="table-bordered table">
@@ -30,6 +31,7 @@ foreach ($beboerListe as $beboer){
 ?>
 	</table>
 </div>
+
 <?php
 
 require_once('bunn.php');
