@@ -12,15 +12,45 @@ require_once("../ink/autolast.php");
 
 DB::getDB()->beginTransaction();
 
-function avbryt() {
+function avbryt($melding) {
 	DB::getDB()->rollback();
-	exit();
+	exit($melding . PHP_EOL);
+}
+
+function byttTegnsett($streng) {
+	return iconv('windows-1252', 'utf-8', $streng);
 }
 
 $db = DB::getDB();
-$db->query('TRUNCATE beboer;');
+$db->query('TRUNCATE skole;');
+$db->query('TRUNCATE studie;');
 $db->query('TRUNCATE rom;');
+$db->query('TRUNCATE beboer;');
 //etc
+
+/* Migrering av skole, start */
+
+$hentSkoler = pg_query('SELECT * FROM skole ORDER BY skole_id;');
+while ($skole = pg_fetch_array($hentSkoler)) {
+	$navn = byttTegnsett($skole['skole']);
+	$st = $db->prepare('INSERT INTO skole(navn) VALUES(:navn);');
+	$st->bindParam(':navn', $navn);
+	$st->execute();
+}
+
+/* Migrering av skole, slutt */
+
+/* Migrering av studie, start */
+
+$hentStudier = pg_query('SELECT * FROM studie ORDER BY studie_id;');
+while ($studie = pg_fetch_array($hentStudier)) {
+	$navn = byttTegnsett($studie['studie']);
+	$st = $db->prepare('INSERT INTO studie(navn) VALUES(:navn);');
+	$st->bindParam(':navn', $navn);
+	$st->execute();
+}
+
+/* Migrering av studie, slutt */
 
 /* Migrering av rom, start */
 
@@ -57,15 +87,22 @@ while ($rom = pg_fetch_array($hentRom)) {
 
 /* Migrering av beboere, start */
 
-$hentBeboere = pg_query('SELECT * FROM beboer WHERE beboer_id > 0 ORDER BY beboer_id;');
+$hentBeboere = pg_query('SELECT * FROM
+	beboer AS be,
+	skole AS sk,
+	studie AS st
+WHERE
+	be.skole_id = sk.skole_id AND
+	be.studie_id = st.studie_id AND
+	beboer_id > 0
+ORDER BY be.beboer_id;');
 if (pg_num_rows($hentBeboere) == 0) {
-	echo 'Ingen beboere? Ikke bra.';
-	avbryt();
+	avbryt('Ingen beboere? Ikke bra.');
 }
 while ($beboer = pg_fetch_array($hentBeboere)) {
 	// Innføring av begrepet mellomnavn (alt mellom fornavn og etternavn)
 	$mellomnavn = $beboer['fornavn'] . ' ' . $beboer['etternavn'];
-	$mellomnavn = iconv('windows-1252', 'utf-8', $mellomnavn);
+	$mellomnavn = byttTegnsett($mellomnavn);
 	$mellomnavn = trim(preg_replace('/[\s]{2,}/', ' ', $mellomnavn));
 	$mellomnavn = explode(' ', $mellomnavn);
 	$etternavn = array_pop($mellomnavn);
@@ -87,16 +124,16 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	}
 	$romhistorikkJson = $romhistorikk->tilJson();
 	/* Migrering av romhistorikk, slutt */
-	// Felter som foreløpig ikke kan være null
 	$fodselsdato = $beboer['fodselsdato'] == null ? ' ' : $beboer['fodselsdato'];
-	$adresse = $beboer['adresse'] == null ? ' ' : $beboer['adresse'];
-	$postnummer = $beboer['postnummer'] == null ? ' ' : $beboer['postnummer'];
+	$adresse = $beboer['adresse'] == null ? null : byttTegnsett($beboer['adresse']);
+	$postnummer = $beboer['postnummer'] == null ? null : $beboer['postnummer'];
 	$telefon = $beboer['mobil'] == null ? ' ' : str_replace(' ', '', $beboer['mobil']);
 	$telefon = substr($telefon, 0, strlen($telefon) - 8) . ' ' . substr($telefon, -8);
-	$epost = $beboer['epost'] == null ? ' ' : strtolower($beboer['epost']);
+	$epost = $beboer['epost'] == null ? null : strtolower($beboer['epost']);
+	$studieId = intval(Studie::medNavn(byttTegnsett($beboer['studie']))->getId());
+	$skoleId = intval(Skole::medNavn(byttTegnsett($beboer['skole']))->getId());
 	// Innsetting
 	$st = $db->prepare('INSERT INTO beboer(
-	id,
 	fornavn,
 	mellomnavn,
 	etternavn,
@@ -105,13 +142,13 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	postnummer,
 	telefon,
 	studie_id,
+	skole_id,
 	klassetrinn,
 	alkoholdepositum,
 	rolle_id,
 	epost,
 	romhistorikk)
 VALUES(
-	:id,
 	:fornavn,
 	:mellomnavn,
 	:etternavn,
@@ -120,13 +157,13 @@ VALUES(
 	:postnummer,
 	:telefon,
 	:studie_id,
+	:skole_id,
 	:klassetrinn,
 	:alkoholdepositum,
 	:rolle_id,
 	:epost,
 	:romhistorikk
 );');
-	$st->bindParam(':id', $beboer['beboer_id']);
 	$st->bindParam(':fornavn', $fornavn);
 	$st->bindParam(':mellomnavn', $mellomnavn);
 	$st->bindParam(':etternavn', $etternavn);
@@ -134,7 +171,8 @@ VALUES(
 	$st->bindParam(':adresse', $adresse);
 	$st->bindParam(':postnummer', $postnummer);
 	$st->bindParam(':telefon', $telefon);
-	$st->bindParam(':studie_id', $beboer['studie_id']);
+	$st->bindParam(':studie_id', $studieId);
+	$st->bindParam(':skole_id', $skoleId);
 	$st->bindParam(':klassetrinn', $beboer['klasse']);
 	$st->bindParam(':alkoholdepositum', $beboer['alkodepositum']);
 	$st->bindParam(':rolle_id', $beboer['oppgave_id']);

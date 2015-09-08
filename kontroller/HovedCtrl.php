@@ -4,7 +4,8 @@ namespace intern3;
 
 class HovedCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
-		switch ($this->cd->getForsteArg()) {
+		$aktueltArg = $this->cd->getAktueltArg();
+		switch ($aktueltArg) {
 			case 'beboer':
 				$valgtCtrl = new BeboerCtrl($this->cd->skiftArg());
 				break;

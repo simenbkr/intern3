@@ -13,14 +13,17 @@ class Beboer {
 	private $adresse;
 	private $postnummer;
 	private $telefon;
-	private $studie_id;
+	private $studieId;
+	private $skoleId;
 	private $klassetrinn;
 	private $alkoholdepositum;
-	private $rolle_id;
+	private $rolleId;
 	private $epost;
 	private $romhistorikk;
 
 	// Latskap
+	private $studie;
+	private $skole;
 	private $romId;
 	private $rom;
 	private $romhistorikkObjekt;
@@ -46,14 +49,18 @@ class Beboer {
 		$instance->adresse = $row['adresse'];
 		$instance->postnummer = $row['postnummer'];
 		$instance->telefon = $row['telefon'];
-		$instance->studie_id = $row['studie_id'];
+		$instance->studieId = $row['studie_id'];
+		$instance->skoleId = $row['skole_id'];
 		$instance->klassetrinn = $row['klassetrinn'];
 		$instance->alkoholdepositum = $row['alkoholdepositum'];
-		$instance->rolle_id = $row['rolle_id'];
+		$instance->rolleId = $row['rolle_id'];
 		$instance->epost = $row['epost'];
 		$instance->romhistorikk = $row['romhistorikk'];
+		$instance->studie = null;
+		$instance->skole = null;
 		$instance->romId = null;
 		$instance->rom = null;
+		$instance->romhistorikkObjekt = null;
 		return $instance;
 	}
 
@@ -83,6 +90,24 @@ class Beboer {
 
 	public function getTelefon() {
 		return $this->telefon;
+	}
+
+	public function getKlassetrinn() {
+		return $this->klassetrinn;
+	}
+
+	public function getStudie() {
+		if ($this->studie == null) {
+			$this->studie = Studie::medId($this->studieId);
+		}
+		return $this->studie;
+	}
+
+	public function getSkole() {
+		if ($this->skole == null) {
+			$this->skole = Skole::medId($this->skoleId);
+		}
+		return $this->skole;
 	}
 
 	public function getEpost() {

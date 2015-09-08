@@ -9,9 +9,9 @@ class CtrlData {
 		$this->arg = (array) $arg;
 		$this->pos = $pos;
 	}
-	public function getForsteArg() {
+	public function getAktueltArg() {
 		$len = count($this->arg);
-		return $len > 0 ? $this->arg[0] : null;
+		return $len > $this->pos ? $this->arg[$this->pos] : null;
 	}
 	public function getSisteArg() {
 		$len = count($this->arg);
