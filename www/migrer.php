@@ -19,6 +19,7 @@ function avbryt($melding) {
 
 function byttTegnsett($streng) {
 	return iconv('windows-1252', 'utf-8', $streng);
+//	return $streng;
 }
 
 $db = DB::getDB();
