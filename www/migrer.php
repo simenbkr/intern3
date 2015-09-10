@@ -26,6 +26,7 @@ $db = DB::getDB();
 $db->query('TRUNCATE skole;');
 $db->query('TRUNCATE studie;');
 $db->query('TRUNCATE rom;');
+$db->query('TRUNCATE bruker;');
 $db->query('TRUNCATE beboer;');
 //etc
 
@@ -86,6 +87,26 @@ while ($rom = pg_fetch_array($hentRom)) {
 
 /* Migrering av rom, slutt */
 
+/* Migrering av brukere, start */
+
+$beboerBrukerKobling = array();
+
+$hentBrukere = pg_query('SELECT * FROM
+	brukerdata as br,
+	beboer as be
+WHERE \'b_\' || be.beboer_id = br.chain
+ORDER BY user_id;');
+while ($bruker = pg_fetch_array($hentBrukere)) {
+	$beboerId = intval(substr($bruker['chain'], 2));
+	$brukerId = $db->lastInsertId();
+	$beboerBrukerKobling[$beboerId] = $brukerId;
+	$st = $db->prepare('INSERT INTO bruker(passord) VALUES(:passord);');
+	$st->bindParam(':passord', $bruker['passord']);
+	$st->execute();
+}
+
+/* Migrering av brukere, slutt */
+
 /* Migrering av beboere, start */
 
 $hentBeboere = pg_query('SELECT * FROM
@@ -101,6 +122,7 @@ if (pg_num_rows($hentBeboere) == 0) {
 	avbryt('Ingen beboere? Ikke bra.');
 }
 while ($beboer = pg_fetch_array($hentBeboere)) {
+	$brukerId = isset($beboerBrukerKobling[$beboer['beboer_id']]) ? $beboerBrukerKobling[$beboer['beboer_id']] : null;
 	// Innføring av begrepet mellomnavn (alt mellom fornavn og etternavn)
 	$mellomnavn = $beboer['fornavn'] . ' ' . $beboer['etternavn'];
 	$mellomnavn = byttTegnsett($mellomnavn);
@@ -135,6 +157,7 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	$skoleId = intval(Skole::medNavn(byttTegnsett($beboer['skole']))->getId());
 	// Innsetting
 	$st = $db->prepare('INSERT INTO beboer(
+	bruker_id,
 	fornavn,
 	mellomnavn,
 	etternavn,
@@ -150,6 +173,7 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	epost,
 	romhistorikk)
 VALUES(
+	:bruker_id,
 	:fornavn,
 	:mellomnavn,
 	:etternavn,
@@ -165,6 +189,7 @@ VALUES(
 	:epost,
 	:romhistorikk
 );');
+	$st->bindParam(':bruker_id', $brukerId);
 	$st->bindParam(':fornavn', $fornavn);
 	$st->bindParam(':mellomnavn', $mellomnavn);
 	$st->bindParam(':etternavn', $etternavn);
