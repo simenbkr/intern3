@@ -10,8 +10,14 @@ require_once('topp.php');
 		<table>
 			<tr>
 				<td>Homo</td>
+			</tr>
+			<tr>
 				<td>Jeg var bøg for seriøst!</td>
+			</tr>
+			<tr>
 				<td>Hva liker do å gjøre? Pule?</td>
+			</tr>
+			<tr>
 				<td>Ensom? Pule? #261</td>
 			</tr>
 		</table>
