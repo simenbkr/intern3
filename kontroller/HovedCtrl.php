@@ -12,6 +12,9 @@ class HovedCtrl extends AbstraktCtrl {
 			case 'vakt':
 				$valgtCtrl = new VaktCtrl($this->cd->skiftArg());
 				break;
+			case 'utleie':
+					$valgtCtrl = new UtleieCtrl($this->cd->skiftArg());
+					break;
 			case 'diverse':
 			default:
 				$valgtCtrl = new DiverseCtrl($this->cd->skiftArg());

@@ -32,6 +32,7 @@ $menyvalg = array(
 		'verv' => 'Verv',
 		'kryss' => 'Kryss',
 		'wiki' => 'Wiki',
+		'utleie' => 'Utleie',
 		'helga' => '(Helga)',
 		'rombytte' => '(Rombytte)'
 );

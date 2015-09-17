@@ -15,10 +15,10 @@ require_once('topp.php');
 				<td>Jeg var bøg for seriøst!</td>
 			</tr>
 			<tr>
-				<td>Hva liker do å gjøre? Pule?</td>
+				<td>Hva liker do å gjøre?</td>
 			</tr>
 			<tr>
-				<td>Ensom? Pule? #261</td>
+				<td>Ensom? Pule? #162</td>
 			</tr>
 		</table>
 	</div>
