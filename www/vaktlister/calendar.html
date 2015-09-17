@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://chrisharrington.github.io/demos/calendar.html -->
+<html ng-app="demo" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>
+		<meta name="viewport" content="width=device-width">
+		<title text="">Angular JS Calendar Demo</title>
+
+        <link rel="stylesheet" type="text/css" href="./calendar_files/font-awesome.css">
+
+		<style type="text/css">body {
+  font-family: Arial;
+  font-size: 14px;
+}
+body > span,
+body > h1 {
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+}
+span {
+  color: #888888;
+}
+span > b {
+  color: black;
+}
+.border-box {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+calendar {
+  float: left;
+  display: block;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  background: white;
+  width: 300px;
+  border: solid 1px #cccccc;
+  margin-bottom: 10px;
+}
+calendar > div.header {
+  float: left;
+  width: 100%;
+  background: #2875c7;
+  height: 40px;
+  color: white;
+}
+calendar > div.header > * {
+  height: 40px;
+  line-height: 40px !important;
+  display: inline-block;
+  vertical-align: middle;
+}
+calendar > div.header > i {
+  float: left;
+  width: 40px;
+  font-size: 1.125em;
+  font-weight: bold;
+  position: relative;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  padding: 0 10px;
+  cursor: pointer;
+}
+calendar > div.header > i.fa-angle-left {
+  text-align: left;
+}
+calendar > div.header > i.fa-angle-right {
+  text-align: right;
+  margin-left: -40px;
+}
+calendar > div.header > span {
+  float: left;
+  width: 100%;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  padding-left: 50px;
+  margin-left: -40px;
+  text-align: center;
+  padding-right: 40px;
+  color: inherit;
+}
+calendar > div.week {
+  float: left;
+  width: 100%;
+  border-top: solid 1px #cccccc;
+}
+calendar > div.week:first-child {
+  border-top: none;
+}
+calendar > div.week > span.day {
+  float: left;
+  width: 14.28571429%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  border-left: solid 1px #cccccc;
+  font-size: 0.75em;
+  text-align: center;
+  height: 30px;
+  line-height: 30px !important;
+  display: inline-block;
+  vertical-align: middle;
+  background: white;
+  cursor: pointer;
+  color: black;
+}
+calendar > div.week > span.day:first-child {
+  border-left: none;
+}
+calendar > div.week > span.day.today {
+  background: #E3F2FF;
+}
+calendar > div.week > span.day.different-month {
+  color: #C0C0C0;
+}
+calendar > div.week > span.day.selected {
+  background: #2875c7;
+  color: white;
+}
+calendar > div.week.names > span {
+  color: #2875c7;
+  font-weight: bold;
+}
+</style>
+		<script type="text/javascript" src="./calendar_files/angular.min.js"></script><style type="text/css"></style>
+		<script type="text/javascript" src="./calendar_files/less.min.js"></script>
+		<script type="text/javascript" src="./calendar_files/underscore-min.js"></script>
+        <script type="text/javascript" src="./calendar_files/moment.min.js"></script>
+
+		<script type="text/javascript">
+			var app = angular.module("demo", []);
+
+            app.controller("calendarDemo", function($scope) {
+                $scope.day = moment();
+            });
+
+            app.directive("calendar", function() {
+                return {
+                    restrict: "E",
+                    templateUrl: "templates/calendar.html",
+                    scope: {
+                        selected: "="
+                    },
+                    link: function(scope) {
+                        scope.selected = _removeTime(scope.selected || moment());
+                        scope.month = scope.selected.clone();
+
+                        var start = scope.selected.clone();
+                        start.date(1);
+                        _removeTime(start.day(0));
+
+                        _buildMonth(scope, start, scope.month);
+
+                        scope.select = function(day) {
+                            scope.selected = day.date;
+                        };
+
+                        scope.next = function() {
+                            var next = scope.month.clone();
+                            _removeTime(next.month(next.month()+1).date(1));
+                            scope.month.month(scope.month.month()+1);
+                            _buildMonth(scope, next, scope.month);
+                        };
+
+                        scope.previous = function() {
+                            var previous = scope.month.clone();
+                            _removeTime(previous.month(previous.month()-1).date(1));
+                            scope.month.month(scope.month.month()-1);
+                            _buildMonth(scope, previous, scope.month);
+                        };
+                    }
+                };
+
+                function _removeTime(date) {
+                    return date.day(0).hour(0).minute(0).second(0).millisecond(0);
+                }
+
+                function _buildMonth(scope, start, month) {
+                    scope.weeks = [];
+                    var done = false, date = start.clone(), monthIndex = date.month(), count = 0;
+                    while (!done) {
+                        scope.weeks.push({ days: _buildWeek(date.clone(), month) });
+                        date.add(1, "w");
+                        done = count++ > 2 && monthIndex !== date.month();
+                        monthIndex = date.month();
+                    }
+                }
+
+                function _buildWeek(date, month) {
+                    var days = [];
+                    for (var i = 0; i < 7; i++) {
+                        days.push({
+                            name: date.format("dd").substring(0, 1),
+                            number: date.date(),
+                            isCurrentMonth: date.month() === month.month(),
+                            isToday: date.isSame(new Date(), "day"),
+                            date: date
+                        });
+                        date = date.clone();
+                        date.add(1, "d");
+                    }
+                    return days;
+                }
+            });
+		</script>
+	<link rel="stylesheet" type="text/css" href="chrome-extension://pkehgijcmpdhfbdbbnkijodmdjhbjlgp/skin/socialwidgets.css"></head>
+	<body ng-controller="calendarDemo" class="ng-scope">
+		<h1>Calendar Demo</h1>
+		<span>This page demonstrates the use of a calendar control built in Angular JS. It allows the user to choose a date.</span>
+		<span>The calendar itself is an Angular JS directive, and I'm using LESS CSS for some of the more complicated CSS rules. I'm also make use of Moment.js, a library that allows for easier manipulation of time than the standard JavaScript libraries. I highly recommend you check them out.</span>
+
+        <calendar selected="day" class="ng-isolate-scope"><div class="header">
+    <i class="fa fa-angle-left" ng-click="previous()"></i>
+    <span class="ng-binding">August, 2015</span>
+    <i class="fa fa-angle-right" ng-click="next()"></i>
+</div>
+<div class="week names">
+    <span class="day">Sun</span>
+    <span class="day">Mon</span>
+    <span class="day">Tue</span>
+    <span class="day">Wed</span>
+    <span class="day">Thu</span>
+    <span class="day">Fri</span>
+    <span class="day">Sat</span>
+</div>
+<!-- ngRepeat: week in weeks --><div class="week ng-scope" ng-repeat="week in weeks">
+    <!-- ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">26</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">27</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">28</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">29</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">30</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">31</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">1</span><!-- end ngRepeat: day in week.days -->
+</div><!-- end ngRepeat: week in weeks --><div class="week ng-scope" ng-repeat="week in weeks">
+    <!-- ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">2</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">3</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">4</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">5</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">6</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">7</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">8</span><!-- end ngRepeat: day in week.days -->
+</div><!-- end ngRepeat: week in weeks --><div class="week ng-scope" ng-repeat="week in weeks">
+    <!-- ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">9</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">10</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">11</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">12</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">13</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">14</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">15</span><!-- end ngRepeat: day in week.days -->
+</div><!-- end ngRepeat: week in weeks --><div class="week ng-scope" ng-repeat="week in weeks">
+    <!-- ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">16</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">17</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">18</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">19</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">20</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">21</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">22</span><!-- end ngRepeat: day in week.days -->
+</div><!-- end ngRepeat: week in weeks --><div class="week ng-scope" ng-repeat="week in weeks">
+    <!-- ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">23</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">24</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">25</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">26</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">27</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">28</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">29</span><!-- end ngRepeat: day in week.days -->
+</div><!-- end ngRepeat: week in weeks --><div class="week ng-scope" ng-repeat="week in weeks">
+    <!-- ngRepeat: day in week.days --><span class="day ng-binding ng-scope today selected" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">30</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">31</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">1</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">2</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">3</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">4</span><!-- end ngRepeat: day in week.days --><span class="day ng-binding ng-scope different-month" ng-class="{ today: day.isToday, &#39;different-month&#39;: !day.isCurrentMonth, selected: day.date.isSame(selected) }" ng-click="select(day)" ng-repeat="day in week.days">5</span><!-- end ngRepeat: day in week.days -->
+</div><!-- end ngRepeat: week in weeks --></calendar>
+
+		<span>Selected date: <b class="ng-binding">Sunday, August 30th 2015</b>
+
+
+</span></body></html>
