@@ -5,6 +5,7 @@ require_once('topp.php');
 ?>
 <div class="col-md-12">
 	<h1>Vaktliste</h1>
+	<p><span style="color: #0A0;">Du skal ikke sitte vakter</span>, evt <span style="color: #0A0;">Dine vakter</span>, <span style="color: #00A;">Ledige vakter</span>
 <?php
 
 $ukeStart = strtotime('last sunday - 6 days, midnight');
