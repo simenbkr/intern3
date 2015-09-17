@@ -10,7 +10,7 @@ require_once('topp.php');
 		<tr>
 			<th>Dato</th>
 			<th>Rom</th>
-			<th>Navn</th>
+			<th>Leietaker</th>
 			<th>Barvakter</th>
 			<th>Vasking</th>
 		</tr>
@@ -28,26 +28,29 @@ foreach (/*$utleie as $utleiet*/range(1, 5) as $i){
 					// if ($utleiet->getRom() == "Bodegaen";) {
 						if (/*empty($utleiet->getBeboer1_id())*/True) {
 							?>
-							<INPUT TYPE = "Submit" Name = "Submit1" VALUE = "Barvakt">
+							<INPUT TYPE = "Submit" Name = "Submit1" VALUE = "Ledig">
 							<?php
+						}
+						else {
+							// echo $utleiet->getBeboer1_id();
 						}
 						?>
 						<!-- <p></p> -->
 						<?php
 						if (/*empty($utleiet->getBeboer2_id())*/True){
 							?>
-							<INPUT TYPE = "Submit" Name = "Submit2" VALUE = "Barvakt">
+							<INPUT TYPE = "Submit" Name = "Submit2" VALUE = "Ledig">
 							<?php
 						}
 						else {
-							// echo $utleiet->getBeboer1_id(); echo $utleiet->getBeboer2_id();
+							// echo $utleiet->getBeboer2_id();
 						}
 					// }
 					?></td>
 			<td><?php
 					if (/*empty($utleiet->getBeboer3_id())*/True) {
 							?>
-							<INPUT TYPE = "Submit" Name = "Submit3" VALUE = "Vasking">
+							<INPUT TYPE = "Submit" Name = "Submit3" VALUE = "Ledig">
 							<?php
 					}
 					else {
