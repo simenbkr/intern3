@@ -61,7 +61,9 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 <div class="col-sm-6 col-xs-12">
 	<h1>Regioppgaver</h1>
 	<table class="table-bordered table">
-	
+		<tr>
+			<td><INPUT TYPE = "Submit" Name = "Submit1" VALUE = "Lage ny internside"></td>
+		</tr>
 	</table>
 </div>
 
