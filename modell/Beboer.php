@@ -35,27 +35,27 @@ class Beboer {
 		return self::init($st);
 	}
 	private static function init(\PDOStatement $st) {
-		$row = $st->fetch();
-		if ($row == null) {
+		$rad = $st->fetch();
+		if ($rad == null) {
 			return null;
 		}
 		$instance = new self();
-		$instance->id = $row['id'];
-		$instance->brukerId = $row['bruker_id'];
-		$instance->fornavn = $row['fornavn'];
-		$instance->mellomnavn = $row['mellomnavn'];
-		$instance->etternavn = $row['etternavn'];
-		$instance->fodselsdato = $row['fodselsdato'];
-		$instance->adresse = $row['adresse'];
-		$instance->postnummer = $row['postnummer'];
-		$instance->telefon = $row['telefon'];
-		$instance->studieId = $row['studie_id'];
-		$instance->skoleId = $row['skole_id'];
-		$instance->klassetrinn = $row['klassetrinn'];
-		$instance->alkoholdepositum = $row['alkoholdepositum'];
-		$instance->rolleId = $row['rolle_id'];
-		$instance->epost = $row['epost'];
-		$instance->romhistorikk = $row['romhistorikk'];
+		$instance->id = $rad['id'];
+		$instance->brukerId = $rad['bruker_id'];
+		$instance->fornavn = $rad['fornavn'];
+		$instance->mellomnavn = $rad['mellomnavn'];
+		$instance->etternavn = $rad['etternavn'];
+		$instance->fodselsdato = $rad['fodselsdato'];
+		$instance->adresse = $rad['adresse'];
+		$instance->postnummer = $rad['postnummer'];
+		$instance->telefon = $rad['telefon'];
+		$instance->studieId = $rad['studie_id'];
+		$instance->skoleId = $rad['skole_id'];
+		$instance->klassetrinn = $rad['klassetrinn'];
+		$instance->alkoholdepositum = $rad['alkoholdepositum'];
+		$instance->rolleId = $rad['rolle_id'];
+		$instance->epost = $rad['epost'];
+		$instance->romhistorikk = $rad['romhistorikk'];
 		$instance->studie = null;
 		$instance->skole = null;
 		$instance->romId = null;

@@ -22,13 +22,13 @@ class Rom {
 	}
 
 	private static function init(\PDOStatement $st) {
-		$row = $st->fetch();
-		if ($row == null) {
+		$rad = $st->fetch();
+		if ($rad == null) {
 			return null;
 		}
 		$instance = new self();
-		$instance->id = $row['id'];
-		$instance->navn = $row['navn'];
+		$instance->id = $rad['id'];
+		$instance->navn = $rad['navn'];
 		return $instance;
 	}
 

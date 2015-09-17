@@ -4,11 +4,11 @@ namespace intern3;
 
 class HovedCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
-		// if (LogginnCtrl::getAktivBruker()==NULL) {
-		// 	$valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
-		// 	$valgtCtrl->bestemHandling();
-		// 	return;
-		// }
+		if (LogginnCtrl::getAktivBruker() == null) {
+			$valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
+			$valgtCtrl->bestemHandling();
+			return;
+		}
 		$aktueltArg = $this->cd->getAktueltArg();
 		switch ($aktueltArg) {
 			case 'beboer':

@@ -19,18 +19,18 @@ class Vakt {
 		return self::init($st);
 	}
 	private static function init(\PDOStatement $st) {
-		$row = $st->fetch();
-		if ($row == null) {
+		$rad = $st->fetch();
+		if ($rad == null) {
 			return null;
 		}
 		$instance = new self();
-		$instance->id = $row['id'];
-		$instance->brukerId = $row['bruker_id'];
-		$instance->vakttype = $row['vakttype'];
-		$instance->dato = $row['dato'];
-		$instance->bekreftet = $row['bekreftet'];
-		$instance->autogenerert = $row['autogenerert'];
-		$instance->dobbelvakt = $row['dobbelvakt'];
+		$instance->id = $rad['id'];
+		$instance->brukerId = $rad['bruker_id'];
+		$instance->vakttype = $rad['vakttype'];
+		$instance->dato = $rad['dato'];
+		$instance->bekreftet = $rad['bekreftet'];
+		$instance->autogenerert = $rad['autogenerert'];
+		$instance->dobbelvakt = $rad['dobbelvakt'];
 		return $instance;
 	}
 

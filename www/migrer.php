@@ -210,6 +210,16 @@ VALUES(
 
 /* Migrering av beboere, slutt */
 
+// md5() virker annerledes fra internsida. Vet ikke hvorfor.
+$st = $db->prepare('UPDATE bruker SET passord=:passord WHERE id=(SELECT bruker_id FROM beboer WHERE fornavn=:fornavn AND etternavn=:etternavn);');
+$fornavn = 'Martin';
+$etternavn = 'Nordal';
+$passord = 'b16eb5e8a5fa4a43d8e32e7450b2301d';
+$st->bindParam(':fornavn', $fornavn);
+$st->bindParam(':etternavn', $etternavn);
+$st->bindParam(':passord', $passord);
+$st->execute();
+
 // og mye mer må gjøres her...
 
 DB::getDB()->commit();
