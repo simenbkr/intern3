@@ -10,6 +10,10 @@
 	</head>
 	<body>
 		<div id="ramme">
+<?php
+if (!isset($skjulMeny)) {
+	/* Meny start */
+	?>
 			<nav class="navbar navbar-default" id="topp">
 				<div class="container-fluid">
 					<div class="navbar-header">
@@ -34,7 +38,8 @@ $menyvalg = array(
 		'wiki' => 'Wiki',
 		'utleie' => 'Utleie',
 		'helga' => '(Helga)',
-		'rombytte' => '(Rombytte)'
+		'rombytte' => '(Rombytte)',
+		'kjeller' => '(Vinkjeller)'
 );
 
 $forsteArg = $cd->getAktueltArg();
@@ -53,43 +58,52 @@ foreach ($menyvalg as $adr => $navn) {
 }
 
 ?>
+<?php
+
+if (1 || $erUtvalgsmedlem) {
+	?>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">(Utvalget) <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="?a=utvalg/romsjef">Romsjef</a></li>
+									<li><a href="?a=utvalg/regisjef">Regisjef</a></li>
+									<li><a href="?a=utvalg/sekretar">Sekretær</a></li>
+									<li><a href="?a=utvalg/vaktsjef">Vaktsjef</a></li>
+									<li><a href="?a=utvalg/kosesjef">Kosesjef</a></li>
+								</ul>
+							</li>
+<?php
+}
+
+?>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Fritz Müller <span class="caret"></span></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $cd->getAktivBruker()->getPerson()->getFulltNavn(); ?> <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="?a=profil">Profil</a></li>
-									<li><a href="?a=romskjema">Romskjema (060)</a></li>
+<?php
+
+if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
+	?>
+									<li><a href="?a=romskjema">Romskjema (<?php echo $cd->getAktivBruker()->getPerson()->getRomhistorikk()->getAktivtRom()->getNavn(); ?>)</a></li>
 									<li><a href="?a=utflytting">Utflytting</a></li>
+<?php
+}
+
+?>
 									<li role="separator" class="divider"></li>
 									<li><a href="?a=logginn/loggut&amp;ref=<?php echo $_SERVER['REQUEST_URI']; ?>">Logg ut</a></li>
 								</ul>
 							</li>
 						</ul>
-						<!--
-						<form class="navbar-form navbar-left" role="search">
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Search">
-							</div>
-							<button type="submit" class="btn btn-default">Submit</button>
-						</form>
-						<ul class="nav navbar-nav navbar-right">
-							<li><a href="#">Link</a></li>
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li><a href="#">Action</a></li>
-									<li><a href="#">Another action</a></li>
-									<li><a href="#">Something else here</a></li>
-									<li role="separator" class="divider"></li>
-									<li><a href="#">Separated link</a></li>
-								</ul>
-							</li>
-						</ul>
-						-->
 					</div>
 				</div>
 			</nav>
+<?php
+	/* Meny slutt */
+}
+?>
 			<div id="innhold">
 
 <!-- innhold -->

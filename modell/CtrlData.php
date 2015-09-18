@@ -5,9 +5,11 @@ namespace intern3;
 class CtrlData {
 	private $arg;
 	private $pos;
+	private $aktivBruker;
 	public function __construct($arg, $pos = 0) {
 		$this->arg = (array) $arg;
 		$this->pos = $pos;
+		$this->aktivBruker = null;
 	}
 	public function getAktueltArg() {
 		$len = count($this->arg);
@@ -18,7 +20,15 @@ class CtrlData {
 		return $len > 0 ? $this->arg[$len - 1] : null;
 	}
 	public function skiftArg() {
-		return new self($this->arg, $this->pos + 1);
+		$kopi = new self($this->arg, $this->pos + 1);
+		$kopi->setAktivBruker($this->aktivBruker);
+		return $kopi;
+	}
+	public function setAktivBruker($aktivBruker) {
+		$this->aktivBruker = $aktivBruker;
+	}
+	public function getAktivBruker() {
+		return $this->aktivBruker;
 	}
 }
 

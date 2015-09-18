@@ -34,6 +34,12 @@ class Beboer {
 		$st->execute();
 		return self::init($st);
 	}
+	public static function medBrukerId($brukerId) {
+		$st = DB::getDB()->prepare('SELECT * FROM beboer WHERE bruker_id=:brukerId;');
+		$st->bindParam(':brukerId', $brukerId);
+		$st->execute();
+		return self::init($st);
+	}
 	private static function init(\PDOStatement $st) {
 		$rad = $st->fetch();
 		if ($rad == null) {
@@ -62,6 +68,10 @@ class Beboer {
 		$instance->rom = null;
 		$instance->romhistorikkObjekt = null;
 		return $instance;
+	}
+
+	public function erBeboer() {
+		return true;
 	}
 
 	public function getId() {

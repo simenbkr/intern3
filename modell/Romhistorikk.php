@@ -53,6 +53,10 @@ class Romhistorikk {
 		}
 		return $this->romHistorikk[$len - 1]->romId;
 	}
+
+	public function getAktivtRom() {
+		return Rom::medId($this->getAktivRomId());
+	}
 }
 
 ?>

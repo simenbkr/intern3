@@ -7,6 +7,9 @@ class Bruker {
 	private $id;
 	private $passord;
 
+	// Latskap
+	private $person;
+
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM bruker WHERE id=:id;');
 		$st->bindParam(':id', $id);
@@ -30,6 +33,7 @@ class Bruker {
 		$instance = new self();
 		$instance->id = $rad['id'];
 		$instance->passord = $rad['passord'];
+		$instance->person = null;
 		return $instance;
 	}
 
@@ -48,6 +52,17 @@ class Bruker {
 
 	public function passordErGyldig($passord) {
 		return $passord == $this->passord;
+	}
+
+	public function getPerson() {
+		if ($this->person <> null) {
+			return $this->person;
+		}
+		$this->person = Beboer::medBrukerId($this->id);
+		if ($this->person == null) {
+			$this->person = Ansatt::medBrukerId($this->id);
+		}
+		return $this->person;
 	}
 
 }
