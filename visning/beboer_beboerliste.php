@@ -6,7 +6,7 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1>Beboerliste</h1>
-	<p>[ Beboerliste ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
+	<p>[ Beboerliste ] [ <a href="?a=beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
 	<table class="table-bordered table">
 		<tr>
 			<th>Navn</th>
@@ -14,6 +14,7 @@ require_once('topp.php');
 			<th>Telefon</th>
 			<th>Epost</th>
 			<th>Studie</th>
+			<th>Født</th>
 			<th>Rolle</th>
 		</tr>
 <?php
@@ -36,6 +37,7 @@ foreach ($beboerListe as $beboer){
 		?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a> (<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
 	}
 	?></td>
+			<td><?php echo $beboer->getFodselsdato(); ?></td>
 			<td>-</td>
 		</tr>
 <?php

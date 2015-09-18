@@ -94,6 +94,10 @@ class Beboer {
 		return $this->etternavn;
 	}
 
+	public function getFodselsdato() {
+		return $this->fodselsdato;
+	}
+
 	public function getFodselsar() {
 		return substr($this->fodselsdato, 0, 4);
 	}
