@@ -40,7 +40,9 @@ class BeboerCtrl extends AbstraktCtrl {
 			$bebodd = $beboer->getRomhistorikk()->getAntallSemestre();
 			$this->addStatistikk('Antall semestre på huset', $bebodd);
 			$trinn = $beboer->getKlassetrinn();
-			$this->addStatistikk('Fordelt på klassetrinn', $trinn);
+			if ($trinn <> '0') {
+				$this->addStatistikk('Fordelt på klassetrinn', $trinn);
+			}
 			$studie = $beboer->getStudie()->getNavn();
 			$this->addStatistikk('Fordelt på studier', $studie);
 		}
