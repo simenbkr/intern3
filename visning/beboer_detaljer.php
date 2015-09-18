@@ -6,6 +6,7 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1><?php echo $beboer->getFulltNavn(); ?></h1>
+	<p>[ <a href="?a=beboer">Beboerliste</a> ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
 	<div>
 		<table>
 			<tr>

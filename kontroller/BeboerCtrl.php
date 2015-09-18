@@ -3,9 +3,19 @@
 namespace intern3;
 
 class BeboerCtrl extends AbstraktCtrl {
+	private $histogram = array();
 	public function bestemHandling() {
 		$aktueltArg = $this->cd->getAktueltArg();
-		if (is_numeric($aktueltArg)) {
+		if ($aktueltArg == 'utskrift') {
+			$beboerListe = BeboerListe::aktive();
+			$dok = new Visning($this->cd);
+			$dok->set('beboerListe', $beboerListe);
+			$dok->vis('beboer_utskrift.php');
+		}
+		else if ($aktueltArg == 'statistikk') {
+			$this->visStatistikk();
+		}
+		else if (is_numeric($aktueltArg)) {
 			$beboer = Beboer::medId($aktueltArg);
 			// Trenger feilhåndtering her.
 			$dok = new Visning($this->cd);
@@ -18,6 +28,35 @@ class BeboerCtrl extends AbstraktCtrl {
 			$dok->set('beboerListe', $beboerListe);
 			$dok->vis('beboer_beboerliste.php');
 		}
+	}
+	private function visStatistikk() {
+		$beboerListe = BeboerListe::aktive();
+		$this->histogram = array();
+		foreach ($beboerListe as $beboer) {
+			$fodtar = $beboer->getFodselsar();
+			if ($fodtar <> '0000') {
+				$this->addStatistikk('Når beboerne er født', $fodtar);
+			}
+			$bebodd = $beboer->getRomhistorikk()->getAntallSemestre();
+			$this->addStatistikk('Antall semestre på huset', $bebodd);
+			$trinn = $beboer->getKlassetrinn();
+			$this->addStatistikk('Fordelt på klassetrinn', $trinn);
+			$studie = $beboer->getStudie()->getNavn();
+			$this->addStatistikk('Fordelt på studier', $studie);
+		}
+		foreach ($this->histogram as $navn => $hist) {
+			ksort($hist, SORT_NUMERIC);
+			$this->histogram[$navn] = $hist;
+		}
+		$dok = new Visning($this->cd);
+		$dok->set('histogram', $this->histogram);
+		$dok->vis('beboer_statistikk.php');
+	}
+	private function addStatistikk($navn, $nokkel, $verdi = 1) {
+		if (!isset($this->histogram[$navn][$nokkel])) {
+			$this->histogram[$navn][$nokkel] = 0;
+		}
+		$this->histogram[$navn][$nokkel] += $verdi;
 	}
 }
 

@@ -16,6 +16,41 @@ font-size: 25px;
 font-weight: normal;
 }
 
+h2 {
+font-size: 21px;
+font-weight: normal;
+}
+
+p {
+margin-top: 15px;
+margin-bottom: 15px;
+}
+
 .borderless th, .borderless td {
 border: none !important;
+}
+
+.histogram {
+margin-top: 15px;
+margin-bottom: 15px;
+}
+
+.histogram td {
+padding-right: 10px;
+text-align: center;
+}
+
+.histogram div {
+//margin: auto;
+width: 20px;
+}
+
+.histogram div:nth-child(1) {
+display: table-cell;
+vertical-align: bottom;
+}
+
+.histogram div:nth-child(2) {
+color: #EEE;
+background-color: #369;
 }

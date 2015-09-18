@@ -57,6 +57,24 @@ class Romhistorikk {
 	public function getAktivtRom() {
 		return Rom::medId($this->getAktivRomId());
 	}
+
+	public function getAntallSemestre() {
+		$sum = 0;
+		foreach ($this->romHistorikk as $periode) {
+			$sum += ($this->getSemester(
+					$periode->utflyttet == null ? date('Y-m-d', $_SERVER['REQUEST_TIME']) : $periode->utflyttet
+			) - $this->getSemester($periode->innflyttet)) * 2;
+		}
+		return $sum;
+	}
+
+	private function getSemester($dato) {
+		/* Gir årstall eller årstall + 0.5 hvis måned er etter juni. */
+		// Passer ikke å ha her, kanskje heller i en DatoUtil-klasse e.l.
+		$unix = strtotime($dato);
+		$sem = substr($dato, 0, 4) + (date('n', $unix) > 6 ? .5 : 0);
+		return $sem;
+	}
 }
 
 ?>

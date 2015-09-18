@@ -6,6 +6,7 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1>Beboerliste</h1>
+	<p>[ Beboerliste ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
 	<table class="table-bordered table">
 		<tr>
 			<th>Navn</th>

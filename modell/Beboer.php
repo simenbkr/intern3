@@ -94,6 +94,10 @@ class Beboer {
 		return $this->etternavn;
 	}
 
+	public function getFodselsar() {
+		return substr($this->fodselsdato, 0, 4);
+	}
+
 	public function getFulltNavn() {
 		return trim(preg_replace('/[\s]{2,}/', ' ', $this->fornavn . ' ' . $this->mellomnavn . ' ' . $this->etternavn));
 	}
