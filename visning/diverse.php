@@ -44,9 +44,19 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 ?>
 			<td<?php
 		if ($dag < $manedStart || $manedSlutt <= $dag) {
-			echo ' style="color: #AAA;"';
+			echo ' style="opacity: .5;"';
 		}
-?>><?php echo date('j', $dag); ?></td>
+?>><?php
+	echo date('j', $dag);
+	$bursdager = intern3\BeboerListe::medBursdag(date('m-d', $dag));
+	if (count($bursdager) > 0) {
+		echo ' <span class="kalender_merke_bursdag" title="';
+		foreach ($bursdager as $bursdag) {
+			echo $bursdag->getFulltNavn() . PHP_EOL;
+		}
+		echo '"> </span>';
+	}
+	?></td>
 <?php
 	} while (($dag = strtotime('next day', $dag)) < $manedSlutt || $ant % 7 <> 0);
 ?>
