@@ -102,6 +102,14 @@ class Beboer {
 		return substr($this->fodselsdato, 0, 4);
 	}
 
+	public function getAlderIAr() {
+		return date('Y') - substr($this->fodselsdato, 0, 4);
+	}
+
+	public function getAlder() {
+		return $this->getAlderIAr() - (($_SERVER['REQUEST_TIME'] - mktime(0, 0, 0, substr($this->fodselsdato, 5, 2), substr($this->fodselsdato, 8, 2))) < 0 ? 1 : 0);
+	}
+
 	public function getFulltNavn() {
 		return trim(preg_replace('/[\s]{2,}/', ' ', $this->fornavn . ' ' . $this->mellomnavn . ' ' . $this->etternavn));
 	}

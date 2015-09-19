@@ -52,7 +52,7 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	if (count($bursdager) > 0) {
 		echo ' <span class="kalender_merke_bursdag" title="';
 		foreach ($bursdager as $bursdag) {
-			echo $bursdag->getFulltNavn() . PHP_EOL;
+			echo $bursdag->getFulltNavn() . ' (' . $bursdag->getAlderIAr() . ' år)' . PHP_EOL;
 		}
 		echo '"> </span>';
 	}
