@@ -23,7 +23,7 @@ else {
 
 ?>
 </div>
-<div class="col-md-4">
+<div class="col-md-4 col-sm-6">
 	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
 		<h2>Generell info<input type="hidden" name="endre" value="generell"></h2>
 		<table class="table table-bordered">
@@ -91,7 +91,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<p><input type="submit" class="btn-primary" value="Lagre"></p>
 	</form>
 </div>
-<div class="col-md-4">
+<div class="col-md-4 col-sm-6">
 	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
 		<h2>Endre passord<input type="hidden" name="endre" value="passord"></h2>
 		<p style="color: #990;">Obs: Det anbefales å bruke et sterkt passord, særlig om man er utvalgsmedlem og har admintilgang. Minstekravet er en lengde på 8 tegn.</p>
@@ -108,7 +108,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<p><input type="submit" class="btn-primary" value="Lagre"></p>
 	</form>
 </div>
-<div class="col-md-4">
+<div class="col-md-4 col-sm-6">
 	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
 		<h2>Bytt profilbilde<input type="hidden" name="endre" value="bilde"></h2>
 		<p style="color: #990;">Du har for øyeblikket ikke noe profilbilde.</p>
@@ -116,7 +116,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<p><input type="submit" class="btn-primary" value="Lagre"></p>
 	</form>
 </div>
-<div class="col-md-4">
+<div class="col-md-4 col-sm-6">
 	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
 		<h2>Varsler<input type="hidden" name="endre" value="varsler"></h2>
 		<table class="table table-bordered">

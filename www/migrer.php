@@ -217,7 +217,7 @@ VALUES(
 /* Migrering av beboere, slutt */
 
 // Nye passord
-$st = $db->query('UPDATE bruker SET passord=\'$6$rounds=5000$VM5wn6AvwUOAdUO2$XKwFTqabqK1hz0OOh8ds22zt0ms74zab8yHwKbBkDAGteTC2K6jVB8KHNv7M.pOq5bVnuIUTIyLiA53ojlkI/0\' WHERE id=(SELECT bruker_id FROM beboer WHERE fornavn=\'Martin\' AND etternavn=\'Nordal\');');
+$st = $db->query('UPDATE bruker SET passord=\'' . LogginnCtrl::genererHash('test') . '\' WHERE id=(SELECT bruker_id FROM beboer WHERE fornavn=\'Martin\' AND etternavn=\'Nordal\');');
 
 /* Migrering av verv, start */
 
