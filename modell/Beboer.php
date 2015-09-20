@@ -27,6 +27,8 @@ class Beboer {
 	private $romId;
 	private $rom;
 	private $romhistorikkObjekt;
+	private $rolle;
+	private $utvalgVervListe;
 
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM beboer WHERE id=:id;');
@@ -159,6 +161,17 @@ class Beboer {
 		return $this->epost;
 	}
 
+	public function getRolleId() {
+		return $this->rolleId;
+	}
+
+	public function getRolle() {
+		if ($this->rolle == null) {
+			$this->rolle = Rolle::medId($this->rolleId);
+		}
+		return $this->rolle;
+	}
+
 	public function getRomId() {
 		if ($this->romId == null) {
 			$this->romId = $this->getRomhistorikk()->getAktivRomId();
@@ -178,6 +191,13 @@ class Beboer {
 			$this->romhistorikkObjekt = Romhistorikk::fraJson($this->romhistorikk);
 		}
 		return $this->romhistorikkObjekt;
+	}
+
+	public function getUtvalgVervListe() {
+		if ($this->utvalgVervListe == null) {
+			$this->utvalgVervListe = VervListe::utvalgMedBeboerId($this->id);
+		}
+		return $this->utvalgVervListe;
 	}
 
 }

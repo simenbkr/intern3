@@ -25,13 +25,13 @@ require_once('topp.php');
 			<td><?php
 	$studie = $beboer->getStudie();
 	$skole = $beboer->getSkole();
-	if ($studie == null || $skole == null) {
-		echo ' ';
-	}
-	else {
-		echo $beboer->getKlassetrinn();
-		?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a> (<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
-	}
+if ($studie == null || $skole == null) {
+	echo ' ';
+}
+else {
+	echo $beboer->getKlassetrinn();
+	?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a> (<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
+}
 	?></td>
 		</tr>
 		<tr>
@@ -40,7 +40,15 @@ require_once('topp.php');
 		</tr>
 		<tr>
 			<th>Rolle</th>
-			<td>-</td>
+			<td><?php
+$utvalgVervListe = $beboer->getUtvalgVervListe();
+if (count($utvalgVervListe) == 0) {
+	echo $beboer->getRolle()->getNavn();
+}
+else {
+	echo '<strong>' . $utvalgVervListe[0]->getNavn() . '</strong>';
+}
+?></td>
 		</tr>
 		<tr>
 			<th>Antall semestre</th>

@@ -115,6 +115,17 @@ $beboerIdFornyelse = array();
 
 /* Migrering av beboere, start */
 
+// Fra gamle oppgave_id til nye rolle_id
+$rolleIder = array(
+	1 => 2, // Halv vakt/regi
+	2 => 1, // Full vakt
+	3 => 3, // Full regi
+	4 => 3,
+	5 => 3,
+	6 => 1,
+	7 => 1
+);
+
 $hentBeboere = pg_query('SELECT * FROM
 	beboer AS be,
 	skole AS sk,
@@ -157,6 +168,7 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	$adresse = $beboer['adresse'] == null ? null : byttTegnsett($beboer['adresse']);
 	$postnummer = $beboer['postnummer'] == null ? null : $beboer['postnummer'];
 	$telefon = $beboer['mobil'] == null ? ' ' : str_replace(' ', '', $beboer['mobil']);
+	$rolleId = $rolleIder[$beboer['oppgave_id']];
 	$epost = $beboer['epost'] == null ? null : strtolower($beboer['epost']);
 	$studieId = intval(Studie::medNavn(byttTegnsett($beboer['studie']))->getId());
 	$skoleId = intval(Skole::medNavn(byttTegnsett($beboer['skole']))->getId());
@@ -206,7 +218,7 @@ VALUES(
 	$st->bindParam(':skole_id', $skoleId);
 	$st->bindParam(':klassetrinn', $beboer['klasse']);
 	$st->bindParam(':alkoholdepositum', $beboer['alkodepositum']);
-	$st->bindParam(':rolle_id', $beboer['oppgave_id']);
+	$st->bindParam(':rolle_id', $rolleId);
 	$st->bindParam(':epost', $epost);
 	$st->bindParam(':romhistorikk', $romhistorikkJson);
 	// Merk at bruker_id her ennå ikke er satt.
