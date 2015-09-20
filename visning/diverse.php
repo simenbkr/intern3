@@ -6,7 +6,7 @@ require_once('topp.php');
 
 <div class="col-sm-6 col-xs-12">
 	<h1>Datoer framover</h1>
-	<p><span style="color: #0A0;">Du skal ikke sitte vakter</span>, evt <span style="color: #0A0;">Dine vakter</span>, <span style="color: #00A;">Ledige vakter</span>, <span style="color: #AA0;">Bursdager</span>, <span style="color: #A00;">Andre viktige datoer</span></p>
+	<p><span style="color: #090;">Du skal ikke sitte vakter</span>, evt <span style="color: #090;">Dine vakter</span>, <span style="color: #009;">Ledige vakter</span>, <span style="color: #990;">Bursdager</span>, <span style="color: #900;">Andre viktige datoer</span></p>
 	<table class="table-bordered table">
 		<tr>
 			<th>U<span class="hidden-sm hidden-xs">ke</span></th>
@@ -53,7 +53,7 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	echo date('j', $dag);
 	$bursdager = intern3\BeboerListe::medBursdag(date('m-d', $dag));
 	if (count($bursdager) > 0) {
-		echo ' <span class="kalender_merke_bursdag" title="';
+		echo '<span class="kalender_merke_bursdag" title="';
 		foreach ($bursdager as $bursdag) {
 			echo $bursdag->getFulltNavn() . ' (' . $bursdag->getAlderIAr() . ' år)' . PHP_EOL;
 		}

@@ -32,6 +32,7 @@ $db->query('TRUNCATE TABLE bruker;');
 $db->query('TRUNCATE TABLE beboer;');
 $db->query('TRUNCATE TABLE verv;');
 $db->query('TRUNCATE TABLE beboer_verv;');
+$db->query('TRUNCATE TABLE vakt;');
 //etc
 
 /* Migrering av skole, start */
@@ -91,6 +92,7 @@ while ($rom = pg_fetch_array($hentRom)) {
 
 /* Migrering av rom, slutt */
 
+// Fra gammel beboer_id til ny bruker_id
 $beboerBrukerKobling = array();
 
 /* Migrering av brukere, start */
@@ -229,7 +231,7 @@ VALUES(
 /* Migrering av beboere, slutt */
 
 // Nye passord
-$st = $db->query('UPDATE bruker SET passord=\'' . LogginnCtrl::genererHash('test') . '\' WHERE id=(SELECT bruker_id FROM beboer WHERE fornavn=\'Martin\' AND etternavn=\'Nordal\');');
+$st = $db->query('UPDATE bruker SET passord=\'' . LogginnCtrl::genererHash('testetest') . '\';');
 
 /* Migrering av verv, start */
 
@@ -261,6 +263,29 @@ while ($verv = pg_fetch_array($hentVerv)) {
 }
 
 /* Migrering av verv, slutt */
+
+/* Migrering av vakter, start */
+
+$hentVakter = pg_query('SELECT * FROM vaktliste ORDER BY vakt_id;');
+while ($vakt = pg_fetch_array($hentVakter)) {
+	$brukerId = $vakt['beboer_id'] <> 0 && isset($beboerBrukerKobling[$vakt['beboer_id']]) ? $beboerBrukerKobling[$vakt['beboer_id']] : 0;
+	$vakttype = $vakt['vakt'] + 1;
+	$bekreftet = $vakt['bekreftet'] == 't';
+	$autogenerert = $vakt['manual'] == 't';
+	$st = $db->prepare('INSERT INTO vakt(
+	bruker_id,vakttype,dato,bekreftet,autogenerert
+) VALUES(
+	:brukerId,:vakttype,:dato,:bekreftet,:autogenerert
+);');
+	$st->bindParam(':brukerId', $brukerId);
+	$st->bindParam(':vakttype', $vakttype);
+	$st->bindParam(':dato', $vakt['dato']);
+	$st->bindParam(':bekreftet', $bekreftet);
+	$st->bindParam(':autogenerert', $autogenerert);
+	$st->execute();
+}
+
+/* Migrering av vakter, slutt */
 
 ferdig(); // Alt heretter går veldig sakte.
 $db->query('TRUNCATE TABLE krysseliste;');

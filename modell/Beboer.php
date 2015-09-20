@@ -193,6 +193,10 @@ class Beboer {
 		return $this->romhistorikkObjekt;
 	}
 
+	public function harUtvalgVerv() {
+		return count($this->getUtvalgVervListe()) > 0;
+	}
+
 	public function getUtvalgVervListe() {
 		if ($this->utvalgVervListe == null) {
 			$this->utvalgVervListe = VervListe::utvalgMedBeboerId($this->id);

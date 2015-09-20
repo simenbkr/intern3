@@ -12,9 +12,19 @@ class Vakt {
 	private $autogenerert;
 	private $dobbelvakt;
 
+	// Latskap
+	private $bruker;
+
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM vakt WHERE id=:id;');
 		$st->bindParam(':id', $id);
+		$st->execute();
+		return self::init($st);
+	}
+	public static function medDatoVakttype($dato, $vakttype) {
+		$st = DB::getDB()->prepare('SELECT * FROM vakt WHERE dato=:dato AND vakttype=:vakttype;');
+		$st->bindParam(':dato', $dato);
+		$st->bindParam(':vakttype', $vakttype);
 		$st->execute();
 		return self::init($st);
 	}
@@ -40,6 +50,18 @@ class Vakt {
 
 	public function getBrukerId() {
 		return $this->brukerId;
+	}
+
+	public function getBruker() {
+		if ($this->bruker == null) {
+			$this->bruker = Bruker::medId($this->brukerId);
+		}
+		return $this->bruker;
+	}
+
+	public function erLedig() {
+		// Fiks denne
+		return false;
 	}
 
 }

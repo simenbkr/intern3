@@ -59,11 +59,13 @@ foreach ($menyvalg as $adr => $navn) {
 ?>
 <?php
 
-if (1 || $erUtvalgsmedlem) {
+if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 	?>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">(Utvalget) <span class="caret"></span></a>
 								<ul class="dropdown-menu">
+									<li><a href="?a=utvalg">Diverse</a></li>
+									<li role="separator" class="divider"></li>
 									<li><a href="?a=utvalg/romsjef">Romsjef</a></li>
 									<li><a href="?a=utvalg/regisjef">Regisjef</a></li>
 									<li><a href="?a=utvalg/sekretar">Sekretær</a></li>

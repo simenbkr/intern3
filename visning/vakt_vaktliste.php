@@ -5,7 +5,7 @@ require_once('topp.php');
 ?>
 <div class="col-md-12">
 	<h1>Vaktliste</h1>
-	<p><span style="color: #0A0;">Du skal ikke sitte vakter</span>, evt <span style="color: #0A0;">Dine vakter</span>, <span style="color: #00A;">Ledige vakter</span>
+	<p><span style="color: #090;">Du skal ikke sitte vakter</span>, evt <span style="color: #090;">Dine vakter</span>, <span style="color: #009;">Ledige vakter</span>
 <?php
 
 $ukeStart = strtotime('last sunday - 6 days, midnight');
@@ -26,22 +26,40 @@ foreach (range($denneUka, $denneUka > 26 ? 52 : 26) as $uke){
 		</tr>
 <?php
 	foreach (range(1, 4) as $vakttype){
-?>
+		?>
 		<tr>
 			<td><?php echo $vakttype; ?>.<span class="hidden-xs"> vakt</span></td>
-			<td>Gauder</td>
-			<td>Gauder</td>
-			<td>Gauder</td>
-			<td>Gauder</td>
-			<td>Gauder</td>
-			<td>Gauder</td>
-			<td>Gauder</td>
+<?php
+		foreach (range(0, 6) as $ukeDag) {
+			$vakt = intern3\Vakt::medDatoVakttype(date('Y-m-d', strtotime('+' . $ukeDag . ' day', $ukeStart)), $vakttype);
+			if ($vakt == null) {
+				echo '			<td> </td>' . PHP_EOL;
+				continue;
+			}
+			$bruker = $vakt->getBruker();
+			echo '			<td';
+			if ($vakt <> null && $vakt->erLedig()) {
+				echo ' style="color: #009;"';
+			}
+			else if ($bruker <> null && $bruker->getId() == $cd->getAktivBruker()->getId()) {
+				echo ' style="color: #090;"';
+			}
+			echo '>';
+			if ($bruker == null) {
+				echo ' ';
+			}
+			else {
+				echo $bruker->getPerson()->getFulltNavn();
+			}
+			echo '</td>' . PHP_EOL;
+		}
+		?>
 		</tr>
 <?php
 	}
 ?>
 	</table>
-	<?php
+<?php
 }
 
 ?>
