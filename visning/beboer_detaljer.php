@@ -5,7 +5,7 @@ require_once('topp.php');
 ?>
 
 <div class="col-md-4">
-	<h1><?php echo $beboer->getFulltNavn(); ?></h1>
+	<h1>Beboer &raquo; <?php echo $beboer->getFulltNavn(); ?></h1>
 	<p>[ <a href="?a=beboer">Beboerliste</a> ] [ <a href="?a=beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
 	<table class="table table-bordered">
 		<tr>

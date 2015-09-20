@@ -41,7 +41,7 @@ class KryssCtrl extends AbstraktCtrl {
 		$dok->set('sumKryss', $sumKryss);
 		$dok->set('transaksjoner', $transaksjoner);
 		$dok->set('ukedager', $ukedager);
-		$dok->vis('kryss.php');
+		$dok->vis('kryss_historikk.php');
 	}
 }
 

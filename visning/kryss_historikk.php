@@ -4,7 +4,7 @@ require_once('topp.php');
 
 ?>
 <div class="col-md-12">
-	<h1>Kryss</h1>
+	<h1>Kryss &raquo; Historikk</h1>
 	<p>[ <a href="?a=kryss">Nylig kryssing</a> ] [ <a href="?a=kryss/historikk">Historikk</a> ] [ <a href="?a=kryss/statistikk">Statistikk</a> ]</p>
 </div>
 <div class="col-md-4 col-sm-6">

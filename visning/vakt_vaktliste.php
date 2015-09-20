@@ -4,7 +4,8 @@ require_once('topp.php');
 
 ?>
 <div class="col-md-12">
-	<h1>Vaktliste</h1>
+	<h1>Vakt &raquo; Vaktliste</h1>
+	<p>[ Vaktliste ] [ <a href="?a=vakt/dine">Dine vakter</a> ] [ <a href="?a=vakt/ledige">Legide vakter</a> ]</p>
 	<p><span style="color: #090;"><?php
 if ($cd->getAktivBruker()->getPerson()->harVakt()) {
 	echo 'Dine vakter';
@@ -22,7 +23,7 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
 ?>
 	<table class="table-bordered table">
 		<tr>
-			<th><span class="hidden-xs">U<span class="hidden-sm">ke</span>&nbsp;</span><?php echo $uke; ?></th>
+			<th><span class="hidden-sm">Uke&nbsp;</span><?php echo $uke; ?></th>
 			<th>M<span class="hidden-xs">an<span class="hidden-sm">dag</span></span>&nbsp;<?php echo date('d/m',  $ukeStart);?></th>
 			<th>T<span class="hidden-xs">ir<span class="hidden-sm">sdag</span></span>&nbsp;<?php echo date('d/m', strtotime('+1 day', $ukeStart));?></th>
 			<th>O<span class="hidden-xs">ns<span class="hidden-sm">dag</span></span>&nbsp;<?php echo date('d/m', strtotime('+2 day', $ukeStart));?></th>
@@ -35,7 +36,7 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
 	foreach (range(1, 4) as $vakttype){
 		?>
 		<tr>
-			<td><?php echo $vakttype; ?>.<span class="hidden-xs"> vakt</span></td>
+			<td><?php echo $vakttype; ?>.<span class="hidden-sm">&nbsp;vakt</span></td>
 <?php
 		foreach (range(0, 6) as $ukeDag) {
 			$vakt = intern3\Vakt::medDatoVakttype(date('Y-m-d', strtotime('+' . $ukeDag . ' day', $ukeStart)), $vakttype);

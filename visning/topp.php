@@ -30,7 +30,7 @@ if (!isset($skjulMeny)) {
 <?php
 
 $menyvalg = array(
-		'beboer' => 'Beboere',
+		'beboer' => 'Beboer',
 		'vakt' => 'Vakt',
 		'regi' => 'Regi',
 		'verv' => 'Verv',

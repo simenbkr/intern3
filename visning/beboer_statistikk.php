@@ -5,7 +5,7 @@ require_once('topp.php');
 ?>
 
 <div class="col-md-12">
-	<h1>Statistikk</h1>
+	<h1>Beboer &raquo; Statistikk</h1>
 	<p>[ <a href="?a=beboer">Beboerliste</a> ] [ <a href="?a=beboer/utskrift">Utskriftsvennlig</a> ] [ Statistikk ]</p>
 </div>
 <?php
