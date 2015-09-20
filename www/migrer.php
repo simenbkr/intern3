@@ -234,7 +234,7 @@ $innsatteVerv = array();
 $hentVerv = pg_query('SELECT * FROM apmandsverv ORDER BY apmandsverv_id;');
 while ($verv = pg_fetch_array($hentVerv)) {
 	$navn = byttTegnsett($verv['apmandsverv']);
-	$utvalg = $verv['utvalgsverv'] == 't';
+	$utvalg = $verv['utvalgsverv'] == 't' ? 1 : 0;
 	if (!isset($innsatteVerv[$navn])) {
 		$st = $db->prepare('INSERT INTO verv(
 	navn,utvalg,epost
