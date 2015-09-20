@@ -4,7 +4,7 @@ namespace intern3;
 
 class BeboerListe {
 	public static function alle() {
-		$st = DB::getDB()->prepare('SELECT id FROM beboer ORDER BY fornavn;');
+		$st = DB::getDB()->prepare('SELECT id FROM beboer ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
 		return self::medPdoSt($st);
 	}
 	public static function aktive() {
@@ -35,11 +35,11 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
 	}
 	public static function medPdoSt($st) {
 		$st->execute();
-		$beboerListe = array();
+		$res = array();
 		while ($rad = $st->fetch()) {
-			$beboerListe[] = Beboer::medId($rad['id']);
+			$res[] = Beboer::medId($rad['id']);
 		}
-		return $beboerListe;
+		return $res;
 	}
 }
 

@@ -7,7 +7,7 @@ margin: auto;
 max-width: 1200px;
 }
 
-#innhold div h1 {
+#innhold div h1, #innhold div h2 {
 margin-top: 0;
 }
 

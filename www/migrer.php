@@ -157,7 +157,6 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	$adresse = $beboer['adresse'] == null ? null : byttTegnsett($beboer['adresse']);
 	$postnummer = $beboer['postnummer'] == null ? null : $beboer['postnummer'];
 	$telefon = $beboer['mobil'] == null ? ' ' : str_replace(' ', '', $beboer['mobil']);
-	$telefon = substr($telefon, 0, strlen($telefon) - 8) . ' ' . substr($telefon, -8);
 	$epost = $beboer['epost'] == null ? null : strtolower($beboer['epost']);
 	$studieId = intval(Studie::medNavn(byttTegnsett($beboer['studie']))->getId());
 	$skoleId = intval(Skole::medNavn(byttTegnsett($beboer['skole']))->getId());
@@ -217,15 +216,8 @@ VALUES(
 
 /* Migrering av beboere, slutt */
 
-// md5() virker annerledes fra internsida. Vet ikke hvorfor.
-$st = $db->prepare('UPDATE bruker SET passord=:passord WHERE id=(SELECT bruker_id FROM beboer WHERE fornavn=:fornavn AND etternavn=:etternavn);');
-$fornavn = 'Martin';
-$etternavn = 'Nordal';
-$passord = 'b16eb5e8a5fa4a43d8e32e7450b2301d';
-$st->bindParam(':fornavn', $fornavn);
-$st->bindParam(':etternavn', $etternavn);
-$st->bindParam(':passord', $passord);
-$st->execute();
+// Nye passord
+$st = $db->query('UPDATE bruker SET passord=\'$6$rounds=5000$VM5wn6AvwUOAdUO2$XKwFTqabqK1hz0OOh8ds22zt0ms74zab8yHwKbBkDAGteTC2K6jVB8KHNv7M.pOq5bVnuIUTIyLiA53ojlkI/0\' WHERE id=(SELECT bruker_id FROM beboer WHERE fornavn=\'Martin\' AND etternavn=\'Nordal\');');
 
 /* Migrering av verv, start */
 

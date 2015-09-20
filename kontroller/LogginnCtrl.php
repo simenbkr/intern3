@@ -12,19 +12,15 @@ class LogginnCtrl extends AbstraktCtrl {
 		}
 		$this->visSkjema();
 	}
-	private function loggUt() {
+	private static function loggUt() {
 		setcookie('brukernavn', '', -1);
 		setcookie('passord', '', -1);
 		Header('Location: ' . $_GET['ref']);
 		exit();
 	}
-	private function loggInn() {
-		$bruker = Bruker::medEpost($_POST['brukernavn']);
-		if ($bruker <> null) {
-			$passordHash = $bruker->getPassordHash($_POST['passord']);
-			setcookie('brukernavn', $_POST['brukernavn'], $_SERVER['REQUEST_TIME'] + 31556926);
-			setcookie('passord', $passordHash, $_SERVER['REQUEST_TIME'] + 31556926);
-		}
+	private static function loggInn() {
+		setcookie('brukernavn', $_POST['brukernavn'], $_SERVER['REQUEST_TIME'] + 31556926);
+		setcookie('passord', self::genererHash($_POST['passord']), $_SERVER['REQUEST_TIME'] + 31556926);
 		Header('Location: ' . $_SERVER['REQUEST_URI']);
 		exit();
 	}
@@ -48,8 +44,8 @@ class LogginnCtrl extends AbstraktCtrl {
 	}
 	public static function genererHash($passord) {
 		if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH) {
-			$salt = '$2y$11$' . substr(md5(uniqid(mt_rand(), true)), 0, 22);
-			return crypt($passord, $salt);
+			$salt = '$2y$11$' . substr(md5($passord . 'V@Q?0q%FCB5?iIB'), 0, 27);
+			return crypt('Z\'3s+uc(WDk<,7Q' . crypt($passord, $salt), '$6$rounds=5000$VM5wn6AvwUOAdUO24oLzGQ$');
 		}
 		throw new \Exception('Sugefisk?');
 	}

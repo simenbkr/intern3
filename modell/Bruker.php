@@ -41,15 +41,6 @@ class Bruker {
 		return $this->id;
 	}
 
-	public function passordErMd5() {
-		/* Anta MD5, dvs gammelt passord, hvis passordlengden er lik 32. */
-		return strlen($this->passord) == 32;
-	}
-
-	public function getPassordHash($passord) {
-		return $this->passordErMd5() ? md5($passord) : crypt($passord, $this->passord);
-	}
-
 	public function passordErGyldig($passord) {
 		return $passord == $this->passord;
 	}

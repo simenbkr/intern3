@@ -94,6 +94,10 @@ class Beboer {
 		return $this->etternavn;
 	}
 
+	public function getFulltNavn() {
+		return trim(preg_replace('/[\s]{2,}/', ' ', $this->fornavn . ' ' . $this->mellomnavn . ' ' . $this->etternavn));
+	}
+
 	public function getFodselsdato() {
 		return $this->fodselsdato;
 	}
@@ -110,11 +114,18 @@ class Beboer {
 		return $this->getAlderIAr() - (($_SERVER['REQUEST_TIME'] - mktime(0, 0, 0, substr($this->fodselsdato, 5, 2), substr($this->fodselsdato, 8, 2))) < 0 ? 1 : 0);
 	}
 
-	public function getFulltNavn() {
-		return trim(preg_replace('/[\s]{2,}/', ' ', $this->fornavn . ' ' . $this->mellomnavn . ' ' . $this->etternavn));
+	public function getAdresse() {
+		return $this->adresse;
+	}
+
+	public function getPostnummer() {
+		return $this->postnummer;
 	}
 
 	public function getTelefon() {
+		if (strlen($this->telefon) > 8) {
+			return substr($this->telefon, 0, strlen($this->telefon) - 8) . ' ' . substr($this->telefon, -8);
+		}
 		return $this->telefon;
 	}
 
@@ -122,11 +133,19 @@ class Beboer {
 		return $this->klassetrinn;
 	}
 
+	public function getStudieId() {
+		return $this->studieId;
+	}
+
 	public function getStudie() {
 		if ($this->studie == null) {
 			$this->studie = Studie::medId($this->studieId);
 		}
 		return $this->studie;
+	}
+
+	public function getSkoleId() {
+		return $this->skoleId;
 	}
 
 	public function getSkole() {
