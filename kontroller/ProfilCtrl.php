@@ -127,7 +127,7 @@ class ProfilCtrl extends AbstraktCtrl {
 				$feil[] = 'Studie mangler.';
 				break;
 			}
-			if (Skole::medId($_POST['studie_id']) == null) {
+			if (Studie::medId($_POST['studie_id']) == null) {
 				$feil[] = 'Studie må være valgt fra lista.';
 				break;
 			}
