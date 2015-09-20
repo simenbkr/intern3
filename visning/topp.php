@@ -38,7 +38,6 @@ $menyvalg = array(
 		'wiki' => 'Wiki',
 		'utleie' => 'Utleie',
 		'helga' => '(Helga)',
-		'rombytte' => '(Rombytte)',
 		'kjeller' => '(Vinkjeller)'
 );
 
@@ -87,6 +86,7 @@ if (1 || $erUtvalgsmedlem) {
 if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
 	?>
 									<li><a href="?a=romskjema">Romskjema (<?php echo $cd->getAktivBruker()->getPerson()->getRomhistorikk()->getAktivtRom()->getNavn(); ?>)</a></li>
+									<li><a href="?a=rombytte">Rombytte</a></li>
 									<li><a href="?a=utflytting">Utflytting</a></li>
 <?php
 }

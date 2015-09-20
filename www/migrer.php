@@ -2,6 +2,8 @@
 
 namespace intern3;
 
+set_time_limit(999999999);
+
 /* Denne fila må på sikt flyttes slik at ikke hvem som helst kan leke med den! */
 /* Denne fila tømmer databasen og importerer fra gammel internside. */
 
@@ -23,11 +25,13 @@ function byttTegnsett($streng) {
 }
 
 $db = DB::getDB();
-$db->query('TRUNCATE skole;');
-$db->query('TRUNCATE studie;');
-$db->query('TRUNCATE rom;');
-$db->query('TRUNCATE bruker;');
-$db->query('TRUNCATE beboer;');
+$db->query('TRUNCATE TABLE skole;');
+$db->query('TRUNCATE TABLE studie;');
+$db->query('TRUNCATE TABLE rom;');
+$db->query('TRUNCATE TABLE bruker;');
+$db->query('TRUNCATE TABLE beboer;');
+$db->query('TRUNCATE TABLE verv;');
+$db->query('TRUNCATE TABLE beboer_verv;');
 //etc
 
 /* Migrering av skole, start */
@@ -87,9 +91,9 @@ while ($rom = pg_fetch_array($hentRom)) {
 
 /* Migrering av rom, slutt */
 
-/* Migrering av brukere, start */
-
 $beboerBrukerKobling = array();
+
+/* Migrering av brukere, start */
 
 $hentBrukere = pg_query('SELECT * FROM
 	brukerdata as br,
@@ -106,6 +110,8 @@ while ($bruker = pg_fetch_array($hentBrukere)) {
 }
 
 /* Migrering av brukere, slutt */
+
+$beboerIdFornyelse = array();
 
 /* Migrering av beboere, start */
 
@@ -206,6 +212,7 @@ VALUES(
 	$st->bindParam(':romhistorikk', $romhistorikkJson);
 	// Merk at bruker_id her ennå ikke er satt.
 	$st->execute();
+	$beboerIdFornyelse[$beboer['beboer_id']] = $db->lastInsertId();
 }
 
 /* Migrering av beboere, slutt */
@@ -220,8 +227,70 @@ $st->bindParam(':etternavn', $etternavn);
 $st->bindParam(':passord', $passord);
 $st->execute();
 
-// og mye mer må gjøres her...
+/* Migrering av verv, start */
 
-DB::getDB()->commit();
+$innsatteVerv = array();
+
+$hentVerv = pg_query('SELECT * FROM apmandsverv ORDER BY apmandsverv_id;');
+while ($verv = pg_fetch_array($hentVerv)) {
+	$navn = byttTegnsett($verv['apmandsverv']);
+	$utvalg = $verv['utvalgsverv'] == 't';
+	if (!isset($innsatteVerv[$navn])) {
+		$st = $db->prepare('INSERT INTO verv(
+	navn,utvalg,epost
+) VALUES(
+	:navn,:utvalg,:epost
+);');
+		$st->bindParam(':navn', $navn);
+		$st->bindParam(':utvalg', $utvalg);
+		$st->bindParam(':epost', $verv['epost']);
+		$st->execute();
+		$innsatteVerv[$navn] = $db->lastInsertId();
+	}
+	if ($verv['beboer_id'] == 0) {
+		continue;
+	}
+	$st = $db->prepare('INSERT INTO beboer_verv(beboer_id,verv_id) VALUES(:beboerId,:vervId);');
+	$st->bindParam(':beboerId', $beboerIdFornyelse[$verv['beboer_id']]);
+	$st->bindParam(':vervId', $innsatteVerv[$navn]);
+	$st->execute();
+}
+
+/* Migrering av verv, slutt */
+
+ferdig(); // Alt heretter går veldig sakte.
+$db->query('TRUNCATE TABLE krysseliste;');
+
+/* Migrering av krysseliste, start */
+
+// Fra gamle til nye drikke_id-er
+$drikkeIder = array(
+	-1 => 1, // Pant (hadde egen kolonne tidligere)
+	0 => 2, // Øl
+	1 => 2, // Øl
+	2 => 3, // Carlsberg
+	3 => 4, // Cider
+	4 => 5 // Rikdom
+);
+
+$hentKryss = pg_query('SELECT * FROM krysseliste_beer ORDER BY dato;');
+while ($kryss = pg_fetch_array($hentKryss)) {
+	if ($kryss['beboer_id'] == 0) {
+		continue;
+	}
+	$drikkeId = $kryss['pant'] == 'TRUE' ? $drikkeIder[-1] : $drikkeIder[$kryss['type']];
+	$krysseliste = Krysseliste::medBeboerDrikkeId($beboerIdFornyelse[$kryss['beboer_id']], $drikkeId);
+	$krysseliste->addKryss($kryss['antall'], strtotime($kryss['dato']), $kryss['fakturert']);
+	$krysseliste->oppdater();
+}
+
+/* Migrering av krysseliste, slutt */
+
+ferdig();
+
+function ferdig() {
+	DB::getDB()->commit();
+	exit();
+}
 
 ?>

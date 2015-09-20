@@ -46,6 +46,9 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 		if ($dag < $manedStart || $manedSlutt <= $dag) {
 			echo ' style="opacity: .5;"';
 		}
+		else if ($dag == strtotime('today, midnight')) {
+			echo ' style="outline: 2px dashed #000;"';
+		}
 ?>><?php
 	echo date('j', $dag);
 	$bursdager = intern3\BeboerListe::medBursdag(date('m-d', $dag));
