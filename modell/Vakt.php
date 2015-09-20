@@ -59,6 +59,10 @@ class Vakt {
 		return $this->bruker;
 	}
 
+	public function getVakttype() {
+		return $this->vakttype;
+	}
+
 	public function erLedig() {
 		// Fiks denne
 		return false;

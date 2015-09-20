@@ -55,11 +55,22 @@ color: #EEE;
 background-color: #369;
 }
 
-.kalender_merke_bursdag {
+.kalender_merke_bursdag, .kalender_merke_dinevakter, .kalender_merke_ledigevakter {
 display: inline-block;
 float: right;
 width: 12px;
 height: 12px;
 border-radius: 6px;
+}
+
+.kalender_merke_bursdag {
 background-color: #990;
+}
+
+.kalender_merke_dinevakter {
+background-color: #090;
+}
+
+.kalender_merke_ledigevakter {
+background-color: #009;
 }

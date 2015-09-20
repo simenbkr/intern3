@@ -28,6 +28,7 @@ class Beboer {
 	private $rom;
 	private $romhistorikkObjekt;
 	private $rolle;
+	private $vervListe;
 	private $utvalgVervListe;
 
 	public static function medId($id) {
@@ -191,6 +192,24 @@ class Beboer {
 			$this->romhistorikkObjekt = Romhistorikk::fraJson($this->romhistorikk);
 		}
 		return $this->romhistorikkObjekt;
+	}
+
+	public function harVakt() {
+		return $this->getRolle()->getRegitimer() < 48;
+		/*
+		$regi = 0;
+		foreach ($this->getVervListe() as $verv) {
+			$regi += $verv->getRegitimer();
+		}
+		return $regi < 48;
+		*/
+	}
+
+	public function getVervListe() {
+		if ($this->vervListe == null) {
+			$this->vervListe = VervListe::medBeboerId($this->id);
+		}
+		return $this->vervListe;
 	}
 
 	public function harUtvalgVerv() {

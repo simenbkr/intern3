@@ -5,12 +5,19 @@ require_once('topp.php');
 ?>
 <div class="col-md-12">
 	<h1>Vaktliste</h1>
-	<p><span style="color: #090;">Du skal ikke sitte vakter</span>, evt <span style="color: #090;">Dine vakter</span>, <span style="color: #009;">Ledige vakter</span>
+	<p><span style="color: #090;"><?php
+if ($cd->getAktivBruker()->getPerson()->harVakt()) {
+	echo 'Dine vakter';
+}
+else {
+	echo 'Du skal ikke sitte vakter';
+}
+?></span>, <span style="color: #009;">Ledige vakter</span>
 <?php
 
 $ukeStart = strtotime('last sunday - 6 days, midnight');
 
-foreach (range($denneUka, $denneUka > 26 ? 52 : 26) as $uke){
+foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, date('Y'))) : 26) as $uke){
 	$ukeStart = strtotime('+1 week', $ukeStart);
 ?>
 	<table class="table-bordered table">

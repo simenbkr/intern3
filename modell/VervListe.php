@@ -7,6 +7,16 @@ class VervListe {
 		$st = DB::getDB()->prepare('SELECT id FROM verv ORDER BY navn COLLATE utf8_swedish_ci;');
 		return self::medPdoSt($st);
 	}
+	public static function medBeboerId($beboerId) {
+		$st = DB::getDB()->prepare('SELECT v.id AS id FROM
+	verv AS v,
+	beboer_verv AS b
+WHERE
+	v.id=b.verv_id
+	AND b.beboer_id=:beboerId;');
+		$st->bindParam(':beboerId', $beboerId);
+		return self::medPdoSt($st);
+	}
 	public static function utvalgMedBeboerId($beboerId) {
 		$st = DB::getDB()->prepare('SELECT v.id AS id FROM
 	verv AS v,
