@@ -121,11 +121,19 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<h2>Varsler<input type="hidden" name="endre" value="varsler"></h2>
 		<table class="table table-bordered">
 			<tr>
-				<th colspan="2">Send epost når ...</th>
+				<th colspan="2">Send epost ...</th>
 			</tr>
 			<tr>
-				<td>noen vil bytte eller gi bort en vakt</td>
+				<td>når noen vil bytte eller gi bort en vakt</td>
 				<td><input type="checkbox" name="varsel[vaktbytte]" value="1"></td>
+			</tr>
+			<tr>
+				<td>når kosesjef har planlagt et utleie</td>
+				<td><input type="checkbox" name="varsel[utleie]" value="1"></td>
+			</tr>
+			<tr>
+				<td>når det er 24 timer igjen til å stå barvakt</td>
+				<td><input type="checkbox" name="varsel[utleie]" value="1"></td>
 			</tr>
 		</table>
 		<p><input type="submit" class="btn-primary" value="Lagre"></p>
