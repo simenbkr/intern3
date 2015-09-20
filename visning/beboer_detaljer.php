@@ -43,7 +43,7 @@ else {
 			<td><?php
 $utvalgVervListe = $beboer->getUtvalgVervListe();
 if (count($utvalgVervListe) == 0) {
-	echo $beboer->getRolle()->getNavn();
+	echo str_replace(' ', '&nbsp;', $beboer->getRolle()->getNavn());
 }
 else {
 	echo '<strong>' . $utvalgVervListe[0]->getNavn() . '</strong>';

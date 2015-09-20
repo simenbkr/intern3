@@ -34,14 +34,14 @@ foreach ($beboerListe as $beboer){
 	}
 	else {
 		echo $beboer->getKlassetrinn();
-		?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a> (<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
+		?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a>&nbsp;(<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
 	}
 	?></td>
 			<td><?php echo $beboer->getFodselsdato(); ?></td>
 			<td><?php
 	$utvalgVervListe = $beboer->getUtvalgVervListe();
 	if (count($utvalgVervListe) == 0) {
-		echo $beboer->getRolle()->getNavn();
+		echo str_replace(' ', '&nbsp;', $beboer->getRolle()->getNavn());
 	}
 	else {
 		echo '<strong>' . $utvalgVervListe[0]->getNavn() . '</strong>';
