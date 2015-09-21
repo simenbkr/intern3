@@ -74,3 +74,28 @@ background-color: #090;
 .kalender_merke_ledigevakter {
 background-color: #009;
 }
+
+.tekst_dinevakter {
+color: #090;
+font-weight: bold;
+}
+
+.tekst_ledigevakter {
+color: #009;
+font-weight: bold;
+}
+
+.tekst_ansattvakt {
+background-color:#EEE;
+opacity:.8;
+}
+
+.tekst_bursdager {
+color: #990;
+font-weight: bold;
+}
+
+.tekst_viktigedatoer {
+color: #900;
+font-weight: bold;
+}

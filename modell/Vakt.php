@@ -14,6 +14,7 @@ class Vakt {
 
 	// Latskap
 	private $bruker;
+	private $vaktbytte;
 
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM vakt WHERE id=:id;');
@@ -64,8 +65,18 @@ class Vakt {
 	}
 
 	public function erLedig() {
-		// Fiks denne
-		return false;
+		return $this->brukerId==0 && $this->autogenerert;
+	}
+
+	public function getVaktbytte() {
+		if ($this->vaktbytte == null) {
+			$this->vaktbytte = Vaktbytte::medVaktId($this->id);
+		}
+		return $this->vaktbytte;
+	}
+
+	public function kanByttes() {
+		return $this->getVaktbytte() <> null;
 	}
 
 }

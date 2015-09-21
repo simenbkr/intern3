@@ -33,6 +33,7 @@ $db->query('TRUNCATE TABLE beboer;');
 $db->query('TRUNCATE TABLE verv;');
 $db->query('TRUNCATE TABLE beboer_verv;');
 $db->query('TRUNCATE TABLE vakt;');
+$db->query('TRUNCATE TABLE ansatt;');
 //etc
 
 /* Migrering av skole, start */
@@ -228,9 +229,21 @@ VALUES(
 	$beboerIdFornyelse[$beboer['beboer_id']] = $db->lastInsertId();
 }
 
+foreach (BeboerListe::aktive() as $beboer) {
+	if ($beboer->getBrukerId()==0) {
+		$st = $db->query('INSERT INTO bruker(passord) VALUES(\'testetest\');');
+		$brukerId = $db->lastInsertId();
+		$st = $db->query('UPDATE beboer SET bruker_id='.$brukerId.' WHERE id='.$beboer->getId().';');
+		$gammelIndex = array_search($beboer->getId(), $beboerIdFornyelse);
+		$beboerBrukerKobling[$gammelIndex] = $brukerId;
+	}
+}
+
 /* Migrering av beboere, slutt */
 
 // Nye passord
+$st = $db->query('INSERT INTO bruker(passord) VALUES(\'testetest\');');
+$st = $db->query('INSERT INTO ansatt(bruker_id, fornavn, etternavn, epost) VALUES('.$db->lastInsertId().', \'Torild\', \'Fivë\', \'torild@singsaker.no\');');
 $st = $db->query('UPDATE bruker SET passord=\'' . LogginnCtrl::genererHash('testetest') . '\';');
 
 /* Migrering av verv, start */
@@ -264,6 +277,8 @@ while ($verv = pg_fetch_array($hentVerv)) {
 
 /* Migrering av verv, slutt */
 
+$vaktIdFornyelse = array();
+
 /* Migrering av vakter, start */
 
 $hentVakter = pg_query('SELECT * FROM vaktliste ORDER BY vakt_id;');
@@ -271,7 +286,7 @@ while ($vakt = pg_fetch_array($hentVakter)) {
 	$brukerId = $vakt['beboer_id'] <> 0 && isset($beboerBrukerKobling[$vakt['beboer_id']]) ? $beboerBrukerKobling[$vakt['beboer_id']] : 0;
 	$vakttype = $vakt['vakt'] + 1;
 	$bekreftet = $vakt['bekreftet'] == 't';
-	$autogenerert = $vakt['manual'] == 't';
+	$autogenerert = $vakt['manual'] != 't';
 	$st = $db->prepare('INSERT INTO vakt(
 	bruker_id,vakttype,dato,bekreftet,autogenerert
 ) VALUES(
@@ -283,9 +298,32 @@ while ($vakt = pg_fetch_array($hentVakter)) {
 	$st->bindParam(':bekreftet', $bekreftet);
 	$st->bindParam(':autogenerert', $autogenerert);
 	$st->execute();
+	$vaktIdFornyelse[$vakt['vakt_id']] = $db->lastInsertId();
 }
 
 /* Migrering av vakter, slutt */
+
+/* Migrering av vakterbytter ja, start */
+
+$hentVaktbytter = pg_query('SELECT * FROM pb_ledigevakter ORDER BY id;');
+while ($vaktbytte = pg_fetch_array($hentVaktbytter)) {
+	$vaktId = $vaktIdFornyelse[$vaktbytte['vakt_id']];
+	$gisBort = !$vaktbytte['modus'];
+	// $forslag = $vaktbytte['forslag'];
+	$merknad = $vaktbytte['comment'];
+	$st = $db->prepare('INSERT INTO vaktbytte(
+	vakt_id,gisbort,merknad
+) VALUES(
+	:vaktId,:gisBort,:merknad
+)');
+	$st->bindParam(':vaktId', $vaktId);
+	$st->bindParam(':gisBort', $gisBort);
+	// $st->bindParam(':forslag', $forslag);
+	$st->bindParam(':merknad', $merknad);
+	$st->execute();
+}
+
+/* Migrering av vakterbytter ja, slutt */
 
 ferdig(); // Alt heretter går veldig sakte.
 $db->query('TRUNCATE TABLE krysseliste;');
