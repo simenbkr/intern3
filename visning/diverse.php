@@ -8,12 +8,12 @@ require_once('topp.php');
 	<h1>Datoer framover</h1>
 	<p><span class="tekst_dinevakter"><?php
 if ($cd->getAktivBruker()->getPerson()->harVakt()) {
-	echo 'Dine vakter';
+	echo '<span class="merke_dinevakter" title=""; > </span> Dine vakter';
 }
 else {
 	echo 'Du skal ikke sitte vakter';
 }
-?></span>, <span class="tekst_bursdager">Bursdager</span>, <span class="tekst_viktigedatoer">Andre viktige datoer</span></p>
+?></span>, <span class="merke_bursdag" title=""; > </span><span class="tekst_bursdager"> Bursdager</span>, <span class="merke_viktigedatoer" title=""; ></span><span class="tekst_viktigedatoer"> Andre viktige datoer</span></p>
 	<table class="table-bordered table">
 		<tr>
 			<th>U<span class="hidden-sm hidden-xs">ke</span></th>

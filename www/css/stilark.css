@@ -64,7 +64,7 @@ border-radius: 6px;
 }
 
 .kalender_merke_bursdag {
-background-color: #990;
+background-color: #DD0;
 }
 
 .kalender_merke_dinevakter {
@@ -73,6 +73,29 @@ background-color: #090;
 
 .kalender_merke_ledigevakter {
 background-color: #009;
+}
+
+.merke_bursdag, .merke_dinevakter, .merke_ledigevakter, .merke_viktigedatoer {
+display: inline-block;
+width: 12px;
+height: 12px;
+border-radius: 6px;
+}
+
+.merke_bursdag {
+background-color: #DD0;
+}
+
+.merke_dinevakter {
+background-color: #090;
+}
+
+.merke_ledigevakter {
+background-color: #009;
+}
+
+.merke_viktigedatoer {
+background-color: #900;
 }
 
 .tekst_dinevakter {
@@ -91,7 +114,7 @@ opacity:.8;
 }
 
 .tekst_bursdager {
-color: #990;
+color: #DD0;
 font-weight: bold;
 }
 
