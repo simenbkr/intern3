@@ -5,9 +5,10 @@ namespace intern3;
 class VaktCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
 		$aktueltArg = $this->cd->getAktueltArg();
+		$vaktbytteListe = VaktbytteListe::etterVakttype();
 		if ($aktueltArg == 'bytte') {
 			$dok = new Visning($this->cd);
-			$dok->set('vaktbytte', $vaktbytte);
+			$dok->set('vaktbytteListe', $vaktbytteListe);
 			$dok->vis('vakt_bytte.php');
 		}
 		else {

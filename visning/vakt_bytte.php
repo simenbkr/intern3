@@ -8,41 +8,30 @@ require_once('topp.php');
 	<h1>Vakt &raquo; Vaktbytte</h1>
 	<p>[ <a href="?a=vakt">Vaktliste</a> ] [ Vaktbytte ]</p>
 </div>
-<div class="col-md-10 col-sm-6">
-	<table class="table table-bordered">
-		<tr>
-			<th>1. Vakt</th>
-			<th>2. Vakt</th>
-			<th>3. Vakt</th>
-			<th>4. Vakt</th>
-		</tr>
-		<tr>
 <?php
 
-// foreach ($vaktbytte as $byttevakt) {
-//
-// }
+foreach (range(1, 4) as $vakttype) {
+	?><div class="col-md-3 col-sm-6 col-sx-12">
+	<table class="table table-bordered">
+		<tr>
+			<th><?php echo $vakttype; ?>.&nbsp;vakt</th>
+		</tr>
+<?php
+	foreach ($vaktbytteListe[$vakttype] as $vaktbytte) {
+		?>		<tr>
+			<td><input type="button" class="pull-right" value="Bytt"><?php
+		echo '<strong>' . date('l d/m', strtotime($vaktbytte->getVakt()->getDato())) . '</strong>';
+		echo '<br>';
+		echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
+		?></td>
+		</tr><?php
+	}
+	?>	</table>
+</div>
+<?php
+}
 
 ?>
-			<td>Søndag 27/09<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 29/09<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 09/10<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 03/11<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-		</tr>
-		<tr>
-			<td>Søndag 28/09<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 05/10<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 10/10<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 10/10<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-		</tr>
-		<tr>
-			<td>Søndag 26/10<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 03/11<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 06/11<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-			<td>Søndag 09/11<br>Gauder<INPUT TYPE= "Submit" STYLE="float:right" VALUE="Bytt"></td>
-		</tr>
-	</table>
-</div>
 
 <?php
 

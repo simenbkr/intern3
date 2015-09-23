@@ -10,6 +10,9 @@ class Vaktbytte {
 	private $forslag;
 	private $merknad;
 
+	// Latskap
+	private $vakt;
+
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM vaktbytte WHERE id=:id;');
 		$st->bindParam(':id', $id);
@@ -42,6 +45,13 @@ class Vaktbytte {
 
 	public function getVaktId() {
 		return $this->vaktId;
+	}
+
+	public function getVakt() {
+		if ($this->vakt == null) {
+			$this->vakt = Vakt::medId($this->vaktId);
+		}
+		return $this->vakt;
 	}
 
 	public function getGisBort() {

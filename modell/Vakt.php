@@ -64,6 +64,10 @@ class Vakt {
 		return $this->vakttype;
 	}
 
+	public function getDato() {
+		return $this->dato;
+	}
+
 	public function erLedig() {
 		return $this->brukerId==0 && $this->autogenerert;
 	}
