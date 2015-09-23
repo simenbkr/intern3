@@ -19,7 +19,7 @@ require_once('topp.php');
 			</tr>
 			<tr>
 				<td> </td>
-				<td><input type="submit" class="btn-primary" value="Logg inn"></td>
+				<td><input type="submit" class="btn btn-primary" value="Logg inn"></td>
 			</tr>
 		</table>
 	</form>

@@ -49,7 +49,7 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
 				continue;
 			}
 			if ($vakt->erLedig()) {
-				echo '			<td style="text-align: center;"><INPUT TYPE = "Submit" VALUE = "Ledig"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" class="btn btn-info" value="Ledig"></td>' . PHP_EOL;
 				continue;
 			}
 			$bruker = $vakt->getBruker();

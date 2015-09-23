@@ -88,7 +88,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 				<td><input type="text" name="klassetrinn" size="1" value="<?php echo isset($_POST['klassetrinn']) ? $_POST['klassetrinn'] : $beboer->getKlassetrinn(); ?>"></td>
 			</tr>
 		</table>
-		<p><input type="submit" class="btn-primary" value="Lagre"></p>
+		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
 	</form>
 </div>
 <div class="col-md-4 col-sm-6">
@@ -105,7 +105,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 				<td><input type="password" name="passord2"></td>
 			</tr>
 		</table>
-		<p><input type="submit" class="btn-primary" value="Lagre"></p>
+		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
 	</form>
 </div>
 <div class="col-md-4 col-sm-6">
@@ -113,7 +113,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<h2>Bytt profilbilde<input type="hidden" name="endre" value="bilde"></h2>
 		<p style="color: #990;">Du har for øyeblikket ikke noe profilbilde.</p>
 		<p style="color: #900;">Hakke implementert dette heller.</p>
-		<p><input type="submit" class="btn-primary" value="Lagre"></p>
+		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
 	</form>
 </div>
 <div class="col-md-4 col-sm-6">
@@ -144,7 +144,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 				<td><input type="checkbox" name="varsel[barvakt]" value="1" checked="checked"></td>
 			</tr>
 		</table>
-		<p><input type="submit" class="btn-primary" value="Lagre"></p>
+		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
 	</form>
 </div>
 <?php
