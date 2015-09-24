@@ -53,7 +53,7 @@ else {
 					<option value="0">- velg -</option>
 <?php
 
-$skoleId = isset($_POST['skole_id']) && Skole::medId($_POST['skole_id']) <> null ? $_POST['skole_id'] : $beboer->getSkoleId();
+$skoleId = isset($_POST['skole_id']) && intern3\Skole::medId($_POST['skole_id']) <> null ? $_POST['skole_id'] : $beboer->getSkoleId();
 foreach (intern3\SkoleListe::alle() as $skole) {
 	echo '					<option value="' . $skole->getId() . '"';
 	if ($skole->getId() == $skoleId) {
@@ -71,7 +71,7 @@ foreach (intern3\SkoleListe::alle() as $skole) {
 					<option value="0">- velg -</option>
 <?php
 
-$studieId = isset($_POST['studie_id']) && Studie::medId($_POST['studie_id']) <> null ? $_POST['studie_id'] : $beboer->getStudieId();
+$studieId = isset($_POST['studie_id']) && intern3\Studie::medId($_POST['studie_id']) <> null ? $_POST['studie_id'] : $beboer->getStudieId();
 foreach (intern3\StudieListe::alle() as $studie) {
 	echo '					<option value="' . $studie->getId() . '"';
 	if ($studie->getId() == $studieId) {
