@@ -1,6 +1,6 @@
 <?php
 
-setlocale(LC_ALL, 'no_NB.utf-8');
+setlocale(LC_ALL, 'nb_NO.utf-8');
 date_default_timezone_set('Europe/Oslo');
 
 $arg = isset($_GET['a']) ? explode('/', $_GET['a']) : array();

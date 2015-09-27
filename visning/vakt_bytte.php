@@ -20,7 +20,7 @@ foreach (range(1, 4) as $vakttype) {
 	foreach ($vaktbytteListe[$vakttype] as $vaktbytte) {
 		?>		<tr>
 			<td><input type="button" class="pull-right" value="Bytt"><?php
-		echo '<strong>' . date('l d/m', strtotime($vaktbytte->getVakt()->getDato())) . '</strong>';
+		echo '<strong>' . ucfirst(strftime('%A %d/%m', strtotime($vaktbytte->getVakt()->getDato()))) . '</strong>';
 		echo '<br>';
 		echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
 		?></td>

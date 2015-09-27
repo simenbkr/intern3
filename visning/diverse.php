@@ -36,7 +36,7 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	$manedSlutt = strtotime('next month', $manedStart);
 ?>
 		<tr>
-			<th colspan="8"><?php echo date('F', $manedStart); ?></th>
+			<th colspan="8"><?php echo ucfirst(strftime('%B', $manedStart)); ?></th>
 <?php
 	$dag = strtotime('last Monday', $manedStart);
 	$ant = 0;
