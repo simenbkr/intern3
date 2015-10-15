@@ -32,7 +32,7 @@ function visDineVakter($visFerdig = true) {
   }
   else {
     ?>      <td><?php echo $tekst; ?>
-          <input class="btn btn-info pull-right" type="button" value="Bytt">
+          <input class="btn btn-sm btn-warning pull-right" type="button" value="Bytt">
         </td>
   <?php
   }
@@ -63,7 +63,7 @@ foreach (range(1, 4) as $vakttype) {
 			<td>
 <?php
     if ($vaktbytte->getVakt()->getBrukerId() != $cd->getAktivBruker()->getId()) {
-      echo '        <input type="button" class="btn btn-info pull-right" value="Bytt" data-toggle="modal" data-target="#' . $modalId . '">' . PHP_EOL;
+      echo '        <input type="button" class="btn btn-sm btn-info pull-right" value="Bytt" data-toggle="modal" data-target="#' . $modalId . '">' . PHP_EOL;
     }
 		echo '        <strong>' . ucfirst(strftime('%A %d/%m', strtotime($vaktbytte->getVakt()->getDato()))) . '</strong>' . PHP_EOL;
 		echo '        <br>' . PHP_EOL;

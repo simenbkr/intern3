@@ -28,7 +28,7 @@ foreach (/*$utleie as $utleiet*/range(1, 5) as $i){
 					// if ($utleiet->getRom() == "Bodegaen";) {
 						if (/*empty($utleiet->getBeboer1_id())*/True) {
 							?>
-							<INPUT TYPE = "Submit" Name = "Submit1" VALUE = "Ledig">
+							<input type="button" class="btn btn-sm btn-info" Name="btn1" value="Ledig">
 							<?php
 						}
 						else {
@@ -39,7 +39,7 @@ foreach (/*$utleie as $utleiet*/range(1, 5) as $i){
 						<?php
 						if (/*empty($utleiet->getBeboer2_id())*/True){
 							?>
-							<INPUT TYPE = "Submit" Name = "Submit2" VALUE = "Ledig">
+							<input type="button" class="btn btn-sm btn-info" Name="btn2" value="Ledig">
 							<?php
 						}
 						else {
@@ -50,7 +50,7 @@ foreach (/*$utleie as $utleiet*/range(1, 5) as $i){
 			<td><?php
 					if (/*empty($utleiet->getBeboer3_id())*/True) {
 							?>
-							<INPUT TYPE = "Submit" Name = "Submit3" VALUE = "Ledig">
+							<input type="button" class="btn btn-sm btn-info" Name="btn3" value="Ledig">
 							<?php
 					}
 					else {
