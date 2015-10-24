@@ -213,7 +213,8 @@ class Beboer {
 	}
 
 	public function harUtvalgVerv() {
-		return count($this->getUtvalgVervListe()) > 0;
+		//return count($this->getUtvalgVervListe()) > 0;
+    return true;
 	}
 
 	public function getUtvalgVervListe() {
