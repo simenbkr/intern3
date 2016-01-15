@@ -79,10 +79,29 @@ class Vakt {
 		return $this->vaktbytte;
 	}
 
-	public function kanByttes() {
+	public function vilBytte() {
 		return $this->getVaktbytte() <> null;
 	}
 
+  public function erFerdig() {
+    $tid = strtotime($this->getDato());
+    $tid = strtotime('midnight', $tid);
+    switch ($this->getVakttype()) {
+      case '1':
+        $tid = strtotime('+8 hour', $tid);
+        break;
+      case '2':
+        $tid = strtotime('+13 hour', $tid);
+        break;
+      case '3':
+        $tid = strtotime('+19 hour', $tid);
+        break;
+      case '4':
+        $tid = strtotime('+1 hour', $tid);
+        break;
+    }
+    return $tid <= $_SERVER['REQUEST_TIME'];
+  }
 }
 
 ?>

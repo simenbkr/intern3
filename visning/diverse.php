@@ -90,7 +90,7 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	<h1>Regioppgaver</h1>
 	<table class="table-bordered table">
 		<tr>
-			<td><INPUT TYPE = "Submit" Name = "Submit1" VALUE = "Lage ny internside"></td>
+			<td><input type="button" class="btn btn-sm btn-info" Name="btn1" value="Lage ny internside"></td>
 		</tr>
 	</table>
 </div>

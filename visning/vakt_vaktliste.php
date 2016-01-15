@@ -41,7 +41,7 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
 		foreach (range(0, 6) as $ukedag) {
 			$vakt = intern3\Vakt::medDatoVakttype(date('Y-m-d', strtotime('+' . $ukedag . ' day', $ukeStart)), $vakttype);
 			if ($vakt == null && $vakttype==2 && $ukedag>=0 && $ukedag<=4) {
-				echo '			<td class="tekst_ansattvakt">Torild Fivë</td>' . PHP_EOL;
+				echo '			<td class="celle_graa">Torild Fivë</td>' . PHP_EOL;
 				continue;
 			}
 			if ($vakt == null) {
@@ -54,7 +54,7 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
 			}
 			$bruker = $vakt->getBruker();
 			echo '			<td';
-			if ($vakt->erLedig() || $vakt->kanByttes()) {
+			if ($vakt->erLedig() || $vakt->vilBytte()) {
 				echo ' class="tekst_ledigevakter"';
 			}
 			else if ($bruker <> null && $bruker->getId() == $cd->getAktivBruker()->getId()) {
