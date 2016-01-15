@@ -33,6 +33,23 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
 		$st->bindParam(':vervId', $vervId);
 		return self::medPdoSt($st);
 	}
+	public static function utenVervId($vervId) {
+		$ikkeUtflyttet = '%"utflyttet":NULL%';
+		$st = DB::getDB()->prepare('SELECT id from beboer
+WHERE
+  id NOT IN (
+    SELECT b.id AS id FROM
+    	beboer AS b,beboer_verv AS v
+    WHERE
+    	b.id=v.beboer_id
+      AND v.verv_id=:vervId
+  )
+  AND romhistorikk LIKE :ikkeUtflyttet
+ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
+		$st->bindParam(':vervId', $vervId);
+		$st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);
+		return self::medPdoSt($st);
+	}
 	public static function medPdoSt($st) {
 		$st->execute();
 		$res = array();
