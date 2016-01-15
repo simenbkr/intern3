@@ -7,7 +7,7 @@ require_once('topp.php');
 <div class="col-md-12">
 	<h1>Beboer &raquo; Beboerliste</h1>
 	<p>[ Beboerliste ] [ <a href="?a=beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
-	<table class="table-bordered table">
+	<table class="table table-bordered table-responsive">
 		<tr>
 			<th>Navn</th>
 			<th>Rom</th>
