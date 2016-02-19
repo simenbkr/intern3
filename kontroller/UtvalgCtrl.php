@@ -9,23 +9,22 @@ class UtvalgCtrl extends AbstraktCtrl {
       $aktueltArg = $this->cd->getAktueltArg();
       switch ($aktueltArg) {
         case 'romsjef':
-          $valgtCtrl = new RomsjefCtrl($this->cd->skiftArg());
+          $valgtCtrl = new UtvalgRomsjefCtrl($this->cd->skiftArg());
           break;
         case 'regisjef':
-          $valgtCtrl = new RegisjefCtrl($this->cd->skiftArg());
+          $valgtCtrl = new UtvalgRegisjefCtrl($this->cd->skiftArg());
           break;
         case 'sekretar':
-          $valgtCtrl = new SekretarCtrl($this->cd->skiftArg());
+          $valgtCtrl = new UtvalgSekretarCtrl($this->cd->skiftArg());
           break;
         case 'vaktsjef':
-          $valgtCtrl = new VaktsjefCtrl($this->cd->skiftArg());
+          $valgtCtrl = new UtvalgVaktsjefCtrl($this->cd->skiftArg());
           break;
         case 'kosesjef':
-          $valgtCtrl = new KosesjefCtrl($this->cd->skiftArg());
+          $valgtCtrl = new UtvalgKosesjefCtrl($this->cd->skiftArg());
           break;
         default:
-          $dok = new Visning($this->cd);
-          $dok->vis('utvalg.php');
+          $valgtCtrl = new UtvalgDiverseCtrl($this->cd->skiftArg());
           break;
       }
       $valgtCtrl->bestemHandling();

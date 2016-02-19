@@ -9,9 +9,9 @@
 <span class="btn-group">
   [<button class="btn-link dropdown-toggle" type="button" data-toggle="dropdown">Regisjef <span class="caret"></span></button>]
   <ul class="dropdown-menu">
-    <li><a href="?a=utvalg/regisjef">Indøk</a></li>
-    <li><a href="?a=utvalg/regisjef">Kukfaen</a></li>
-    <li><a href="?a=utvalg/regisjef">Gauder.no</a></li>
+    <li><a href="?a=utvalg/regisjef">Regiportal</a></li>
+    <li><a href="?a=utvalg/regisjef">#</a></li>
+    <li><a href="?a=utvalg/regisjef">#</a></li>
   </ul>
 </span>
 <span class="btn-group">
@@ -25,15 +25,21 @@
 <span class="btn-group">
   [<button class="btn-link dropdown-toggle" type="button" data-toggle="dropdown">Vaktsjef <span class="caret"></span></button>]
   <ul class="dropdown-menu">
-    <li><a href="?a=utvalg/vaktsjef">Indøk</a></li>
-    <li><a href="?a=utvalg/vaktsjef">Kukfaen</a></li>
-    <li><a href="?a=utvalg/vaktsjef">Gauder.no</a></li>
+    <li><a href="?a=utvalg/vaktsjef">Krysseliste for vakta</a></li>
+    <li><a href="?a=utvalg/vaktsjef">Vaktoversikt</a></li>
+    <li><a href="?a=utvalg/vaktsjef">Generer vaktliste</a></li>
   </ul>
 </span>
 <span class="btn-group">
   [<button class="btn-link dropdown-toggle" type="button" data-toggle="dropdown">Kosesjef <span class="caret"></span></button>]
   <ul class="dropdown-menu">
     <li><a href="?a=utvalg/kosesjef/utleie">Utleie</a></li>
-    <li><a href="?a=utvalg/kosesjef/krysseliste">Krysseliste for øl</a></li>
+    <li><a href="?a=utvalg/kosesjef/krysseliste">Krysseliste for Bodega</a></li>
+  </ul>
+</span>
+<span class="btn-group">
+  [<button class="btn-link dropdown-toggle" type="button" data-toggle="dropdown">Husfar <span class="caret"></span></button>]
+  <ul class="dropdown-menu">
+    <li><a href="?a=utvalg/husfar/viktigedatoer">Viktige datoer</a></li>
   </ul>
 </span>

@@ -3,9 +3,6 @@
 require_once('topp.php');
 
 ?>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Sekretær &raquo; Åpmandsverv</h1>
@@ -39,7 +36,7 @@ foreach ($vervListe as $verv) {
 		if ($i++ > 0) {
 			echo ', ';
 		}
-		echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a> <a href="#" class="red"><span class="glyphicon glyphicon-remove"> </span></a>';
+		echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a> <a href="#" class="red">X</a>';
 	}
 	?></td>
   <td><select class="form-control">

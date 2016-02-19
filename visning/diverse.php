@@ -88,9 +88,10 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 
 <div class="col-sm-6 col-xs-12">
 	<h1>Regioppgaver</h1>
+	<p>Her vil det stå regioppgaver du kan melde deg opp på</p>
 	<table class="table-bordered table">
 		<tr>
-			<td><input type="button" class="btn btn-sm btn-info" Name="btn1" value="Lage ny internside"></td>
+			<td>Det skal lages en ny internside innen 1/6-16 <input type="button" class="btn btn-sm btn-info" Name="btn1" value="Meld på"></td>
 		</tr>
 	</table>
 </div>

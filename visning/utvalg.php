@@ -14,6 +14,7 @@ require_once('topp.php');
 require_once('utvalgmeny.php');
 
 ?>
+<p>Hei velkommen til utvalgssiden!</p>
 
 </div>
 
