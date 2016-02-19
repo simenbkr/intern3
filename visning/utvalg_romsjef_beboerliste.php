@@ -1,17 +1,12 @@
 <?php
 
-require_once('topp.php');
+require_once('topp_utvalg.php');
 
 ?>
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Romsjef &raquo; Beboerliste</h1>
 
-<?php
-
-require_once('utvalgmeny.php');
-
-?>
   <p> </p>
 	<table class="table-bordered table">
 		<tr>

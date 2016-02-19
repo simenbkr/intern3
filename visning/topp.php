@@ -10,10 +10,12 @@
 	</head>
 	<body>
 		<div id="ramme">
+
 <?php
 if (!isset($skjulMeny)) {
 	/* Meny start */
 	?>
+
 			<nav class="navbar navbar-default" id="topp">
 				<div class="container-fluid">
 					<div class="navbar-header">
@@ -60,19 +62,8 @@ foreach ($menyvalg as $adr => $navn) {
 <?php
 
 if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
-	?>
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">(Utvalget) <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li><a href="?a=utvalg">Diverse</a></li>
-									<li role="separator" class="divider"></li>
-									<li><a href="?a=utvalg/romsjef">Romsjef</a></li>
-									<li><a href="?a=utvalg/regisjef">Regisjef</a></li>
-									<li><a href="?a=utvalg/sekretar">Sekretær</a></li>
-									<li><a href="?a=utvalg/vaktsjef">Vaktsjef</a></li>
-									<li><a href="?a=utvalg/kosesjef">Kosesjef</a></li>
-								</ul>
-							</li>
+?>
+							<li><a href="?a=utvalg">Utvalget</a></li>
 <?php
 }
 
@@ -106,6 +97,6 @@ if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
 	/* Meny slutt */
 }
 ?>
-			<div id="innhold">
+		<div id="innhold">
 
-<!-- innhold -->
+      <!-- innhold -->

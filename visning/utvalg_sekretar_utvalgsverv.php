@@ -1,17 +1,12 @@
 <?php
 
-require_once('topp.php');
+require_once('topp_utvalg.php');
 
 ?>
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Sekretær &raquo; Utvalgsverv</h1>
 
-<?php
-
-require_once('utvalgmeny.php');
-
-?>
 
   <p> </p>
   <h2>Endre utvalgsverv:</h2>

@@ -1,20 +1,16 @@
 <?php
 
-require_once('topp.php');
+require_once('topp_utvalg.php');
 
 ?>
 
 <div class="col-md-12">
 	<h1>Utvalget</h1>
 
-	<!-- <p>[ Utvalget ] [ <a href="?a=utvalg/romsjef">Romsjef</a> ] [ <a href="?a=utvalg/regisjef">Regisjef</a> ] [ <a href="?a=utvalg/sekretar">Sekretær</a> ] [ <a href="?a=utvalg/vaktsjef">Vaktsjef</a> ] [ <a href="?a=utvalg/kosesjef">Kosesjef</a> ]</p> -->
+<p>Hei og velkommen til utvalgssiden!</p>
 
-<?php
-
-require_once('utvalgmeny.php');
-
-?>
-<p>Hei velkommen til utvalgssiden!</p>
+<p></p>
+<p>Naviger deg frem ved hjelp av utvalgsmenyen</p>
 
 </div>
 
