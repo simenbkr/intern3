@@ -102,6 +102,48 @@ class Vakt {
     }
     return $tid <= $_SERVER['REQUEST_TIME'];
   }
+
+  public function antallUfordelte() {
+    $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id = 0;');
+    // $st->bindParam(':brukerId', $brukerId);
+    $st->execute();
+    $res = $st->fetch();
+    return $res['antall'];
+  }
+
+  public function antallSkalSitteMedBrukerId($brukerId) {
+    // Dette må fikses
+    return 0;
+  }
+
+  public function antallHarSittetMedBrukerId($brukerId) {
+    $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato < CURDATE();');
+    $st->bindParam(':brukerId', $brukerId);
+    $st->execute();
+    $res = $st->fetch();
+    return $res['antall'];
+  }
+
+  public function antallErOppsattMedBrukerId($brukerId) {
+    $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato >= CURDATE()');
+    $st->bindParam(':brukerId', $brukerId);
+    $st->execute();
+    $res = $st->fetch();
+    return $res['antall'];
+  }
+
+  public function antallHarIgjenMedBrukerId($brukerId, $skalSitte) {
+    $antall = $skalSitte;
+    $antall -= Vakt::antallHarSittetMedBrukerId($brukerId);
+    return $antall;
+  }
+
+  public function antallIkkeOppsattMedBrukerId($brukerId, $skalSitte) {
+    $antall = $skalSitte;
+    $antall -= Vakt::antallHarSittetMedBrukerId($brukerId);
+    $antall -= Vakt::antallErOppsattMedBrukerId($brukerId);
+    return $antall;
+  }
 }
 
 ?>

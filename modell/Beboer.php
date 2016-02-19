@@ -30,6 +30,7 @@ class Beboer {
 	private $rolle;
 	private $vervListe;
 	private $utvalgVervListe;
+  private $bruker;
 
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM beboer WHERE id=:id;');
@@ -70,6 +71,7 @@ class Beboer {
 		$instance->romId = null;
 		$instance->rom = null;
 		$instance->romhistorikkObjekt = null;
+    $instance->bruker = null;
 		return $instance;
 	}
 
@@ -196,13 +198,6 @@ class Beboer {
 
 	public function harVakt() {
 		return $this->getRolle()->getRegitimer() < 48;
-		/*
-		$regi = 0;
-		foreach ($this->getVervListe() as $verv) {
-			$regi += $verv->getRegitimer();
-		}
-		return $regi < 48;
-		*/
 	}
 
 	public function getVervListe() {
@@ -224,6 +219,51 @@ class Beboer {
 		return $this->utvalgVervListe;
 	}
 
+  // public function getBruker() {
+  //   if ($this->bruker == null && $this->brukerId != 0) {
+  //     $this->bruker = Bruker::medId($this->id);
+  //   }
+  //   return $this->bruker;
+  // }
+
+  public function antallStraffevakter() {
+    return Straffevakt::antallMedBrukerId($this->getBrukerId());
+  }
+
+  public function antallVakterSkalSitte() {
+    // Dette må fikses
+    $rolleId = $this->getRolleId();
+    if ($rolleId == 1) {
+      $antall = 5;
+    }
+    else if ($rolleId == 2) {
+      $antall = 8;
+    }
+    else if ($rolleId == 3) {
+      $antall = 0;
+    }
+    if (date("m") < '07' && $antall > 0) {
+      $antall += 1;
+    }
+    $antall += $this->antallStraffevakter();
+    return $antall;
+  }
+
+  public function antallVakterHarSittet() {
+    return Vakt::antallHarSittetMedBrukerId($this->getBrukerId());
+  }
+
+  public function antallVakterErOppsatt() {
+    return Vakt::antallErOppsattMedBrukerId($this->getBrukerId());
+  }
+
+  public function antallVakterHarIgjen() {
+    return Vakt::antallHarIgjenMedBrukerId($this->getBrukerId(), $this->antallVakterSkalSitte());
+  }
+
+  public function antallVakterIkkeOppsatt() {
+    return Vakt::antallIkkeOppsattMedBrukerId($this->getBrukerId(), $this->antallVakterSkalSitte());
+  }
 }
 
 ?>

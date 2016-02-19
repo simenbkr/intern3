@@ -55,7 +55,6 @@ class Bruker {
 		}
 		return $this->person;
 	}
-
 }
 
 ?>

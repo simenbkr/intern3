@@ -10,9 +10,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 	    $dok->vis('utvalg_vaktsjef.php');
     }
     else if ($aktueltArg == 'vaktoversikt') {
-      $beboerListe = BeboerListe::aktive();
+      $beboerListe = BeboerListe::harVakt();
+      $antallUfordelte = Vakt::antallUfordelte();
       $dok = new Visning($this->cd);
       $dok->set('beboerListe', $beboerListe);
+      $dok->set('antallUfordelte', $antallUfordelte);
 	    $dok->vis('utvalg_vaktsjef_vaktoversikt.php');
     }
     else {
