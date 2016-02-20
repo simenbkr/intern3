@@ -17,6 +17,12 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
       $dok->set('antallUfordelte', $antallUfordelte);
 	    $dok->vis('utvalg_vaktsjef_vaktoversikt.php');
     }
+    else if ($aktueltArg == 'vaktstyring') {
+      $dok = new Visning($this->cd);
+      $dok->set('denneUka', @date('W'));
+      $dok->set('detteAret', @date('Y'));
+	    $dok->vis('utvalg_vaktsjef_vaktstyring.php');
+    }
     else {
       $dok = new Visning($this->cd);
       $dok->vis('utvalg_vaktsjef.php');

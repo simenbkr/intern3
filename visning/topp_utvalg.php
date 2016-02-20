@@ -143,7 +143,7 @@ if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vaktsjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/vaktsjef">Krysseliste for vakta</a></li>
+                  <li><a href="?a=utvalg/vaktsjef/vaktstyring">Vaktstyring</a></li>
                   <li><a href="?a=utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
                   <li><a href="?a=utvalg/vaktsjef">Generer vaktliste</a></li>
                 </ul>
