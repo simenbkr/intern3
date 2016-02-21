@@ -264,6 +264,10 @@ class Beboer {
   public function antallVakterIkkeOppsatt() {
     return Vakt::antallIkkeOppsattMedBrukerId($this->getBrukerId(), $this->antallVakterSkalSitte());
   }
+
+  public function antallVakterIkkeBekreftet() {
+    return Vakt::antallIkkeBekreftetMedBrukerId($this->getBrukerId());
+  }
 }
 
 ?>

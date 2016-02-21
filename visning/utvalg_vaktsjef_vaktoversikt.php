@@ -7,7 +7,9 @@ require_once('topp_utvalg.php');
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Vaktsjef &raquo; Vaktoversikt</h1>
 
+  <p><h2>Antall vakter: <?php echo $antallVakter; ?></h2></p>
   <p><h2>Ufordelte vakter: <?php echo $antallUfordelte; ?></h2></p>
+  <p><h2>Ubekreftede vakter: <?php echo $antallUbekreftet; ?></h2></p>
 
 </div>
 
@@ -22,6 +24,7 @@ require_once('topp_utvalg.php');
 			<th>Er oppsatt</th>
 			<th>Har igjen</th>
 			<th>Ikke oppsatt</th>
+      <th>Ikke bekreftet</th>
 		</tr>
 
 <?php
@@ -35,6 +38,7 @@ foreach ($beboerListe as $beboer){
 			<td><?php echo $beboer->antallVakterErOppsatt(); ?></td>
       <td><?php echo $beboer->antallVakterHarIgjen(); ?></td>
       <td><?php echo $beboer->antallVakterIkkeOppsatt(); ?></td>
+      <td><?php echo $beboer->antallVakterIkkeBekreftet(); ?></td>
 		</tr>
 <?php
 	}

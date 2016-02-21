@@ -103,9 +103,22 @@ class Vakt {
     return $tid <= $_SERVER['REQUEST_TIME'];
   }
 
+  public function antallVakter() {
+    $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt');
+    $st->execute();
+    $res = $st->fetch();
+    return $res['antall'];
+  }
+
   public function antallUfordelte() {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id = 0;');
-    // $st->bindParam(':brukerId', $brukerId);
+    $st->execute();
+    $res = $st->fetch();
+    return $res['antall'];
+  }
+
+  public function antallUbekreftet() {
+    $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bekreftet = 0 AND bruker_id != 0;');
     $st->execute();
     $res = $st->fetch();
     return $res['antall'];
@@ -143,6 +156,14 @@ class Vakt {
     $antall -= Vakt::antallHarSittetMedBrukerId($brukerId);
     $antall -= Vakt::antallErOppsattMedBrukerId($brukerId);
     return $antall;
+  }
+
+  public function antallIkkeBekreftetMedBrukerId($brukerId) {
+    $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND bekreftet = 0');
+    $st->bindParam(':brukerId', $brukerId);
+    $st->execute();
+    $res = $st->fetch();
+    return $res['antall'];
   }
 }
 
