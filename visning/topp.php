@@ -10,9 +10,10 @@
 		<script src="js/jquery-ui.js"></script>
 		<link rel="stylesheet" href="css/jquery-ui.css">
 		<script>
-$(function() {
+var formaterDatovelger = function() {
   $('.datepicker').datepicker({dateFormat: "dd/mm/yy"});
-});
+};
+$(formaterDatovelger);
 		</script>
 	</head>
 	<body>
