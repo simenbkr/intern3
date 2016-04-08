@@ -29,6 +29,8 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
     }
     else if ($aktueltArg == 'generer') {
       $dok = new Visning($this->cd);
+			$dok->set('feilEnkelt', array());
+			$dok->set('feilPeriode', array());
       $dok->vis('utvalg_vaktsjef_generer.php');
     }
     else {

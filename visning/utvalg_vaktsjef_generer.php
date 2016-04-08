@@ -55,6 +55,17 @@ $(flereEnkeltvakter);
 	</script>
 	<h2>Manuelle vakter</h2>
 	<p>Her kan man oppgi juleball, helgavakter og andre generelt upassende vakter.</p>
+<?php
+
+if (count($feilEnkelt) > 0) {
+	echo '	<ul style="color: #900;">' . PHP_EOL;
+	foreach ($feil as $pkt) {
+		echo '		<li>' . $pkt . '</li>' . PHP_EOL;
+	}
+	echo '	</ul>' . PHP_EOL;
+}
+
+?>
 	<table class="table-bordered table">
 		<thead>
 			<tr>
@@ -77,6 +88,17 @@ $(flereVaktperioder);
 	</script>
 	<h2>Perioder med manuell tildeling</h2>
 	<p>Her kan man oppgi eksamenstid, ferier o.l.</p>
+<?php
+
+if (count($feilPeriode) > 0) {
+	echo '	<ul style="color: #900;">' . PHP_EOL;
+	foreach ($feil as $pkt) {
+		echo '		<li>' . $pkt . '</li>' . PHP_EOL;
+	}
+	echo '	</ul>' . PHP_EOL;
+}
+
+?>
   <table class="table-bordered table">
 		<thead>
 			<tr>
