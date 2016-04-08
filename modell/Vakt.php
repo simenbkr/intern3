@@ -103,33 +103,33 @@ class Vakt {
     return $tid <= $_SERVER['REQUEST_TIME'];
   }
 
-  public function antallVakter() {
+  public static function antallVakter() {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt');
     $st->execute();
     $res = $st->fetch();
     return $res['antall'];
   }
 
-  public function antallUfordelte() {
+  public static function antallUfordelte() {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id = 0;');
     $st->execute();
     $res = $st->fetch();
     return $res['antall'];
   }
 
-  public function antallUbekreftet() {
+  public static function antallUbekreftet() {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bekreftet = 0 AND bruker_id != 0;');
     $st->execute();
     $res = $st->fetch();
     return $res['antall'];
   }
 
-  public function antallSkalSitteMedBrukerId($brukerId) {
+  public static function antallSkalSitteMedBrukerId($brukerId) {
     // Dette må fikses
     return 0;
   }
 
-  public function antallHarSittetMedBrukerId($brukerId) {
+  public static function antallHarSittetMedBrukerId($brukerId) {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato < CURDATE();');
     $st->bindParam(':brukerId', $brukerId);
     $st->execute();
@@ -137,7 +137,7 @@ class Vakt {
     return $res['antall'];
   }
 
-  public function antallErOppsattMedBrukerId($brukerId) {
+  public static function antallErOppsattMedBrukerId($brukerId) {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato >= CURDATE()');
     $st->bindParam(':brukerId', $brukerId);
     $st->execute();
@@ -145,20 +145,20 @@ class Vakt {
     return $res['antall'];
   }
 
-  public function antallHarIgjenMedBrukerId($brukerId, $skalSitte) {
+  public static function antallHarIgjenMedBrukerId($brukerId, $skalSitte) {
     $antall = $skalSitte;
     $antall -= Vakt::antallHarSittetMedBrukerId($brukerId);
     return $antall;
   }
 
-  public function antallIkkeOppsattMedBrukerId($brukerId, $skalSitte) {
+  public static function antallIkkeOppsattMedBrukerId($brukerId, $skalSitte) {
     $antall = $skalSitte;
     $antall -= Vakt::antallHarSittetMedBrukerId($brukerId);
     $antall -= Vakt::antallErOppsattMedBrukerId($brukerId);
     return $antall;
   }
 
-  public function antallIkkeBekreftetMedBrukerId($brukerId) {
+  public static function antallIkkeBekreftetMedBrukerId($brukerId) {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND bekreftet = 0');
     $st->bindParam(':brukerId', $brukerId);
     $st->execute();
