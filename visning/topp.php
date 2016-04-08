@@ -7,6 +7,13 @@
 		<link rel="stylesheet" href="css/stilark.css">
 		<script src="js/jquery-2.1.4.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery-ui.js"></script>
+		<link rel="stylesheet" href="css/jquery-ui.css">
+		<script>
+$(function() {
+  $('.datepicker').datepicker({dateFormat: "dd/mm/yy"});
+});
+		</script>
 	</head>
 	<body>
 		<div id="ramme">
@@ -92,11 +99,90 @@ if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
 						</ul>
 					</div>
 				</div>
-			</nav>
 <?php
 	/* Meny slutt */
 }
 ?>
+
+<?php
+if (isset($visUtvalgMeny)) {
+/* Utvalgmeny start */
+?>
+
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="?a=utvalg">Utvalget</a>
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Romsjef <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="?a=utvalg/romsjef/beboerliste">Beboerliste</a></li>
+                  <li><a href="?a=utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
+                  <li><a href="?a=utvalg/romsjef/lister">Skrive ut lister</a></li>
+                </ul>
+              </li>
+            </ul>
+
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regisjef <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="?a=utvalg/regisjef">Regiportal</a></li>
+                  <li><a href="?a=utvalg/regisjef">#</a></li>
+                  <li><a href="?a=utvalg/regisjef">#</a></li>
+                </ul>
+              </li>
+            </ul>
+
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sekretær <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="?a=utvalg/sekretar/apmandsverv">Åpmandsverv</a></li>
+                  <li><a href="?a=utvalg/sekretar/utvalgsverv">Utvalgsverv</a></li>
+                  <li><a href="?a=utvalg/sekretar/lister">Skrive ut lister</a></li>
+                </ul>
+              </li>
+            </ul>
+
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vaktsjef <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="?a=utvalg/vaktsjef/vaktstyring">Vaktstyring</a></li>
+                  <li><a href="?a=utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
+                  <li><a href="?a=utvalg/vaktsjef/generer">Generer vaktliste</a></li>
+                </ul>
+              </li>
+            </ul>
+
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kosesjef <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="?a=utvalg/kosesjef/utleie">Utleie</a></li>
+                  <li><a href="?a=utvalg/kosesjef/krysseliste">Krysseliste for Bodega</a></li>
+                </ul>
+              </li>
+            </ul>
+
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Husfar <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="?a=utvalg/husfar/viktigedatoer">Viktige datoer</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+<?php
+/* Utvalgmeny slutt */
+}
+?>
+			</nav>
+
 		<div id="innhold">
 
       <!-- innhold -->
