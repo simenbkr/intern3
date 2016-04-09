@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="css/jquery-ui.css">
 		<script>
 var formaterDatovelger = function() {
-  $('.datepicker').datepicker({dateFormat: "dd/mm/yy"});
+  $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
 };
 $(formaterDatovelger);
 		</script>
