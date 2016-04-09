@@ -69,11 +69,11 @@ class ProfilCtrl extends AbstraktCtrl {
 				$feil[] = 'Fødselsdato mangler.';
 				break;
 			}
-			if (!preg_match('/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/', $_POST['fodselsdato'])) {
+			if (!Funk::erDatoGyldigFormat($_POST['fodselsdato'])) {
 				$feil[] = 'Fødselsdato må være i formatet åååå-mm-dd.';
 				break;
 			}
-			if (!checkdate(substr($_POST['fodselsdato'], 5, 2), substr($_POST['fodselsdato'], 8, 2), substr($_POST['fodselsdato'], 0, 4))) {
+			if (!Funk::finsDato($_POST['fodselsdato'])) {
 				$feil[] = 'Fødselsdato er ugyldig, datoen fins ikke.';
 				break;
 			}
