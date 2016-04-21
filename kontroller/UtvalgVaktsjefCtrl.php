@@ -56,6 +56,13 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 		$feilEnkelt = $this->godkjennVaktlisteEnkelt();
 		$feilPeriode = $this->godkjennVaktlistePeriode();
 		if (count($feilVarighet) == 0 && count($feilEnkelt) == 0 && count($feilPeriode) == 0) {
+			DB::getDB()->beginTransaction();
+			/* Obs: Ikke noe feilhåndtering på disse stegene ennå. */
+			$this->nullstillTabell();
+			$this->opprettVakter();
+			$this->tildelVakter();
+			/* Ved feil, ->rollback() istedet for ->commit(). */
+			DB::getDB()->commit();
 		}
 		return array($feilVarighet, $feilEnkelt, $feilPeriode);
 	}
@@ -182,6 +189,88 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 		$_POST['vaktperiode_type_slutt'] = array_values($_POST['vaktperiode_type_slutt']);
 		$_POST['vaktperiode_dato_slutt'] = array_values($_POST['vaktperiode_dato_slutt']);
 		return array_keys($feilPeriode);
+	}
+	private function nullstillTabell() {
+		DB::getDB()->query('TRUNCATE TABLE vakt;TRUNCATE TABLE vaktbytte;');
+	}
+	private function opprettVakter() {
+		$varighetDatoStart = strtotime($_POST['varighet_dato_start']);
+		$varighetDatoSlutt = strtotime($_POST['varighet_dato_slutt']);
+		$dato = $varighetDatoStart;
+		do {
+			for ($type = 1; $type <= 4; $type++) {
+				if (($type <> 2 || self::erIHelg($dato)) && self::erITidsrom(
+						$_POST['varighet_type_start'], $varighetDatoStart,
+						$_POST['varighet_type_slutt'], $varighetDatoSlutt,
+						$type, $dato
+				)) {
+					$st = DB::getDB()->prepare('INSERT INTO vakt(vakttype,dato,autogenerert) VALUES(:vakttype,:dato,:autogenerert);');
+					$st->bindParam(':vakttype', $type);
+					$isoDato = date('Y-m-d', $dato);
+					$st->bindParam(':dato', $isoDato);
+					$auto = self::skalAutogenereres($type, $dato);
+					$st->bindParam(':autogenerert', $auto);
+					$st->execute();
+				}
+			}
+			$dato = strtotime('midnight + 1 day', $dato);
+		} while($dato <= $varighetDatoSlutt);
+	}
+	private function tildelVakter() {
+		$brukere = array();
+		foreach (BeboerListe::harVakt() as $beboer) {
+			for ($i = 0; $i < Vakt::antallSkalSitteMedBrukerId($beboer->getBrukerId()); $i++) {
+				$brukere[] = $beboer->getBrukerId();
+			}
+		}
+		$margin = $_POST['varighet_sikkerhetsmargin'];
+		$vakter = VaktListe::autogenerert();
+		while (count($brukere) > 0 && $margin < count($vakter)) {
+			$brukerTrekk = mt_rand(0, count($brukere) - 1);
+			$vaktTrekk = mt_rand(0, count($vakter) - 1);
+			$st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:brukerId WHERE id=:id;');
+			$vaktId = $vakter[$vaktTrekk]->getId();
+			$st->bindParam(':id', $vaktId);
+			$st->bindParam(':brukerId', $brukere[$brukerTrekk]);
+			$st->execute();
+			unset($brukere[$brukerTrekk], $vakter[$vaktTrekk]);
+			$brukere = array_values($brukere);
+			$vakter = array_values($vakter);
+		}
+	}
+	private static function erITidsrom($typeStart, $datoStart, $typeSlutt, $datoSlutt, $typeTest, $datoTest) {
+		/* Sjekk om en tenkt vakt (gitt av type og dato) er i et tidsrom. */
+		if ($datoStart > $datoTest || $datoTest > $datoSlutt) {
+			/* Dato er ikke i periode. */
+			return false;
+		}
+		if (($datoStart == $datoTest && $typeStart > $typeTest) || ($datoTest == $datoSlutt && $typeTest > $typeSlutt)) {
+			/* Vakttype er utenfor periode til tross for at dato er innenfor. */
+			return false;
+		}
+		return true;
+	}
+	private static function skalAutogenereres($type, $dato) {
+		for ($i = 0; $i < count($_POST['enkeltvakt_type']); $i++) {
+			if ($type == $_POST['enkeltvakt_type'][$i] && date('Y-m-d', $dato) == $_POST['enkeltvakt_dato'][$i]) {
+				return false;
+			}
+		}
+		for ($i = 0; $i < count($_POST['vaktperiode_type_start']); $i++) {
+		$vaktperiodeDatoStart = strtotime($_POST['vaktperiode_dato_start'][$i]);
+		$vaktperiodeDatoSlutt = strtotime($_POST['vaktperiode_dato_slutt'][$i]);
+			if (self::erITidsrom(
+					$_POST['vaktperiode_type_start'][$i], $vaktperiodeDatoStart,
+					$_POST['vaktperiode_type_slutt'][$i], $vaktperiodeDatoSlutt,
+					$type, $dato
+			)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	private static function erIHelg($dato) {
+		return date('N', $dato) > 5;
 	}
 }
 

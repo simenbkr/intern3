@@ -124,10 +124,11 @@ class Vakt {
     return $res['antall'];
   }
 
-  public static function antallSkalSitteMedBrukerId($brukerId) {
-    // Dette må fikses
-    return 0;
-  }
+	public static function antallSkalSitteMedBrukerId($brukerId) {
+		/* Forutsettes her at bruker fins og er beboer. */
+		//return Bruker::medId($brukerId)->getPerson()->getRolle();
+		return date('m') > 6 ? 5 : 6;
+	}
 
   public static function antallHarSittetMedBrukerId($brukerId) {
     $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato < CURDATE();');
