@@ -37,7 +37,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 				if (count($feilVarighet) > 0 || count($feilEnkelt) > 0 || count($feilPeriode) > 0) {
 					break;
 				}
-				//Header('Location: ');
+				Header('Location: ?a=utvalg/vaktsjef/vaktstyring');
 				exit();
 			} while(false);
 			$dok = new Visning($this->cd);
