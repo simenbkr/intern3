@@ -30,6 +30,7 @@ class CtrlData {
 	public function getAktivBruker() {
 		return $this->aktivBruker;
 	}
+	//TODO: adminBruker (for å logge inn som andre brukere)
 }
 
 ?>

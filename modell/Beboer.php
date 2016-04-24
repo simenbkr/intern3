@@ -2,7 +2,7 @@
 
 namespace intern3;
 
-class Beboer {
+class Beboer implements Person {
 
 	private $id;
 	private $brukerId;

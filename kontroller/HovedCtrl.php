@@ -11,6 +11,14 @@ class HovedCtrl extends AbstraktCtrl {
 			return;
 		}
 		$this->cd->setAktivBruker($aktivBruker);
+		if ($aktivBruker->getPerson()->erBeboer()) {
+			$kvittering = Kvittering::detteSemesterMedRomId($aktivBruker->getPerson()->getRomId());
+			if ($kvittering == null || $kvittering->getId() == null) {
+				$valgtCtrl = new RomskjemaCtrl($this->cd->skiftArg());
+				$valgtCtrl->tvungenRegistrering();
+				return;
+			}
+		}
 		$aktueltArg = $this->cd->getAktueltArg();
 		switch ($aktueltArg) {
 			case 'beboer':

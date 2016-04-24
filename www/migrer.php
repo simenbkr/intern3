@@ -8,7 +8,14 @@ set_time_limit(999999999);
 /* Denne fila tømmer databasen og importerer fra gammel internside. */
 
 // For å koble til postgres-sql og singbasen
-require_once("../ink/pg_sql_tilkobling.php");
+pg_connect('host=dev.singsaker.no dbname=singbasen user=utvalget password=***REMOVED***');
+
+// For å koble til mysql og regiportalen
+$regi = new \PDO('mysql:host=localhost;dbname=regiportal', 'regiportal', 'regiportal',
+	array(
+		\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+	)
+);
 
 require_once("../ink/autolast.php");
 
@@ -33,7 +40,13 @@ $db->query('TRUNCATE TABLE beboer;');
 $db->query('TRUNCATE TABLE verv;');
 $db->query('TRUNCATE TABLE beboer_verv;');
 $db->query('TRUNCATE TABLE vakt;');
+$db->query('TRUNCATE TABLE vaktbytte;');
 $db->query('TRUNCATE TABLE ansatt;');
+$db->query('TRUNCATE TABLE prioritet;');
+$db->query('TRUNCATE TABLE feilkategori;');
+$db->query('TRUNCATE TABLE feil;');
+$db->query('TRUNCATE TABLE kvittering;');
+$db->query('TRUNCATE TABLE rapport;');
 //etc
 
 /* Migrering av skole, start */
@@ -303,7 +316,7 @@ while ($vakt = pg_fetch_array($hentVakter)) {
 
 /* Migrering av vakter, slutt */
 
-/* Migrering av vakterbytter ja, start */
+/* Migrering av vaktbytter, start */
 
 $hentVaktbytter = pg_query('SELECT * FROM pb_ledigevakter ORDER BY id;');
 while ($vaktbytte = pg_fetch_array($hentVaktbytter)) {
@@ -323,7 +336,143 @@ while ($vaktbytte = pg_fetch_array($hentVaktbytter)) {
 	$st->execute();
 }
 
-/* Migrering av vakterbytter ja, slutt */
+/* Migrering av vaktbytter, slutt */
+
+/* Fornyelse fra regiportalens brukerId, start */
+
+$brukerIdFornyelse = array();
+$hent = $regi->prepare('SELECT id,brukernavn,fornavn,etternavn FROM bruker;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('SELECT bruker_id FROM beboer WHERE epost LIKE :epost OR (fornavn LIKE :fornavn AND etternavn LIKE :etternavn) OR (LEFT(fornavn,LOCATE(\' \',fornavn) - 1) LIKE :fornavn AND etternavn LIKE :etternavn);');
+	$epost = $rad['brukernavn'] . '@%';
+	$fornavn = $rad['fornavn'] . '%';
+	$etternavn = $rad['etternavn'] . '%';
+	$st->bindParam(':epost', $epost);
+	$st->bindParam(':fornavn', $fornavn);
+	$st->bindParam(':etternavn', $etternavn);
+	$st->execute();
+	$ny = $st->fetch();
+	$brukerIdFornyelse[$rad['id']] = $ny['bruker_id'];
+}
+// spesialtilfeller...
+$brukerIdFornyelse[247] = 222;
+$brukerIdFornyelse[389] = 357;
+
+/* Fornyelse fra regiportalens brukerId, slutt */
+
+/* Fra regiportalens stedId til romId, start */
+
+$stedIdFornyelse = array();
+$hent = $regi->prepare('SELECT id,navn FROM sted;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$stedIdFornyelse[$rad['id']] = Rom::medNavn($rad['navn'])->getId();
+}
+
+/* Fra regiportalens stedId til romId, slutt */
+
+/* Migrering av prioritet, start */
+
+$hent = $regi->prepare('SELECT * FROM prioritet;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO prioritet(
+	navn,nummer,farge
+) VALUES(
+	:navn,:nummer,:farge
+);');
+	$st->bindParam(':navn', $rad['navn']);
+	$st->bindParam(':nummer', $rad['nummer']);
+	$st->bindParam(':farge', $rad['farge']);
+	$st->execute();
+}
+
+/* Migrering av prioritet, slutt */
+
+/* Migrering av feilkategori, start */
+
+$hent = $regi->prepare('SELECT * FROM feilkategori;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO feilkategori(
+	navn,beskrivelse,prioritet_id
+) VALUES(
+	:navn,:beskrivelse,:prioritet_id
+);');
+	$st->bindParam(':navn', $rad['navn']);
+	$st->bindParam(':beskrivelse', $rad['beskrivelse']);
+	$st->bindParam(':prioritet_id', $rad['prioritet_id']);
+	$st->execute();
+}
+
+/* Migrering av feilkategori, slutt */
+
+/* Migrering av feil, start */
+
+$hent = $regi->prepare('SELECT * FROM feil;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO feil(
+	navn,beskrivelse,feilkategori_id,prioritet_id,tid_oppretta
+) VALUES(
+	:navn,:beskrivelse,:feilkategori_id,:prioritet_id,:tid_oppretta
+);');
+	$st->bindParam(':navn', $rad['navn']);
+	$st->bindParam(':beskrivelse', $rad['beskrivelse']);
+	$st->bindParam(':feilkategori_id', $rad['feilkategori_id']);
+	$st->bindParam(':prioritet_id', $rad['prioritet_id']);
+	$st->bindParam(':tid_oppretta', $rad['tid_oppretta']);
+	$st->execute();
+}
+
+/* Migrering av feil, slutt */
+
+/* Migrering av kvittering, start */
+
+$kvitteringIdFornyelse = array();
+$hent = $regi->prepare('SELECT * FROM kvittering;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO kvittering(
+	bruker_id,rom_id,tid_oppretta
+) VALUES(
+	:bruker_id,:rom_id,:tid_oppretta
+);');
+	$st->bindParam(':bruker_id', $brukerIdFornyelse[$rad['bruker_id']]);
+	$st->bindParam(':rom_id', $stedIdFornyelse[$rad['sted_id']]);
+	$st->bindParam(':tid_oppretta', $rad['tid_oppretta']);
+	$st->execute();
+	$kvitteringIdFornyelse[$rad['id']] = $db->lastInsertId();
+}
+
+/* Migrering av kvittering, slutt */
+
+/* Migrering av rapport, start */
+
+$rapportIdFornyelse = array();
+$hent = $regi->prepare('SELECT * FROM rapport;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO rapport(
+	kvittering_id,feil_id,oppgave_id,prioritet_id,godkjent,tid_endret,merknad,tid_godkjent,godkjent_bruker_id
+) VALUES(
+	:kvittering_id,:feil_id,:oppgave_id,:prioritet_id,:godkjent,:tid_endret,:merknad,:tid_godkjent,:godkjent_bruker_id
+);');
+	$st->bindParam(':kvittering_id', $kvitteringIdFornyelse[$rad['kvittering_id']]);
+	$st->bindParam(':feil_id', $rad['feil_id']);
+	$st->bindParam(':oppgave_id', $rad['oppgave_id']);
+	$st->bindParam(':prioritet_id', $rad['prioritet_id']);
+	$st->bindParam(':godkjent', $rad['godkjent']);
+	$st->bindParam(':tid_endret', $rad['tid_endret']);
+	$st->bindParam(':merknad', $rad['merknad']);
+	$st->bindParam(':tid_godkjent', $rad['tid_godkjent']);
+	$st->bindParam(':godkjent_bruker_id', $rad['godkjent_bruker_id']);
+	$st->execute();
+	$rapportIdFornyelse[$rad['id']] = $db->lastInsertId();
+}
+
+/* Migrering av rapport, slutt */
 
 ferdig(); // Alt heretter går veldig sakte.
 $db->query('TRUNCATE TABLE krysseliste;');

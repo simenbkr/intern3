@@ -21,6 +21,11 @@ font-size: 21px;
 font-weight: normal;
 }
 
+h3 {
+font-size: 17px;
+font-weight: normal;
+}
+
 p {
 margin-top: 15px;
 margin-bottom: 15px;
@@ -125,4 +130,26 @@ font-weight: bold;
 
 a.red:link, a.red:active, a.red:visited, a.red:hover {
 color: #ff0000; background: #ffffff; font-style: italic;
+}
+
+.romskjemaseksjon {
+outline: 1px solid #DDD;
+border: 1px solid #DDD;
+}
+
+.romskjemaseksjon h2 {
+background-color: #BBB;
+}
+
+.romskjemaseksjon h3 {
+background-color: #DDD;
+}
+
+.romskjemaseksjon h2, .romskjemaseksjon h3, .romskjemaseksjon p, .romskjemaseksjon ul {
+margin-top: 5px;
+margin-bottom: 5px;
+}
+
+.liten {
+font-size: .8em;
 }
