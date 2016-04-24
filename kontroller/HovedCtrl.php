@@ -11,7 +11,8 @@ class HovedCtrl extends AbstraktCtrl {
 			return;
 		}
 		$this->cd->setAktivBruker($aktivBruker);
-		if ($aktivBruker->getPerson()->erBeboer()) {
+		$aktueltArg = $this->cd->getAktueltArg();
+		if ($aktueltArg <> 'logginn' && $aktivBruker->getPerson()->erBeboer()) {
 			$kvittering = Kvittering::detteSemesterMedRomId($aktivBruker->getPerson()->getRomId());
 			if ($kvittering == null || $kvittering->getId() == null) {
 				$valgtCtrl = new RomskjemaCtrl($this->cd->skiftArg());
@@ -19,7 +20,6 @@ class HovedCtrl extends AbstraktCtrl {
 				return;
 			}
 		}
-		$aktueltArg = $this->cd->getAktueltArg();
 		switch ($aktueltArg) {
 			case 'beboer':
 				$valgtCtrl = new BeboerCtrl($this->cd->skiftArg());
@@ -60,9 +60,9 @@ class HovedCtrl extends AbstraktCtrl {
 			case 'logginn':
 				$valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
 				break;
-      case 'utvalg':
-        $valgtCtrl = new UtvalgCtrl($this->cd->skiftArg());
-        break;
+			case 'utvalg':
+				$valgtCtrl = new UtvalgCtrl($this->cd->skiftArg());
+				break;
 			case 'diverse':
 			default:
 				$valgtCtrl = new DiverseCtrl($this->cd->skiftArg());

@@ -7,6 +7,13 @@ require_once('topp.php');
 <div class="col-md-12">
 	<h1>Romskjema (<?php echo $rom->getNavn(); ?>)</h1>
 	<p>Her registreres feil på rommet. Hvis et punkt er i orden, så la være å skrive noe på det. Se også bort fra bad hvis rommet ditt ikke har det.</p>
+<?php
+
+if ($tvungen) {
+	echo '	<p style="color: #F00;">Du må ta stilling til dette skjemaet i starten av hvert semester.</p>' . PHP_EOL;
+}
+
+?>
 </div>
 
 <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">

@@ -94,7 +94,7 @@ if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
 
 ?>
 									<li role="separator" class="divider"></li>
-									<li><a href="?a=logginn/loggut&amp;ref=<?php echo $_SERVER['REQUEST_URI']; ?>">Logg ut</a></li>
+									<li><a href="?a=logginn/loggut&amp;ref=<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">Logg ut</a></li>
 								</ul>
 							</li>
 						</ul>

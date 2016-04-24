@@ -13,13 +13,11 @@ class RomskjemaCtrl extends AbstraktCtrl {
 			Header('Location: ' . $_SERVER['REQUEST_URI']);
 			exit();
 		}
-		$dok = new Visning($this->cd);
-		$dok->set('rom', $rom);
-		$dok->vis('romskjema.php');
+		$this->visEllerRegistrer($rom);
 	}
 
 	public function tvungenRegistrering() {
-		$this->visEllerRegistrer($rom = $this->cd->getAktivBruker()->getPerson()->getRom());
+		$this->visEllerRegistrer($this->cd->getAktivBruker()->getPerson()->getRom(), true);
 	}
 
 	public function adminRegistrering() {
@@ -40,7 +38,7 @@ class RomskjemaCtrl extends AbstraktCtrl {
 		$dok->vis('romskjema_romliste.php');
 	}
 
-	private function visEllerRegistrer($rom) {
+	private function visEllerRegistrer($rom, $tvungen = false) {
 		if (isset($_POST['feil']) && is_array($_POST['feil'])) {
 			$this->registerAlleFeil($rom);
 			Header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -48,6 +46,7 @@ class RomskjemaCtrl extends AbstraktCtrl {
 		}
 		$dok = new Visning($this->cd);
 		$dok->set('rom', $rom);
+		$dok->set('tvungen', $tvungen);
 		$dok->vis('romskjema.php');
 	}
 
