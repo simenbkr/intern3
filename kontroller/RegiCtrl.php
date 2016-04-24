@@ -7,7 +7,7 @@ class RegiCtrl extends AbstraktCtrl {
 		//$aktueltArg = $this->cd->getAktueltArg();
 		//$regi = Regi::medId($aktueltArg);
 		$dok = new Visning($this->cd);
-		$dok->vis('regiportal.php');
+		$dok->vis('regi.php');
 	}
 }
 

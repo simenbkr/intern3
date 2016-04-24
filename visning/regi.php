@@ -3,7 +3,11 @@
 require_once('topp.php');
 
 ?>
-<h1>Regiportal</h1>
+
+<div class="col-md-12">
+	<h1>Regi</h1>
+</div>
+
 <?php
 
 require_once('bunn.php');
