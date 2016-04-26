@@ -3,8 +3,8 @@
 namespace intern3;
 
 class RapportListe extends Liste {
-	const sorteringskriterier = 'rapport,feil,sted,prioritet,kvittering';
-	const databaseontologi    = 'rapport.feil_id=feil.id AND rapport.kvittering_id=kvittering.id AND kvittering.sted_id=sted.id AND rapport.prioritet_id=prioritet.id';
+	const sorteringskriterier = 'rapport,feil,rom,prioritet,kvittering';
+	const databaseontologi    = 'rapport.feil_id=feil.id AND rapport.kvittering_id=kvittering.id AND kvittering.rom_id=rom.id AND rapport.prioritet_id=prioritet.id';
 
 	public static function medId($ider=array())
 	{
@@ -27,14 +27,21 @@ class RapportListe extends Liste {
 		$sql='SELECT rapport.id FROM '.self::sorteringskriterier.',ansvarsomrade_feil WHERE '.self::databaseontologi.' AND rapport.feil_id=ansvarsomrade_feil.feil_id AND ansvarsomrade_feil.ansvarsomrade_id=:id';
 		return self::LagListe($sql , $id , $sortering , $Sideinndeling);
 	}
+	/*
 	public static function medStedkategoriId($id, $sortering='id' , $Sideinndeling = null)
 	{
 		$sql='SELECT rapport.id FROM '.self::sorteringskriterier.' WHERE '.self::databaseontologi.' AND sted.stedkategori_id=:id';
 		return self::LagListe($sql , $id , $sortering , $Sideinndeling);
 	}
-	public static function medStedId($id, $sortering='id' , $Sideinndeling = null)
+	*/
+	public static function medRomId($id, $sortering='id' , $Sideinndeling = null)
 	{
-		$sql='SELECT rapport.id FROM '.self::sorteringskriterier.' WHERE '.self::databaseontologi.' AND sted.id=:id';
+		$sql='SELECT rapport.id FROM '.self::sorteringskriterier.' WHERE '.self::databaseontologi.' AND rom.id=:id';
+		return self::LagListe($sql , $id , $sortering , $Sideinndeling);
+	}
+	public static function medPrioritetId($id, $sortering='id' , $Sideinndeling = null)
+	{
+		$sql='SELECT rapport.id FROM '.self::sorteringskriterier.' WHERE '.self::databaseontologi.' AND prioritet.id=:id';
 		return self::LagListe($sql , $id , $sortering , $Sideinndeling);
 	}
 	public static function medOppgaveId($id, $sortering='id' , $Sideinndeling = null)

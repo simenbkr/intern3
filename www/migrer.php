@@ -47,6 +47,8 @@ $db->query('TRUNCATE TABLE feilkategori;');
 $db->query('TRUNCATE TABLE feil;');
 $db->query('TRUNCATE TABLE kvittering;');
 $db->query('TRUNCATE TABLE rapport;');
+$db->query('TRUNCATE TABLE ansvarsomrade;');
+$db->query('TRUNCATE TABLE ansvarsomrade_feil;');
 //etc
 
 /* Migrering av skole, start */
@@ -473,6 +475,39 @@ while ($rad = $hent->fetch()) {
 }
 
 /* Migrering av rapport, slutt */
+
+/* Migrering av ansvarsområde, start */
+
+$hent = $regi->prepare('SELECT * FROM ansvarsomrade;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	if ($rad['navn'] == 'Admin') {
+		continue;
+	}
+	$st = $db->prepare('INSERT INTO ansvarsomrade(
+	navn,beskrivelse
+) VALUES(
+	:navn,:beskrivelse
+);');
+	$st->bindParam(':navn', $rad['navn']);
+	$st->bindParam(':beskrivelse', $rad['beskrivelse']);
+	$st->execute();
+}
+
+$hent = $regi->prepare('SELECT * FROM ansvarsomrade_feil;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO ansvarsomrade_feil(
+	ansvarsomrade_id,feil_id
+) VALUES(
+	:ansvarsomrade_id,:feil_id
+);');
+	$st->bindParam(':ansvarsomrade_id', $rad['ansvarsomrade_id']);
+	$st->bindParam(':feil_id', $rad['feil_id']);
+	$st->execute();
+}
+
+/* Migrering av ansvarsområde, slutt */
 
 ferdig(); // Alt heretter går veldig sakte.
 $db->query('TRUNCATE TABLE krysseliste;');

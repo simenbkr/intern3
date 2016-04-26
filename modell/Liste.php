@@ -56,6 +56,7 @@ abstract class Liste {
 	return self::listeFraPdo($ListeFn , $st);
 	}
 	protected static function listeFraPdo ($ListeFn , $st) {
+	$ListeFn = __NAMESPACE__ . '\\' . $ListeFn;
 	$st->execute();
 	$liste = array();
 		if (strpos($ListeFn , '::')) { // hvis funksjonen er i en klasse

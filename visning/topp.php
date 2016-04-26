@@ -37,36 +37,23 @@ if (!isset($skjulMeny)) {
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-<?php
-
-$menyvalg = array(
-		'beboer' => 'Beboer',
-		'vakt' => 'Vakt',
-		'regi' => 'Regi',
-		'verv' => 'Verv',
-		'kryss' => 'Kryss',
-		'wiki' => 'Wiki',
-		'utleie' => 'Utleie',
-		'helga' => '(Helga)',
-		'kjeller' => '(Vinkjeller)'
-);
-
-$forsteArg = $cd->getAktueltArg();
-
-foreach ($menyvalg as $adr => $navn) {
-	if ($adr == $forsteArg) {
-		?>
-							<li class="active"><a href="?a=<?php echo $adr; ?>"><?php echo $navn; ?> <span class="sr-only">(du er her)</span></a></li>
-<?php
-	}
-	else {
-		?>
-							<li><a href="?a=<?php echo $adr; ?>"><?php echo $navn; ?></a></li>
-<?php
-	}
-}
-
-?>
+							<li><a href="?a=beboer">Beboer</a></li>
+							<li><a href="?a=vakt">Vakt</a></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regi <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="?a=regi/oppgave">Oppgaver</a></li>
+									<li><a href="?a=regi/rapport">Rapporter</a></li>
+									<li><a href="?a=regi/minregi">Min regi</a></li>
+									<li><a href="?a=regi/status">Registatus</a></li>
+								</ul>
+							</li>
+							<li><a href="?a=verv">Verv</a></li>
+							<li><a href="?a=kryss">Kryss</a></li>
+							<li><a href="?a=wiki">Wiki</a></li>
+							<li><a href="?a=utleie">Utleie</a></li>
+							<li><a href="?a=helga">(Helga)</a></li>
+							<li><a href="?a=kjeller">(Vinkjeller)</a></li>
 <?php
 
 if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
