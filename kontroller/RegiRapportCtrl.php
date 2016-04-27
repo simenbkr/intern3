@@ -4,7 +4,7 @@ namespace intern3;
 
 class RegiRapportCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
-		$sortering = 'rapport.godkjent ASC,prioritet.nummer DESC,kvittering.tid_oppretta ASC';
+		$sortering = 'rapport.godkjent ASC,prioritet.nummer DESC,kvittering.tid_oppretta ASC,rapport.id ASC';
 		$sideinndeling = null;
 		$ekstraTittel = array();
 		$type = $this->cd->getAktueltArg();
