@@ -37,7 +37,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 				if (count($feilVarighet) > 0 || count($feilEnkelt) > 0 || count($feilPeriode) > 0) {
 					break;
 				}
-				Header('Location: ?a=utvalg/vaktsjef/vaktstyring');
+				Header('Location: ?a=utvalg/vaktsjef/vaktoversikt');
 				exit();
 			} while(false);
 			$dok = new Visning($this->cd);
@@ -217,26 +217,67 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 		} while($dato <= $varighetDatoSlutt);
 	}
 	private function tildelVakter() {
-		$brukere = array();
+		$brukere = array(0 => array(), 1 => array()); // Hvor mange flere vakter hver bruker har igjen under trekkinga
 		foreach (BeboerListe::harVakt() as $beboer) {
-			for ($i = 0; $i < Vakt::antallSkalSitteMedBrukerId($beboer->getBrukerId()); $i++) {
-				$brukere[] = $beboer->getBrukerId();
-			}
+			$brukere[1][$beboer->getBrukerId()] = Vakt::antallSkalSitteMedBrukerId($beboer->getBrukerId());
+			$brukere[0][$beboer->getBrukerId()] = round($brukere[1][$beboer->getBrukerId()] / 3);
+			$brukere[1][$beboer->getBrukerId()] -= $brukere[0][$beboer->getBrukerId()];
 		}
 		$margin = $_POST['varighet_sikkerhetsmargin'];
-		$vakter = VaktListe::autogenerert();
-		while (count($brukere) > 0 && $margin < count($vakter)) {
-			$brukerTrekk = mt_rand(0, count($brukere) - 1);
-			$vaktTrekk = mt_rand(0, count($vakter) - 1);
-			$st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:brukerId WHERE id=:id;');
-			$vaktId = $vakter[$vaktTrekk]->getId();
-			$st->bindParam(':id', $vaktId);
-			$st->bindParam(':brukerId', $brukere[$brukerTrekk]);
-			$st->execute();
-			unset($brukere[$brukerTrekk], $vakter[$vaktTrekk]);
-			$brukere = array_values($brukere);
-			$vakter = array_values($vakter);
+		$vakter = array(0 => array(), 1 => VaktListe::autogenerert());
+		foreach ($vakter[1] as $indeks => $vakt) {
+			if ($vakt->getVakttype() == 1) {
+				unset($vakter[1][$indeks]);
+				$vakter[0][] = $vakt;
+			}
 		}
+		$vakter = array_values($vakter);
+		//print_r($brukere);
+		//var_dump(count($brukere), array_sum($brukere), count($vakter));
+		foreach (range(0, 1) as $omgang) {
+			while (array_sum($brukere[$omgang]) > 0 && $margin < count($vakter[$omgang])) {
+				do {
+					$brukerTrekk = array_rand($brukere[$omgang]);
+					//var_dump($netter[$brukerTrekk] . ' ' . max($netter));
+					//break;
+				} while($brukere[$omgang][$brukerTrekk] < max($brukere[$omgang]));
+				//} while($brukere[$brukerTrekk] < max($brukere) || $netter[$brukerTrekk] < max($netter) - 1);
+				//} while(
+				//		pow(max(0, max($brukere) - $brukere[$brukerTrekk]), 2)
+				//		+ pow(max(0, max($netter) - $netter[$brukerTrekk]), 2)
+				//		> 0
+				//);
+				do {
+					$vaktTrekk = mt_rand(0, count($vakter[$omgang]) - 1);
+					//var_dump($omgang . ' ' . count($vakter[$omgang]) . ' ' . count($brukere[$omgang]) . ' ' . $vakter[$omgang][$vaktTrekk]->getVakttype());
+					//break;
+				} while($omgang == 0 && $vakter[$omgang][$vaktTrekk]->getVakttype() <> '1');
+				$st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:brukerId WHERE id=:id;');
+				$vaktId = $vakter[$omgang][$vaktTrekk]->getId();
+				$st->bindParam(':id', $vaktId);
+				$st->bindParam(':brukerId', $brukerTrekk);
+				$st->execute();
+				$brukere[$omgang][$brukerTrekk]--;
+				if ($brukere[$omgang][$brukerTrekk] == 0) {
+					unset($brukere[$omgang][$brukerTrekk]);
+				}
+				unset($vakter[$omgang][$vaktTrekk]);
+				$vakter[$omgang] = array_values($vakter[$omgang]);
+			}
+			foreach ($brukere[$omgang] as $brukerId => $igjen) {
+				$brukere[$omgang][$brukerId] += $igjen;
+			}
+			$vakter[$omgang+1] = array_merge($vakter[$omgang+1], $vakter[$omgang]);
+		}
+		//print_r($brukere);
+		//var_dump(count($brukere), array_sum($brukere), count($vakter));
+		foreach ($vakter as $vakt) {
+			$st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
+			$vaktId = $vakt->getId();
+			$st->bindParam(':id', $vaktId);
+			$st->execute();
+		}
+		//exit();
 	}
 	private static function erITidsrom($typeStart, $datoStart, $typeSlutt, $datoSlutt, $typeTest, $datoTest) {
 		/* Sjekk om en tenkt vakt (gitt av type og dato) er i et tidsrom. */

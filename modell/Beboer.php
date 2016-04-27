@@ -257,6 +257,10 @@ class Beboer implements Person {
     return Vakt::antallErOppsattMedBrukerId($this->getBrukerId());
   }
 
+	public function antallForstevakter() {
+		return Vakt::antallForsteMedBrukerId($this->getBrukerId());
+	}
+
   public function antallVakterHarIgjen() {
     return Vakt::antallHarIgjenMedBrukerId($this->getBrukerId(), $this->antallVakterSkalSitte());
   }

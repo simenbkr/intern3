@@ -125,9 +125,12 @@ class Vakt {
   }
 
 	public static function antallSkalSitteMedBrukerId($brukerId) {
-		/* Forutsettes her at bruker fins og er beboer. */
-		//return Bruker::medId($brukerId)->getPerson()->getRolle();
-		return date('m') > 6 ? 5 : 6;
+		$beboer = Beboer::medBrukerId($brukerId);
+		if ($beboer == null || !$beboer->erBeboer()) {
+			return 0;
+		}
+		$rolle = $beboer->getRolle();
+		return date('m') > 6 ? $rolle->getVakterH() : $rolle->getVakterV();
 	}
 
   public static function antallHarSittetMedBrukerId($brukerId) {
@@ -145,6 +148,14 @@ class Vakt {
     $res = $st->fetch();
     return $res['antall'];
   }
+
+	public static function antallForsteMedBrukerId($brukerId) {
+		$st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakttype=\'1\'');
+		$st->bindParam(':brukerId', $brukerId);
+		$st->execute();
+		$res = $st->fetch();
+		return $res['antall'];
+	}
 
   public static function antallHarIgjenMedBrukerId($brukerId, $skalSitte) {
     $antall = $skalSitte;

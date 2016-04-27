@@ -7,6 +7,8 @@ class Rolle {
 	private $id;
 	private $navn;
 	private $regitimer;
+	private $vakterH;
+	private $vakterV;
 
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM rolle WHERE id=:id;');
@@ -29,6 +31,8 @@ class Rolle {
 		$instance->id = $rad['id'];
 		$instance->navn = $rad['navn'];
 		$instance->regitimer = $rad['regitimer'];
+		$instance->vakterH = $rad['vakter_h'];
+		$instance->vakterV = $rad['vakter_v'];
 		return $instance;
 	}
 
@@ -42,6 +46,14 @@ class Rolle {
 
 	public function getRegitimer() {
 		return $this->regitimer;
+	}
+
+	public function getVakterH() {
+		return $this->vakterH;
+	}
+
+	public function getVakterV() {
+		return $this->vakterV;
 	}
 
 }

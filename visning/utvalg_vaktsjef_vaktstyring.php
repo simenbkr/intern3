@@ -9,14 +9,25 @@ require_once('topp_utvalg.php');
 
 <?php
 
-$ukeStart = strtotime('last sunday - 6 days, midnight');
+if (date('m') > 6) {
+	$ukeStart = strtotime('1 July');
+	$ukeSlutt = strtotime('1 January + 1 year');
+}
+else {
+	$ukeStart = strtotime('1 January');
+	$ukeSlutt = strtotime('1 July');
+	if (date('W', $ukeStart) == 53) {
+		$ukeStart = strtotime('next week', $ukeStart);
+	}
+}
+$ukeStart = strtotime('last week', $ukeStart);
 
-foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, date('Y'))) : 26) as $uke){
+foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 	$ukeStart = strtotime('+1 week', $ukeStart);
 ?>
 	<table class="table-bordered table">
 		<tr>
-			<th style="width:5.5%;"><span class="hidden-sm hidden-xs">Uke&nbsp;</span><?php echo $uke; ?></th>
+			<th style="width:5.5%;"><span class="hidden-sm hidden-xs">Uke&nbsp;</span><?php echo intval(date('W', $ukeStart)); ?></th>
 			<th style="width:13.5%;">M<span class="hidden-xs">an<span class="hidden-sm">dag</span></span>&nbsp;<?php echo date('d/m',  $ukeStart);?></th>
 			<th style="width:13.5%;">T<span class="hidden-xs">ir<span class="hidden-sm">sdag</span></span>&nbsp;<?php echo date('d/m', strtotime('+1 day', $ukeStart));?></th>
 			<th style="width:13.5%;">O<span class="hidden-xs">ns<span class="hidden-sm">dag</span></span>&nbsp;<?php echo date('d/m', strtotime('+2 day', $ukeStart));?></th>

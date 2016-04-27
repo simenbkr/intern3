@@ -22,6 +22,7 @@ require_once('topp_utvalg.php');
       <th>Skal sitte</th>
 			<th>Har sittet</th>
 			<th>Er oppsatt</th>
+			<th>Førstevakter</th>
 			<th>Har igjen</th>
 			<th>Ikke oppsatt</th>
       <th>Ikke bekreftet</th>
@@ -36,9 +37,10 @@ foreach ($beboerListe as $beboer){
 			<td><?php echo $beboer->antallVakterSkalSitte(); ?></td>
 			<td><?php echo $beboer->antallVakterHarSittet(); ?></td>
 			<td><?php echo $beboer->antallVakterErOppsatt(); ?></td>
-      <td><?php echo $beboer->antallVakterHarIgjen(); ?></td>
-      <td><?php echo $beboer->antallVakterIkkeOppsatt(); ?></td>
-      <td><?php echo $beboer->antallVakterIkkeBekreftet(); ?></td>
+			<td><?php echo $beboer->antallForstevakter(); ?></td>
+			<td><?php echo $beboer->antallVakterHarIgjen(); ?></td>
+			<td><?php echo $beboer->antallVakterIkkeOppsatt(); ?></td>
+			<td><?php echo $beboer->antallVakterIkkeBekreftet(); ?></td>
 		</tr>
 <?php
 	}
