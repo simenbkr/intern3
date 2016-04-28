@@ -56,6 +56,45 @@ class Bruker {
 		return $this->person;
 	}
 
+	public function antallStraffevakter() {
+		return Straffevakt::antallMedBrukerId($this->id);
+	}
+
+	public function antallVakterSkalSitte() {
+		$beboer = $this->getPerson();
+		if (!$beboer->erBeboer()) {
+			return 0;
+		}
+		$rolle = $beboer->getRolle();
+		$antall = date('m') > 6 ? $rolle->getVakterH() : $rolle->getVakterV();
+		$antall += $this->antallStraffevakter();
+		return $antall;
+	}
+
+	public function antallVakterHarSittet() {
+		return Vakt::antallHarSittetMedBrukerId($this->id);
+	}
+
+	public function antallVakterErOppsatt() {
+		return Vakt::antallErOppsattMedBrukerId($this->id);
+	}
+
+	public function antallForstevakter() {
+		return Vakt::antallForsteMedBrukerId($this->id);
+	}
+
+	public function antallVakterHarIgjen() {
+		return Vakt::antallHarIgjenMedBrukerId($this->id, $this->antallVakterSkalSitte());
+	}
+
+	public function antallVakterIkkeOppsatt() {
+		return Vakt::antallIkkeOppsattMedBrukerId($this->id, $this->antallVakterSkalSitte());
+	}
+
+	public function antallVakterIkkeBekreftet() {
+		return Vakt::antallIkkeBekreftetMedBrukerId($this->id);
+	}
+
 	public function getRegisekunderMedSemester($unix = false) {
 		if ($unix === false) {
 			global $_SERVER;

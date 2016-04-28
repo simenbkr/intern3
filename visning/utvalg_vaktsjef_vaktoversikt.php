@@ -29,18 +29,19 @@ require_once('topp_utvalg.php');
 		</tr>
 
 <?php
-foreach ($beboerListe as $beboer){
+foreach ($beboerListe as $beboer) {
+	$bruker = $beboer->getBruker();
   ?>
 		<tr>
 			<td><a href="?a=beboer/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
-			<td><?php echo $beboer->antallStraffevakter(); ?></td>
-			<td><?php echo $beboer->antallVakterSkalSitte(); ?></td>
-			<td><?php echo $beboer->antallVakterHarSittet(); ?></td>
-			<td><?php echo $beboer->antallVakterErOppsatt(); ?></td>
-			<td><?php echo $beboer->antallForstevakter(); ?></td>
-			<td><?php echo $beboer->antallVakterHarIgjen(); ?></td>
-			<td><?php echo $beboer->antallVakterIkkeOppsatt(); ?></td>
-			<td><?php echo $beboer->antallVakterIkkeBekreftet(); ?></td>
+			<td><?php echo $bruker->antallStraffevakter(); ?></td>
+			<td><?php echo $bruker->antallVakterSkalSitte(); ?></td>
+			<td><?php echo $bruker->antallVakterHarSittet(); ?></td>
+			<td><?php echo $bruker->antallVakterErOppsatt(); ?></td>
+			<td><?php echo $bruker->antallForstevakter(); ?></td>
+			<td><?php echo $bruker->antallVakterHarIgjen(); ?></td>
+			<td><?php echo $bruker->antallVakterIkkeOppsatt(); ?></td>
+			<td><?php echo $bruker->antallVakterIkkeBekreftet(); ?></td>
 		</tr>
 <?php
 	}

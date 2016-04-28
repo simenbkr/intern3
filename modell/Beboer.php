@@ -225,53 +225,6 @@ class Beboer implements Person {
 		}
 		return $this->bruker;
 	}
-
-  public function antallStraffevakter() {
-    return Straffevakt::antallMedBrukerId($this->getBrukerId());
-  }
-
-  public function antallVakterSkalSitte() {
-    // Dette må fikses
-    $rolleId = $this->getRolleId();
-    if ($rolleId == 1) {
-      $antall = 5;
-    }
-    else if ($rolleId == 2) {
-      $antall = 8;
-    }
-    else if ($rolleId == 3) {
-      $antall = 0;
-    }
-    if (date("m") < '07' && $antall > 0) {
-      $antall += 1;
-    }
-    $antall += $this->antallStraffevakter();
-    return $antall;
-  }
-
-  public function antallVakterHarSittet() {
-    return Vakt::antallHarSittetMedBrukerId($this->getBrukerId());
-  }
-
-  public function antallVakterErOppsatt() {
-    return Vakt::antallErOppsattMedBrukerId($this->getBrukerId());
-  }
-
-	public function antallForstevakter() {
-		return Vakt::antallForsteMedBrukerId($this->getBrukerId());
-	}
-
-  public function antallVakterHarIgjen() {
-    return Vakt::antallHarIgjenMedBrukerId($this->getBrukerId(), $this->antallVakterSkalSitte());
-  }
-
-  public function antallVakterIkkeOppsatt() {
-    return Vakt::antallIkkeOppsattMedBrukerId($this->getBrukerId(), $this->antallVakterSkalSitte());
-  }
-
-  public function antallVakterIkkeBekreftet() {
-    return Vakt::antallIkkeBekreftetMedBrukerId($this->getBrukerId());
-  }
 }
 
 ?>
