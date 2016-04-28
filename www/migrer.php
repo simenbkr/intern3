@@ -49,6 +49,9 @@ $db->query('TRUNCATE TABLE kvittering;');
 $db->query('TRUNCATE TABLE rapport;');
 $db->query('TRUNCATE TABLE ansvarsomrade;');
 $db->query('TRUNCATE TABLE ansvarsomrade_feil;');
+$db->query('TRUNCATE TABLE arbeidskategori;');
+$db->query('TRUNCATE TABLE arbeid;');
+$db->query('TRUNCATE TABLE oppgave;');
 //etc
 
 /* Migrering av skole, start */
@@ -508,6 +511,74 @@ while ($rad = $hent->fetch()) {
 }
 
 /* Migrering av ansvarsområde, slutt */
+
+/* Migrering av arbeidskategori, start */
+
+$hent = $regi->prepare('SELECT * FROM arbeidskategori;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO arbeidskategori(
+	navn,beskrivelse,tid_oppretta
+) VALUES(
+	:navn,:beskrivelse,:tid_oppretta
+);');
+	$st->bindParam(':navn', $rad['navn']);
+	$st->bindParam(':beskrivelse', $rad['beskrivelse']);
+	$st->bindParam(':tid_oppretta', $rad['tid_oppretta']);
+	$st->execute();
+}
+
+/* Migrering av arbeidskategori, slutt */
+
+/* Migrering av arbeid, start */
+
+$hent = $regi->prepare('SELECT * FROM arbeid;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO arbeid(
+	bruker_id,polymorfkategori_id,polymorfkategori_velger,tid_registrert,sekunder_brukt,tid_utfort,kommentar,godkjent,tid_godkjent,godkjent_bruker_id
+) VALUES(
+	:bruker_id,:polymorfkategori_id,:polymorfkategori_velger,:tid_registrert,:sekunder_brukt,:tid_utfort,:kommentar,:godkjent,:tid_godkjent,:godkjent_bruker_id
+);');
+	$st->bindParam(':bruker_id', $brukerIdFornyelse[$rad['bruker_id']]);
+	$st->bindParam(':polymorfkategori_id', $rad['polymorfkategori_id']);
+	$st->bindParam(':polymorfkategori_velger', $rad['polymorfkategori_velger']);
+	$st->bindParam(':tid_registrert', $rad['tid_registrert']);
+	$st->bindParam(':sekunder_brukt', $rad['sekunder_brukt']);
+	$st->bindParam(':tid_utfort', $rad['tid_utfort']);
+	$st->bindParam(':kommentar', $rad['kommentar']);
+	$st->bindParam(':godkjent', $rad['godkjent']);
+	$st->bindParam(':tid_godkjent', $rad['tid_godkjent']);
+	$st->bindParam(':godkjent_bruker_id', $rad['godkjent_bruker_id']);
+	$st->execute();
+}
+
+/* Migrering av arbeid, slutt */
+
+/* Migrering av oppgave, start */
+
+$hent = $regi->prepare('SELECT * FROM oppgave;');
+$hent->execute();
+while ($rad = $hent->fetch()) {
+	$st = $db->prepare('INSERT INTO oppgave(
+	tid_oppretta,anslag_timer,ansvarsomrade_id,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id
+) VALUES(
+	:tid_oppretta,:anslag_timer,:ansvarsomrade_id,:anslag_personer,:prioritet_id,:navn,:beskrivelse,:godkjent,:tid_godkjent,:godkjent_bruker_id
+);');
+	$st->bindParam(':tid_oppretta', $rad['tid_oppretta']);
+	$st->bindParam(':anslag_timer', $rad['anslag_timer']);
+	$st->bindParam(':ansvarsomrade_id', $rad['ansvarsomrade_id']);
+	$st->bindParam(':anslag_personer', $rad['anslag_personer']);
+	$st->bindParam(':prioritet_id', $rad['prioritet_id']);
+	$st->bindParam(':navn', $rad['navn']);
+	$st->bindParam(':beskrivelse', $rad['beskrivelse']);
+	$st->bindParam(':godkjent', $rad['godkjent']);
+	$st->bindParam(':tid_godkjent', $rad['tid_godkjent']);
+	$st->bindParam(':godkjent_bruker_id', $rad['godkjent_bruker_id']);
+	$st->execute();
+}
+
+/* Migrering av oppgave, slutt */
 
 ferdig(); // Alt heretter går veldig sakte.
 $db->query('TRUNCATE TABLE krysseliste;');

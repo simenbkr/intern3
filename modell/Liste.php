@@ -25,7 +25,7 @@ abstract class Liste {
 			$Arg0 = trim($Arg0);
 			} // $Arg er nå argumentene i returlista i spørringa, der $Arg0 er det første.
 		$sql_ant = str_replace($Sekv , 'SELECT COUNT(' . $Arg0 . ') FROM' , $sql); // For telling av antall rader
-		$db = new DB();
+		$db = DB::getDB();
 		$st = $db->prepare($sql_ant);
 			foreach ($param as $nok => $ver) {
 			$st->bindParam($nok , $ver);
@@ -47,7 +47,7 @@ abstract class Liste {
 				}
 			}
 		}
-	$db = new DB();
+	$db = DB::getDB();
 	$st = $db->prepare($sql);
 		foreach ($param as $nok => $ver) {
 		$st->bindParam($nok , $ver);

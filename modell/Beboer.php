@@ -219,12 +219,12 @@ class Beboer implements Person {
 		return $this->utvalgVervListe;
 	}
 
-  // public function getBruker() {
-  //   if ($this->bruker == null && $this->brukerId != 0) {
-  //     $this->bruker = Bruker::medId($this->id);
-  //   }
-  //   return $this->bruker;
-  // }
+	public function getBruker() {
+		if ($this->bruker == null && $this->brukerId != 0) {
+			$this->bruker = Bruker::medId($this->brukerId);
+		}
+		return $this->bruker;
+	}
 
   public function antallStraffevakter() {
     return Straffevakt::antallMedBrukerId($this->getBrukerId());

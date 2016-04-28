@@ -55,6 +55,21 @@ class Bruker {
 		}
 		return $this->person;
 	}
+
+	public function getRegisekunderMedSemester($unix = false) {
+		if ($unix === false) {
+			global $_SERVER;
+			$unix = $_SERVER['REQUEST_TIME'];
+		}
+		$sum = 0;
+		foreach (ArbeidListe::medBrukerIdSemester($this->id , $unix) as $arbeid) {
+			if (!$arbeid->getGodkjent()) {
+				continue;
+			}
+			$sum += $arbeid->getSekunderBrukt();
+		}
+		return $sum;
+	}
 }
 
 ?>

@@ -9,11 +9,20 @@ class RegiCtrl extends AbstraktCtrl {
 			case 'rapport':
 				$valgtCtrl = new RegiRapportCtrl($this->cd->skiftArg());
 				break;
+			case 'registatus':
+				$dok = new Visning($this->cd);
+				$unix = $_SERVER['REQUEST_TIME'];
+				$dok->set('tabeller', array(
+						'Har gjenværende regitimer'      => BrukerListe::harRegiIgjen($unix),
+						'Har ikke gjenværende regitimer' => BrukerListe::harIkkeRegiIgjen($unix)
+				));
+				$dok->vis('regi_registatus.php');
+				return;
 			case '':
 			default:
 				$dok = new Visning($this->cd);
 				$dok->vis('regi.php');
-				break;
+				return;
 		}
 		$valgtCtrl->bestemHandling();
 	}

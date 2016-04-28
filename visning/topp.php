@@ -45,7 +45,7 @@ if (!isset($skjulMeny)) {
 									<li><a href="?a=regi/oppgave">Oppgaver</a></li>
 									<li><a href="?a=regi/rapport">Rapporter</a></li>
 									<li><a href="?a=regi/minregi">Min regi</a></li>
-									<li><a href="?a=regi/status">Registatus</a></li>
+									<li><a href="?a=regi/registatus">Registatus</a></li>
 								</ul>
 							</li>
 							<li><a href="?a=verv">Verv</a></li>
