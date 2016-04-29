@@ -6,11 +6,15 @@ class CtrlData {
 	private $arg;
 	private $pos;
 	private $aktivBruker;
+	private $adminBruker;
+	private $rot;
 	private $base;
-	public function __construct($arg, $pos = 0) {
+	public function __construct($arg, $pos = 0, $rot = 0) {
 		$this->arg = (array) $arg;
 		$this->pos = $pos;
 		$this->aktivBruker = null;
+		$this->adminBruker = null;
+		$this->rot = $rot;
 		$this->base = array();
 	}
 	public function getArg($pos) {
@@ -33,25 +37,35 @@ class CtrlData {
 		$kopi->setAktivBruker($this->aktivBruker);
 		return $kopi;
 	}
+	public function skiftArgMedRot() {
+		$kopi = new self($this->arg, $this->pos + 1, $this->pos);
+		$kopi->setAdminBruker($this->aktivBruker);
+		return $kopi;
+	}
 	public function setAktivBruker($aktivBruker) {
 		$this->aktivBruker = $aktivBruker;
 	}
 	public function getAktivBruker() {
 		return $this->aktivBruker;
 	}
+	public function setAdminBruker($adminBruker) {
+		$this->adminBruker = $adminBruker;
+	}
+	public function getAdminBruker() {
+		return $this->adminBruker;
+	}
 	public function getBase($pos = 0) {
+		$pos += $this->rot;
 		if (!isset($this->base[$pos])) {
-			if ($pos == 0) {
-				$pos = $this->getAktuellArgPos();
+			if ($this->rot == 0 || count($this->arg) <= $pos) {
+				$this->base[$pos] = '';
 			}
-			else if (count($this->arg) <= $pos) {
-				return '';
+			else {
+				$this->base[$pos] = implode('/', array_slice($this->arg, 0, $pos + $this->rot));
 			}
-			$this->base[$pos] = implode('/', array_slice($this->arg, 0, $pos));
 		}
 		return $this->base[$pos];
 	}
-	//TODO: adminBruker (for å logge inn som andre brukere)
 }
 
 ?>

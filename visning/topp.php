@@ -115,9 +115,7 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regisjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/regisjef">Regiportal</a></li>
-                  <li><a href="?a=utvalg/regisjef">#</a></li>
-                  <li><a href="?a=utvalg/regisjef">#</a></li>
+                  <li><a href="?a=utvalg/regisjef/arbeid">Arbeid</a></li>
                 </ul>
               </li>
             </ul>
