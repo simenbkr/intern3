@@ -44,7 +44,7 @@ if (count($feilVarighet) > 0) {
 					<option value="1"<?php if (isset($_POST['varighet_type_slutt']) && $_POST['varighet_type_slutt'] == '1') { echo ' selected="selected"'; } ?>>1. vakt</option>
 					<option value="2"<?php if (isset($_POST['varighet_type_slutt']) && $_POST['varighet_type_slutt'] == '2') { echo ' selected="selected"'; } ?>>2. vakt</option>
 					<option value="3"<?php if (isset($_POST['varighet_type_slutt']) && $_POST['varighet_type_slutt'] == '3') { echo ' selected="selected"'; } ?>>3. vakt</option>
-					<option value="4"<?php if (isset($_POST['varighet_type_slutt']) && $_POST['varighet_type_slutt'] == '4') { echo ' selected="selected"'; } ?>>4. vakt</option>
+					<option value="4"<?php if (!isset($_POST['varighet_type_slutt']) || $_POST['varighet_type_slutt'] == '4') { echo ' selected="selected"'; } ?>>4. vakt</option>
 				</select>
 				<input class="datepicker" name="varighet_dato_slutt" size="8" placeholder="dato"<?php if (isset($_POST['varighet_dato_slutt']) && $_POST['varighet_dato_slutt']) { echo ' value="' . $_POST['varighet_dato_slutt'] . '"'; } ?>>
 			</td>
@@ -94,7 +94,7 @@ if (count($feilEnkelt) > 0) {
 var vaktperiodeIterator = 0;
 function flereVaktperioder() {
 	id = vaktperiodeIterator++;
-	$('#vaktperioder').append('<tr><td><select name="vaktperiode_type_start[' + id + ']"><option value="1">1. vakt</option><option value="2">2. vakt</option><option value="3">3. vakt</option><option value="4">4. vakt</option></select>&nbsp;<input class="datepicker" name="vaktperiode_dato_start[' + id + ']" size="8" placeholder="dato"></td><td><select name="vaktperiode_type_slutt[' + id + ']"><option value="1">1. vakt</option><option value="2">2. vakt</option><option value="3">3. vakt</option><option value="4">4. vakt</option></select>&nbsp;<input class="datepicker" name="vaktperiode_dato_slutt[' + id + ']" size="8" placeholder="dato"></td></tr>');
+	$('#vaktperioder').append('<tr><td><select name="vaktperiode_type_start[' + id + ']"><option value="1">1. vakt</option><option value="2">2. vakt</option><option value="3">3. vakt</option><option value="4">4. vakt</option></select>&nbsp;<input class="datepicker" name="vaktperiode_dato_start[' + id + ']" size="8" placeholder="dato"></td><td><select name="vaktperiode_type_slutt[' + id + ']"><option value="1">1. vakt</option><option value="2">2. vakt</option><option value="3">3. vakt</option><option value="4" selected="selected">4. vakt</option></select>&nbsp;<input class="datepicker" name="vaktperiode_dato_slutt[' + id + ']" size="8" placeholder="dato"></td></tr>');
 	formaterDatovelger();
 }
 $(flereVaktperioder);

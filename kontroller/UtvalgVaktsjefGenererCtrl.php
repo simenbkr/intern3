@@ -195,14 +195,14 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 			$brukere[1][$beboer->getBrukerId()] -= $brukere[0][$beboer->getBrukerId()];
 		}
 		$margin = $_POST['varighet_sikkerhetsmargin'];
-		$vakter = array(0 => array(), 1 => VaktListe::autogenerert());
+		$vakter = array(0 => array(), 1 => VaktListe::autogenerert(), 2 => array());
 		foreach ($vakter[1] as $indeks => $vakt) {
 			if ($vakt->getVakttype() == 1) {
 				unset($vakter[1][$indeks]);
 				$vakter[0][] = $vakt;
 			}
 		}
-		$vakter = array_values($vakter);
+		$vakter[1] = array_values($vakter[1]);
 		//print_r($brukere);
 		//var_dump(count($brukere), array_sum($brukere), count($vakter));
 		foreach (range(0, 1) as $omgang) {
@@ -242,9 +242,9 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 		}
 		//print_r($brukere);
 		//var_dump(count($brukere), array_sum($brukere), count($vakter));
-		foreach ($vakter as $vakt) {
+		foreach ($vakter[1] as $vakt) {
 			$st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
-			$vaktId = $vakt->getId();
+      $vaktId = $vakt->getId();
 			$st->bindParam(':id', $vaktId);
 			$st->execute();
 		}
