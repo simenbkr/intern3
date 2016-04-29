@@ -33,13 +33,15 @@ class CtrlData {
 		return $len > 0 ? $this->arg[$len - 1] : null;
 	}
 	public function skiftArg() {
-		$kopi = new self($this->arg, $this->pos + 1);
+		$kopi = new self($this->arg, $this->pos + 1, $this->rot);
 		$kopi->setAktivBruker($this->aktivBruker);
+		$kopi->setAdminBruker($this->aktivBruker);
 		return $kopi;
 	}
-	public function skiftArgMedRot() {
+	public function skiftArgMedRot($aktiverBruker) {
 		$kopi = new self($this->arg, $this->pos + 1, $this->pos);
 		$kopi->setAdminBruker($this->aktivBruker);
+		$kopi->setAktivBruker($aktiverBruker);
 		return $kopi;
 	}
 	public function setAktivBruker($aktivBruker) {
@@ -55,16 +57,16 @@ class CtrlData {
 		return $this->adminBruker;
 	}
 	public function getBase($pos = 0) {
-		$pos += $this->rot;
+		$pos += $this->rot - 1;
 		if (!isset($this->base[$pos])) {
-			if ($this->rot == 0 || count($this->arg) <= $pos) {
+			if ($this->rot == 0 || count($this->arg) < $pos) {
 				$this->base[$pos] = '';
 			}
 			else {
-				$this->base[$pos] = implode('/', array_slice($this->arg, 0, $pos + $this->rot));
+				$this->base[$pos] = implode('/', array_slice($this->arg, 0, $pos + $this->rot)) . '/';
 			}
 		}
-		return $this->base[$pos];
+		return '?a=' . $this->base[$pos];
 	}
 }
 

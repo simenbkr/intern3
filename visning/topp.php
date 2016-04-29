@@ -37,28 +37,28 @@ if (!isset($skjulMeny)) {
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-							<li><a href="?a=beboer">Beboer</a></li>
-							<li><a href="?a=vakt">Vakt</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>beboer">Beboer</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>vakt">Vakt</a></li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regi <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li><a href="?a=regi/oppgave">Oppgaver</a></li>
-									<li><a href="?a=regi/rapport">Rapporter</a></li>
-									<li><a href="?a=regi/minregi">Min regi</a></li>
-									<li><a href="?a=regi/registatus">Registatus</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>regi/oppgave">Oppgaver</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>regi/rapport">Rapporter</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>regi/minregi">Min regi</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>regi/registatus">Registatus</a></li>
 								</ul>
 							</li>
-							<li><a href="?a=verv">Verv</a></li>
-							<li><a href="?a=kryss">Kryss</a></li>
-							<li><a href="?a=wiki">Wiki</a></li>
-							<li><a href="?a=utleie">Utleie</a></li>
-							<li><a href="?a=helga">(Helga)</a></li>
-							<li><a href="?a=kjeller">(Vinkjeller)</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>verv">Verv</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>kryss">Kryss</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>wiki">Wiki</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>helga">(Helga)</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>kjeller">(Vinkjeller)</a></li>
 <?php
 
 if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 ?>
-							<li><a href="?a=utvalg">Utvalget</a></li>
+							<li><a href="<?php echo $cd->getBase(); ?>utvalg">Utvalget</a></li>
 <?php
 }
 
@@ -68,20 +68,29 @@ if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo $cd->getAktivBruker()->getPerson()->getFulltNavn(); ?> <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li><a href="?a=profil">Profil</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>profil">Profil</a></li>
 <?php
 
 if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
 	?>
-									<li><a href="?a=romskjema">Romskjema (<?php echo $cd->getAktivBruker()->getPerson()->getRomhistorikk()->getAktivtRom()->getNavn(); ?>)</a></li>
-									<li><a href="?a=rombytte">Rombytte</a></li>
-									<li><a href="?a=utflytting">Utflytting</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>romskjema">Romskjema (<?php echo $cd->getAktivBruker()->getPerson()->getRomhistorikk()->getAktivtRom()->getNavn(); ?>)</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>rombytte">Rombytte</a></li>
+									<li><a href="<?php echo $cd->getBase(); ?>utflytting">Utflytting</a></li>
 <?php
 }
 
 ?>
 									<li role="separator" class="divider"></li>
-									<li><a href="?a=logginn/loggut&amp;ref=<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">Logg ut</a></li>
+									<li><a href="<?php
+
+if ($cd->getAdminBruker() == null) {
+	echo $cd->getBase() . 'logginn/loggut&amp;ref=' . htmlspecialchars($_SERVER['REQUEST_URI']);
+}
+else {
+	echo substr($cd->getBase(), 0, strrpos(rtrim($cd->getBase(), '/'), '/'));
+}
+
+?>">Logg ut</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -104,9 +113,9 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Romsjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/romsjef/beboerliste">Beboerliste</a></li>
-                  <li><a href="?a=utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
-                  <li><a href="?a=utvalg/romsjef/endrebeboer">Endre beboer</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/beboerliste">Beboerliste</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endrebeboer">Endre beboer</a></li>
                 </ul>
               </li>
             </ul>
@@ -115,7 +124,7 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regisjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/regisjef/arbeid">Arbeid</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/arbeid">Arbeid</a></li>
                 </ul>
               </li>
             </ul>
@@ -124,9 +133,9 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sekretær <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/sekretar/apmandsverv">Åpmandsverv</a></li>
-                  <li><a href="?a=utvalg/sekretar/utvalgsverv">Utvalgsverv</a></li>
-                  <li><a href="?a=utvalg/sekretar/lister">Skrive ut lister</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/apmandsverv">Åpmandsverv</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/utvalgsverv">Utvalgsverv</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/lister">Skrive ut lister</a></li>
                 </ul>
               </li>
             </ul>
@@ -135,9 +144,9 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vaktsjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/vaktsjef/vaktstyring">Vaktstyring</a></li>
-                  <li><a href="?a=utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
-                  <li><a href="?a=utvalg/vaktsjef/generer">Generer vaktliste</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktstyring">Vaktstyring</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/generer">Generer vaktliste</a></li>
                 </ul>
               </li>
             </ul>
@@ -146,8 +155,8 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kosesjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/kosesjef/utleie">Utleie</a></li>
-                  <li><a href="?a=utvalg/kosesjef/krysseliste">Krysseliste for Bodega</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/kosesjef/utleie">Utleie</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/kosesjef/krysseliste">Krysseliste for Bodega</a></li>
                 </ul>
               </li>
             </ul>
@@ -156,7 +165,7 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Husfar <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="?a=utvalg/husfar/viktigedatoer">Viktige datoer</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/husfar/viktigedatoer">Viktige datoer</a></li>
                 </ul>
               </li>
             </ul>
