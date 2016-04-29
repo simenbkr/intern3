@@ -106,7 +106,7 @@ if (isset($visUtvalgMeny)) {
                 <ul class="dropdown-menu">
                   <li><a href="?a=utvalg/romsjef/beboerliste">Beboerliste</a></li>
                   <li><a href="?a=utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
-                  <li><a href="?a=utvalg/romsjef/lister">Skrive ut lister</a></li>
+                  <li><a href="?a=utvalg/romsjef/endrebeboer">Endre beboer</a></li>
                 </ul>
               </li>
             </ul>

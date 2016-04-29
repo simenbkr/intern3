@@ -34,7 +34,7 @@ foreach ($vervListe as $verv) {
 		echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a> <a href="#" class="red">X</a>';
 	}
 	?></td>
-  <td><select class="form-control">
+  <td><select>
     <option value="0">- velg -</option>
 
 <?php

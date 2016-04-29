@@ -20,7 +20,7 @@ require_once('topp_utvalg.php');
       <th>Beboer</th>
     </tr>
     <tr>
-      <td><select class="form-control">
+      <td><select>
 
 <?php
 foreach ($vervListe as $verv) {
@@ -34,7 +34,7 @@ foreach ($vervListe as $verv) {
 }
 ?>
     </td>
-    <td><select class="form-control">
+    <td><select>
 
 <?php
 foreach ($beboerListe as $beboer) {

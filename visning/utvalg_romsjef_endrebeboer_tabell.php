@@ -1,0 +1,119 @@
+<form>
+  <table class="table table-bordered table-responsive">
+    <tr>
+      <td>Fornavn:</td>
+      <td><input type="text" name="fornavn" value="<?php echo $beboer == null ? '' : $beboer->getFornavn(); ?>"></td>
+    </tr>
+    <tr>
+      <td>Mellomnavn:</td>
+      <td><input type="text" name="mellomnavn" value="<?php echo $beboer == null ? '' : $beboer->getMellomnavn(); ?>"></td>
+    </tr>
+    <tr>
+      <td>Etternavn:</td>
+      <td><input type="text" name="etternavn" value="<?php echo $beboer == null ? '' : $beboer->getEtternavn(); ?>"></td>
+    </tr>
+    <tr>
+      <td>Født (år-mnd-dag):</td>
+      <td><input type="text" name="fodselsdato" value="<?php echo $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
+    </tr>
+    <tr>
+      <td>Adresse:</td>
+      <td><input type="text" name="adresse" value="<?php echo $beboer == null ? '' : $beboer->getAdresse(); ?>"></td>
+    </tr>
+    <tr>
+      <td>Postnummer:</td>
+      <td><input type="text" name="postnummer" value="<?php echo $beboer == null ? '' : $beboer->getPostnummer(); ?>"></td>
+    </tr>
+    <tr>
+      <td>Telefon:</td>
+      <td><input type="text" name="mobil" value="<?php echo $beboer == null ? '' : $beboer->getTelefon(); ?>"></td>
+    </tr>
+
+    <tr>
+      <td>E-post:</td>
+      <td><input type="text" name="epost" value="<?php echo $beboer == null ? '' : $beboer->getEpost(); ?>"></td>
+    </tr>
+
+    <tr>
+      <td>Skole:</td>
+      <td>
+        <select name="skole_id">
+<?php
+foreach ($skoleListe as $skole) {
+?>          <option <?php if ($beboer != null && $skole->getId() == $beboer->getSkoleId()) {echo 'selected="selected"';} ?> value="<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></option>
+<?php
+}
+?>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Studie:</td>
+      <td>
+        <select name="studie_id">
+          <?php
+          foreach ($studieListe as $studie) {
+          ?>
+                    <option <?php if ($beboer != null && $studie->getId() == $beboer->getStudieId()) {echo 'selected="selected"';} ?> value="<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></option>
+          <?php
+          }
+          ?>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Klasse:</td>
+      <td>
+        <select name="klasse">
+          <option <?php if ($beboer != null && $beboer->getKlassetrinn() == '1') {echo 'selected="selected"';} ?> value="1">1</option>
+          <option <?php if ($beboer != null && $beboer->getKlassetrinn() == '2') {echo 'selected="selected"';} ?> value="2">2</option>
+          <option <?php if ($beboer != null && $beboer->getKlassetrinn() == '3') {echo 'selected="selected"';} ?> value="3">3</option>
+          <option <?php if ($beboer != null && $beboer->getKlassetrinn() == '4') {echo 'selected="selected"';} ?> value="4">4</option>
+          <option <?php if ($beboer != null && $beboer->getKlassetrinn() == '5') {echo 'selected="selected"';} ?> value="5">5</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Betalt alkodepositum:</td>
+      <td><input type="checkbox" name="alkodep"></td>
+    </tr>
+    <tr>
+      <td>Rolle:</td>
+      <td>
+        <select name="rolle_id">
+<?php
+foreach ($rolleListe as $rolle) {
+?>
+          <option <?php if ($beboer != null && $rolle->getId() == $beboer->getRolleId()) {echo 'selected="selected"';} ?> value="<?php echo $rolle->getId(); ?>"><?php echo $rolle->getNavn(); ?></option>
+<?php
+}
+?>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Romhistorikk:</td>
+      <td><?php foreach ($beboer->getRomhistorikk()->getPerioder() as $periode) {
+        echo intern3\Rom::medId($periode->romId)->getNavn() . ' ' . $periode->innflyttet . ' ' . $periode->utflyttet . '<br>';
+      } ?></td>
+    </tr>
+    <tr>
+      <td>Rom:</td>
+      <td>
+        <select name="rom_id">
+<?php
+foreach ($romListe as $rom) {
+?>
+          <option <?php if ($beboer != null && $rom->getId() == $beboer->getRomId()) {echo 'selected="selected"';} ?> value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></option>
+<?php
+}
+?>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input class="btn btn-primary" type="submit" value="<?php echo $beboer == null ? 'Legg til' : 'Endre'; ?>"></td>
+    </tr>
+  </table>
+</from>

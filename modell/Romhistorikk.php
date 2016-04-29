@@ -25,6 +25,10 @@ class Romhistorikk {
 		$this->romHistorikk = array();
 	}
 
+  public function getPerioder() {
+    return $this->romHistorikk;
+  }
+
 	public function addPeriode($romId, $innflyttet, $utflyttet) {
 		$this->romHistorikk[] = new Romhistorikk\Periode($romId, $innflyttet, $utflyttet);
 	}
