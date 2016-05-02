@@ -35,7 +35,7 @@ class CtrlData {
 	public function skiftArg() {
 		$kopi = new self($this->arg, $this->pos + 1, $this->rot);
 		$kopi->setAktivBruker($this->aktivBruker);
-		$kopi->setAdminBruker($this->aktivBruker);
+		$kopi->setAdminBruker($this->adminBruker);
 		return $kopi;
 	}
 	public function skiftArgMedRot($aktiverBruker) {
