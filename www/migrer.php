@@ -189,6 +189,7 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
 	$adresse = $beboer['adresse'] == null ? null : byttTegnsett($beboer['adresse']);
 	$postnummer = $beboer['postnummer'] == null ? null : $beboer['postnummer'];
 	$telefon = $beboer['mobil'] == null ? ' ' : str_replace(' ', '', $beboer['mobil']);
+	$alkoholdepositum = $beboer['alkodepositum'] == 't' ? 1 : 0;
 	$rolleId = $rolleIder[$beboer['oppgave_id']];
 	$epost = $beboer['epost'] == null ? null : strtolower($beboer['epost']);
 	$studieId = intval(Studie::medNavn(byttTegnsett($beboer['studie']))->getId());
@@ -238,7 +239,7 @@ VALUES(
 	$st->bindParam(':studie_id', $studieId);
 	$st->bindParam(':skole_id', $skoleId);
 	$st->bindParam(':klassetrinn', $beboer['klasse']);
-	$st->bindParam(':alkoholdepositum', $beboer['alkodepositum']);
+	$st->bindParam(':alkoholdepositum', $alkoholdepositum);
 	$st->bindParam(':rolle_id', $rolleId);
 	$st->bindParam(':epost', $epost);
 	$st->bindParam(':romhistorikk', $romhistorikkJson);
