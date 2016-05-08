@@ -9,6 +9,9 @@ class RegiCtrl extends AbstraktCtrl {
 			case 'rapport':
 				$valgtCtrl = new RegiRapportCtrl($this->cd->skiftArg());
 				break;
+			case 'minregi':
+				$valgtCtrl = new RegiMinregiCtrl($this->cd->skiftArg());
+				break;
 			case 'registatus':
 				$dok = new Visning($this->cd);
 				$unix = $_SERVER['REQUEST_TIME'];
