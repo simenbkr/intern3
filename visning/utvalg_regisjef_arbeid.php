@@ -14,7 +14,7 @@ foreach (range($sideinndeling->getSider(), 1) as $side) {
 		$lenker[] = '<strong>' . $side . '</strong>';
 	}
 	else {
-		$lenker[] = '<a href="?a=' . $cd->getBase() . 'utvalg/regisjef/arbeid/' . $side . '">' . $side . '</a>';
+		$lenker[] = '<a href="' . $cd->getBase() . 'utvalg/regisjef/arbeid/' . $side . '">' . $side . '</a>';
 	}
 }
 echo implode(',' . PHP_EOL, $lenker);
