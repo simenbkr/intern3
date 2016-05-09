@@ -4,6 +4,25 @@ require_once('topp_utvalg.php');
 
 ?>
 
+<script>
+
+function godkjennArbeid(id, underkjenn) {
+	underkjenn = underkjenn || false;
+	$.ajax({
+		type: 'POST',
+		url: '<?php echo $_SERVER['REQUEST_URI']; ?>',
+		data: 'id=' + id + '&underkjenn=' + (underkjenn != false ? 1 : 0),
+		success: function(data) {
+			$('#arbeid_' + id).html(data);
+		},
+		error: function(req, stat, err) {
+			alert(err);
+		}
+	});
+}
+
+</script>
+
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Regisjef &raquo; Arbeid</h1>
 	<p>Gå til side: <?php
@@ -24,42 +43,28 @@ echo implode(',' . PHP_EOL, $lenker);
 
 <div class="col-md-12 table-responsive">
 	<table class="table table-striped table-hover">
-		<tr>
-			<th>Beboer</th>
-			<th>Utført</th>
-			<th>Kategori</th>
-			<th>Tid brukt</th>
-			<th>Kommentar</th>
-			<th>Status</th>
-			<th> </th>
-		</tr>
+		<thead>
+			<tr>
+				<th>Beboer</th>
+				<th>Utført</th>
+				<th>Kategori</th>
+				<th>Tid brukt</th>
+				<th>Kommentar</th>
+				<th>Status</th>
+				<th> </th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
 
 foreach ($arbeidListe as $arbeid) {
-	?>		<tr id="arbeid_<?php echo $arbeid->getId(); ?>">
-			<td><?php echo $arbeid->getBruker()->getPerson()->getFulltNavn(); ?></td>
-			<td><?php echo $arbeid->getTidUtfort(); ?></td>
-			<td><?php
-
-	if (!isset($oppg)) {
-		if (get_class($arbeid->getPolymorfKategori()) == 'Oppgave') {
-			echo '<a href="' . $cd->getBase(-2) . '/oppgave/' . $arbeid->getPolymorfKategori()->getId() . '">' . $arbeid->getPolymorfKategori()->getNavn() . '</a>';
-		}
-		else {
-			echo $arbeid->getPolymorfKategori()->getNavn();
-		}
-	}
-
-?></td>
-			<td><?php echo $arbeid->getTidBrukt(); ?></td>
-			<td><?php echo $arbeid->getKommentar(); ?></td>
-			<td><?php echo $arbeid->getGodkjent() > 0 ? 'Godkjent' : 'Ubehandla'; ?></td>
-			<td> </td>
-		</tr>
-<?php
+	echo '			<tr id="arbeid_' . $arbeid->getId() . '">' . PHP_EOL;
+	include('utvalg_regisjef_arbeid_rad.php');
+	echo '			</tr>' . PHP_EOL;
 }
 
 ?>
+		</tbody>
 	</table>
 </div>
 

@@ -175,6 +175,7 @@ foreach (intern3\RapportListe::medBrukerId_brukerensEgne($this->cd->getAktivBruk
 				<th>Dato utført / registrert</th>
 				<th>Kategori</th>
 				<th>Tid brukt</th>
+				<th>Kommentar</th>
 				<th>Status</th>
 				<th> </th>
 			</tr>
@@ -187,6 +188,7 @@ foreach ($arbeidListe as $arbeid) {
 				<td><?php echo substr($arbeid->getTidUtfort(), 0, 10) . ' / ' . substr($arbeid->getTidRegistrert(), 0, 10); ?></td>
 				<td><?php echo $arbeid->getPolymorfKategori()->getNavn(); ?></td>
 				<td><?php echo intern3\Funk::timerTilTidForm($arbeid->getSekunderBrukt() / 3600); ?></td>
+				<td><?php echo htmlspecialchars($arbeid->getKommentar()); ?></td>
 				<td><?php echo $arbeid->getGodkjent() ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
 				<td><?php echo $arbeid->getGodkjent() ? ' ' : '<button>Slett</button>'; ?></td>
 			</tr>
