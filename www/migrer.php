@@ -49,6 +49,7 @@ $db->query('TRUNCATE TABLE kvittering;');
 $db->query('TRUNCATE TABLE rapport;');
 $db->query('TRUNCATE TABLE ansvarsomrade;');
 $db->query('TRUNCATE TABLE ansvarsomrade_feil;');
+$db->query('TRUNCATE TABLE bruker_ansvarsomrade;');
 $db->query('TRUNCATE TABLE arbeidskategori;');
 $db->query('TRUNCATE TABLE arbeid;');
 $db->query('TRUNCATE TABLE oppgave;');
