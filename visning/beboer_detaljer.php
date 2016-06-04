@@ -6,7 +6,7 @@ require_once('topp.php');
 
 <div class="col-md-4">
 	<h1>Beboer &raquo; <?php echo $beboer->getFulltNavn(); ?></h1>
-	<p>[ <a href="?a=beboer">Beboerliste</a> ] [ <a href="?a=beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
+	<p>[ <a href="<?php echo $cd->getBase(); ?>beboer">Beboerliste</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]</p>
 	<table class="table table-bordered">
 		<tr>
 			<th>Rom</th>
@@ -30,7 +30,7 @@ if ($studie == null || $skole == null) {
 }
 else {
 	echo $beboer->getKlassetrinn();
-	?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a> (<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
+	?>. <a href="<?php echo $cd->getBase(); ?>studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a> (<a href="<?php echo $cd->getBase(); ?>skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
 }
 	?></td>
 		</tr>

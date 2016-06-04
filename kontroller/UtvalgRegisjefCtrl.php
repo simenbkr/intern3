@@ -5,14 +5,16 @@ namespace intern3;
 class UtvalgRegisjefCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
 		$aktueltArg = $this->cd->getAktueltArg();
-		if ($aktueltArg == 'regisjef') {
-			$dok = new Visning($this->cd);
-			$dok->vis('utvalg_regisjef.php');
+		switch ($aktueltArg) {
+			case 'arbeid':
+				$valgtCtrl = new UtvalgRegisjefArbeidCtrl($this->cd->skiftArg());
+				break;
+			default:
+				$dok = new Visning($this->cd);
+				$dok->vis('utvalg_regisjef.php');
+				return;
 		}
-		else {
-			$dok = new Visning($this->cd);
-			$dok->vis('utvalg_regisjef.php');
-		}
+		$valgtCtrl->bestemHandling();
 	}
 }
 

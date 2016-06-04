@@ -183,7 +183,7 @@ class Arbeid {
 	public function getBruker () {
 		if(!$this->bruker){
 			// lazyinit
-			$this->bruker = Person::medId($this->bruker_id);
+			$this->bruker = Bruker::medId($this->bruker_id);
 		}
 		return $this->bruker;
 	}

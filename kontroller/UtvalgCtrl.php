@@ -23,6 +23,9 @@ class UtvalgCtrl extends AbstraktCtrl {
         case 'kosesjef':
           $valgtCtrl = new UtvalgKosesjefCtrl($this->cd->skiftArg());
           break;
+        case 'admin':
+          $valgtCtrl = new UtvalgAdminCtrl($this->cd->skiftArg());
+          break;
         default:
           $valgtCtrl = new UtvalgDiverseCtrl($this->cd->skiftArg());
           break;

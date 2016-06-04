@@ -6,7 +6,7 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1>Beboer &raquo; Beboerliste</h1>
-	<p>[ Beboerliste ] [ <a href="?a=beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="?a=beboer/statistikk">Statistikk</a> ]</p>
+	<p>[ Beboerliste ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]</p>
 	<table class="table table-bordered table-responsive">
 		<tr>
 			<th>Navn</th>
@@ -22,7 +22,7 @@ require_once('topp.php');
 foreach ($beboerListe as $beboer){
 	?>
 		<tr>
-			<td><a href="?a=beboer/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
+			<td><a href="<?php echo $cd->getBase(); ?>beboer/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
 			<td><?php echo $beboer->getRom()->getNavn(); ?></td>
 			<td><?php echo $beboer->getTelefon(); ?></td>
 			<td><a href="mailto:<?php echo $beboer->getEpost(); ?>"><?php echo $beboer->getEpost(); ?></a></td>
@@ -34,7 +34,7 @@ foreach ($beboerListe as $beboer){
 	}
 	else {
 		echo $beboer->getKlassetrinn();
-		?>. <a href="?a=studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a>&nbsp;(<a href="?a=skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
+		?>. <a href="<?php echo $cd->getBase(); ?>studie/<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></a>&nbsp;(<a href="<?php echo $cd->getBase(); ?>skole/<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></a>)<?php
 	}
 	?></td>
 			<td><?php echo $beboer->getFodselsdato(); ?></td>

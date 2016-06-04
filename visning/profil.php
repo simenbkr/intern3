@@ -17,7 +17,7 @@ if (count($feil) > 0) {
 	echo '	</ul>' . PHP_EOL;
 }
 else {
-	echo '	<p>[ <a href="?a=beboer/' . $beboer->getId() . '">Se profil</a> ]</p>
+	echo '	<p>[ <a href="' . $cd->getBase() . 'beboer/' . $beboer->getId() . '">Se profil</a> ]</p>
 ';
 }
 

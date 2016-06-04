@@ -12,7 +12,15 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl {
 			$dok->vis('utvalg_romsjef_beboerliste.php');
 		}
 		else if ($aktueltArg == 'nybeboer') {
+      $skoleListe = SkoleListe::alle();
+      $studieListe = StudieListe::alle();
+      $rolleListe = RolleListe::alle();
+      $romListe = RomListe::alle();
 			$dok = new Visning($this->cd);
+      $dok->set('skoleListe', $skoleListe);
+      $dok->set('studieListe', $studieListe);
+      $dok->set('rolleListe', $rolleListe);
+      $dok->set('romListe', $romListe);
 			$dok->vis('utvalg_romsjef_nybeboer.php');
 		}
 		else if ($aktueltArg == 'endrebeboer') {

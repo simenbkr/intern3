@@ -5,7 +5,7 @@ require_once('topp.php');
 ?>
 <div class="col-md-12">
 	<h1>Vakt &raquo; Vaktliste</h1>
-	<p>[ Vaktliste ] [ <a href="?a=vakt/bytte">Vaktbytte</a> ]</p>
+	<p>[ Vaktliste ] [ <a href="<?php echo $cd->getBase(); ?>vakt/bytte">Vaktbytte</a> ]</p>
 	<p><span class="tekst_dinevakter"><?php
 if ($cd->getAktivBruker()->getPerson()->harVakt()) {
 	echo 'Dine vakter';

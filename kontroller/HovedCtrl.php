@@ -20,7 +20,10 @@ class HovedCtrl extends AbstraktCtrl {
 				return;
 			}
 		}
-		switch ($aktueltArg) {
+		$this->bestemKontroller();
+	}
+	public function bestemKontroller() {
+		switch ($this->cd->getAktueltArg()) {
 			case 'beboer':
 				$valgtCtrl = new BeboerCtrl($this->cd->skiftArg());
 				break;

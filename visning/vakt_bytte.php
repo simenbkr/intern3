@@ -6,7 +6,7 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1>Vakt &raquo; Vaktbytte</h1>
-	<p>[ <a href="?a=vakt">Vaktliste</a> ] [ Vaktbytte ]</p>
+	<p>[ <a href="<?php echo $cd->getBase(); ?>vakt">Vaktliste</a> ] [ Vaktbytte ]</p>
 </div>
 <div class="col-md-3 col-sm-6 col-sx-12">
 <?php

@@ -28,7 +28,11 @@ class ArbeidListe extends Liste {
 		return self::listeFraSql('Arbeid::medId' , 'SELECT arbeid.id FROM arbeid WHERE bruker_id=:brk;' , array(':brk' => $bruker_id) , $Sideinndeling);
 	}
 
-	public static function medSemester($unix , $Sideinndeling = null) {
+	public static function medSemester($unix = false , $Sideinndeling = null) {
+		if ($unix === false) {
+			global $_SERVER;
+			$unix = $_SERVER['REQUEST_TIME'];
+		}
     if (date('n' , $unix) > 6) {
     $start = strtotime('first day of July' , $unix);
     $slutt = strtotime('first day of January next year' , $unix);
@@ -43,7 +47,11 @@ class ArbeidListe extends Liste {
 		return self::listeFraSql('Arbeid::medId' , $sql , $param , $Sideinndeling);
 	}
 
-	public static function medBrukerIdSemester($bruker_id , $unix , $Sideinndeling = null) {
+	public static function medBrukerIdSemester($bruker_id , $unix = false , $Sideinndeling = null) {
+		if ($unix === false) {
+			global $_SERVER;
+			$unix = $_SERVER['REQUEST_TIME'];
+		}
     if (date('n' , $unix) > 6) {
     $start = strtotime('first day of July' , $unix);
     $slutt = strtotime('first day of January next year' , $unix);

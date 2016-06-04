@@ -138,6 +138,10 @@ class Beboer implements Person {
 		return $this->klassetrinn;
 	}
 
+	public function harAlkoholdepositum() {
+		return $this->alkoholdepositum > 0;
+	}
+
 	public function getStudieId() {
 		return $this->studieId;
 	}

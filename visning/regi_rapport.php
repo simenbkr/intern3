@@ -10,7 +10,7 @@ require_once('topp.php');
 <?php
 
 foreach (intern3\AnsvarsomradeListe::alle() as $ao) {
-	echo '		<a class="display: block;" href="?a=regi/rapport/ansvarsomrade/' . $ao->getId() . '">' . $ao->getNavn() . '</a><br>' . PHP_EOL;
+	echo '		<a class="display: block;" href="' . $cd->getBase() . 'regi/rapport/ansvarsomrade/' . $ao->getId() . '">' . $ao->getNavn() . '</a><br>' . PHP_EOL;
 }
 
 ?>
@@ -20,7 +20,7 @@ foreach (intern3\AnsvarsomradeListe::alle() as $ao) {
 <?php
 
 foreach (intern3\FeilkategoriListe::alle() as $fk) {
-	echo '		<a class="display: block;" href="?a=regi/rapport/feilkategori/' . $fk->getId() . '">' . $fk->getNavn() . '</a><br>' . PHP_EOL;
+	echo '		<a class="display: block;" href="' . $cd->getBase() . 'regi/rapport/feilkategori/' . $fk->getId() . '">' . $fk->getNavn() . '</a><br>' . PHP_EOL;
 }
 
 ?>
@@ -30,7 +30,7 @@ foreach (intern3\FeilkategoriListe::alle() as $fk) {
 <?php
 
 foreach (intern3\RomListe::alle() as $rom) {
-	echo '		<a style="display: inline-block;" href="?a=regi/rapport/rom/' . $rom->getId() . '">' . $rom->getNavn() . '</a>' . PHP_EOL;
+	echo '		<a style="display: inline-block;" href="' . $cd->getBase() . 'regi/rapport/rom/' . $rom->getId() . '">' . $rom->getNavn() . '</a>' . PHP_EOL;
 }
 
 ?>
@@ -40,7 +40,7 @@ foreach (intern3\RomListe::alle() as $rom) {
 <?php
 
 foreach (intern3\PrioritetListe::alle() as $p) {
-	echo '		<a class="display: block;" href="?a=regi/rapport/prioritet/' . $p->getId() . '">' . $p->getNavn() . '</a><br>' . PHP_EOL;
+	echo '		<a class="display: block;" href="' . $cd->getBase() . 'regi/rapport/prioritet/' . $p->getId() . '">' . $p->getNavn() . '</a><br>' . PHP_EOL;
 }
 
 ?>
@@ -80,9 +80,9 @@ foreach ($rapportListe as $rapport) {
 	?>
 			<tbody>
 				<tr<?php if ($rapport->getGodkjent()) { echo ' style="opacity: .6; text-decoration: line-through;"'; } ?>>
-					<td><a href="?a=<?php echo $cd->getBase() . '/rom/' . $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></a></td>
-					<td><a href="?a=<?php echo $cd->getBase() . '/prioritet/' . $prioritet->getId(); ?>" style="color: <?php echo $prioritet->getFarge(); ?>"><?php echo $prioritet->getNavn(); ?></a></td>
-					<td><a href="?a=<?php echo $cd->getBase() . '/feil/' . $feil->getId(); ?>"><?php echo $feil->getNavn(); ?></a></td>
+					<td><a href="<?php echo $cd->getBase() . 'regi/rapport/rom/' . $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></a></td>
+					<td><a href="<?php echo $cd->getBase() . 'regi/rapport/prioritet/' . $prioritet->getId(); ?>" style="color: <?php echo $prioritet->getFarge(); ?>"><?php echo $prioritet->getNavn(); ?></a></td>
+					<td><a href="<?php echo $cd->getBase() . 'regi/rapport/feil/' . $feil->getId(); ?>"><?php echo $feil->getNavn(); ?></a></td>
 					<td><?php echo htmlspecialchars($rapport->getMerknad()); ?></td>
 					<td><?php echo substr($rapport->getTidOppretta(), 0, 10); ?></td>
 					<td>Detaljer</td>

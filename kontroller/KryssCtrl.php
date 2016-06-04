@@ -34,8 +34,15 @@ class KryssCtrl extends AbstraktCtrl {
 			return ($a->tid < $b->tid) ? 1 : -1;
 		});
 		$sum = array_sum($ukedager);
-		foreach ($ukedager as $dag => $antall) {
-			$ukedager[$dag] = round(($antall / $sum) * 100);
+		if ($sum == 0) {
+			foreach ($ukedager as $dag => $antall) {
+				$ukedager[$dag] = 0;
+			}
+		}
+		else {
+			foreach ($ukedager as $dag => $antall) {
+				$ukedager[$dag] = round(($antall / $sum) * 100);
+			}
 		}
 		$dok = new Visning($this->cd);
 		$dok->set('sumKryss', $sumKryss);

@@ -1,5 +1,7 @@
 <?php
 
+namespace intern3;
+
 class SideinndelData {
 private $PerSide;
 private $Side;
