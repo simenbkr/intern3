@@ -91,12 +91,14 @@ foreach ($rolleListe as $rolle) {
         </select>
       </td>
     </tr>
+    <?php if ($beboer != null) { ?> <!-- fjerner romhistorikk på _nybeboer.php -->
     <tr>
       <td>Romhistorikk:</td>
       <td><?php foreach ($beboer->getRomhistorikk()->getPerioder() as $periode) {
         echo intern3\Rom::medId($periode->romId)->getNavn() . ' ' . $periode->innflyttet . ' ' . $periode->utflyttet . '<br>';
       } ?></td>
     </tr>
+    <?php } ?> <!-- slutt -->
     <tr>
       <td>Rom:</td>
       <td>

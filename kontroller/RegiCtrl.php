@@ -18,6 +18,11 @@ class RegiCtrl extends AbstraktCtrl {
 				));
 				$dok->vis('regi_registatus.php');
 				return;
+      case 'minregi':
+        $dok = new Visning($this->cd);
+        $unix = $_SERVER['REQUEST_TIME'];
+        $dok->vis('regi_minregi.php');
+        return;
 			case '':
 			default:
 				$dok = new Visning($this->cd);
