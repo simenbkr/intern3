@@ -81,7 +81,6 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 		</tr>
 <?php
 }
-
 ?>
 	</table>
 </div>
@@ -90,9 +89,23 @@ foreach (range($denneManed, $denneManed > 6 ? 12 : 6) as $maned) {
 	<h1>Regioppgaver</h1>
 	<p>Her vil det stå regioppgaver du kan melde deg opp på</p>
 	<table class="table-bordered table">
-		<tr>
-			<td>Det skal lages en ny internside innen 1/6-16 <input type="button" class="btn btn-sm btn-info" Name="btn1" value="Meld på"></td>
-		</tr>
+    <thead>
+      <tr>
+        <th>Navn</th>
+        <th>Beskrivelse</th>
+      </tr>
+    </thead>
+    <tbody>
+<?php
+foreach ($oppgaveListe as $oppgave) {
+?>		<tr>
+        <td><?php echo $oppgave->getNavn(); ?></td>
+        <td><?php echo htmlspecialchars($oppgave->getBeskrivelse()); ?></td>
+      </tr>
+<?php
+}
+?>
+		</tbody>
 	</table>
 </div>
 

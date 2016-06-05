@@ -3,7 +3,10 @@
 require_once('topp.php');
 
 ?>
-<h1>Wiki</h1>
+<div class="col-md-12">
+	<h1>Wiki</h1>
+  Denne siden kommer høsten 2016.
+</div>
 <?php
 
 require_once('bunn.php');

@@ -35,7 +35,6 @@ foreach (/*$utleie as $utleiet*/range(1, 5) as $i){
 							// echo $utleiet->getBeboer1_id();
 						}
 						?>
-						<!-- <p></p> -->
 						<?php
 						if (/*empty($utleiet->getBeboer2_id())*/True){
 							?>

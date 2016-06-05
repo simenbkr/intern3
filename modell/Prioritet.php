@@ -27,7 +27,7 @@ class Prioritet
 
 		return $instans;
 	}
-	
+
 	private function init($pdo_statement)
 	{
 		$prioritet = $pdo_statement->fetch();
