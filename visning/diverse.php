@@ -13,7 +13,7 @@ if ($cd->getAktivBruker()->getPerson()->harVakt()) {
 else {
 	echo 'Du skal ikke sitte vakter';
 }
-?></span>, <span class="merke_bursdag" title=""; > </span><span class="tekst_bursdager"> Bursdager</span>, <span class="merke_viktigedatoer" title=""; ></span><span class="tekst_viktigedatoer"> Andre viktige datoer</span></p>
+?></span>, <span class="merke_bursdag" title=""; > </span><span class="tekst_bursdager"> Bursdager</span>, <span class="merke_viktigedatoer" title=""; ></span><span class="tekst_viktigedatoer"> Viktige datoer</span></p>
 	<table class="table-bordered table">
 		<tr>
 			<th>U<span class="hidden-sm hidden-xs">ke</span></th>

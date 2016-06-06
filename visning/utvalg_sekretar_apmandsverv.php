@@ -31,7 +31,7 @@ foreach ($vervListe as $verv) {
 		if ($i++ > 0) {
 			echo ', ';
 		}
-		echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a> <a href="#" class="red">X</a>';
+		echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a> <button onclick="fjern">&#x2718;</button>'; // TODO denne må fikses!
 	}
 	?></td>
   <td><select>

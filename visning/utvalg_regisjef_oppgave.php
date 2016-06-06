@@ -23,6 +23,20 @@ function fjern(id) {
 	});
 }
 
+function godkjenn(id) {
+	$.ajax({
+		type: 'POST',
+		url: '<?php echo $_SERVER['REQUEST_URI']; ?>',
+		data: id, // TODO må fikses!
+		success: function(data) {
+			$('#oppgave_' + id).html(data);
+		},
+		error: function(req, stat, err) {
+			alert(err);
+		}
+	});
+}
+
 function byttPolymorfkategori(id) {
 	$('#polymorfkategori_ymse').hide();
 	$('#polymorfkategori_feil').hide();
@@ -54,7 +68,7 @@ $(document).ready(function() {
 		<table class="table table-bordered">
       <tr>
         <th>Navn</th>
-        <td><input name="prioritet" <?php echo isset($_POST['prioritet']) ? ' value="' . $_POST['prioritet'] . '"' : ''; ?>></td>
+        <td><input name="navn" <?php echo isset($_POST['navn']) ? ' value="' . $_POST['navn'] . '"' : ''; ?>></td>
       </tr>
       <tr>
         <th>Prioritet</th>
@@ -89,7 +103,7 @@ $(document).ready(function() {
 				<th>Anslag timer</th>
 				<th>Anslag personer</th>
         <th>Beskrivelse</th>
-				<th> </th>
+				<th>Godkjenn/Fjern</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -102,7 +116,7 @@ foreach ($oppgaveListe as $oppgave) {
 				<td><?php echo $oppgave->getAnslagTimer(); ?></td>
 				<td><?php echo $oppgave->getAnslagPersoner(); ?></td>
 				<td><?php echo htmlspecialchars($oppgave->getBeskrivelse()); ?></td>
-				<td><button onclick="fjern">&#x2718;</button></td>
+				<td><button onclick="godkjenn(<?php $oppgave->getId(); ?>)">&#x2714;</button><button onclick="fjern(<?php $oppgave->getId(); ?>)">&#x2718;</button></td>
 			</tr>
 <?php
 }
