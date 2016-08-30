@@ -23,9 +23,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 				$dok->vis('utvalg_vaktsjef_vaktoversikt.php');
 				break;
 			case 'vaktstyring':
+        $beboerListe = BeboerListe::harVakt();
 				$dok = new Visning($this->cd);
 				$dok->set('denneUka', @date('W'));
 				$dok->set('detteAret', @date('Y'));
+        $dok->set('beboerListe', $beboerListe);
 				$dok->vis('utvalg_vaktsjef_vaktstyring.php');
 				break;
 			case 'generer':
