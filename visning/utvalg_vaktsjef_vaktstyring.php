@@ -53,10 +53,10 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 				continue;
 			}
 			else if ($vakt == null) {
-				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="#' . $modalId . '"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="#' . $modalId . 'ledig"></td>' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
-				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="#' . $modalId . '"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="#' . $modalId . 'ledig"></td>' . PHP_EOL;
 			}
       else {
   			$bruker = $vakt->getBruker();
@@ -71,20 +71,34 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
   			}
       }
 		  ?>
-      <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
+      <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog"> // Modal for vakter
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title"><?php echo $vakttype . '. vakt ' . strftime('%A %d/%m', $unix); ?></h4>
+            </div>
+            <div class="modal-body" align="center">
+              <input type="button" class="btn btn-sm btn-info" value="Bytte vakt" data-target="<?php echo $modalId; ?>byttevakt">
+              <input type="button" class="btn btn-sm btn-info" value="Dobbelvakt" data-target="<?php echo $modalId; ?>dobbelvakt">
+              <input type="button" class="btn btn-sm btn-warning" value="Straffevakt" data-target="<?php echo $modalId; ?>straffevakt">
+              <input type="button" class="btn btn-sm btn-danger" value="Slett vakt" data-target="<?php echo $modalId; ?>slettvakt">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="<?php echo $modalId; ?>ledig" role="dialog"> // Modal for ledige vakter
         <div class="modal-dialog modal-sm">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
               <h4 class="modal-title"><?php echo $vakttype . '. vakt ' . strftime('%A %d/%m', $unix); ?></h4>
             </div>
-            <div class="modal-body">
-              <p>Bytte vakt</p>
-              <p>Gi vakt</p>
-              <p>Slett vakt</p>
-              <p>Sett vakt som ledig</p>
-              <p>Dobbelvakt</p>
-              <p>Straffevakt</p>
+            <div class="modal-body" align="center">
+              <input type="button" class="btn btn-sm btn-success" value="Sett vakt" data-target="<?php echo $modalId; ?>settakt">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
