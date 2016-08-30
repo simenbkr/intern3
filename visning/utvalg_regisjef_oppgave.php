@@ -102,7 +102,10 @@ $(document).ready(function() {
         <th>Prioritet</th>
 				<th>Anslag timer</th>
 				<th>Anslag personer</th>
+        <th>Påmeldte</th>
         <th>Beskrivelse</th>
+        <th>Opprettet</th>
+        <th>Godkjent</th>
 				<th>Godkjenn/Fjern</th>
 			</tr>
 		</thead>
@@ -110,13 +113,16 @@ $(document).ready(function() {
 <?php
 
 foreach ($oppgaveListe as $oppgave) {
-	?>			<tr>
+	?>			<tr id="<?php echo $oppgave->getId(); ?>">
 				<td><?php echo $oppgave->getNavn(); ?></td>
 			  <td><?php echo $oppgave->getPrioritetId(); ?></td>
 				<td><?php echo $oppgave->getAnslagTimer(); ?></td>
 				<td><?php echo $oppgave->getAnslagPersoner(); ?></td>
+				<td><?php null == null ? '':''; ?></td>
 				<td><?php echo htmlspecialchars($oppgave->getBeskrivelse()); ?></td>
-				<td><button onclick="godkjenn(<?php $oppgave->getId(); ?>)">&#x2714;</button><button onclick="fjern(<?php $oppgave->getId(); ?>)">&#x2718;</button></td>
+        <td><?php echo $oppgave->getTidOppretta(); ?></td>
+        <td><?php echo $oppgave->getTidGodkjent() != null ? '<span title="Godkjent av ' . intern3\Bruker::medId($oppgave->getGodkjentBrukerId()) == null ? intern3\Bruker::medId($oppgave->getGodkjentBrukerId())->getPerson()->getFulltNavn() : $oppgave->getGodkjentBrukerId() . '">' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>
+        <td><?php echo $oppgave->getGodkjent() > 0 ? '' : '<button onclick="godkjenn(' . $oppgave->getId() . ')">&#x2714;</button>'; ?> <button onclick="fjern(<?php $oppgave->getId(); ?>)">&#x2718;</button></td>
 			</tr>
 <?php
 }
