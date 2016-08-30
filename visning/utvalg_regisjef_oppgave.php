@@ -121,7 +121,7 @@ foreach ($oppgaveListe as $oppgave) {
 				<td><?php null == null ? '':''; ?></td>
 				<td><?php echo htmlspecialchars($oppgave->getBeskrivelse()); ?></td>
         <td><?php echo $oppgave->getTidOppretta(); ?></td>
-        <td><?php echo $oppgave->getTidGodkjent() != null ? '<span title="Godkjent av ' . intern3\Bruker::medId($oppgave->getGodkjentBrukerId()) == null ? intern3\Bruker::medId($oppgave->getGodkjentBrukerId())->getPerson()->getFulltNavn() : $oppgave->getGodkjentBrukerId() . '">' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>
+        <td><?php echo $oppgave->getTidGodkjent() != null ? '<span title="Godkjent av ' . intern3\Bruker::medId($oppgave->getGodkjentBrukerId()) == null ? intern3\Bruker::medId($oppgave->getGodkjentId())->getPerson()->getFulltNavn() : intern3\Beboer::medId($oppgave->getGodkjentBrukerId())->getFulltNavn() . ' > ' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>
         <td><?php echo $oppgave->getGodkjent() > 0 ? '' : '<button onclick="godkjenn(' . $oppgave->getId() . ')">&#x2714;</button>'; ?> <button onclick="fjern(<?php $oppgave->getId(); ?>)">&#x2718;</button></td>
 			</tr>
 <?php
