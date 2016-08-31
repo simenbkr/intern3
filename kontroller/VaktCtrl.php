@@ -9,7 +9,7 @@ class VaktCtrl extends AbstraktCtrl {
 		if ($aktueltArg == 'bytte') {
 			$dok = new Visning($this->cd);
 			$dok->set('vaktbytteListe', $vaktbytteListe);
-			$dok->vis('vakt_bytte.php');
+			$dok->vis('vakt_bytte_liste.php');
 		}
 		else {
 			$dok = new Visning($this->cd);

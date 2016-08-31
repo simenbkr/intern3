@@ -24,12 +24,23 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 				break;
 			case 'vaktstyring':
         $beboerListe = BeboerListe::harVakt();
+        $torild = Ansatt::medId(1); // 1 Torild Fivë
 				$dok = new Visning($this->cd);
+        $dok->set('torild', $torild);
 				$dok->set('denneUka', @date('W'));
 				$dok->set('detteAret', @date('Y'));
         $dok->set('beboerListe', $beboerListe);
 				$dok->vis('utvalg_vaktsjef_vaktstyring.php');
 				break;
+      case 'vaktstyring_settvakt':
+        $beboer = Beboer::medId($this->cd->getArg($this->cd->getAktuellArgPos()+1));
+        if ($beboer == null) {
+          break; // TODO må fikses
+        }
+        $dok = new Visning($this->cd);
+        $dok->set('beboer', $beboer);
+        $dok->vis('utvalg_vaktsjef_vaktstyring_settvakt.php');
+        break;
 			case 'generer':
 				$valgtCtrl = new UtvalgVaktsjefGenererCtrl($this->cd->skiftArg());
 				$valgtCtrl->bestemHandling();

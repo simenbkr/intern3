@@ -15,13 +15,13 @@ class Ansatt implements Person {
   private $bruker;
 
 	public static function medId($id) {
-		$st = DB::getDB()->prepare('SELECT * FROM beboer WHERE id=:id;');
+		$st = DB::getDB()->prepare('SELECT * FROM ansatt WHERE id=:id;');
 		$st->bindParam(':id', $id);
 		$st->execute();
 		return self::init($st);
 	}
 	public static function medBrukerId($brukerId) {
-		$st = DB::getDB()->prepare('SELECT * FROM beboer WHERE bruker_id=:brukerId;');
+		$st = DB::getDB()->prepare('SELECT * FROM ansatt WHERE bruker_id=:brukerId;');
 		$st->bindParam(':brukerId', $brukerId);
 		$st->execute();
 		return self::init($st);
