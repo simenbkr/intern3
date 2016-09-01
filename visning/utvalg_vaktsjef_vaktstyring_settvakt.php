@@ -1,8 +1,5 @@
 <div>
   <p> </p>
-<?php
-function visVakter($visFerdig = true) {
-	?>
 		<table class="table table-bordered">
 			<tr>
 				<th>Velg vakt</th>
@@ -32,8 +29,4 @@ function visVakter($visFerdig = true) {
 		}
 	?>
 		</table>
-<?php
-}
-visVakter();
-?>
 </div>
