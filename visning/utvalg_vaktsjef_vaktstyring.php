@@ -6,10 +6,25 @@ require_once('topp_utvalg.php');
 
 <script>
 function velgBeboer(id) {
-  $.get('?a=utvalg/vaktsjef/vaktstyring_settvakt/'+id, function(data) {
-    $('#settvakt').html(html);
-  });
+  if (id == 0) {
+    $('#').find('.modal-body').append(id);
+    $('#modal').find('.modal-body').append(id);
+    $('#settvakt').html(' ');
+  }
+  else {
+    $.get('?a=utvalg/vaktsjef/vaktstyring_settvakt/'+id, function(data) {
+      $('#').find('.modal-body').append(id);
+      $('#modal').find('.modal-body').append(id);
+      $('#settvakt').html(data);
+    });
+  }
 }
+// $(function modalId() {
+//   $('.modal').on('shown.bs.modal', function() {
+//     var modalId = $(this).attr('id');
+//     // $('#'+modalId).find('.modal-body').prepend('<p>' + modalId + '</p>');
+//   });
+// });
 </script>
 
 <div class="col-md-12">
@@ -133,7 +148,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Lukk</button>
-              <button type="button" class="btn btn-sm btn-primary">Lagre</button> <!-- TODO må fikses! -->
+              <button type="button" class="btn btn-sm btn-primary" id="lagre">Lagre</button> <!-- TODO må fikses! -->
             </div>
           </div>
         </div>
@@ -166,7 +181,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
             </div>
             <div class="modal-body" align="center">
               <p>Velg hvem som skal ha vakten</p>
-              <select onchange="velgBeboer(this.value)" data-target="#<?php echo $modalId; ?>-byttvakt">
+              <select onchange="velgBeboer(this.value)">
                 <option value="0">- velg -</option>
 
                 <?php

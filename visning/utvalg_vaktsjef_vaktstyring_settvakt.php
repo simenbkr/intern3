@@ -2,13 +2,16 @@
   <p> </p>
 <?php
 function visVakter($visFerdig = true) {
+  global $beboer;
 	?>
 		<table class="table table-bordered">
 			<tr>
 				<th>Velg vakt</th>
+        <th><?php var_dump($beboer); ?></th>
 			</tr>
 	<?php
-	foreach (intern3\VaktListe::medBrukerId($beboer->getBrukerId()) as $vakt) {
+  foreach (intern3\VaktListe::medBrukerId($beboer->getBrukerId()) as $vakt) {
+  // foreach (intern3\VaktListe::medBrukerId(49) as $vakt) {
 		$tid = strtotime($vakt->getDato());
 		$tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
 		?>		<tr>

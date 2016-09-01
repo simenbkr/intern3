@@ -212,7 +212,7 @@ class Beboer implements Person {
 	}
 
 	public function harUtvalgVerv() {
-		//return count($this->getUtvalgVervListe()) > 0;
+		//return count($this->getUtvalgVervListe()) > 0; // TODO må fikses!
     return true;
 	}
 
