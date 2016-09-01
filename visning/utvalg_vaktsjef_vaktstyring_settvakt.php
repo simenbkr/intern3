@@ -3,7 +3,6 @@
 		<table class="table table-bordered">
 			<tr>
 				<th>Velg vakt</th>
-        <th><?php var_dump($beboer); ?></th>
 			</tr>
 	<?php
   foreach (intern3\VaktListe::medBrukerId($beboer->getBrukerId()) as $vakt) {
@@ -32,3 +31,4 @@
 	?>
 		</table>
 </div>
+
