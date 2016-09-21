@@ -553,7 +553,6 @@ while ($rad = $hent->fetch()) {
 /* Migrering av arbeidskategori, slutt */
 
 /* Migrering av arbeid, start */
-echo "<br/><br/>Starter arbeids-migrering!";
 $hent = $regi->prepare('SELECT * FROM arbeid;');
 $hent->execute();
 while ($rad = $hent->fetch()) {
@@ -601,38 +600,8 @@ while ($rad = $hent->fetch()) {
 }
 
 /* Migrering av oppgave, slutt */
-echo "<br/><br/>Starter øl-kryssing-migrering!";
-//ferdig(); // Alt heretter går veldig sakte.
-$db->query('TRUNCATE TABLE krysseliste;');
-
-/* Migrering av krysseliste, start */
-
-// Fra gamle til nye drikke_id-er
-$drikkeIder = array(
-	-1 => 1, // Pant (hadde egen kolonne tidligere)
-	0 => 2, // Øl
-	1 => 2, // Øl
-	2 => 3, // Carlsberg
-	3 => 4, // Cider
-	4 => 5 // Rikdom
-);
-
-$hentKryss = pg_query('SELECT * FROM krysseliste_beer ORDER BY dato;');
-while ($kryss = pg_fetch_array($hentKryss)) {
-	if ($kryss['beboer_id'] == 0) {
-		continue;
-	}
-	$drikkeId = $kryss['pant'] == 'TRUE' ? $drikkeIder[-1] : $drikkeIder[$kryss['type']];
-	$krysseliste = Krysseliste::medBeboerDrikkeId($beboerIdFornyelse[$kryss['beboer_id']], $drikkeId);
-	$krysseliste->addKryss($kryss['antall'], strtotime($kryss['dato']), $kryss['fakturert']);
-	$krysseliste->oppdater();
-}
-
-/* Migrering av krysseliste, slutt */
-
 
 /* Migrering av kryssejournal start */
-print_r($mapBeboerIder);
 $hentKrysseliste = pg_query('SELECT * FROM krysseliste ORDER BY dato');
 
 while ($krysset = pg_fetch_array($hentKrysseliste)){
@@ -643,7 +612,7 @@ while ($krysset = pg_fetch_array($hentKrysseliste)){
 cid_mottatt,cid_pafyll,cid_avlevert,cid_utavskap,carls_mottatt,carls_pafyll,carls_avlevert,carls_utavskap,dato,
 rikdom_mottatt,rikdom_pafyll,rikdom_avlevert,rikdom_utavskap) VALUES(:kryss_id,:beboer_id,:vakt,:ol_mottatt,:ol_pafyll,:ol_avlevert,:ol_utavskap,
 :cid_mottatt,:cid_pafyll,:cid_avlevert,:cid_utavskap,:carls_mottatt,:carls_pafyll,:carls_avlevert,:carls_utavskap,:dato,
-:rikdom_mottatt,:rikdom_pafyll,:rikdom_avlevert,:rikdom_utavskap))');
+:rikdom_mottatt,:rikdom_pafyll,:rikdom_avlevert,:rikdom_utavskap)');
 
 	$st->bindParam(':kryss_id',$krysset['kryss_id']);
 	$st->bindParam(':beboer_id',$mapBeboerIder[$krysset['beboer_id']]);
@@ -674,6 +643,37 @@ rikdom_mottatt,rikdom_pafyll,rikdom_avlevert,rikdom_utavskap) VALUES(:kryss_id,:
 	$st->execute();
 
 }
+/*Migrering av kryssejournal slutt*/
+ferdig();
+// Alt heretter går veldig sakte. TODO Endre ferdig() til senere før "ekte" migrering!
+$db->query('TRUNCATE TABLE krysseliste;');
+
+/* Migrering av krysseliste, start */
+
+// Fra gamle til nye drikke_id-er
+$drikkeIder = array(
+	-1 => 1, // Pant (hadde egen kolonne tidligere)
+	0 => 2, // Øl
+	1 => 2, // Øl
+	2 => 3, // Carlsberg
+	3 => 4, // Cider
+	4 => 5 // Rikdom
+);
+
+$hentKryss = pg_query('SELECT * FROM krysseliste_beer ORDER BY dato;');
+while ($kryss = pg_fetch_array($hentKryss)) {
+	if ($kryss['beboer_id'] == 0) {
+		continue;
+	}
+	$drikkeId = $kryss['pant'] == 'TRUE' ? $drikkeIder[-1] : $drikkeIder[$kryss['type']];
+	$krysseliste = Krysseliste::medBeboerDrikkeId($beboerIdFornyelse[$kryss['beboer_id']], $drikkeId);
+	$krysseliste->addKryss($kryss['antall'], strtotime($kryss['dato']), $kryss['fakturert']);
+	$krysseliste->oppdater();
+}
+
+/* Migrering av krysseliste, slutt */
+
+
 
 
 
