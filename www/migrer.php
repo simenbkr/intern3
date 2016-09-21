@@ -53,6 +53,7 @@ $db->query('TRUNCATE TABLE bruker_ansvarsomrade;');
 $db->query('TRUNCATE TABLE arbeidskategori;');
 $db->query('TRUNCATE TABLE arbeid;');
 $db->query('TRUNCATE TABLE oppgave;');
+$db->query('TRUNCATE TABLE journal');
 //etc
 
 /* Migrering av skole, start */
@@ -148,6 +149,9 @@ $rolleIder = array(
 	7 => 1
 );
 
+//Gammel => Ny
+$mapBeboerIder = array();
+$indeks = 1;
 $hentBeboere = pg_query('SELECT * FROM
 	beboer AS be,
 	skole AS sk,
@@ -247,6 +251,9 @@ VALUES(
 	// Merk at bruker_id her ennå ikke er satt.
 	$st->execute();
 	$beboerIdFornyelse[$beboer['beboer_id']] = $db->lastInsertId();
+
+	$mapBeboerIder[$beboer['beboer_id']] = $indeks;
+	$indeks += 1;
 }
 
 foreach (BeboerListe::aktive() as $beboer) {
@@ -546,7 +553,7 @@ while ($rad = $hent->fetch()) {
 /* Migrering av arbeidskategori, slutt */
 
 /* Migrering av arbeid, start */
-
+echo "<br/><br/>Starter arbeids-migrering!";
 $hent = $regi->prepare('SELECT * FROM arbeid;');
 $hent->execute();
 while ($rad = $hent->fetch()) {
@@ -594,8 +601,8 @@ while ($rad = $hent->fetch()) {
 }
 
 /* Migrering av oppgave, slutt */
-
-ferdig(); // Alt heretter går veldig sakte.
+echo "<br/><br/>Starter øl-kryssing-migrering!";
+//ferdig(); // Alt heretter går veldig sakte.
 $db->query('TRUNCATE TABLE krysseliste;');
 
 /* Migrering av krysseliste, start */
@@ -622,6 +629,53 @@ while ($kryss = pg_fetch_array($hentKryss)) {
 }
 
 /* Migrering av krysseliste, slutt */
+
+
+/* Migrering av kryssejournal start */
+print_r($mapBeboerIder);
+$hentKrysseliste = pg_query('SELECT * FROM krysseliste ORDER BY dato');
+
+while ($krysset = pg_fetch_array($hentKrysseliste)){
+	if($krysset['beboer_id'] == 0 || $krysset['beboer_id'] == 0){
+		continue;
+	}
+	$st = $db->prepare('INSERT INTO journal(kryss_id,beboer_id,vakt,ol_mottatt,ol_pafyll,ol_avlevert,ol_utavskap,
+cid_mottatt,cid_pafyll,cid_avlevert,cid_utavskap,carls_mottatt,carls_pafyll,carls_avlevert,carls_utavskap,dato,
+rikdom_mottatt,rikdom_pafyll,rikdom_avlevert,rikdom_utavskap) VALUES(:kryss_id,:beboer_id,:vakt,:ol_mottatt,:ol_pafyll,:ol_avlevert,:ol_utavskap,
+:cid_mottatt,:cid_pafyll,:cid_avlevert,:cid_utavskap,:carls_mottatt,:carls_pafyll,:carls_avlevert,:carls_utavskap,:dato,
+:rikdom_mottatt,:rikdom_pafyll,:rikdom_avlevert,:rikdom_utavskap))');
+
+	$st->bindParam(':kryss_id',$krysset['kryss_id']);
+	$st->bindParam(':beboer_id',$mapBeboerIder[$krysset['beboer_id']]);
+	$st->bindParam(':vakt',$krysset['vakt']);
+
+	$st->bindParam(':ol_mottatt',$krysset['ol_mottatt']);
+	$st->bindParam(':ol_pafyll',$krysset['ol_pafyll']);
+	$st->bindParam(':ol_avlevert',$krysset['ol_avlevert']);
+	$st->bindParam(':ol_utavskap',$krysset['ol_utavskap']);
+
+	$st->bindParam(':cid_mottatt',$krysset['cid_mottatt']);
+	$st->bindParam(':cid_pafyll',$krysset['cid_pafyll']);
+	$st->bindParam(':cid_avlevert',$krysset['cid_avlevert']);
+	$st->bindParam(':cid_utavskap',$krysset['cid_utavskap']);
+
+	$st->bindParam(':carls_mottatt',$krysset['carls_mottatt']);
+	$st->bindParam(':carls_pafyll',$krysset['carls_pafyll']);
+	$st->bindParam(':carls_avlevert',$krysset['carls_avlevert']);
+	$st->bindParam(':carls_utavskap',$krysset['carls_utavskap']);
+
+	$st->bindParam(':dato',$krysset['dato']);
+
+	$st->bindParam(':rikdom_mottatt',$krysset['rikdom_mottatt']);
+	$st->bindParam(':rikdom_pafyll',$krysset['rikdom_pafyll']);
+	$st->bindParam(':rikdom_avlevert',$krysset['rikdom_avlevert']);
+	$st->bindParam(':rikdom_utavskap',$krysset['rikdom_utavskap']);
+
+	$st->execute();
+
+}
+
+
 
 ferdig();
 
