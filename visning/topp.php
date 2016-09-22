@@ -148,6 +148,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktstyring">Vaktstyring</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/generer">Generer vaktliste</a></li>
+					<li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/ukerapport">Ukerapport</a></li>
                 </ul>
               </li>
             </ul>
