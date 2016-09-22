@@ -49,6 +49,13 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
 				$valgtCtrl = new UtvalgVaktsjefGenererCtrl($this->cd->skiftArg());
 				$valgtCtrl->bestemHandling();
 				break;
+			case 'ukerapport':
+				$krysseinstans = new Journal();
+				$dok = new Visning($this->cd);
+				$dok->set('krysseting',$krysseinstans->getUkeKryss());
+				$dok->set('journal',$krysseinstans->getKrysseInfo());
+				$dok->vis('utvalg_vaktsjef_ukesrapport.php');
+				break;
 			default:
 				$dok = new Visning($this->cd);
 				$dok->vis('utvalg_vaktsjef.php');
