@@ -26,9 +26,30 @@ foreach ($transaksjoner as $kryss) {
 <?php
 }
 
+//TODO Implementer slik at man kan se månedskryss for hver måned med en droppdown meny.
 ?>
 	</table>
 </div>
+
+<div class="col-md-4">
+	<h2>Ditt alkoholkonsum denne måneden</h2>
+	<table class="table table-bordered">
+		<tr>
+			<th>Drikke</th>
+			<th>Antall</th>
+		</tr>
+
+	<?php
+	foreach($mndkryss as $navn => $antall){
+		?>
+		<tr>
+			<td><?php echo $navn;?></td>
+			<td><?php echo $antall;?></td>
+		</tr>
+<?php } ?>
+	</table>
+</div>
+
 <div class="col-md-4 col-sm-6">
 	<h2>Ditt totale alkoholkonsum</h2>
 	<table class="table table-bordered">

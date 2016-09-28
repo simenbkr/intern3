@@ -44,7 +44,12 @@ class KryssCtrl extends AbstraktCtrl {
 				$ukedager[$dag] = round(($antall / $sum) * 100);
 			}
 		}
+
+		$mndkryss = Krysseliste::getKryssByMonth($this->cd->getAktivBruker()->getPerson()->getId());
 		$dok = new Visning($this->cd);
+		$dok->set('mndkryss',$mndkryss);
+		//$dok->set('datoen',$first);
+		//$dok->set('thisMonth',$thisMonth);
 		$dok->set('sumKryss', $sumKryss);
 		$dok->set('transaksjoner', $transaksjoner);
 		$dok->set('ukedager', $ukedager);
