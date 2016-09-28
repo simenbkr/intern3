@@ -76,7 +76,21 @@ class Beboer implements Person {
 	}
 
 	public function erBeboer() {
-		return true;
+		$id = $this->getId();
+		$st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id LIMIT 1');
+		$st->bindParam(':id',$id);
+		$st->execute();
+
+		$romhistorikk = $st->fetchColumn();
+
+		$dec = json_decode($romhistorikk,true);
+
+		foreach($dec as $romInfo){
+			if($romInfo['utflyttet'] == null){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function getId() {
