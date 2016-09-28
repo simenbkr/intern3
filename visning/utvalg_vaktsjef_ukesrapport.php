@@ -21,8 +21,8 @@ require_once('topp_utvalg.php');
 
     </script>
     <div class="container">
-
-        <p><select onchange="velgUke(this.value)">
+        <h1>Utvalget &raquo; Vaktsjef &raquo; Ukesrapport</h1>
+        <p>Velg Uke: <select onchange="velgUke(this.value)">
                 <option value="0">- Velg Uke -</option>
 
                 <?php
@@ -37,7 +37,7 @@ require_once('topp_utvalg.php');
             </select></p>
 
 
-        <p><select onchange="velgAar(this.value)">
+        <p>Velg År: <select onchange="velgAar(this.value)">
                 <option value="0">- Velg År -</option>
 
                 <?php
