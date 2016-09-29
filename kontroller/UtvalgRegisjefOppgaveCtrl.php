@@ -8,13 +8,23 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
     {
 
         if (isset($_POST['godkjenn'])) {
-
-            Oppgave::endreGodkjent($_POST['godkjenn'],1);
+            $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+            Oppgave::endreGodkjent($post['godkjenn'],1);
         }
         elseif(isset($_POST['fjern'])){
-            Oppgave::endreGodkjent($_POST['fjern'],0);
+            $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+            Oppgave::endreGodkjent($post['fjern'],0);
         }
+        elseif(isset($_POST['registrer'])){
+            $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+            $navn = $post['navn'];
+            $pri = $post['prioritet'];
+            $anslagtid = $post['timer'];
+            $anslagpers = $post['personer'];
+            $beskrivelse = $post['beskrivelse'];
 
+            Oppgave::AddOppgave($navn,$pri,$anslagtid,$anslagpers,$beskrivelse);
+        }
 
         $oppgaveListe = OppgaveListe::alle();
         $dok = new Visning($this->cd);

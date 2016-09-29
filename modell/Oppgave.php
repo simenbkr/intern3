@@ -163,6 +163,18 @@ class Oppgave
         }
     }
 
+    public static function AddOppgave($navn,$pri,$anslagtid,$anslagpers,$beskrivelse){
+        $st = DB::getDB()->prepare('INSERT INTO oppgave (tid_oppretta,anslag_timer,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id) 
+        VALUES(NOW(),:anslagtimer,:anslagpersoner,:pri,:navn,:beskrivelse,0,NULL,NULL)');
+        $st->bindParam(':anslagtimer',$anslagtid);
+        $st->bindParam(':anslagpersoner',$anslagpers);
+        $st->bindParam(':pri',$pri);
+        $st->bindParam(':navn',$navn);
+        $st->bindParam(':beskrivelse',$beskrivelse);
+        $st->execute();
+    }
+
+
     /*
      * Funksjonene nedenfor instansierer variabler ved behov.
      */
