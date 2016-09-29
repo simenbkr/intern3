@@ -225,9 +225,20 @@ class Beboer implements Person {
 		return $this->vervListe;
 	}
 
+	public function harDataVerv(){
+		$id = $this->getId();
+
+		$st = DB::getDB()->prepare('SELECT * from beboer_verv WHERE (beboer_id=:beboer_id AND (verv_id=43 OR verv_id=44))');
+		$st->bindParam(':beboer_id',$id);
+		$st->execute();
+
+		return $st->rowCount() > 0;
+	}
+
+
 	public function harUtvalgVerv() {
-		//return count($this->getUtvalgVervListe()) > 0; // TODO må fikses!
-    return true;
+		//return count($this->getUtvalgVervListe()) > 0 || $this->harDataVerv();
+    	return true;
 	}
 
 	public function getUtvalgVervListe() {

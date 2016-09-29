@@ -155,8 +155,8 @@ require_once('topp_utvalg.php');
                         . '" > ' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>
 
                 <td><?php if ($godkjent == 0) { ?>
-                    <button onclick="godkjenn(<?php echo $id; ?>)">Godkjenn</button><?php } ?>
-                    <button onclick="fjern(<?php echo $id; ?>)">Fjern</button>
+                    <button class="btn btn-default" onclick="godkjenn(<?php echo $id; ?>)">Godkjenn</button><?php } ?>
+                    <button class="btn btn-default" onclick="fjern(<?php echo $id; ?>)">Fjern</button>
                 </td>
             </tr>
 
