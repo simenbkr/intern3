@@ -16,6 +16,15 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                     $vervid = $post['verv'];
                     Verv::deleteBeboerFromVerv($id,$vervid);
                 }
+                elseif (isset($_POST['vervet'])){
+                    setcookie('du','posta');
+                    $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+                    $postet = explode('&',$post['vervet']);
+                    $beboer_id = $postet[0];
+                    $verv_id = $postet[1];
+                    Verv::updateVerv($beboer_id,$verv_id);
+                }
+
             }
 
             $beboerListe = BeboerListe::aktive();

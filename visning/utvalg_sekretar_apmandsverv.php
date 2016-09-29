@@ -11,7 +11,6 @@ require_once('topp_utvalg.php');
             data: 'fjern=' + beboerid+'&verv='+vervid,
             method: 'POST',
             success: function (data) {
-                $('#oppgave_' + id).html(data);
                 location.reload();
             },
             error: function (req, stat, err) {
@@ -19,6 +18,8 @@ require_once('topp_utvalg.php');
             }
         });
     }
+
+
 </script>
 <div class="col-md-12">
     <h1>Utvalget &raquo; Sekretær &raquo; Åpmandsverv</h1>
@@ -40,7 +41,8 @@ require_once('topp_utvalg.php');
 
         foreach ($vervListe as $verv) {
         ?>
-        <tr>
+        <div id="<?php echo $verv->getId();?>">
+        <tr id="<?php echo $verv->getId();?>">
             <td><?php echo $verv->getNavn(); ?></td>
             <td><?php
                 $i = 0;
@@ -51,21 +53,24 @@ require_once('topp_utvalg.php');
                     echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a>';?> <button onclick="fjern(<?php echo $apmand->getId(); ?>,<?php echo $verv->getId(); ?>)">&#x2718;</button>
                 <?php } ?>
                 </td>
-            <td><select>
+            <td></div>
+                <form action="" method="POST">
+                <select id="vervet" name="vervet" onchange="this.form.submit()">
                     <option value="0">- velg -</option>
 
                     <?php
                     foreach (intern3\BeboerListe::utenVervId($verv->getId()) as $beboer) {
                         ?>
 
-                        <option value="<?php echo $beboer->getId(); ?>">
+                        <option id="vervet" value="<?php echo $beboer->getId() . '&' . $verv->getId(); ?>" name="<?php echo $beboer->getId() . '&' . $verv->getId(); ?>">
                             <?php echo $beboer->getFulltNavn(); ?>
                         </option>
-
                         <?php
                     }
                     ?>
                 </select>
+                <noscript><input type="submit" value="Submit"></noscript>
+            </form>
             </td>
             <td><?php
                 $epost = $verv->getEpost();

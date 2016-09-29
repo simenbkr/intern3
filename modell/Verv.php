@@ -45,8 +45,6 @@ class Verv
 
     public static function deleteBeboerFromVerv($beboerId, $vervId)
     {
-        setcookie('beboerid',$beboerId);
-        setcookie('vervid',$vervId);
         $st = DB::getDB()->prepare('DELETE FROM beboer_verv WHERE (beboer_id=:beboer_id AND verv_id=:verv_id)');
         $st->bindParam(':beboer_id', $beboerId);
         $st->bindParam(':verv_id', $vervId);
@@ -55,7 +53,8 @@ class Verv
 
     public static function updateVerv($beboerId, $vervId)
     {
-        $st = DB::getDB()->prepare('UPDATE beboer_verv SET beboer_id=:beboer_id WHERE verv_id=:verv_id');
+        //$st = DB::getDB()->prepare('UPDATE beboer_verv SET beboer_id=:beboer_id WHERE verv_id=:verv_id');
+        $st = DB::getDB()->prepare('INSERT INTO beboer_verv (beboer_id,verv_id) VALUES(:beboer_id,:verv_id)');
         $st->bindParam(':beboer_id', $beboerId);
         $st->bindParam(':verv_id', $vervId);
         $st->execute();
@@ -73,7 +72,7 @@ class Verv
 
     public function erUtvalg()
     {
-        return $this->utvalg;
+        return isset($this->utvalg) ? $this->utvalg : 0;
     }
 
     public function getEpost()
