@@ -4,7 +4,7 @@ require_once('topp_utvalg.php');
 ?>
     <script>
         var ukenr = null;
-        var aaret = null;
+        var aaret = 2016;
         function velgUke(nr) {
             $.get('?a=utvalg/vaktsjef/ukerapport_tabell/' + nr + '/' + aaret, function (data) {
                 $('#kryss').html(data);
@@ -38,7 +38,7 @@ require_once('topp_utvalg.php');
 
 
         <p>Velg År: <select onchange="velgAar(this.value)">
-                <option value="0">- Velg År -</option>
+                <option value="2016">2016</option>
 
                 <?php
                 $start = 2007;
