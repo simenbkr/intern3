@@ -8,7 +8,7 @@ function velgBeboer(id) {
       $('#settvakt').html(data);
     });
   }
-};
+}
 </script>
 <?php
 if(isset($_POST['modalId']) && isset($_POST['vakttype'])) {
@@ -16,7 +16,6 @@ if(isset($_POST['modalId']) && isset($_POST['vakttype'])) {
   $vakttype = $_POST['vakttype'];
   $unix = $_POST['unix'];
 }
-else {echo 'Noe gikk galt, kontakt Data Senior.';}
 ?>
 <!-- Modal for vakter -->
 <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">

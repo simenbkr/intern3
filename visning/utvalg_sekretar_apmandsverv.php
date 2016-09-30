@@ -4,22 +4,37 @@ require_once('topp_utvalg.php');
 
 ?>
 <script>
-    function fjern(beboerid,vervid) {
-        $.ajax({
-            type: 'POST',
-            url: '?a=utvalg/sekretar/apmandsverv',
-            data: 'fjern=' + beboerid+'&verv='+vervid,
-            method: 'POST',
-            success: function (data) {
-                location.reload();
-            },
-            error: function (req, stat, err) {
-                alert(err);
-            }
-        });
+function fjern(beboerId,vervId) {
+  $.ajax({
+    type: 'POST',
+    url: '?a=utvalg/sekretar/apmandsverv',
+    data: 'fjern=' + beboerId +'&verv='+ vervId,
+    method: 'POST',
+    success: function (data) {
+      location.reload();
+    },
+    error: function (req, stat, err) {
+      alert(err);
     }
-
-
+  });
+}
+function modal() {
+  var vervId = $(this).attr('data-target');
+  var vervNavn = $(this).attr('data-name');
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/sekretar/apmandsverv_modal',
+    data: 'vervId=' + vervId + '&vervNavn=' + vervNavn,
+    success: function(data) {
+      $('#modal-' + vervId).html(data);
+      $('#' + vervId).modal('show');
+      $('#' + vervId).on('hidden.bs.modal', function() {
+        $('#modal-' + vervId).html(' ');
+      });
+    }
+  });
+}
 </script>
 <div class="col-md-12">
     <h1>Utvalget &raquo; Sekretær &raquo; Åpmandsverv</h1>
@@ -54,23 +69,11 @@ require_once('topp_utvalg.php');
                 <?php } ?>
                 </td>
             <td></div>
-                <form action="" method="POST">
-                <select id="vervet" name="vervet" onchange="this.form.submit()">
-                    <option value="0">- velg -</option>
-
-                    <?php
-                    foreach (intern3\BeboerListe::utenVervId($verv->getId()) as $beboer) {
-                        ?>
-
-                        <option id="vervet" value="<?php echo $beboer->getId() . '&' . $verv->getId(); ?>" name="<?php echo $beboer->getId() . '&' . $verv->getId(); ?>">
-                            <?php echo $beboer->getFulltNavn(); ?>
-                        </option>
-                        <?php
-                    }
-                    ?>
-                </select>
-                <noscript><input type="submit" value="Submit"></noscript>
-            </form>
+              <div>
+                <input type="button" class="btn btn-sm btn-info" value="Legg Til" onclick="modal.call(this)" data-target="<?php echo $verv->getId(); ?>" data-name="<?php echo $verv->getNavn(); ?>">
+                <div id="modal-<?php echo $verv->getId(); ?>">
+                </div>
+              </div>
             </td>
             <td><?php
                 $epost = $verv->getEpost();
