@@ -124,4 +124,4 @@ foreach ($romListe as $rom) {
       <td><input class="btn btn-primary" type="submit" value="<?php echo !isset($beboer) || $beboer == null ? 'Legg til' : 'Endre'; ?>"></td>
     </tr>
   </table>
-</from>
+</form>

@@ -9,7 +9,7 @@ class UtvalgVaktsjefVaktstyringCtrl extends AbstraktCtrl {
 			case 'settvakt':
 				$beboer = Beboer::medId($this->cd->getArg($this->cd->getAktuellArgPos()+1));
         if ($beboer == NULL) {
-
+          exit();
         }
         else {
   				$dok = new Visning($this->cd);
@@ -24,7 +24,6 @@ class UtvalgVaktsjefVaktstyringCtrl extends AbstraktCtrl {
         $dok->vis('utvalg_vaktsjef_vaktstyring_modal.php');
         break;
       case 'vaktstyring':
-			default:
         $beboerListe = BeboerListe::harVakt();
         $torild = Ansatt::medId(1);
         $dok = new Visning($this->cd);

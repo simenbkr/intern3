@@ -5,26 +5,25 @@ require_once('topp_utvalg.php');
 ?>
 
 <script>
-function velgBeboer(id) {
-  if (id == 0) {
-    $('#').find('.modal-body').append(id);
-    $('#modal').find('.modal-body').append(id);
-    $('#settvakt').html(' ');
-  }
-  else {
-    $.get('?a=utvalg/vaktsjef/vaktstyring_settvakt/'+id, function(data) {
-      $('#').find('.modal-body').append(id);
-      $('#modal').find('.modal-body').append(id);
-      $('#settvakt').html(data);
-    });
-  }
-}
-// $(function modalId() {
-//   $('.modal').on('shown.bs.modal', function() {
-//     var modalId = $(this).attr('id');
-//     // $('#'+modalId).find('.modal-body').prepend('<p>' + modalId + '</p>');
-//   });
-// });
+function modal() {
+  var modalId = $(this).attr('data-target');
+  var vakttype = $(this).attr('data-type');
+  var unix = $(this).attr('data-unix');
+  var dataString = 'modalId=' + modalId + '&vakttype=' + vakttype + '&unix=' + unix;
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring_modal',
+    data: dataString,
+    success: function(data) {
+      $('#get-' + modalId).html(data);
+      $('#' + modalId).modal('show');
+      $('#' + modalId).on('hidden.bs.modal', function() {
+        $('#get-' + modalId).html(' ');
+      });
+    }
+  });
+};
 </script>
 
 <div class="col-md-12">
@@ -61,7 +60,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 		</tr>
 <?php
 	foreach (range(1, 4) as $vakttype){
-		?>
+?>
 		<tr>
 			<td><?php echo $vakttype; ?>.<span class="hidden-sm hidden-xs">&nbsp;vakt</span><br>&nbsp;</td>
 <?php
@@ -73,16 +72,16 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 
 			if ($vakt == null && $vakttype==2 && $ukedag>=0 && $ukedag<=4) {
         echo '			<td class="celle_graa">';
-        echo '			<a href="JavaScript:void(0);" data-toggle="modal" data-target="#' . $modalId . '">' . PHP_EOL; // TODO funker ikke!
+        echo '			<a href="JavaScript:void(0);" data-toggle="modal" data-target="' . $modalId . '">' . PHP_EOL; // TODO funker ikke!
 				echo $torild->getFulltNavn();
         echo '</a>' . PHP_EOL;
         continue; // TODO må fjernes
 			}
 			else if ($vakt == null) {
-				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="#' . $modalId . '-ledig"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig"></td>' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
-				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="#' . $modalId . '-ledig"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig"></td>' . PHP_EOL;
 			}
       else {
   			$bruker = $vakt->getBruker();
@@ -91,13 +90,13 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
   				echo ' ';
   			}
   			else {
-          echo '			 <a href="JavaScript:void(0);" data-toggle="modal" data-target="#' . $modalId . '">' . PHP_EOL;
+          echo '			 <a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
           echo $bruker->getPerson()->getFulltNavn();
           echo '</a>' . PHP_EOL;
   			}
       }
-		  ?>
-      <div id="modal">
+      echo '			 <div id="get-' . $modalId . '">' . PHP_EOL;
+?>
       </div>
     </td>
 <?php } ?>

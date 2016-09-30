@@ -1,5 +1,25 @@
+<script>
+function velgBeboer(id) {
+  if (id == 0) {
+    $('#settvakt').html('Feil oppstod');
+  }
+  else {
+    $.get('?a=utvalg/vaktsjef/vaktstyring_settvakt/'+id, function(data) {
+      $('#settvakt').html(data);
+    });
+  }
+};
+</script>
+<?php
+if(isset($_POST['modalId']) && isset($_POST['vakttype'])) {
+  $modalId = $_POST['modalId'];
+  $vakttype = $_POST['vakttype'];
+  $unix = $_POST['unix'];
+}
+else {echo 'Noe gikk galt, kontakt Data Senior.';}
+?>
 <!-- Modal for vakter -->
-<div class="modal fade" tabindex="-1" id="<?php echo $modalId; ?>" role="dialog">
+<div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content panel-primary">
       <div class="modal-header panel-heading">
@@ -20,7 +40,7 @@
   </div>
 </div>
 <!-- Modal for ledige vakter -->
-<div class="modal fade" tabindex="-1" id="<?php echo $modalId; ?>-ledig" role="dialog">
+<div class="modal fade" id="<?php echo $modalId; ?>-ledig" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content panel-primary">
       <div class="modal-header panel-heading">
@@ -55,7 +75,7 @@
   </div>
 </div>
 <!-- Modal for å slette vakter -->
-<div class="modal fade" tabindex="-1" id="<?php echo $modalId; ?>-slettvakt" role="dialog">
+<div class="modal fade" id="<?php echo $modalId; ?>-slettvakt" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content panel-primary">
       <div class="modal-header panel-heading">
@@ -73,7 +93,7 @@
   </div>
 </div>
 <!-- Modal for å bytte vakt -->
-<div class="modal fade" tabindex="-1" id="<?php echo $modalId; ?>-byttvakt" role="dialog">
+<div class="modal fade" id="<?php echo $modalId; ?>-byttvakt" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content panel-primary">
       <div class="modal-header panel-heading">
