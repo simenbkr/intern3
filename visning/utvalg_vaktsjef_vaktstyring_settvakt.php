@@ -11,7 +11,7 @@
 		?>		<tr>
 	<?php
 	if ($vakt->erFerdig()) {
-		if ($visFerdig) {
+		if (!$visFerdig) {
 			?>
 					<td class="celle_graa"><?php echo $tekst; ?></td>
 		<?php

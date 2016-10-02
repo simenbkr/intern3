@@ -4,13 +4,13 @@ if(isset($_POST['vervId']) && isset($_POST['vervNavn'])) {
   $vervNavn = $_POST['vervNavn'];
 }
 ?>
-<!-- Modal for apmandsverv -->
-<div class="modal fade" id="<?php echo $vervId; ?>" role="dialog">
+<!-- Modal for åpmandsverv -->
+<div class="modal fade" id="<?php echo $vervId; ?>-åpmand" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content panel-primary">
       <div class="modal-header panel-heading">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title" align="center"><?php echo $vervNavn; ?></h4>
+        <h4 class="modal-title" align="center"><?php echo $vervNavn; ?>-åpmand</h4>
       </div>
       <div class="modal-body" align="center">
         <p>Velg hvem som skal ha åpmandsvervet</p>

@@ -1,7 +1,7 @@
 <script>
 function velgBeboer(id) {
   if (id == 0) {
-    $('#settvakt').html('Feil oppstod');
+    $('#settvakt').html(' ');
   }
   else {
     $.get('?a=utvalg/vaktsjef/vaktstyring_settvakt/'+id, function(data) {

@@ -28,8 +28,8 @@ function modal() {
     data: 'vervId=' + vervId + '&vervNavn=' + vervNavn,
     success: function(data) {
       $('#modal-' + vervId).html(data);
-      $('#' + vervId).modal('show');
-      $('#' + vervId).on('hidden.bs.modal', function() {
+      $('#' + vervId + '-åpmand').modal('show');
+      $('#' + VervId + '-åpmand').on('hidden.bs.modal', function() {
         $('#modal-' + vervId).html(' ');
       });
     }

@@ -15,7 +15,7 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
               $vervid = $post['verv'];
               Verv::deleteBeboerFromVerv($id,$vervid);
             }
-            elseif (isset($_POST['vervet'])){
+            else if (isset($_POST['vervet'])){
               setcookie('du','posta');
               $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
               $postet = explode('&',$post['vervet']);
