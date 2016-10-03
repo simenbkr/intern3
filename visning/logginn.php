@@ -4,14 +4,14 @@ require_once('topp.php');
 
 if (isset($visError)) {
 ?>
-  <div class="alert alert-danger fade in" id="error"  style="display:table; margin: auto;">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    Du har ikke tilgang!
-  </div>
+<div class="alert alert-danger" id="error"  style="display:table; margin: auto; margin-top: 10%">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  Du har ikke tilgang til denne siden!
+</div>
 <?php
 }
 ?>
-<div style="display:table; margin: auto; margin-top: 20%;">
+<div style="display:table; margin: auto; margin-top: <?php if (isset($visError)) { echo '10%'; } else { echo '20%'; } ?>">
 	<h1 style="text-align: center;">Singsaker Studenterhjem</h1>
 	<h1 style="font-size: 45px; text-align: center;">Internside</h1>
 	<p>[ Logg inn ] [ <a href="?a=logginn/registrer">Registrer</a> ] [ <a href="?a=logginn/passord">Glemt passord</a> ]</p>

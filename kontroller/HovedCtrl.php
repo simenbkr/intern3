@@ -6,6 +6,13 @@ class HovedCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
 		$aktivBruker = LogginnCtrl::getAktivBruker();
 		if ($aktivBruker == null) {
+      if (isset($_COOKIE['brukernavn'])) {
+        if ($_COOKIE['brukernavn'] == 'journal') {
+          $valgtCtrl = new JournalCtrl($this->cd->skiftArg());
+    			$valgtCtrl->bestemHandling();
+    			return;
+        }
+      }
 			$valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
 			$valgtCtrl->bestemHandling();
 			return;
@@ -65,6 +72,9 @@ class HovedCtrl extends AbstraktCtrl {
 				break;
 			case 'utvalg':
 				$valgtCtrl = new UtvalgCtrl($this->cd->skiftArg());
+				break;
+			case 'journal':
+				$valgtCtrl = new JournalCtrl($this->cd->skiftArg());
 				break;
 			case 'diverse':
 			default:
