@@ -2,6 +2,14 @@
 
 require_once('topp.php');
 
+if (isset($visError)) {
+?>
+  <div class="alert alert-danger fade in" id="error"  style="display:table; margin: auto;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Du har ikke tilgang!
+  </div>
+<?php
+}
 ?>
 <div style="display:table; margin: auto; margin-top: 20%;">
 	<h1 style="text-align: center;">Singsaker Studenterhjem</h1>
