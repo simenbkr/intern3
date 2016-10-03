@@ -11,7 +11,7 @@ function fjern(beboerId,vervId) {
     data: 'fjern=' + beboerId +'&verv='+ vervId,
     method: 'POST',
     success: function (data) {
-      location.reload();
+      window.location.reload();
     },
     error: function (req, stat, err) {
       alert(err);

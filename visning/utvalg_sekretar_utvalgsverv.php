@@ -29,7 +29,7 @@ function fjern(beboerId,vervId) {
 </div>
 
 <div class="col-md-6">
-    <form action="" method="post">
+    <form action="" method="post" id="utvalgsverv">
     <table class="table-bordered table">
         <tr>
             <th>Utvalgsverv</th>
@@ -59,7 +59,7 @@ function fjern(beboerId,vervId) {
                     foreach ($beboerListe as $beboer) {
                         ?>
 
-                        <option name="beboerid" value="<?php echo $beboer->getId(); ?>">
+                        <option name="<?php echo $beboer->getId(); ?>" value="<?php echo $beboer->getId(); ?>">
                             <?php echo $beboer->getFulltNavn(); ?>
                         </option>
 
@@ -71,7 +71,7 @@ function fjern(beboerId,vervId) {
         </tr>
         <tr>
         <td></td>
-        <td><input type="submit" class="btn btn-sm btn-info" value="Legg til" name="legg til"></td>
+        <td><input type="submit" class="btn btn-sm btn-info" value="Legg til" name="leggtil"></td>
         </tr>
     </table>
     </form>
@@ -90,11 +90,13 @@ function fjern(beboerId,vervId) {
         <td>
           <?php
           if ($verv->getApmend() != null) {
+            $i = 0;
             foreach ($verv->getApmend() as $apmand) {
-              echo $apmand->getFulltNavn();
-              ?>
-              <button onclick="fjern(<?php echo $apmand->getId(); ?>,<?php echo $verv->getId(); ?>)">&#x2718;</button>
-              <?php
+              if ($i++ > 0) {
+                echo ', ';
+              }
+              echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a>';?> <button onclick="fjern(<?php echo $apmand->getId(); ?>,<?php echo $verv->getId(); ?>)">&#x2718;</button>
+            <?php
             }
           } else { echo ' '; }
           ?>

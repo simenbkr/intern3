@@ -8,20 +8,24 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
     {
         $aktueltArg = $this->cd->getAktueltArg();
         if ($aktueltArg == 'apmandsverv') {
-          if(isset($_POST)){
+          if(isset($_POST)) {
             if (isset($_POST['fjern']) && isset($_POST['verv'])) {
               $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
-              $id = $post['fjern'];
-              $vervid = $post['verv'];
-              Verv::deleteBeboerFromVerv($id,$vervid);
-            }
-            else if (isset($_POST['vervet'])){
+              $beboerId = $post['fjern'];
+              $vervId = $post['verv'];
+              Verv::deleteBeboerFromVerv($beboerId,$vervId);
+            } else if (isset($_POST['vervet'])){
               setcookie('du','posta');
               $post = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
               $postet = explode('&',$post['vervet']);
-              $beboer_id = $postet[0];
-              $verv_id = $postet[1];
-              Verv::updateVerv($beboer_id,$verv_id);
+              $beboerId = $postet[0];
+              if ($beboerId != 0) {
+                $vervId = $postet[1];
+                Verv::updateVerv($beboerId, $vervId);
+                $page = '?a=utvalg/sekretar/apmandsverv';
+                header('Location: '.$page, true, 303);
+                exit;
+              }
             }
           }
           $beboerListe = BeboerListe::aktive();
@@ -33,16 +37,28 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
           $dok->set('utvalg', $utvalg);
           $dok->vis('utvalg_sekretar_apmandsverv.php');
       } else if ($aktueltArg == 'apmandsverv_modal') {
-        $beboerListe = BeboerListe::aktive();
-        $dok = new Visning($this->cd);
-        $dok->set('beboerListe', $beboerListe);
-        $dok->vis('utvalg_sekretar_apmandsverv_modal.php');
+          $beboerListe = BeboerListe::aktive();
+          $dok = new Visning($this->cd);
+          $dok->set('beboerListe', $beboerListe);
+          $dok->vis('utvalg_sekretar_apmandsverv_modal.php');
       } else if ($aktueltArg == 'utvalgsverv') {
-          if (isset($_POST['endre'])) {
+          if(isset($_POST)) {
+            if (isset($_POST['fjern']) && isset($_POST['verv'])) {
               $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-              $vervId = $post['vervid'];
-              $personId = $post['beboerid'];
-              Verv::updateVerv($personId, $vervId);
+              $beboerId = $post['fjern'];
+              $vervId = $post['verv'];
+              Verv::deleteBeboerFromVerv($beboerId,$vervId);
+            } else if (isset($_POST['leggtil'])) {
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                $vervId = $post['vervid'];
+                if ($vervId != 0) {
+                  $beboerId = $post['beboerid'];
+                  Verv::updateVerv($beboerId, $vervId);
+                  $page = '?a=utvalg/sekretar/utvalgsverv';
+                  header('Location: '.$page, true, 303);
+                  exit;
+                }
+            }
           }
           $beboerListe = BeboerListe::aktive();
           $vervListe = VervListe::alleUtvalg();

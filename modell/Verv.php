@@ -54,7 +54,7 @@ class Verv
     public static function updateVerv($beboerId, $vervId)
     {
         //$st = DB::getDB()->prepare('UPDATE beboer_verv SET beboer_id=:beboer_id WHERE verv_id=:verv_id');
-        $st = DB::getDB()->prepare('INSERT INTO beboer_verv (beboer_id,verv_id) VALUES(:beboer_id,:verv_id)');
+        $st = DB::getDB()->prepare('INSERT INTO beboer_verv SET beboer_id=:beboer_id, verv_id=:verv_id');
         $st->bindParam(':beboer_id', $beboerId);
         $st->bindParam(':verv_id', $vervId);
         $st->execute();
