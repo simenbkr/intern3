@@ -218,6 +218,20 @@ class Beboer implements Person {
 		return $this->getRolle()->getRegitimer() < 48;
 	}
 
+	public function getVakterInnenDogn(){
+		//Henter ut alle vakter for de neste 24 timene.
+		$vakterInnenDogn = array();
+		if($this->harVakt()){
+			$vakter = VaktListe::medBrukerId($this->getBrukerId());
+			foreach($vakter as $vakt){
+				if(time() <= strtotime($vakt->getDato()) + 86400){
+					$vakterInnenDogn[] = $vakt;
+				}
+			}
+		}
+		return $vakterInnenDogn;
+	}
+
 	public function getVervListe() {
 		if ($this->vervListe == null) {
 			$this->vervListe = VervListe::medBeboerId($this->id);
@@ -234,7 +248,6 @@ class Beboer implements Person {
 
 		return $st->rowCount() > 0;
 	}
-
 
 	public function harUtvalgVerv() {
 		//return count($this->getUtvalgVervListe()) > 0 || $this->harDataVerv();
