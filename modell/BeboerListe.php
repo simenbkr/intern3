@@ -51,7 +51,7 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
 		return self::medPdoSt($st);
 	}
 
-  public static function harVakt() {
+  public static function harVakt() { // TODO burde sjekke rolle id = 1 eller 2 istedenfor regitimer..
     $ikkeUtflyttet = '%"utflyttet":NULL%';
     $st = DB::getDB()->prepare('SELECT b.id AS id FROM beboer AS b, rolle AS r WHERE b.rolle_id=r.id AND r.regitimer < 48 AND b.romhistorikk LIKE :ikkeUtflyttet ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
 		$st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);

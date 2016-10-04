@@ -1,3 +1,21 @@
+<?php
+if(isset($_POST['vaktId_1'])) {
+  $vaktId_1 = $_POST['vaktId_1'];
+}
+?>
+<script>
+function bytt(vaktId_1, vaktId_2) {
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring',
+    data: 'vaktId_1=' + vaktId_1 + '&vaktId_2=' + vaktId_2,
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
+</script>
 <div>
   <p> </p>
 		<table class="table table-bordered">
@@ -11,7 +29,7 @@
 		?>		<tr>
 	<?php
 	if ($vakt->erFerdig()) {
-		if (!$visFerdig) {
+		if (isset($visFerdig)) {
 			?>
 					<td class="celle_graa"><?php echo $tekst; ?></td>
 		<?php
@@ -19,7 +37,7 @@
 	}
 	else {
 		?>			<td><?php echo $tekst; ?>
-					<input class="btn btn-sm btn-warning pull-right" type="button" value="Bytt">
+					<input class="btn btn-sm btn-warning pull-right" onclick="bytt(<?php echo $vaktId_1; ?>, <?php echo $vakt->getId(); ?>)" type="button" value="Bytt">
 				</td>
 	<?php
 	}

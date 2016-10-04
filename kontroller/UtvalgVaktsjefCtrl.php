@@ -31,7 +31,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
           $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
           $vaktId_1 = $post['vaktId_1'];
           $vaktId_2 = $post['vaktId_2'];
-          VaktBytte::byttVakt($vaktId_1, $vaktId_2);
+          Vakt::byttVakt($vaktId_1, $vaktId_2);
           $page = '?a=utvalg/vakstsjef/vaktstyring';
           header('Location: '.$page, true, 303);
           exit;
@@ -54,6 +54,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl {
             exit();
           } else {
             $dok = new Visning($this->cd);
+            $dok->set('visFerdig', 1);
             $dok->set('beboer', $beboer);
             $dok->vis('utvalg_vaktsjef_vaktstyring_settvakt.php');
           }

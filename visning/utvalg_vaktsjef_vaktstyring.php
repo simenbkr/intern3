@@ -9,7 +9,8 @@ function modal() {
   var modalId = $(this).attr('data-target');
   var vakttype = $(this).attr('data-type');
   var unix = $(this).attr('data-unix');
-  var dataString = 'modalId=' + modalId + '&vakttype=' + vakttype + '&unix=' + unix;
+  var vaktId_1 = $(this).attr('data-id');
+  var dataString = 'modalId=' + modalId + '&vakttype=' + vakttype + '&unix=' + unix + '&vaktId_1=' + vaktId_1;
   $.ajax({
     cache: false,
     type: 'POST',
@@ -72,16 +73,16 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 
 			if ($vakt == null && $vakttype==2 && $ukedag>=0 && $ukedag<=4) {
         echo '			<td class="celle_graa">';
-        echo '			<a href="JavaScript:void(0);" data-toggle="modal" data-target="' . $modalId . '">' . PHP_EOL; // TODO funker ikke!
+        echo '			<a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL; // TODO funker ikke!
 				echo $torild->getFulltNavn();
         echo '</a>' . PHP_EOL;
         continue; // TODO må fjernes
 			}
 			else if ($vakt == null) {
-				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '"></td>' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
-				echo '			<td style="text-align: center;"><input type="button" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '"></td>' . PHP_EOL;
 			}
       else {
   			$bruker = $vakt->getBruker();
@@ -90,7 +91,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
   				echo ' ';
   			}
   			else {
-          echo '			 <a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
+          echo '			 <a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
           echo $bruker->getPerson()->getFulltNavn();
           echo '</a>' . PHP_EOL;
   			}

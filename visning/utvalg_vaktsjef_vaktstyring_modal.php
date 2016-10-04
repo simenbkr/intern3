@@ -1,22 +1,30 @@
+<?php
+if(isset($_POST['modalId']) && isset($_POST['vakttype']) && isset($_POST['unix']) && isset($_POST['vaktId_1'])) {
+  $modalId = $_POST['modalId'];
+  $vakttype = $_POST['vakttype'];
+  $unix = $_POST['unix'];
+  $vaktId_1 = $_POST['vaktId_1'];
+}
+?>
 <script>
 function velgBeboer(id) {
   if (id == 0) {
     $('#settvakt').html(' ');
   }
   else {
-    $.get('?a=utvalg/vaktsjef/vaktstyring_settvakt/'+id, function(data) {
-      $('#settvakt').html(data);
+    var vaktId_1 = '<?php echo $vaktId_1; ?>';
+    $.ajax({
+      cache: false,
+      type: 'POST',
+      url: '?a=utvalg/vaktsjef/vaktstyring_settvakt',
+      data: 'beboerId=' + id + '&vaktId_1=' + vaktId_1,
+      success: function(data) {
+        $('#settvakt').html(data);
+      }
     });
   }
 }
 </script>
-<?php
-if(isset($_POST['modalId']) && isset($_POST['vakttype'])) {
-  $modalId = $_POST['modalId'];
-  $vakttype = $_POST['vakttype'];
-  $unix = $_POST['unix'];
-}
-?>
 <!-- Modal for vakter -->
 <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
   <div class="modal-dialog">
