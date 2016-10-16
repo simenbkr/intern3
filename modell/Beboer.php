@@ -261,6 +261,23 @@ class Beboer implements Person {
 		return $this->utvalgVervListe;
 	}
 
+	public function getEpostPref(){
+		$st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
+		$st->bindParam(':beboer_id',$this->getId());
+		$st->execute();
+
+		return $st->fetchColumn();
+	}
+
+	public function vilHaVaktVarsler(){
+		$st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
+		$st->bindParam(':beboer_id',$this->getId());
+		$st->execute();
+		$epost_preferanser = $st->fetchColumn();
+
+		return $epost_preferanser['snart_vakt'] == 1;
+	}
+
 	public function getBruker() {
 		if ($this->bruker == null && $this->brukerId != 0) {
 			$this->bruker = Bruker::medId($this->brukerId);

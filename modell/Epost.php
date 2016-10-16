@@ -82,12 +82,18 @@ class Epost {
 	public function send($tittel = null) {
 		// TODO: Vi har $beskjed og lista kalt $mottakere, bare å døtte dette et sted
         /*NOTAT: Dette må KUN sendes fra servere hvor det er konfigurert slik at PHP
-        sender gjennom Postfix, og som har korrekt SPF-record, riktig oppsatt DKIM, Reverse PTR
+        sender gjennom Postfix, og som har korrekt SPF-record, riktig oppsatt DKIM, DMARC, Reverse PTR
         og (helst) TLS mellom SMTP-servere.
         Per 2016-10-04 er DOBBEL satt opp slik.
         */
-        $headers = "From: no-reply@mail.singsaker.no" . "\r\n";
+        $headers = "From: Internsida Singsaker <no-reply@mail.singsaker.no>" . "\r\n";
+        $headers .= "Reply-To: no-reply@mail.singsaker.no\r\n";
+        $headers .= "Return-Path: no-reply@mail.singsaker.no\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $headers .= "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Date: " . date('H:i:s, d M Y') . " UTC +0000\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+
         $tittelen = (isset($tittel) && $tittel != null) ? $tittel : "[INTERN] Du har fått en melding fra intern.singsaker.no";
         foreach($this->getMottakere() as $mottaker){
             mail($mottaker,$tittelen,$this->getMessage(),$headers);

@@ -9,12 +9,18 @@ if (isset($success)) {
   Du er nå logget inn på journalen og ut av din egen bruker.
 </div>
 <?php
+   unset($success);
 }
 ?>
 
 <div class="col-sm-6 col-xs-12" style="margin: auto; margin-top: 5%">
 	<h1>Journal</h1>
 
+    <ul>
+        <li><a href="?a=journal/krysseliste">Krysseliste</a></li>
+        <li><a href="?a=journal/signering">Signering</a></li>
+        <li><a href="?a=journal/pafyll">Påfyll</a></li>
+    </ul>
 <?php
 
 require_once('bunn.php');
