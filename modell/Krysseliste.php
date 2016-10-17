@@ -190,6 +190,52 @@ class Krysseliste
         return $kryss;
     }
 
+    public static function getKryssbyDay($beboer_id, $dato)
+    {
+        $datoen = date('Y-m-d', strtotime($dato));
+        $id = $beboer_id;
+        $st = DB::getDB()->prepare('SELECT * from krysseliste WHERE beboer_id=:id');
+
+        $st->bindParam(':id', $id);
+        $st->execute();
+
+        $krysserader = $st->fetchAll();
+
+        $kryss = array('Pant' => 0,
+            'Øl' => 0,
+            'Cider' => 0,
+            'Carlsberg' => 0,
+            'Rikdom' => 0
+        );
+
+        foreach ($krysserader as $krysseliste) {
+            $krysseliste2 = json_decode($krysseliste['krysseliste'], true);
+            foreach ($krysseliste2 as $enkelt_kryss) {
+                $tiden = date('Y-m-d', strtotime($enkelt_kryss['tid']));
+                if ($tiden == $datoen) {
+                    switch ($krysseliste['drikke_id']) {
+                        case '1':
+                            $kryss['Pant'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            break;
+                        case '2':
+                            $kryss['Øl'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            break;
+                        case '3':
+                            $kryss['Cider'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            break;
+                        case '4':
+                            $kryss['Carlsberg'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            break;
+                        case '5':
+                            $kryss['Pant'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            break;
+                    }
+                }
+            }
+        }
+        return $kryss;
+    }
+
 
     public function addKryss($antall, $unixTid = false, $fakturert = false)
     {
@@ -228,8 +274,7 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         $st->execute();
     }
 
-    private
-    function opprett()
+    private function opprett()
     {
         $st = DB::getDB()->prepare('INSERT INTO krysseliste(
 	beboer_id,drikke_id,krysseliste

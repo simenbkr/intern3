@@ -35,7 +35,6 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->vis('journal.php');
                         break;
                     case 'krysseliste':
-
                         $beboere = BeboerListe::aktive();
                         $dok = new Visning($this->cd);
                         $dok->set('beboere', $beboere);
@@ -53,7 +52,7 @@ class JournalCtrl extends AbstraktCtrl
                                 $krysselista = KrysseListe::medBeboerDrikkeId($beboerId,$drikkeid);
                                 $krysselista->addKryss($antall);
                                 $krysselista->oppdater();
-                                Header('Location: ?a=journal/krysseliste');
+                                break;
                             }
                         }
                         $beboerId = $this->cd->getSisteArg();

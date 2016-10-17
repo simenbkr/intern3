@@ -9,6 +9,7 @@ $beboere_2 = array_slice($beboere, $length / 2);
 
     <hr><br/><h1>Krysseliste</h1>
     <div class="container-fluid">
+        <h2><a href="javascript:history.back()">TILBAKE</a></h2>
         <div class="border row">
 
             <div class="border col-md-6">
@@ -54,7 +55,7 @@ $beboere_2 = array_slice($beboere, $length / 2);
                     </tbody>
                 </table>
             </div>
-
+            <h2><a href="javascript:history.back()">TILBAKE</a></h2>
 
         </div>
     </div>

@@ -2,6 +2,10 @@
 
 require_once('topp.php');
 
+
+if ($beboer == null) {
+    header('Location: ?a=journal/krysseliste');
+}
 ?>
 
 <script>
@@ -67,7 +71,7 @@ require_once('topp.php');
             data: 'beboerId=' + beboerId + "&antall=" + count + "&type=" + drikkeid,//'fjern=' + beboerId +'&verv='+ vervId,
             method: 'POST',
             success: function (data) {
-                window.location.reload();
+                history.back();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -79,14 +83,14 @@ require_once('topp.php');
 <style>
     @media screen and (min-device-width:698px) {
         div#showgrid {
-            width: 698px;
+            width: auto;
             margin: auto;
         }
     }
 
     div.column {
         border-style: solid;
-        border-width: 1px;
+        border-width: 0px;
     }
 
     .row {
@@ -99,7 +103,7 @@ require_once('topp.php');
             width: 180px;
             height: 180px;
             display: inline;
-            float: left;
+            float: block;
         }
     }
 
@@ -150,13 +154,16 @@ require_once('topp.php');
     }
 
 
-
     .btn-huge{
-        padding-top:60px;
-        padding-bottom:60px;
-        padding-left:60px;
-        padding-right:60px;
+        padding-top:55px;
+        padding-bottom:55px;
+        padding-left:65px;
+        padding-right:65px;
+        font-family: Verdana;
+        font-size: 40px;
+        margin-bottom: 5px;
     }
+
 
 </style>
 
@@ -172,33 +179,31 @@ require_once('topp.php');
         </ul>
     </h1>
     <br/>
-
     <div id="showgrid">
         <div class="row">
-            <div class="column"><button class="myButton" onclick="updateCount(1)">1</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(2)">2</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(3)">3</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(1)">1</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(2)">2</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(3)">3</button></div>
         </div>
         <div class="row">
-            <div class="column"><button class="myButton" onclick="updateCount(4)">4</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(5)">5</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(6)">6</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(4)">4</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(5)">5</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(6)">6</button></div>
         </div>
         <div class="row">
-            <div class="column"><button class="myButton" onclick="updateCount(7)">7</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(8)">8</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(9)">9</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(7)">7</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(8)">8</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(9)">9</button></div>
         </div>
         <div class="row">
-            <div class="column"><button class="myButton" onclick="setNegativeCount()">-</button></div>
-            <div class="column"><button class="myButton" onclick="updateCount(0)">0</button></div>
-            <div class="column"><button class="myButton" onclick="">-</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="setNegativeCount()">-</button></div>
+            <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(0)">0</button></div>
         </div>
-
     </div>
     <br/><hr>
     <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss(<?php echo $beboer->getId(); ?>)"></button>
-    <a href="javascript:history.back()">TILBAKE</a>
+    <br/>
+    <h1><a href="javascript:history.back()">TILBAKE</a></h1>
 </div>
 <hr>
 <?php
