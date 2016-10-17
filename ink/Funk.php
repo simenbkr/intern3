@@ -18,6 +18,11 @@ class Funk {
 		$minutter = round($minutter);
 		return $fortegn * $timer . ($minutter > 0 ? ':' . $minutter : '');
 		}
+    public static function startsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
 }
 
 ?>

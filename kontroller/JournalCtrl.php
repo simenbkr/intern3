@@ -42,14 +42,14 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->vis('krysselista.php');
                         break;
                     case 'kryssing':
-                        if(isset($_POST)){
+                        if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if(isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])){
+                            if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
                                 $beboerId = $post['beboerId'];
                                 $antall = $post['antall'];
                                 $drikkeid = $post['type'];
 
-                                $krysselista = KrysseListe::medBeboerDrikkeId($beboerId,$drikkeid);
+                                $krysselista = KrysseListe::medBeboerDrikkeId($beboerId, $drikkeid);
                                 $krysselista->addKryss($antall);
                                 $krysselista->oppdater();
                                 break;
@@ -62,6 +62,36 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->set('beboer', $beboer);
                         $dok->vis('kryss.php');
                         break;
+                    case 'vaktbytte':
+                        $sistearg = $this->cd->getSisteArg();
+                        if ($sistearg == 'vaktbytte') {
+                            $beboere = BeboerListe::aktive();
+                            $dok = new Visning($this->cd);
+                            $dok->set('beboere', $beboere);
+                            $dok->set('skjulMeny', 1);
+                            $dok->vis('vaktbytte.php');
+                            break;
+                        } else {
+                            if ($sistearg == "TORILD") {
+
+                            } else {
+                                $bokstav = $sistearg;
+
+                                $beboere = BeboerListe::aktive();
+                                $aktuelle = array();
+                                foreach($beboere as $beboer){
+                                    if(($beboer->getRolleId() == 1 || $beboer->getRolleId() == 2) && Funk::startsWith($beboer->getEtternavn(),$bokstav)){
+                                        $aktuelle[] = $beboer;
+                                    }
+                                }
+
+                                $dok = new Visning($this->cd);
+                                $dok->set('aktuelle', $aktuelle);
+                                $dok->set('skjulMeny', 1);
+                                $dok->vis('vaktbytte_bokstav.php');
+                                break;
+                            }
+                        }
                     default:
                         setcookie('brukernavn', '', -1);
                         setcookie('passord', '', -1);
@@ -70,7 +100,7 @@ class JournalCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
                         $dok->set('visError', 1);
-                        $dok->vis('logginn.php');
+                        $dok->vis('logginn . php');
                 }
             }
         } else {
@@ -81,7 +111,7 @@ class JournalCtrl extends AbstraktCtrl
             $dok = new Visning($this->cd);
             $dok->set('skjulMeny', 1);
             $dok->set('visError', 1);
-            $dok->vis('logginn.php');
+            $dok->vis('logginn . php');
             exit();
         }
     }

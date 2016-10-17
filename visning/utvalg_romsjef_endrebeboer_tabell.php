@@ -1,4 +1,5 @@
-<form>
+<form action="" method="post">
+  <input type="hidden" name="beboerid" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getId(); ?>">
   <table class="table table-bordered table-responsive">
     <tr>
       <td>Fornavn:</td>
