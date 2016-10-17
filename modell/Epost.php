@@ -16,6 +16,11 @@ class Adressat {
 	public function __toString() {
 		return $this->navn . '<' . $this->adresse . '>';
 	}
+
+	public function getAdresse(){
+	    return $this->adresse;
+    }
+
 }
 
 namespace intern3;
@@ -96,7 +101,7 @@ class Epost {
 
         $tittelen = (isset($tittel) && $tittel != null) ? $tittel : "[INTERN] Du har fått en melding fra intern.singsaker.no";
         foreach($this->getMottakere() as $mottaker){
-            mail($mottaker,$tittelen,$this->getMessage(),$headers);
+            mail($mottaker->getAdresse(),$tittelen,$this->getMessage(),$headers);
         }
 
 

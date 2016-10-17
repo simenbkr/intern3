@@ -23,6 +23,25 @@ class Funk {
         $length = strlen($needle);
         return (substr($haystack, 0, $length) === $needle);
     }
+
+    public static function getLastBrukerId(){
+        $st = DB::getDB()->prepare('SELECT id FROM bruker ORDER BY id DESC LIMIT 1');
+        $st->execute();
+        return $st->fetchColumn();
+    }
+
+    public static function generatePassword($length = 12) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789æøå';
+        $count = mb_strlen($chars);
+
+        for ($i = 0, $result = ''; $i < $length; $i++) {
+            $index = rand(0, $count - 1);
+            $result .= mb_substr($chars, $index, 1);
+        }
+
+        return $result;
+    }
+
 }
 
 ?>
