@@ -93,7 +93,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $st->bindParam(':telefon', $post['mobil']);
                 $st->bindParam(':studie_id', $post['studie_id']);
                 $st->bindParam(':skole_id', $post['skole_id']);
-                $st->bindParam(':klassetrinn', $post['klassetrinn']);
+                $st->bindParam(':klassetrinn', $post['klasse']);
                 $alko = $post['alkodepositum'] == 'on' ? 1 : 0;
                 $st->bindParam(':alko', $alko);
                 $st->bindParam(':rolle', $post['rolle_id']);
