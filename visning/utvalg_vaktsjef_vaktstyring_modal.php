@@ -1,9 +1,11 @@
 <?php
-if(isset($_POST['modalId']) && isset($_POST['vakttype']) && isset($_POST['unix']) && isset($_POST['vaktId_1'])) {
+if(isset($_POST['modalId']) && isset($_POST['vakttype']) && isset($_POST['unix'])) {
   $modalId = $_POST['modalId'];
   $vakttype = $_POST['vakttype'];
   $unix = $_POST['unix'];
-  $vaktId_1 = $_POST['vaktId_1'];
+  if (isset($_POST['vaktId_1'])) {
+    $vaktId_1 = $_POST['vaktId_1'];
+  }
 }
 ?>
 <script>
@@ -24,6 +26,10 @@ function velgBeboer(id) {
     });
   }
 }
+function lagre() {
+   document.getElementById('lagre').style.display = "block";
+   location.reload();
+}
 </script>
 <!-- Modal for vakter -->
 <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
@@ -35,6 +41,7 @@ function velgBeboer(id) {
       </div>
       <div class="modal-body" align="center">
         <p> </p>
+        <input type="button" class="btn btn-sm btn-primary" value="Sett vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-settvakt">
         <input type="button" class="btn btn-sm btn-primary" value="Bytt vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-byttvakt">
         <input type="button" class="btn btn-sm btn-primary" value="Dobbelvakt" data-target="#<?php echo $modalId; ?>-dobbelvakt">
         <input type="button" class="btn btn-sm btn-warning" value="Straffevakt" data-target="#<?php echo $modalId; ?>-straffevakt">
@@ -47,7 +54,7 @@ function velgBeboer(id) {
   </div>
 </div>
 <!-- Modal for ledige vakter -->
-<div class="modal fade" id="<?php echo $modalId; ?>-ledig" role="dialog">
+<div class="modal fade" id="<?php echo $modalId; ?>-settvakt" role="dialog">
   <div class="modal-dialog modal-sm">
     <div class="modal-content panel-primary">
       <div class="modal-header panel-heading">
@@ -55,11 +62,13 @@ function velgBeboer(id) {
         <h4 class="modal-title" align="center"><?php echo $vakttype . '. vakt ' . strftime('%A %d/%m', $unix); ?></h4>
       </div>
       <div class="modal-body" align="center">
-        <!-- <div class="alert alert-info fade in" id="lagret" style="display: none;">Lagret!<button type="button" class="close" onclick="hideLagret()">&times;</button>
-        </div> -->
+        <div class="alert alert-info fade in" id="lagre" style="display: none;">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        Lagret!
+        </div>
         <p>Velg hvem som skal ha vakten</p>
         <select onchange="velgBeboer(this.value)">
-          <option value="0">- velg -</option>
+          <option value="0" default="true">- velg -</option>
 
           <?php
           foreach ($beboerListe as $beboer) { // Denne velger kun de som har vakt
@@ -76,7 +85,7 @@ function velgBeboer(id) {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Lukk</button>
-        <button type="button" class="btn btn-sm btn-primary" id="lagre">Lagre</button> <!-- TODO må fikses! -->
+        <button type="button" onclick="lagre()" class="btn btn-sm btn-primary" id="lagre">Lagre</button> <!-- TODO må fikses! -->
       </div>
     </div>
   </div>
@@ -110,7 +119,7 @@ function velgBeboer(id) {
       <div class="modal-body" align="center">
         <p>Velg hvem som skal ha vakten</p>
         <select onchange="velgBeboer(this.value)">
-          <option value="0">- velg -</option>
+          <option value="0" default="true">- velg -</option>
 
           <?php
           foreach ($beboerListe as $beboer) { // Denne velger kun de som har vakt
