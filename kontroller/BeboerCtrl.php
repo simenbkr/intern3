@@ -10,6 +10,7 @@ class BeboerCtrl extends AbstraktCtrl {
 			$beboerListe = BeboerListe::aktive();
 			$dok = new Visning($this->cd);
 			$dok->set('beboerListe', $beboerListe);
+			$dok->set('skjulMeny',1);
 			$dok->vis('beboer_utskrift.php');
 		}
 		else if ($aktueltArg == 'statistikk') {

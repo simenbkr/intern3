@@ -6,7 +6,7 @@ require_once('topp_utvalg.php');
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Romsjef &raquo; Beboerliste</h1>
-
+	<p>[ Beboerliste ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]</p>
   <p> </p>
 	<table class="table-bordered table">
 		<tr>
