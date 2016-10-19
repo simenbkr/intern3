@@ -15,7 +15,7 @@ if (isset($visError)) {
   <div style="display:table; margin: auto; margin-top: <?php if (isset($visError)) { echo '5%'; } else { echo '20%'; } ?>">
   	<h1 style="text-align: center;">Singsaker Studenterhjem</h1>
   	<h1 style="font-size: 45px; text-align: center;">Internside</h1>
-  	<p>[ Logg inn ] [ <a href="?a=logginn/registrer">Registrer</a> ] [ <a href="?a=logginn/passord">Glemt passord</a> ]</p>
+  	<p>[ Logg inn ] [ <a href="?a=logginn/passord">Glemt passord</a> ]</p>
   	<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
   		<table class="table borderless">
   			<tr>
