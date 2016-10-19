@@ -14,7 +14,7 @@ if(isset($epostSendt) && $epostSendt == 1){
 <div style="display:table; margin: auto; margin-top: <?php if (isset($epostSendt)) { echo '5%'; } else { echo '20%'; } ?>">
     <h1 style="text-align: center;">Singsaker Studenterhjem</h1>
     <h1 style="font-size: 45px; text-align: center;">Internside</h1>
-    <p>[ <a href="?a=logginn">Logg inn</a> ] [ Glemt passord ]</p>
+    <p>[ <a href="?a=diverse">Logg inn</a> ] [ Glemt passord ]</p>
     <p>Skriv inn din epost under, så sender vi et nytt passord til deg.</p>
     <form method="post" action="">
         <table class="table borderless">
