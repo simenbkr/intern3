@@ -35,27 +35,31 @@ class LogginnCtrl extends AbstraktCtrl {
 	}
 
 	private function glemtPassord(){
-		if(isset($_POST) && isset($_POST['brukernavn'])){
+		$dok = new Visning($this->cd);
+		if(isset($_POST) && isset($_POST['brukernavn'])) {
 			$post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 			$epost = $post['brukernavn'];
 			$aktuellBruker = Bruker::medEpost($epost);
-			$bruker_id = $aktuellBruker->getId();
-			$nyttPassord = Funk::generatePassword();
-			$hash = self::genererHash($nyttPassord);
 
-			$st = DB::getDB()->prepare('UPDATE bruker SET passord=:passord WHERE id=:id');
-			$st->bindParam(':passord',$hash);
-			$st->bindParam(':id',$bruker_id);
-			$st->execute();
+			if($aktuellBruker != null){
+				$bruker_id = $aktuellBruker->getId();
+				$nyttPassord = Funk::generatePassword();
+				$hash = self::genererHash($nyttPassord);
 
-			$beskjed = "<html><body>Hei<br/><br/>Du, eller noen som later som de er deg har forsøkt å resette ditt passord på <a href='https://intern.singsaker.no'>Internsidene</a><br/><br/>Ditt nye passord er : $nyttPassord<br/>Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lurer på noe, ta kontakt med oss på epost: <a href='mailto:data@singsaker.no'>data@singsaker.no</a> eller ta turen innom.<br/><br/>Med vennlig hilsen<br/>Robottene på Singsaker<br/><br/>(Dette var en automagisk beskjed. Feil? Ta kontakt!)</body></html>";
-			$tittel = "[SING-INTERN] Ditt passord har blitt resatt.";
-			$sendEpost = new Epost($beskjed);
-			$sendEpost->addBrukerId($bruker_id);
-			$sendEpost->send($tittel);
+				$st = DB::getDB()->prepare('UPDATE bruker SET passord=:passord WHERE id=:id');
+				$st->bindParam(':passord', $hash);
+				$st->bindParam(':id', $bruker_id);
+				$st->execute();
+
+				$beskjed = "<html><body>Hei<br/><br/>Du, eller noen som later som de er deg har forsøkt å resette ditt passord på <a href='https://intern.singsaker.no'>Internsidene</a><br/><br/>Ditt nye passord er : $nyttPassord<br/>Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lurer på noe, ta kontakt med oss på epost: <a href='mailto:data@singsaker.no'>data@singsaker.no</a> eller ta turen innom.<br/><br/>Med vennlig hilsen<br/>Robottene på Singsaker<br/><br/>(Dette var en automagisk beskjed. Feil? Ta kontakt!)</body></html>";
+				$tittel = "[SING-INTERN] Ditt passord har blitt resatt.";
+				$sendEpost = new Epost($beskjed);
+				$sendEpost->addBrukerId($bruker_id);
+				$sendEpost->send($tittel);
+				$dok->set('epostSendt', 1);
+			}
+
 		}
-
-		$dok = new Visning($this->cd);
 		$dok->set('skjulMeny',1);
 		$dok->vis('glemtpassord.php');
 	}
