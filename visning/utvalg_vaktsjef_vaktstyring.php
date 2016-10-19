@@ -76,13 +76,13 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
         echo '			<a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL; // TODO funker ikke!
 				echo $torild->getFulltNavn();
         echo '</a>' . PHP_EOL;
-        continue; // TODO må fjernes
+        // continue; // TODO må fjernes
 			}
 			else if ($vakt == null) {
-				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
-				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-toggle="modal" data-target="' . $modalId . '-ledig" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '"></td>' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
 			}
       else {
   			$bruker = $vakt->getBruker();
