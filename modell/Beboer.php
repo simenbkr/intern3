@@ -250,8 +250,8 @@ class Beboer implements Person {
 	}
 
 	public function harUtvalgVerv() {
-		//return count($this->getUtvalgVervListe()) > 0 || $this->harDataVerv();
-    	return true;
+		return count($this->getUtvalgVervListe()) > 0 || $this->harDataVerv();
+    	//return true;
 	}
 
 	public function getUtvalgVervListe() {
@@ -283,6 +283,18 @@ class Beboer implements Person {
 			$this->bruker = Bruker::medId($this->brukerId);
 		}
 		return $this->bruker;
+	}
+
+	public function erHelgaGeneral(){
+		$denne_helga = Helga::getLatestHelga();
+		$generaler = $denne_helga->getGeneraler();
+
+		foreach ($generaler as $general){
+			if ( $this->getId() == $general->getId() ){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

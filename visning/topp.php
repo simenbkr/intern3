@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 	<head>
 		<meta charset="utf-8">
 		<title>Intern3.0</title>
@@ -8,7 +8,7 @@
 		<script src="js/jquery-2.1.4.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/jquery-ui.js"></script>
-		<link rel="stylesheet" href="css/jquery-ui.css">
+ 		<link rel="stylesheet" href="css/jquery-ui.css">
 		<script>
 var formaterDatovelger = function() {
   $('.datepicker').datepicker({dateFormat: "yy-mm-dd"});
@@ -53,6 +53,13 @@ if (!isset($skjulMeny)) {
 							<li><a href="<?php echo $cd->getBase(); ?>wiki">Wiki</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>helga">(Helga)</a></li>
+                            <?php
+                            if ($cd->getAktivBruker()->getPerson()->erHelgaGeneral()) {
+                                ?>
+                                <li><a href="<?php echo $cd->getBase(); ?>helga/general">HelgaGeneral</a></li>
+                            <?php
+                            }
+                            ?>
 							<li><a href="<?php echo $cd->getBase(); ?>kjeller">(Vinkjeller)</a></li>
 <?php
 
@@ -136,6 +143,7 @@ if (isset($visUtvalgMeny)) {
                 <ul class="dropdown-menu">
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/apmandsverv">Åpmandsverv</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/utvalgsverv">Utvalgsverv</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/helga">Helga</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/lister">Skrive ut lister</a></li>
                 </ul>
               </li>
