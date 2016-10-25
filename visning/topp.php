@@ -1,3 +1,7 @@
+<?php
+namespace intern3;
+require_once('../ink/autolast.php');
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 	<head>
@@ -52,14 +56,24 @@ if (!isset($skjulMeny)) {
 							<li><a href="<?php echo $cd->getBase(); ?>kryss">Kryss</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>wiki">Wiki</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>
-							<li><a href="<?php echo $cd->getBase(); ?>helga">(Helga)</a></li>
+
                             <?php
                             if ($cd->getAktivBruker()->getPerson()->erHelgaGeneral()) {
                                 ?>
-                                <li><a href="<?php echo $cd->getBase(); ?>helga/general">HelgaGeneral</a></li>
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Helga <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="<?php echo $cd->getBase(); ?>helga">Helga</a></li>
+                                            <li><a href="<?php echo $cd->getBase(); ?>helga/general">General</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
                             <?php
-                            }
+                            } elseif(Helga::getLatestHelga()->getKlar()){
                             ?>
+                            <li><a href="<?php echo $cd->getBase(); ?>helga">Helga</a></li>
+                            <?php } ?>
 							<li><a href="<?php echo $cd->getBase(); ?>kjeller">(Vinkjeller)</a></li>
 <?php
 

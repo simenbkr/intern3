@@ -42,5 +42,10 @@ class HelgaGjesteListe {
         return count(self::getAlleGjesterAar($aar));
     }
 
+    public static function getGjesteCountBeboer($beboerid,$aar){
+        return count(self::getGjesteListeByBeboerAar($beboerid, $aar));
+    }
+
+
 }
 

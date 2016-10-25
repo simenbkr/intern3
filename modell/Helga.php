@@ -9,14 +9,16 @@ class Helga
     private $generaler;
     private $tema;
     private $aar;
+    private $klar;
 
-    public function __construct($start_dato, $slutt_dato = null, $generaler = null, $tema = null)
+    public function __construct($start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null)
     {
         $this->start_dato = date('Y-m-d', strtotime($start_dato));
         $this->slutt_dato = date('Y-m-d', strtotime($start_dato . ' + 2 days'));
         $this->generaler = $generaler;
         $this->tema = $tema;
         $this->aar = date('Y', strtotime($start_dato));
+        $this->klar = $klar;
     }
 
     public function getStartDato()
@@ -40,6 +42,10 @@ class Helga
 
     public function getTema(){
         return $this->tema;
+    }
+
+    public function getKlar(){
+        return $this->klar != 0;
     }
 
     public function addGeneral($beboer_id)
@@ -122,7 +128,7 @@ class Helga
             }
         }
 
-        return new self($rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema']);
+        return new self($rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar']);
     }
 
     public static function getHelgaByAar($aar)
@@ -141,7 +147,7 @@ class Helga
                 $generaler[] = Beboer::medId($general);
             }
         }
-        return new self($res['start_dato'], $res['slutt_dato'], $generaler, $res['tema']);
+        return new self($res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar']);
     }
 
     public static function createHelga($start_dato)
