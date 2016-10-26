@@ -1,10 +1,27 @@
 <?php
-
 require_once('topp.php');
-
-
-
 $ledige = $max_gjeste_count - $gjeste_count;
+
+$dag_array = array(
+    0 => 'Torsdag',
+    1 => 'Fredag',
+    2 => 'Lørdag'
+);
+$side_tittel = "Helga » $dag_array[$dag_tall]";
+switch($dag_tall) {
+    case 0:
+        $undertittel = "[ Torsdag ] [ <a href='?a=helga/fredag'>Fredag</a> ] [ <a href='?a=helga/lordag'>Lørdag</a> ]";
+        break;
+    case 1:
+        $undertittel = "[ <a href='?a=helga/torsdag'>Torsdag</a> ] [ Fredag ] [ <a href='?a=helga/lordag'>Lørdag</a> ]";
+        break;
+    case 2:
+        $undertittel = "[ <a href='?a=helga/torsdag'>Torsdag</a> ] [ <a href='?a=helga/fredag'>Fredag</a> ] [ Lørdag ]";
+        break;
+    default:
+        $undertittel = "[ Torsdag ] [ <a href='?a=helga/fredag'>Fredag</a> ] [ <a href='?a=helga/lordag'>Lørdag</a> ]";
+}
+
 ?>
 <script>
     $("#ajaxform").submit(function(e)
@@ -25,11 +42,11 @@ $ledige = $max_gjeste_count - $gjeste_count;
     });
     $("#ajaxform").submit(); //SUBMIT FORM
 
-    function fjern(id) {
+    function fjern(id, dag) {
         $.ajax({
             type: 'POST',
             url: '?a=helga',
-            data: 'fjern=fjern&gjestid=' + id,
+            data: 'fjern=fjern&gjestid=' + id + "&dag=" + dag,
             method: 'POST',
             success: function (html) {
                 document.getElementById(id).remove();
@@ -49,15 +66,14 @@ $ledige = $max_gjeste_count - $gjeste_count;
             method: 'POST',
             success: function (html) {
                 document.getElementById(id).remove();
-                $('.container').load(document.URL + ' .container');
+                //$('.container').load(document.URL + ' .container');
+                $(".container").replaceWith($('.container', $(html)));
             },
             error: function (req, stat, err) {
                 alert(err);
             }
         });
     }
-
-
 </script>
 <div class="container">
     <?php
@@ -79,14 +95,21 @@ $ledige = $max_gjeste_count - $gjeste_count;
         <?php
         unset($epostError);
     }
+    if (isset($epostSendt)){
+        ?>
+        <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            Epost ble sendt!
+        </div>
+        <?php
+        unset($epostSendt);
+    }
     ?>
     <div class="row">
-        <h1>Helga!</h1>
+        <h1><?php echo $side_tittel; ?></h1>
+        <h3><?php echo $undertittel; ?></h3>
         <p>Her kan du invitere dine venner til Helga!</p>
         <div class="col-lg-6">
-
-
-
             <?php
         for($i = 0; $i < $ledige; $i++){
         ?>
@@ -94,7 +117,7 @@ $ledige = $max_gjeste_count - $gjeste_count;
         <form name="ajaxform" id="ajaxform" action="" method="POST">
             <table class="table table-bordered table-responsive">
                         <tr>
-                            <input type="hidden" name="add" value="add"/>
+                            <input type="hidden" name="add" value="<?php echo $dag_tall; ?>"/>
                             <td>Navn: <input type="text" name="navn" value =""/></td>
                             <td>Epost: <input type="text" name="epost" value =""/></td>
                             <td><input class="btn btn-primary" type="submit" value="Legg til"></td>
@@ -113,9 +136,9 @@ $ledige = $max_gjeste_count - $gjeste_count;
         <tr id="<?php echo $gjest->getId(); ?>">
             <td>Navn: <?php echo $gjest->getNavn(); ?></td>
             <td>Epost: <?php echo $gjest->getEpost(); ?></td>
-            <td><input class="btn btn-primary" type="submit" value="Slett" onclick="fjern(<?php echo $gjest->getId(); ?>)"></td>
+            <td><input class="btn btn-primary" type="submit" value="Slett" onclick="fjern(<?php echo $gjest->getId(); ?>,<?php echo $dag_tall; ?>)"></td>
             <?php if($gjest->getSendt() == 0) { ?>
-            <td><button class="btn btn-info" onclick="send_epost(<?php echo $gjest->getId(); ?>">Send</button></td>
+            <td><input class="btn btn-info" type="submit" value="Send" onclick="send_epost(<?php echo $gjest->getId(); ?>)"></td>
             <?php } else { ?>
                 <td><button class="btn btn-info disabled">Send</button></td>
             <?php } ?>

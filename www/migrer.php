@@ -601,6 +601,37 @@ while ($rad = $hent->fetch()) {
 
 /* Migrering av oppgave, slutt */
 
+/* Lager Helga-tabell, start */
+$st = DB::getDB()->prepare("CREATE TABLE `intern3_dev`.`helga` 
+( `aar` INT(4) NOT NULL , 
+`start_dato` VARCHAR(10) NOT NULL , 
+`slutt_dato` VARCHAR(10) NOT NULL , 
+`generaler` VARCHAR(512) NOT NULL , 
+`tema` VARCHAR(128) NOT NULL , 
+`klar` TINYINT(1) NOT NULL,
+`max_gjest` INT(10) NOT NULL,
+PRIMARY KEY (`aar`))");
+$st->execute();
+
+/* Lager Helga-tabell, slutt */
+
+/* Lager helgagjest-tabell, start */
+
+$st = DB::getDB()->prepare("CREATE TABLE `helgagjest` 
+( `id` INT NOT NULL AUTO_INCREMENT ,
+ `navn` VARCHAR(512) NOT NULL ,
+  `epost` VARCHAR(128) NOT NULL ,
+   `vert` INT(10) NOT NULL ,
+   `dag` INT(10) NOT NULL ,
+    `sendt_epost` TINYINT(1) NOT NULL ,
+     `inne` TINYINT(1) NOT NULL ,
+     `aar` INT(4) NOT NULL ,
+     `klar` TINYINT(1) NOT NULL
+      PRIMARY KEY (`id`))");
+
+$st->execute();
+/* Lager helgagjest-tabell, slutt */
+
 
 /* Oppsett av epost_preferanser start */
 

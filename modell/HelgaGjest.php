@@ -10,8 +10,9 @@ class HelgaGjest {
     private $vert;
     private $sendt_epost;
     private $inne;
+    private $dag;
 
-    public function __construct($id, $epost,$navn,$vert, $sendt_epost = null, $inne = null)
+    public function __construct($id, $epost,$navn,$vert, $dag, $sendt_epost = null, $inne = null)
     {
         $this->id = $id;
         $this->epost = $epost;
@@ -19,6 +20,7 @@ class HelgaGjest {
         $this->vert = $vert;
         $this->inne = $inne;
         $this->sendt_epost = $sendt_epost;
+        $this->dag = $dag;
     }
 
     public function getId(){
@@ -71,12 +73,14 @@ class HelgaGjest {
     }
 
     private function oppdater(){
-        $st = DB::getDB()->prepare('UPDATE helgagjest SET epost=:epost, navn=:navn, vert=:vert, inne=:inne,sendt_epost=:sendt_epost');
+        $st = DB::getDB()->prepare('UPDATE helgagjest SET epost=:epost, navn=:navn, vert=:vert, inne=:inne,sendt_epost=:sendt_epost WHERE id=:id');
         $st->bindParam(':epost', $this->epost);
         $st->bindParam(':navn', $this->navn);
         $st->bindParam(':vert', $this->vert);
         $st->bindParam(':inne', $this->inne);
         $st->bindParam(':sendt_epost', $this->sendt_epost);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
     }
 
     public static function byId($id){
@@ -84,17 +88,18 @@ class HelgaGjest {
         $st->bindParam(':id', $id);
         $st->execute();
         $raden = $st->fetchAll()[0];
-        return new self($id, $raden['epost'], $raden['navn'], $raden['vert'], $raden['sendt_epost'], $raden['inne']);
+        return new self($id, $raden['epost'], $raden['navn'], $raden['vert'], $raden['dag'], $raden['sendt_epost'], $raden['inne']);
     }
 
-    public static function addGjest($navn, $epost, $vert, $aar, $inne=0, $sendt_epost=0){
-        $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, inne, sendt_epost) VALUES(:navn, :aar, :epost, :vert, :inne, :sendt_epost)');
+    public static function addGjest($navn, $epost, $vert, $dag, $aar, $inne=0, $sendt_epost=0){
+        $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost) VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost)');
         $st->bindParam(':navn',     $navn);
         $st->bindParam(':aar',      $aar);
         $st->bindParam(':epost',    $epost);
         $st->bindParam(':vert',     $vert);
         $st->bindParam(':inne',     $inne);
         $st->bindParam(':sendt_epost',  $sendt_epost);
+        $st->bindParam(':dag',      $dag);
         $st->execute();
     }
 

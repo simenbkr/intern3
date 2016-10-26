@@ -45,10 +45,10 @@ class HelgaCtrl extends AbstraktCtrl
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-                    if (isset($post['add']) && isset($post['navn']) && isset($post['epost'])) {
+                    if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
                         //Legg til gjest.
                         if (Funk::isValidEmail($post['epost'])) {
-                            HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $aar);
+                            HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'] ,$aar);
                         } else {
                             $dok->set('epostError', 1);
                         }
@@ -63,24 +63,42 @@ class HelgaCtrl extends AbstraktCtrl
                             $dok->set('VisError', 1);
                         }
                     }
-
-                    if (isset($post['send']) && isset($post['gjestid'])) {
+                    if (isset($post['send']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
                         $gjesteid = $post['gjestid'];
-                        if (HelgaGjest::belongsToBeboer($gjesteid, $beboer_id)) {
-                            $gjesten = HelgaGjest::byId($gjesteid);
+                        $gjesten = HelgaGjest::byId($gjesteid);
+                        if (HelgaGjest::belongsToBeboer($gjesteid, $beboer_id) && Funk::isValidEmail($gjesten->getEpost())) {
+                            $dok->set('epostSendt', 1);
+                            setcookie('du','komhit');
                             $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
                             $beskjed = "<html><body>Hei, " . $gjesten->getNavn() ."! <br/><br/>Du har blitt invitert til" . $denne_helga->getTema() ."-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() ."<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem</body></html>";
                             Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
                             $gjesten->setSendt(1);
+
                         }
                     }
                 }
-                $beboers_gjester = HelgaGjesteListe::getGjesteListeByBeboerAar($beboer_id, $aar);
-                $gjeste_count = HelgaGjesteListe::getGjesteCountBeboer($beboer_id, $aar);
+                $dagen = $this->cd->getSisteArg();
+                switch($dagen){
+                    case 'torsdag':
+                        $dag_tall = 0;
+                        break;
+                    case 'fredag':
+                        $dag_tall = 1;
+                        break;
+                    case 'lordag':
+                        $dag_tall = 2;
+                        break;
+                    default:
+                        $dag_tall = 0;
+                }
+                $beboers_gjester = HelgaGjesteListe::getGjesteListeDagByBeboerAar($dag_tall, $beboer_id, $aar);
+                $gjeste_count = HelgaGjesteListe::getGjesteCountDagBeboer($dag_tall, $beboer_id, $aar);
                 $max_gjeste_count = $denne_helga->getMaxGjester();
+                $dok->set('dag_tall', $dag_tall);
                 $dok->set('max_gjeste_count', $max_gjeste_count);
                 $dok->set('beboers_gjester', $beboers_gjester);
                 $dok->set('gjeste_count', $gjeste_count);
+                $dok->set('dagen', $dagen);
                 $dok->vis('helga.php');
                 exit();
         }
