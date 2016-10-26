@@ -153,7 +153,7 @@ class ProfilCtrl extends AbstraktCtrl {
 			$st->bindParam(':id', $id);
 			$st->bindParam(':passord', $passord);
 			$st->execute();
-			setcookie('passord', $passord, $_SERVER['REQUEST_TIME'] + 31556926);
+			setcookie('passord', $passord, $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
 		}
 		return $feil;
 	}

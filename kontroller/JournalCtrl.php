@@ -13,9 +13,9 @@ class JournalCtrl extends AbstraktCtrl
                 switch ($aktueltArg) {
                     case 'hoved':
                     default:
-                        setcookie('brukernavn', 'journal');
+                        setcookie('brukernavn', 'journal', NULL, NULL, NULL, NULL, TRUE);
                         $passord = '2h6Sh801kS9zPq8N'; // TODO må fikese!!
-                        setcookie('passord', $passord);
+                        setcookie('passord', $passord, NULL, NULL, NULL, NULL, TRUE);
                         setcookie('du', '', -1);
                         Header('Location: ' . $_GET['ref']);
                         $dok = new Visning($this->cd);
@@ -48,7 +48,10 @@ class JournalCtrl extends AbstraktCtrl
                                 $beboerId = $post['beboerId'];
                                 $antall = $post['antall'];
                                 $drikkeid = $post['type'];
-
+                                if (!Beboer::medId($beboerId)->harAlkoholdepositum()){
+                                    die('Du har ikke betalt alkoholdepositum og kan ikke krysse!');
+                                    //TODO gjør noe mer fornuftig med detta. Vise error-page elns.
+                                }
                                 $krysselista = KrysseListe::medBeboerDrikkeId($beboerId, $drikkeid);
                                 $krysselista->addKryss($antall);
                                 $krysselista->oppdater();
@@ -111,7 +114,7 @@ class JournalCtrl extends AbstraktCtrl
             $dok = new Visning($this->cd);
             $dok->set('skjulMeny', 1);
             $dok->set('visError', 1);
-            $dok->vis('logginn . php');
+            $dok->vis('logginn.php');
             exit();
         }
     }

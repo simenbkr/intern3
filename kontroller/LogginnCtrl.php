@@ -23,8 +23,8 @@ class LogginnCtrl extends AbstraktCtrl {
 		exit();
 	}
 	private static function loggInn() {
-		setcookie('brukernavn', $_POST['brukernavn'], $_SERVER['REQUEST_TIME'] + 31556926);
-		setcookie('passord', self::genererHash($_POST['passord']), $_SERVER['REQUEST_TIME'] + 31556926);
+		setcookie('brukernavn', $_POST['brukernavn'], $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
+		setcookie('passord', self::genererHash($_POST['passord']), $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
 		Header('Location: ' . $_SERVER['REQUEST_URI']);
 		exit();
 	}
