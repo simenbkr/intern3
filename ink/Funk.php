@@ -33,15 +33,21 @@ class Funk {
     public static function generatePassword($length = 12) {
         $chars = 'abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789æøå';
         $count = mb_strlen($chars);
-
         for ($i = 0, $result = ''; $i < $length; $i++) {
             $index = rand(0, $count - 1);
             $result .= mb_substr($chars, $index, 1);
         }
-
         return $result;
     }
 
+    public static function isValidEmail($kandidat){
+        //Ref http://www.w3schools.com/php/filter_validate_email.asp
+        if (!filter_var($kandidat, FILTER_VALIDATE_EMAIL) === false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 ?>

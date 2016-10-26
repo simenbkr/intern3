@@ -16,7 +16,7 @@ class HelgaGjesteListe {
         $gjester = array();
 
         foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['sendt_epost'], $gjest['inne']);
+            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['sendt_epost'], $gjest['inne']);
             $gjester[] = $instansen;
         }
         return $gjester;

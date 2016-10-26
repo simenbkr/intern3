@@ -70,7 +70,11 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
             $helga = Helga::getLatestHelga();
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                if (isset($post['fjern']) && is_numeric($post['fjern']) && $post['fjern'] > 0) {
+                foreach($post as $key => $value) { setcookie($key,$value);}
+                if (isset($post['ny_helga']) && isset($post['aar']) && is_numeric($post['aar'])){
+                    Helga::createBareBoneHelga($post['aar']);
+                }
+                elseif (isset($post['fjern']) && is_numeric($post['fjern']) && $post['fjern'] > 0) {
                     $beboerId = $post['fjern'];
                     $helga->removeGeneral($beboerId);
                 } elseif (isset($post['beboerid']) && is_numeric($post['beboerid']) && $post['beboerid'] > 0) {

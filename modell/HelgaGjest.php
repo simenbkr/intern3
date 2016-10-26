@@ -79,5 +79,38 @@ class HelgaGjest {
         $st->bindParam(':sendt_epost', $this->sendt_epost);
     }
 
+    public static function byId($id){
+        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE id=:id');
+        $st->bindParam(':id', $id);
+        $st->execute();
+        $raden = $st->fetchAll()[0];
+        return new self($id, $raden['epost'], $raden['navn'], $raden['vert'], $raden['sendt_epost'], $raden['inne']);
+    }
+
+    public static function addGjest($navn, $epost, $vert, $aar, $inne=0, $sendt_epost=0){
+        $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, inne, sendt_epost) VALUES(:navn, :aar, :epost, :vert, :inne, :sendt_epost)');
+        $st->bindParam(':navn',     $navn);
+        $st->bindParam(':aar',      $aar);
+        $st->bindParam(':epost',    $epost);
+        $st->bindParam(':vert',     $vert);
+        $st->bindParam(':inne',     $inne);
+        $st->bindParam(':sendt_epost',  $sendt_epost);
+        $st->execute();
+    }
+
+    public static function removeGjest($gjestid){
+        $st = DB::getDB()->prepare('DELETE FROM helgagjest WHERE id=:id');
+        $st->bindParam(':id', $gjestid);
+        $st->execute();
+    }
+
+    public static function belongsToBeboer($gjesteid, $beboerid){
+        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE (id=:id AND vert=:vert)');
+        $st->bindParam(':id', $gjesteid);
+        $st->bindParam(':vert', $beboerid);
+        $st->execute();
+
+        return $st->rowCount() > 0;
+    }
 }
 ?>

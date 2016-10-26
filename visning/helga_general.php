@@ -59,7 +59,13 @@ foreach($helga->getGeneraler() as $general){
                         <td><input type="text" name="tema" value ="<?php echo $helga->getTema();?>"/></td>
                     </tr>
                         <td>Klar (dette gjør <br/>Helga-siden synlig for alle):</td>
-                        <td><input type="checkbox" name="klar"<?php if (isset($helga) && $helga != null && $helga->getKlar()) {echo ' checked="checked"';} ?>></td>
+                        <td><input type="checkbox" name="klar" <?php if (isset($helga) && $helga != null && $helga->getKlar()) {echo 'checked="checked"';} ?>></td>
+
+                    <tr>
+                        <td>Antall gjester per beboer:</td>
+                        <td><input type="text" name="max_gjest" value ="<?php echo $helga->getMaxGjester();?>"/></td>
+                    </tr>
+
                     <tr>
                     <td></td>
                     <td><input class="btn btn-primary" type="submit" value="Endre"></td>

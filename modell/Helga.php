@@ -10,15 +10,22 @@ class Helga
     private $tema;
     private $aar;
     private $klar;
+    private $max_gjester;
 
-    public function __construct($start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null)
+    public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester=15)
     {
-        $this->start_dato = date('Y-m-d', strtotime($start_dato));
-        $this->slutt_dato = date('Y-m-d', strtotime($start_dato . ' + 2 days'));
+        if ($start_dato != null) {
+            $this->start_dato = date('Y-m-d', strtotime($start_dato));
+            $this->slutt_dato = date('Y-m-d', strtotime($start_dato . ' + 2 days'));
+        }else {
+            $this->start_dato = null;
+            $this->slutt_dato = null;
+        }
         $this->generaler = $generaler;
         $this->tema = $tema;
-        $this->aar = date('Y', strtotime($start_dato));
+        $this->aar = $aar;
         $this->klar = $klar;
+        $this->max_gjester = $max_gjester;
     }
 
     public function getStartDato()
@@ -46,6 +53,15 @@ class Helga
 
     public function getKlar(){
         return $this->klar != 0;
+    }
+
+    public function getMaxGjester(){
+        return $this->max_gjester;
+    }
+
+    public function setMaxGjester($antall){
+        $this->max_gjester = $antall;
+        $this->oppdater();
     }
 
     public function addGeneral($beboer_id)
@@ -87,12 +103,13 @@ class Helga
             $general_ider[] = $general->getId();
         }
 
-        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema WHERE aar=:aar');
+        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest WHERE aar=:aar');
         $st->bindParam(':start_dato', $this->start_dato);
         $st->bindParam(':slutt_dato', $this->slutt_dato);
         $st->bindParam(':generaler', json_encode($general_ider));
         $st->bindParam(':tema', $this->tema);
         $st->bindParam(':aar', $this->aar);
+        $st->bindParam(':max_gjest', $this->max_gjester);
         $st->execute();
     }
 
@@ -111,12 +128,12 @@ class Helga
     }
 
     public static function fraSQLRad($rad){
-        return new self($rad['start_dato'],$rad['slutt_dato'], $rad['generaler'], $rad['tema']);
+        return new self($rad['aar'], $rad['start_dato'],$rad['slutt_dato'], $rad['generaler'], $rad['tema']);
     }
 
     public static function getLatestHelga()
     {
-        $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY start_dato DESC LIMIT 1');
+        $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC LIMIT 1');
         $st->execute();
         $rader = $st->fetchAll()[0];
 
@@ -128,7 +145,7 @@ class Helga
             }
         }
 
-        return new self($rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar']);
+        return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest']);
     }
 
     public static function getHelgaByAar($aar)
@@ -147,7 +164,7 @@ class Helga
                 $generaler[] = Beboer::medId($general);
             }
         }
-        return new self($res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar']);
+        return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest']);
     }
 
     public static function createHelga($start_dato)
@@ -161,6 +178,14 @@ class Helga
         $st->execute();
         return self::getHelgaByAar($aar);
     }
+
+    public static function createBareBoneHelga($aar)
+    {
+        $st = DB::getDB()->prepare('INSERT INTO helga (aar) VALUES(:aar)');
+        $st->bindParam(':aar', $aar);
+        $st->execute();
+    }
+
 
     public function erHelgaGeneral($beboer_id){
         foreach($this->generaler as $general){
