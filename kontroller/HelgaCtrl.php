@@ -11,6 +11,11 @@ class HelgaCtrl extends AbstraktCtrl
         $beboer_id = LogginnCtrl::getAktivBruker()->getPerson()->getId();
         $denne_helga = Helga::getLatestHelga();
         $aar = $denne_helga->getAar();
+        $dag_array = array(
+            0 => 'Torsdag',
+            1 => 'Fredag',
+            2 => 'Lørdag'
+        );
         switch ($aktueltArg) {
             case 'general':
                 //Hvis bruker ikke er general går man til default. Ganske smart.
@@ -18,9 +23,6 @@ class HelgaCtrl extends AbstraktCtrl
                     $dok = new Visning($this->cd);
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-                        //foreach($post as $key => $value) {setcookie($key, $value);}
-
                         if (isset($post['start']) && isset($post['aar'])) {
                             $klar = $post['klar'] == 'on' ? 1 : 0;
                             $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
@@ -53,7 +55,6 @@ class HelgaCtrl extends AbstraktCtrl
                             $dok->set('epostError', 1);
                         }
                     }
-
                     if (isset($post['fjern']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
                         //Fjern gjest.
                         $id = $post['gjestid'];
@@ -67,13 +68,13 @@ class HelgaCtrl extends AbstraktCtrl
                         $gjesteid = $post['gjestid'];
                         $gjesten = HelgaGjest::byId($gjesteid);
                         if (HelgaGjest::belongsToBeboer($gjesteid, $beboer_id) && Funk::isValidEmail($gjesten->getEpost())) {
-                            $dok->set('epostSendt', 1);
-                            setcookie('du','komhit');
+                            $dagen = $dag_array[$gjesten->getDag()];
+                            $datoen = date('Y-m-d', strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
                             $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
-                            $beskjed = "<html><body>Hei, " . $gjesten->getNavn() ."! <br/><br/>Du har blitt invitert til" . $denne_helga->getTema() ."-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() ."<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem</body></html>";
+                            $beskjed = "<html><body>Hei, " . $gjesten->getNavn() ."! <br/><br/>Du har blitt invitert til " . $denne_helga->getTema() ."-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() ."<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem</body></html>";
                             Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
                             $gjesten->setSendt(1);
-
+                            $dok->set('epostSendt', 1);
                         }
                     }
                 }

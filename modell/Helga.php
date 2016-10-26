@@ -135,7 +135,13 @@ class Helga
     {
         $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC LIMIT 1');
         $st->execute();
-        $rader = $st->fetchAll()[0];
+
+        if ($st->rowCount() > 0){
+            $rader = $st->fetchAll()[0];
+        }
+        else {
+            return null;
+        }
 
         $generaler = array();
         $json_generaler = json_decode($rader['generaler'], true);

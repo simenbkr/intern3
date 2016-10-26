@@ -47,6 +47,15 @@ class HelgaGjest {
         return $this->inne;
     }
 
+    public function getDag(){
+        return $this->dag;
+    }
+
+    public function setDag($dag){
+        $this->dag = $dag;
+        $this->oppdater();
+    }
+
     public function setEpost($epost){
         $this->epost = $epost;
         $this->oppdater();

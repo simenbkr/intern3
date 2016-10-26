@@ -619,15 +619,15 @@ $st->execute();
 
 $st = DB::getDB()->prepare("CREATE TABLE `helgagjest` 
 ( `id` INT NOT NULL AUTO_INCREMENT ,
- `navn` VARCHAR(512) NOT NULL ,
-  `epost` VARCHAR(128) NOT NULL ,
-   `vert` INT(10) NOT NULL ,
-   `dag` INT(10) NOT NULL ,
-    `sendt_epost` TINYINT(1) NOT NULL ,
-     `inne` TINYINT(1) NOT NULL ,
-     `aar` INT(4) NOT NULL ,
-     `klar` TINYINT(1) NOT NULL
-      PRIMARY KEY (`id`))");
+`navn` VARCHAR(512) NOT NULL ,
+`epost` VARCHAR(128) NOT NULL ,
+`vert` INT(10) NOT NULL ,
+`dag` INT(10) NOT NULL ,
+`sendt_epost` TINYINT(1) NOT NULL ,
+`inne` TINYINT(1) NOT NULL ,
+`aar` INT(4) NOT NULL ,
+`klar` TINYINT(1) NOT NULL,
+ PRIMARY KEY (`id`))");
 
 $st->execute();
 /* Lager helgagjest-tabell, slutt */
