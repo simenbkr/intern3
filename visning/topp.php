@@ -25,6 +25,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
+    print_r($_COOKIE);
 	/* Meny start */
 	?>
 
@@ -66,6 +67,7 @@ if (!isset($skjulMeny)) {
                                         <ul class="dropdown-menu">
                                             <li><a href="<?php echo $cd->getBase(); ?>helga">Helga</a></li>
                                             <li><a href="<?php echo $cd->getBase(); ?>helga/general">General</a></li>
+                                            <li><a href="<?php echo $cd->getBase(); ?>helga/inngang">Inngang</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -171,6 +173,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/generer">Generer vaktliste</a></li>
 					<li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/ukerapport">Ukerapport</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapport">Krysserapport</a></li>
                 </ul>
               </li>
             </ul>

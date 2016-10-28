@@ -1,9 +1,18 @@
 <?php
 require_once('topp.php');
 
-$length = count($beboere);
-$beboere_1 = array_slice($beboere, 0, $length / 2);
-$beboere_2 = array_slice($beboere, $length / 2);
+$beboere_med_depositum = array();
+
+foreach($beboere as $beboer){
+    if($beboer->harAlkoholdepositum()){
+        $beboere_med_depositum[] = $beboer;
+    }
+}
+
+
+$length = count($beboere_med_depositum);
+$beboere_1 = array_slice($beboere_med_depositum, 0, $length / 2);
+$beboere_2 = array_slice($beboere_med_depositum, $length / 2);
 
 ?>
 

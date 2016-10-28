@@ -55,6 +55,7 @@ class JournalCtrl extends AbstraktCtrl
                                 $krysselista = KrysseListe::medBeboerDrikkeId($beboerId, $drikkeid);
                                 $krysselista->addKryss($antall);
                                 $krysselista->oppdater();
+                                //$krysselista->kryss($antall);
                                 break;
                             }
                         }
@@ -103,7 +104,7 @@ class JournalCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
                         $dok->set('visError', 1);
-                        $dok->vis('logginn . php');
+                        $dok->vis('logginn.php');
                 }
             }
         } else {

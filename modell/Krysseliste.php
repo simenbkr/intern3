@@ -22,6 +22,8 @@ class Kryss
 
 namespace intern3;
 
+use intern3\Krysseliste\Kryss;
+
 class Krysseliste
 {
 
@@ -129,8 +131,8 @@ class Krysseliste
             foreach ($jsonArray as $strukt) {
                 $this->kryssListe[] = new Krysseliste\Kryss(
                     $strukt->tid,
-                    $strukt->fakturert,
-                    $strukt->antall
+                    $strukt->antall,
+                    $strukt->fakturert
                 );
             }
         }
@@ -141,13 +143,11 @@ class Krysseliste
     {
         $id = $beboer_id;
         $st = DB::getDB()->prepare('SELECT * from krysseliste WHERE beboer_id=:id');
-
         $st->bindParam(':id', $id);
         $st->execute();
-
         $krysserader = $st->fetchAll();
 
-        $datoen = isset($dato) ? $dato : date('Y-m-d', strtotime('now'));
+        $datoen = (isset($dato)) ? $dato : date('Y-m');
 
         $first = date('Y-m-01', strtotime($datoen));
         $last = date('Y-m-t', strtotime($datoen));
@@ -169,19 +169,19 @@ class Krysseliste
 
                     switch ($krysseliste['drikke_id']) {
                         case '1':
-                            $kryss['Pant'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Pant'] += $enkelt_kryss['antall'];
                             break;
                         case '2':
-                            $kryss['Øl'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Øl'] += $enkelt_kryss['antall'];
                             break;
                         case '3':
-                            $kryss['Cider'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Cider'] += $enkelt_kryss['antall'];
                             break;
                         case '4':
-                            $kryss['Carlsberg'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Carlsberg'] += $enkelt_kryss['antall'];
                             break;
                         case '5':
-                            $kryss['Pant'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Rikdom'] += $enkelt_kryss['antall'];
                             break;
                     }
                 }
@@ -215,19 +215,19 @@ class Krysseliste
                 if ($tiden == $datoen) {
                     switch ($krysseliste['drikke_id']) {
                         case '1':
-                            $kryss['Pant'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Pant'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
                             break;
                         case '2':
-                            $kryss['Øl'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Øl'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
                             break;
                         case '3':
-                            $kryss['Cider'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Cider'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
                             break;
                         case '4':
-                            $kryss['Carlsberg'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Carlsberg'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
                             break;
                         case '5':
-                            $kryss['Pant'] += $enkelt_kryss['fakturert'] * $enkelt_kryss['antall'];
+                            $kryss['Rikdom'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
                             break;
                     }
                 }
@@ -237,6 +237,18 @@ class Krysseliste
     }
 
 
+    public function setFakturert($start, $slutt){
+        $this->getKryssListe();
+        $start = date('Y-m-d', strtotime($start));
+        $slutt = date('Y-m-d', strtotime($slutt));
+        foreach($this->kryssListe as $kryss){
+            if($kryss->tid >= $start && $kryss->tid <= $slutt){
+                $kryss->fakturert = 1;
+            }
+        }
+        $this->oppdater();
+    }
+
     public function addKryss($antall, $unixTid = false, $fakturert = false)
     {
         if ($unixTid === false) {
@@ -244,8 +256,8 @@ class Krysseliste
         }
         $this->settInnKryss(new Krysseliste\Kryss(
             date('Y-m-d H:i:s', $unixTid),
-            $fakturert ? 1 : 0,
-            $antall
+            $antall,
+            $fakturert ? 1 : 0
         ));
     }
 

@@ -3,7 +3,7 @@
 require_once('topp.php');
 
 
-if ($beboer == null) {
+if ($beboer == null || !$beboer->harAlkoholdepositum()) {
     header('Location: ?a=journal/krysseliste');
 }
 ?>

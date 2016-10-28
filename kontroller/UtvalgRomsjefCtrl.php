@@ -49,7 +49,7 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
 
                 $beskjed = "<html><body>Hei!<br/><br/>Du har fått opprettet en brukerkonto på 
 <a href='https://intern.singsaker.no'>Singsaker sine internsider!</a> Velkommen skal du være.<br/>Brukernavn: $post[epost]<br/>Passord: $passord<br/><br/>Vi anbefaler deg å bytte passord. snarest
-<br/><br/>Med vennlig hilsen<br/>Singsaker Internsider og Datagutta på Sing. <br/><br/>Denne melding var datagenerert. Noe galt? Vennligst si ifra til data@singsaker.no</body></html>";
+<br/><br/>Med vennlig hilsen<br/>Singsaker Internsider og Datagutta på Sing. <br/><br/>Denne melding var datagenerert. Noe galt? Vennligst si ifra til <a href='mailto:data@singsaker.no'>data@singsaker.no</a></body></html>";
                 $tittel = "[SING-INTERN] Opprettelse av brukerkonto";
                 $epost = new Epost($beskjed);
                 $epost->addBrukerId($bruker_id);
