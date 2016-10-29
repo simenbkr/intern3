@@ -139,6 +139,93 @@ class Krysseliste
         return $this->kryssListe;
     }
 
+    public static function getAllIkkeFakturert()
+    {
+        $beboerListe = BeboerListe::aktive();
+        $krysseListeListe = array();
+        foreach ($beboerListe as $beboer) {
+            $Helekrysseliste = self::medBeboerId($beboer->getId());
+            $kryss = array('Pant' => 0,
+                'Øl' => 0,
+                'Cider' => 0,
+                'Carlsberg' => 0,
+                'Rikdom' => 0
+            );
+            foreach ($Helekrysseliste as $delKryseListe) {
+                $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
+
+                foreach ($KryssDrikka as $enkelt_kryss) {
+                    if ($enkelt_kryss['fakturert'] == 0) {
+                        switch ($delKryseListe->drikkeId) {
+                            case '1':
+                                $kryss['Pant'] += $enkelt_kryss['antall'];
+                                break;
+                            case '2':
+                                $kryss['Øl'] += $enkelt_kryss['antall'];
+                                break;
+                            case '3':
+                                $kryss['Cider'] += $enkelt_kryss['antall'];
+                                break;
+                            case '4':
+                                $kryss['Carlsberg'] += $enkelt_kryss['antall'];
+                                break;
+                            case '5':
+                                $kryss['Rikdom'] += $enkelt_kryss['antall'];
+                                break;
+                        }
+
+                    }
+                }
+
+            }
+            $krysseListeListe[$beboer->getId()] = $kryss;
+        }
+        return $krysseListeListe;
+    }
+
+    public static function getAllFakturert(){
+        $beboerListe = BeboerListe::aktive();
+        $krysseListeListe = array();
+        foreach ($beboerListe as $beboer) {
+            $Helekrysseliste = self::medBeboerId($beboer->getId());
+            $kryss = array('Pant' => 0,
+                'Øl' => 0,
+                'Cider' => 0,
+                'Carlsberg' => 0,
+                'Rikdom' => 0
+            );
+            foreach ($Helekrysseliste as $delKryseListe) {
+                $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
+
+                foreach ($KryssDrikka as $enkelt_kryss) {
+                    if ($enkelt_kryss['fakturert'] != 0) {
+                        switch ($delKryseListe->drikkeId) {
+                            case '1':
+                                $kryss['Pant'] += $enkelt_kryss['antall'];
+                                break;
+                            case '2':
+                                $kryss['Øl'] += $enkelt_kryss['antall'];
+                                break;
+                            case '3':
+                                $kryss['Cider'] += $enkelt_kryss['antall'];
+                                break;
+                            case '4':
+                                $kryss['Carlsberg'] += $enkelt_kryss['antall'];
+                                break;
+                            case '5':
+                                $kryss['Rikdom'] += $enkelt_kryss['antall'];
+                                break;
+                        }
+
+                    }
+                }
+
+            }
+            $krysseListeListe[$beboer->getId()] = $kryss;
+        }
+        return $krysseListeListe;
+    }
+
     public static function getKryssByMonth($beboer_id, $dato = null)
     {
         $id = $beboer_id;
@@ -237,12 +324,13 @@ class Krysseliste
     }
 
 
-    public function setFakturert($start, $slutt){
+    public function setFakturert($start, $slutt)
+    {
         $this->getKryssListe();
         $start = date('Y-m-d', strtotime($start));
         $slutt = date('Y-m-d', strtotime($slutt));
-        foreach($this->kryssListe as $kryss){
-            if($kryss->tid >= $start && $kryss->tid <= $slutt){
+        foreach ($this->kryssListe as $kryss) {
+            if ($kryss->tid >= $start && $kryss->tid <= $slutt) {
                 $kryss->fakturert = 1;
             }
         }
