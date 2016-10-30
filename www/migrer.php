@@ -658,7 +658,15 @@ foreach($beboerliste as $beboer){
 
 /* Oppsett av epost_pref slutt */
 
+/* Lager fakturert-tabell for å holde oversikt over når øl blir fakturert. */
 
+$st = DB::getDB()->prepare('CREATE TABLE fakturert (
+id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+dato VARCHAR(1024) NOT NULL
+)');
+$st->execute();
+
+/* Slutt */
 
 /* Migrering av kryssejournal start */
 $hentKrysseliste = pg_query('SELECT * FROM krysseliste ORDER BY dato');

@@ -302,25 +302,59 @@ class Krysseliste
                 if ($tiden == $datoen) {
                     switch ($krysseliste['drikke_id']) {
                         case '1':
-                            $kryss['Pant'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
+                            $kryss['Pant'] += $enkelt_kryss['antall'];
                             break;
                         case '2':
-                            $kryss['Øl'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
+                            $kryss['Øl'] += $enkelt_kryss['antall'];
                             break;
                         case '3':
-                            $kryss['Cider'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
+                            $kryss['Cider'] += $enkelt_kryss['antall'];
                             break;
                         case '4':
-                            $kryss['Carlsberg'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
+                            $kryss['Carlsberg'] += $enkelt_kryss['antall'];
                             break;
                         case '5':
-                            $kryss['Rikdom'] += $enkelt_kryss['antall'] * $enkelt_kryss['fakturert'];
+                            $kryss['Rikdom'] += $enkelt_kryss['antall'];
                             break;
                     }
                 }
             }
         }
         return $kryss;
+    }
+
+    public static function setPeriodeFakturert(){
+        $beboerListe = BeboerListe::aktive();
+
+        foreach($beboerListe as $beboer){
+            if(!$beboer->harAlkoholdepositum()) { continue; }
+            $beboers_krysseliste = self::medBeboerId($beboer->getId());
+
+            foreach($beboers_krysseliste as $drikke_kryss){
+                $drikke_kryss->getKryssListe();
+                foreach($drikke_kryss->kryssListe as $enkelt_kryss){
+                    if ($enkelt_kryss->fakturert == 0){
+                        $enkelt_kryss->fakturert = 1;
+                    }
+
+                }
+                $drikke_kryss->oppdater();
+            }
+
+        }
+        self::oppdaterFakturert();
+    }
+
+    public static function getSistFakturert(){
+        $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY dato DESC LIMIT 1');
+        $st->execute();
+        $resultat = $st->fetchAll()[0];
+        return $resultat['dato'];
+    }
+
+    private static function oppdaterFakturert(){
+        $st = DB::getDB()->prepare('INSERT INTO fakturert (dato) VALUES (NOW())');
+        $st->execute();
     }
 
 

@@ -4,8 +4,8 @@
         <tr>
             <th class="tittel">Krysseliste</th>
             <th class="dato">
-                Fra:
-                Til: <?php echo date('Y-m-d'); ?>
+                Fra: <?php echo date('Y-m-d H:i', strtotime($sistFakturert)); ?>
+                Til: <?php echo date('Y-m-d H:i'); ?>
             </th>
         </tr>
     </table>

@@ -104,19 +104,31 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('journal', $krysseinstans->getKrysseInfo());
                 $dok->vis('utvalg_vaktsjef_ukesrapport_tabell.php');
                 break;
+            case 'detaljkryss':
+                $beboerId = $this->cd->getSisteArg();
+                $beboer = Beboer::medId($beboerId);
+                if (is_numeric($beboerId) && $beboer != null) {
+                    $beboersKrysseliste = Krysseliste::medBeboerId($beboerId);
+                    $dok = new Visning($this->cd);
+                    $dok->set('beboer', $beboer);
+                    $dok->set('beboersKrysseliste', $beboersKrysseliste);
+                    $dok->vis('utvalg_vaktsjef_detaljkryss.php');
+                    break;
+                }
             case 'krysserapport':
+                $dok = new Visning($this->cd);
+                if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
+                    Krysseliste::setPeriodeFakturert();
+                    $dok->set('periodeFakturert', 1);
+                }
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();
-                $krysseListeMonthListe = array();
                 foreach ($beboerListe as $beboer) {
-                    if (!$beboer->harAlkoholdepositum()) {
-                        continue;
-                    }
-                    $krysseListeMonthListe[$beboer->getId()] = Krysseliste::getKryssByMonth($beboer->getId());
                     $beboerListe2_0[$beboer->getId()] = $beboer;
                 }
-
-                $dok = new Visning($this->cd);
+                $krysseListeMonthListe = Krysseliste::getAllIkkeFakturert();
+                $sistFakturert = Krysseliste::getSistFakturert();
+                $dok->set('sistFakturert', $sistFakturert);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
                 $dok->vis('utvalg_vaktsjef_krysserapport.php');
@@ -124,20 +136,19 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'krysserapportutskrift':
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();
-                $krysseListeMonthListe = array();
                 foreach ($beboerListe as $beboer) {
-                    if (!$beboer->harAlkoholdepositum()) {
-                        continue;
-                    }
-                    $krysseListeMonthListe[$beboer->getId()] = Krysseliste::getKryssByMonth($beboer->getId());
                     $beboerListe2_0[$beboer->getId()] = $beboer;
                 }
-
                 $dok = new Visning($this->cd);
+                $krysseListeMonthListe = Krysseliste::getAllIkkeFakturert();
+                $sistFakturert = Krysseliste::getSistFakturert();
+
+                $dok->set('sistFakturert', $sistFakturert);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
                 $dok->vis('utvalg_vaktsjef_krysserapport_utskrift.php');
                 break;
+
             case 'vaktstyring_dobbelvakt':
                 if (isset($_POST['vaktId_1']) && isset($_POST['dobbelvakt'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
