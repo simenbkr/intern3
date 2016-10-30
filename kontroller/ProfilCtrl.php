@@ -17,7 +17,7 @@ class ProfilCtrl extends AbstraktCtrl {
 					//$feil = array_merge($feil, $this->endreBilde());
 					break;
 				case 'varsler':
-					//$feil = array_merge($feil, $this->endreVarsler());
+					$feil = array_merge($feil, $this->endreVarsler());
 					break;
 			}
 			if (count($feil) == 0) {
@@ -25,10 +25,31 @@ class ProfilCtrl extends AbstraktCtrl {
 				exit();
 			}
 		}
+		$epostInst = LogginnCtrl::getAktivBruker()->getPerson()->getEpostPref();
 		$dok = new Visning($this->cd);
+		$dok->set('epostInst', $epostInst);
 		$dok->set('feil', $feil);
 		$dok->vis('profil.php');
 	}
+
+	private function endreVarsler(){
+		$options = array('tildeltvakt', 'vakt', 'vaktbytte', 'utleie', 'barvakt');
+		$st = DB::getDB()->prepare('UPDATE epost_pref SET tildelt=:tildeltvakt, snart_vakt=:vakt, bytte=:vaktbytte, utleie=:utleie, barvakt=:barvakt');
+		foreach($options as $option) {
+			$var = ':' . $option;
+			if (isset($_POST[$option]) && $_POST[$option] == 1){
+				$en = 1;
+				$st->bindParam($var, $en);
+			} else {
+				$null = 0;
+				$st->bindParam($var, $null);
+			}
+		}
+		$st->execute();
+		return null;
+	}
+
+
 	private function endreGenerellInfo() {
 		$feil = $this->godkjennGenerellInfo();
 		if (count($feil) == 0) {

@@ -125,23 +125,23 @@ foreach (intern3\StudieListe::alle() as $studie) {
 			</tr>
 			<tr>
 				<td>når du har blitt tildelt en vakt</td>
-				<td><input type="checkbox" name="varsel[tildeltvakt]" value="1" checked="checked"></td>
+				<td><input type="checkbox" name="tildeltvakt" value="1" <?php if($epostInst['tildelt'] == 1) { ?> checked="checked"><?php } ?></td>
 			</tr>
 			<tr>
 				<td>når det er 24 timer igjen til å sitte vakt</td>
-				<td><input type="checkbox" name="varsel[vakt]" value="1" checked="checked"></td>
+				<td><input type="checkbox" name="vakt" value="1" <?php if($epostInst['snart_vakt'] == 1) { ?> checked="checked"><?php } ?></td>
 			</tr>
 			<tr>
 				<td>når noen vil bytte eller gi bort en vakt</td>
-				<td><input type="checkbox" name="varsel[vaktbytte]" value="1" checked="checked"></td>
+				<td><input type="checkbox" name="vaktbytte" value="1" <?php if($epostInst['bytte'] == 1) { ?> checked="checked"><?php } ?></td>
 			</tr>
 			<tr>
 				<td>når kosesjef har planlagt et utleie</td>
-				<td><input type="checkbox" name="varsel[utleie]" value="1" checked="checked"></td>
+				<td><input type="checkbox" name="utleie" value="1" <?php if($epostInst['utleie'] == 1) { ?> checked="checked"><?php } ?></td>
 			</tr>
 			<tr>
 				<td>når det er 24 timer igjen til å stå barvakt</td>
-				<td><input type="checkbox" name="varsel[barvakt]" value="1" checked="checked"></td>
+				<td><input type="checkbox" name="barvakt" value="1" <?php if($epostInst['barvakt'] == 1) { ?> checked="checked"><?php } ?></td>
 			</tr>
 		</table>
 		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>

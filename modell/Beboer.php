@@ -310,7 +310,7 @@ class Beboer implements Person
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
 
-        return $st->fetchColumn();
+        return $st->fetchAll()[0];
     }
 
     public function vilHaVaktVarsler()
@@ -321,6 +321,42 @@ class Beboer implements Person
         $epost_preferanser = $st->fetchColumn();
 
         return $epost_preferanser['snart_vakt'] == 1;
+    }
+
+    public function vilHaTildeltVarsel(){
+        $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
+        $st->bindParam(':beboer_id', $this->getId());
+        $st->execute();
+        $epost_preferanser = $st->fetchColumn();
+
+        return $epost_preferanser['tildelt'] == 1;
+    }
+
+    public function vilHaBytteGiVarsel(){
+        $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
+        $st->bindParam(':beboer_id', $this->getId());
+        $st->execute();
+        $epost_preferanser = $st->fetchColumn();
+
+        return $epost_preferanser['bytte'] == 1;
+    }
+
+    public function vilHaUtleieVarsel(){
+        $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
+        $st->bindParam(':beboer_id', $this->getId());
+        $st->execute();
+        $epost_preferanser = $st->fetchColumn();
+
+        return $epost_preferanser['utleie'] == 1;
+    }
+
+    public function vilHaBarvaktVarsel(){
+        $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
+        $st->bindParam(':beboer_id', $this->getId());
+        $st->execute();
+        $epost_preferanser = $st->fetchColumn();
+
+        return $epost_preferanser['barvakt'] == 1;
     }
 
     public function getBruker()
