@@ -52,7 +52,7 @@ class JournalCtrl extends AbstraktCtrl
                                     die('Du har ikke betalt alkoholdepositum og kan ikke krysse!');
                                     //TODO gjør noe mer fornuftig med detta. Vise error-page elns.
                                 }
-                                $krysselista = KrysseListe::medBeboerDrikkeId($beboerId, $drikkeid);
+                                $krysselista = Krysseliste::medBeboerDrikkeId($beboerId, $drikkeid);
                                 $krysselista->addKryss($antall);
                                 $krysselista->oppdater();
                                 //$krysselista->kryss($antall);
