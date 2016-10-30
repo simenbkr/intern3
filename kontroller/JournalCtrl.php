@@ -48,7 +48,7 @@ class JournalCtrl extends AbstraktCtrl
                                 $beboerId = $post['beboerId'];
                                 $antall = $post['antall'];
                                 $drikkeid = $post['type'];
-                                if (!Beboer::medId($beboerId)->harAlkoholdepositum()){
+                                if (!Beboer::medId($beboerId)->harAlkoholdepositum()) {
                                     die('Du har ikke betalt alkoholdepositum og kan ikke krysse!');
                                     //TODO gjør noe mer fornuftig med detta. Vise error-page elns.
                                 }
@@ -67,10 +67,29 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->vis('kryss.php');
                         break;
                     case 'vaktbytte':
+                        $denneVakt = VaktSesjon::getLatest();
+                        if (isset($_POST) && isset($_POST['beboerId']) && is_numeric($_POST['beboerId'])) {
+                            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                            if($post['beboerId'] >= 0 && Beboer::medId($post['beboerId']) != null){
+                                $denneVakt->setBeboerId($post['beboerId']);
+                            }
+                            //Torild
+                            elseif($post['beboerId'] == 0){
+                                $denneVakt->setBeboerId($post['beboerId']);
+                            }
+                        }
+                        if($denneVakt->getBeboerId() == 0){
+                            //Torild
+                            $vakta = Ansatt::medId(1);
+                        } else {
+                            $vakta = Beboer::medId($denneVakt->getBeboerId());
+                        }
+                        $dok = new Visning($this->cd);
+                        $dok->set('denneVakt', $denneVakt);
+                        $dok->set('vakt', $vakta);
                         $sistearg = $this->cd->getSisteArg();
                         if ($sistearg == 'vaktbytte') {
                             $beboere = BeboerListe::aktive();
-                            $dok = new Visning($this->cd);
                             $dok->set('beboere', $beboere);
                             $dok->set('skjulMeny', 1);
                             $dok->vis('vaktbytte.php');
@@ -83,13 +102,12 @@ class JournalCtrl extends AbstraktCtrl
 
                                 $beboere = BeboerListe::aktive();
                                 $aktuelle = array();
-                                foreach($beboere as $beboer){
-                                    if(($beboer->getRolleId() == 1 || $beboer->getRolleId() == 2) && Funk::startsWith($beboer->getEtternavn(),$bokstav)){
+                                foreach ($beboere as $beboer) {
+                                    if (($beboer->getRolleId() == 1 || $beboer->getRolleId() == 2) && Funk::startsWith($beboer->getEtternavn(), $bokstav)) {
                                         $aktuelle[] = $beboer;
                                     }
                                 }
 
-                                $dok = new Visning($this->cd);
                                 $dok->set('aktuelle', $aktuelle);
                                 $dok->set('skjulMeny', 1);
                                 $dok->vis('vaktbytte_bokstav.php');
