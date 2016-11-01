@@ -658,6 +658,23 @@ foreach($beboerliste as $beboer){
 
 /* Oppsett av epost_pref slutt */
 
+/* Utleie-tabell, start */
+
+$st = DB::getDB()->prepare('CREATE TABLE `utleie` (
+`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY , 
+`dato` VARCHAR(512) NOT NULL,
+`navn` VARCHAR(512) NOT NULL,
+`beboer1_id` INT(10) NOT NULL,
+`beboer2_id` INT(10) NOT NULL,
+`beboer3_id` INT(10) NOT NULL,
+`rom` VARCHAR(512) NOT NULL)');
+
+$st->execute();
+
+/* Utleie-tabell, slutt */
+
+
+
 /* Lager fakturert-tabell for å holde oversikt over når øl blir fakturert. */
 
 $st = DB::getDB()->prepare('CREATE TABLE fakturert (

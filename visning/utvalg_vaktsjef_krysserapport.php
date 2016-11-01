@@ -1,6 +1,5 @@
 <?php
-require_once('topp.php');
-//print_r($krysseListeMonthListe);
+require_once('topp_utvalg.php');
 
 ?>
 <script>
