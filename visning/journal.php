@@ -13,7 +13,7 @@ if (isset($success)) {
 }
 unset($success);
 ?>
-
+<!-- ?a=journal/logout for å logge ut. -->
 <div class="col-sm-6 col-xs-12" style="margin: auto; margin-top: 5%">
 	<h1>Journal</h1>
 <h1>

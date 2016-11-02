@@ -13,6 +13,7 @@ class JournalCtrl extends AbstraktCtrl
             if ($aktivBruker->getPerson()->harUtvalgVerv()) {
                 $aktueltArg = $this->cd->getAktueltArg();
                 switch ($aktueltArg) {
+                    case '':
                     case 'hoved':
                     default:
                         setcookie('brukernavn', 'journal', NULL, NULL, NULL, NULL, TRUE);
@@ -30,6 +31,7 @@ class JournalCtrl extends AbstraktCtrl
             if ($_COOKIE['brukernavn'] == 'journal' && $_COOKIE['passord'] == $passord_hash) {
                 $aktueltArg = $this->cd->getAktueltArg();
                 switch ($aktueltArg) {
+                    case '':
                     case 'hoved':
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
@@ -214,10 +216,16 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->set('vakta', $vakta);
                         $dok->vis('journal_signering.php');
                         break;
+                    case 'logout':
                     default:
+                        setcookie('brukernavn', '', -1);
+                        setcookie('passord', '', -1);
+                        setcookie('du', '', -1);
+                        Header('Location: ' . $_GET['ref']);
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
-                        $dok->vis('journal.php');
+                        $dok->set('visError', 1);
+                        $dok->vis('logginn.php');
                 }
             }
         } else {
