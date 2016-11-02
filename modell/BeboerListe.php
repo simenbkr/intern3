@@ -20,6 +20,18 @@ class BeboerListe
         return self::medPdoSt($st);
     }
 
+    public static function ikkeAktive(){
+        $aktive = self::aktive();
+        $alle = self::alle();
+        $ikke_aktive = array();
+        foreach($alle as $beboer){
+            if (!in_array($beboer, $aktive)){
+                $ikke_aktive[] = $beboer;
+            }
+        }
+        return $ikke_aktive;
+    }
+
     public static function medBursdag($dato)
     {
         $ikkeUtflyttet = '%"utflyttet":NULL%';
