@@ -1,5 +1,6 @@
 <?php
 require_once('topp.php');
+require_once ('topp_journal.php');
 ?>
     <script>
         function bytte(beboerId) {
@@ -9,7 +10,7 @@ require_once('topp.php');
                 data: 'beboerId=' + beboerId,
                 method: 'POST',
                 success: function (data) {
-                    $(".container").replaceWith($('.container', $(data)));
+                    $("#ramme").replaceWith($('.container', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -42,8 +43,7 @@ require_once('topp.php');
                     echo "[<a href='?a=journal/vaktbytte/Æ'>Æ</a>]";
                     echo "[<a href='?a=journal/vaktbytte/Ø'>Ø</a>]";
                     echo "[<a href='?a=journal/vaktbytte/Å'>Å</a>]";
-                    echo "<br/><br/>";
-                   // echo "[<a href='?a=journal/vaktbytte/TORILD'>TORILD FIVE</a>]";?>
+                    echo "<br/><br/>"; ?>
                     <input class="btn btn-default btn-block" type="submit" value="TORILD FIVE" onclick="bytte(0)">
 
                     <br><br/>

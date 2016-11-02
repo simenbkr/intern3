@@ -1,5 +1,5 @@
 <?php
-
+require_once ('topp_journal.php');
 require_once('topp.php');
 
 

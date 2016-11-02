@@ -1,5 +1,5 @@
 <?php
-
+require_once ('topp_journal.php');
 require_once('topp.php');
 
 if (isset($success)) {
@@ -16,13 +16,13 @@ unset($success);
 
 <div class="col-sm-6 col-xs-12" style="margin: auto; margin-top: 5%">
 	<h1>Journal</h1>
-
+<h1>
     <ul>
         <li><a href="?a=journal/krysseliste">Krysseliste</a></li>
         <li><a href="?a=journal/signering">Signering</a></li>
         <li><a href="?a=journal/pafyll">Påfyll</a></li>
         <li><a href="?a=journal/vaktbytte">Vaktbytte</a></li>
-    </ul>
+    </ul></h1>
 <?php
 
 require_once('bunn.php');

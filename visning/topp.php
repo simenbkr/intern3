@@ -59,7 +59,7 @@ if (!isset($skjulMeny)) {
 							<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>
 
                             <?php
-                            if ($cd->getAktivBruker()->getPerson()->erHelgaGeneral()) {
+                            if ($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->erHelgaGeneral()) {
                                 ?>
                                 <ul class="nav navbar-nav">
                                     <li class="dropdown">
@@ -79,7 +79,7 @@ if (!isset($skjulMeny)) {
 							<li><a href="<?php echo $cd->getBase(); ?>kjeller">(Vinkjeller)</a></li>
 <?php
 
-if ($cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
+if ($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 ?>
 							<li><a href="<?php echo $cd->getBase(); ?>utvalg">Utvalget</a></li>
 <?php

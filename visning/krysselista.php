@@ -1,5 +1,6 @@
 <?php
 require_once('topp.php');
+require_once ('topp_journal.php');
 
 $beboere_med_depositum = array();
 
@@ -8,12 +9,9 @@ foreach($beboere as $beboer){
         $beboere_med_depositum[] = $beboer;
     }
 }
-
-
 $length = count($beboere_med_depositum);
 $beboere_1 = array_slice($beboere_med_depositum, 0, $length / 2);
 $beboere_2 = array_slice($beboere_med_depositum, $length / 2);
-
 ?>
 
     <hr><br/><h1>Krysseliste</h1>
@@ -64,7 +62,7 @@ $beboere_2 = array_slice($beboere_med_depositum, $length / 2);
                     </tbody>
                 </table>
             </div>
-            <h2><a href="javascript:history.back()">TILBAKE</a></h2>
+            <h2><a href="?a=journal">TILBAKE</a></h2>
 
         </div>
     </div>

@@ -7,17 +7,16 @@ require_once("autolast.php");
 /* Start utsending av e-post til de som har vakt innen de neste 24t */
 $harVakt = BeboerListe::harVakt();
 foreach($harVakt as $beboer){
-    //Denne må legges til i tandem med knappen på profil-greia.
     if($beboer->vilHaVaktVarsler()){
         $vakterInnenDogn = $beboer->getVakterInnenDogn();
 
         foreach($vakterInnenDogn as $vakt){
-            $beskjed = "Hei!\r\nDu har snart vakt! Du skal ha vakt " . $vakt->getDato() . "\r\nDette er " . $vakt->getVakttype();
-            $beskjed .= "\r\n\r\n Med vennlig hilsen \r\nRobottene ved Internsidene";
-            $beskjed .= "\r\n\r\nHvis denne e-posten er sendt feil, vennligst ta kontakt med data@singsaker.no";
+            $beskjed = "<html><body>Hei!<br/>Du har snart vakt! Du skal ha vakt " . $vakt->getDato() . "<br/>Dette er " . $vakt->getVakttype();
+            $beskjed .= "<br/><br/> Med vennlig hilsen <br/>Robottene ved Internsidene";
+            $beskjed .= "<br/><br/>Hvis denne e-posten er sendt feil, vennligst ta kontakt med data@singsaker.no</body></html>";
             $epost = new \intern3\Epost($beskjed);
             $epost->addBrukerId($beboer->getBrukerId());
-            $tittel = "[SINGSAKER-INTERN] Du skal snart sitte vakt!";
+            $tittel = "[SING-INTERN] Du skal snart sitte vakt!";
             $epost->send($tittel);
         }
     }
