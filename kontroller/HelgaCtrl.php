@@ -24,7 +24,10 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if (isset($post['start']) && isset($post['aar'])) {
+                            if (isset($post['endre']) && isset($post['epost_tekst'])) {
+                                $denne_helga->setEpostTekst($post['epost_tekst']);
+                                $dok->set('oppdatert', 1);
+                            } elseif (isset($post['start']) && isset($post['aar'])) {
                                 $klar = $post['klar'] == 'on' ? 1 : 0;
                                 $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
                                 $st->bindParam(':start', $post['start']);
@@ -36,6 +39,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $dok->set('oppdatert', 1);
                             }
                         }
+                        $denne_helga = Helga::getLatestHelga();
                         $alle_helga = Helga::getAlleHelga();
                         $dok->set('alle_helga', $alle_helga);
                         $dok->set('helga', $denne_helga);
@@ -47,7 +51,6 @@ class HelgaCtrl extends AbstraktCtrl
                     $dok = new Visning($this->cd);
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
                         if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
                             //Legg til gjest.
                             if (Funk::isValidEmail($post['epost'])) {
@@ -72,7 +75,8 @@ class HelgaCtrl extends AbstraktCtrl
                                 $dagen = $dag_array[$gjesten->getDag()];
                                 $datoen = date('Y-m-d', strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
                                 $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
-                                $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til " . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem</body></html>";
+                                //$beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til " . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem</body></html>";
+                                $beskjed = $denne_helga->getEpostTekst() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Med vennlig hilsen<br/>" . $denne_helga->getTema() . "-Helga 2017";
                                 Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
                                 $gjesten->setSendt(1);
                                 $dok->set('epostSendt', 1);

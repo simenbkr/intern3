@@ -12,7 +12,7 @@ class Helga
     private $klar;
     private $max_gjester;
 
-    public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester=15)
+    public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester = 15, $epost_tekst = null)
     {
         if ($start_dato != null) {
             $this->start_dato = date('Y-m-d', strtotime($start_dato));
@@ -26,6 +26,7 @@ class Helga
         $this->aar = $aar;
         $this->klar = $klar;
         $this->max_gjester = $max_gjester;
+        $this->epost_tekst = $epost_tekst;
     }
 
     public function getStartDato()
@@ -57,6 +58,23 @@ class Helga
 
     public function getMaxGjester(){
         return $this->max_gjester;
+    }
+
+    public function getEpostTekst(){
+        return $this->epost_tekst;
+    }
+
+    public function getGeneralerAsFornavn(){
+        $string = "";
+        foreach($this->generaler as $general){
+            $string .= $general->getFornavn() . ',';
+        }
+        return rtrim($string, ',');
+    }
+
+    public function setEpostTekst($epost_tekst){
+        $this->epost_tekst = $epost_tekst;
+        $this->oppdater();
     }
 
     public function setMaxGjester($antall){
@@ -103,13 +121,14 @@ class Helga
             $general_ider[] = $general->getId();
         }
 
-        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest WHERE aar=:aar');
+        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest, epost_tekst=:epost_tekst WHERE aar=:aar');
         $st->bindParam(':start_dato', $this->start_dato);
         $st->bindParam(':slutt_dato', $this->slutt_dato);
         $st->bindParam(':generaler', json_encode($general_ider));
         $st->bindParam(':tema', $this->tema);
         $st->bindParam(':aar', $this->aar);
         $st->bindParam(':max_gjest', $this->max_gjester);
+        $st->bindParam(':epost_tekst', $this->epost_tekst);
         $st->execute();
     }
 
@@ -151,7 +170,7 @@ class Helga
             }
         }
 
-        return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest']);
+        return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest'], $rader['epost_tekst']);
     }
 
     public static function getHelgaByAar($aar)
@@ -170,7 +189,7 @@ class Helga
                 $generaler[] = Beboer::medId($general);
             }
         }
-        return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest']);
+        return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest'], $res['epost_tekst']);
     }
 
     public static function createHelga($start_dato)

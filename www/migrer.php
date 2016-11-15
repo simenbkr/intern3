@@ -608,6 +608,7 @@ $st = DB::getDB()->prepare("CREATE TABLE `intern3_dev`.`helga`
 `slutt_dato` VARCHAR(10) NOT NULL , 
 `generaler` VARCHAR(512) NOT NULL , 
 `tema` VARCHAR(128) NOT NULL , 
+`epost_text` TEXT NOT NULL ,
 `klar` TINYINT(1) NOT NULL,
 `max_gjest` INT(10) NOT NULL,
 PRIMARY KEY (`aar`))");
