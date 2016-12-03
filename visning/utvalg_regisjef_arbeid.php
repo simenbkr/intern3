@@ -25,6 +25,14 @@ function godkjennArbeid(id, underkjenn) {
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Regisjef &raquo; Arbeid</h1>
+	<?php if(isset($endret)){ ?>
+		<div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			Du endret et arbeid!
+		</div>
+	<?php
+	}
+	?>
 	<p>Gå til side: <?php
 
 $lenker = array();
@@ -51,6 +59,7 @@ echo implode(',' . PHP_EOL, $lenker);
 				<th>Tid brukt</th>
 				<th>Kommentar</th>
 				<th>Status</th>
+				<th> </th>
 				<th> </th>
 			</tr>
 		</thead>
