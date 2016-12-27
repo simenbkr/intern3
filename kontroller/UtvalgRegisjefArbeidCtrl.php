@@ -24,7 +24,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                     }
                     if(isset($_POST)){
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                        if(isset($post['time']) && is_numeric($post['time']) && isset($post['endre']) && is_numeric($post['endre'])){
+                        if(isset($post['time']) && isset($post['endre'])){
                             $this->endreArbeid($post['endre'], $post['time']);
                             $dok->set('endret', 1);
                             break;
@@ -71,12 +71,29 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
 
     private function endreArbeid($id, $nyTid){
         $aktuelt_arbeid = Arbeid::medId($id);
-        $tiden = $nyTid * 3600;
+        $tiden = $this->getSekunderBrukt($nyTid);
         $st = DB::getDB()->prepare('UPDATE arbeid SET sekunder_brukt=:sek_brukt WHERE id=:id');
         $st->bindParam(':id', $id);
         $st->bindParam(':sek_brukt', $tiden);
         $st->execute();
         return;
+    }
+
+    private function getSekunderBrukt($param)
+    {
+        if (preg_match('/^([0-9]+)$/', $param, $treff)) {
+            return $treff[1] * 3600;
+        }
+        if (preg_match('/^([0-9]+)(\:([0-9]{2}))?$/', $param, $treff)) {
+            return $treff[1] * 3600 + $treff[3] * 60;
+        }
+        if (preg_match('/^[0-9]+(\,[0-9]+)?$/', $param)) {
+            return str_replace(',', '.', $param) * 3600;
+        }
+        if (preg_match('/^[0-9]+(\.[0-9]+)?$/', $param)) {
+            return $param * 3600;
+        }
+        return 0;
     }
 
 }

@@ -28,6 +28,7 @@ foreach($aktuelle as $beboer){ ?>
 }
 ?>
 </div>
+    <a href="javascript:history.back()">TILBAKE</a>
 </div>
 
 

@@ -16,9 +16,11 @@ class JournalCtrl extends AbstraktCtrl
                     case '':
                     case 'hoved':
                     default:
-                        setcookie('brukernavn', 'journal', NULL, NULL, NULL, NULL, TRUE);
-                        setcookie('passord', $passord_hash, NULL, NULL, NULL, NULL, TRUE);
-                        setcookie('du', '', -1);
+                        //setcookie('brukernavn', 'journal', NULL, NULL, NULL, NULL, TRUE);
+                        //setcookie('passord', $passord_hash, NULL, NULL, NULL, NULL, TRUE);
+                        //setcookie('du', '', -1);
+                        $_SESSION['brukernavn'] = 'journal';
+                        $_SESSION['passord'] = $passord_hash;
                         Header('Location: ' . $_GET['ref']);
                         $dok = new Visning($this->cd);
                         $dok->set('success', 1);
@@ -27,8 +29,8 @@ class JournalCtrl extends AbstraktCtrl
                         break;
                 }
             }
-        } else if (isset($_COOKIE['brukernavn']) && isset($_COOKIE['passord'])) {
-            if ($_COOKIE['brukernavn'] == 'journal' && $_COOKIE['passord'] == $passord_hash) {
+        } else if (isset($_SESSION['brukernavn']) && isset($_SESSION['passord'])) {
+            if ($_SESSION['brukernavn'] == 'journal' && $_SESSION['passord'] == $passord_hash) {
                 $aktueltArg = $this->cd->getAktueltArg();
                 switch ($aktueltArg) {
                     case '':
@@ -52,7 +54,7 @@ class JournalCtrl extends AbstraktCtrl
 
                                     //Loggfører til journal.utavskap.
                                     $denne_vakta = VaktSesjon::getLatest();
-                                    switch($drikkeid) {
+                                    switch ($drikkeid) {
                                         //var drikker = ['','Pant','Øl','Cider','Carlsberg','Rikdom'];
                                         case 2:
                                             $nyOl = $denne_vakta->getOl();
@@ -100,9 +102,10 @@ class JournalCtrl extends AbstraktCtrl
                         $denne_vakta = VaktSesjon::getLatest();
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if(isset($post['pafyll']) && $post['pafyll'] == 1 && isset($post['antall'])
-                                && is_numeric($post['antall']) && isset($post['type']) && is_numeric($post['type'])){
-                                switch($post['type']){
+                            if (isset($post['pafyll']) && $post['pafyll'] == 1 && isset($post['antall'])
+                                && is_numeric($post['antall']) && isset($post['type']) && is_numeric($post['type'])
+                            ) {
+                                switch ($post['type']) {
                                     //var drikker = ['','Pant','Øl','Cider','Carlsberg','Rikdom'];
                                     case 2:
                                         $nyOl = $denne_vakta->getOl();
@@ -168,21 +171,21 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->set('vakt', $vakta);
                         $sistearg = $this->cd->getSisteArg();
                         if ($sistearg == 'vaktbytte') {
+                            $denne_vakta = VaktSesjon::getLatest();
                             $beboere = BeboerListe::aktive();
                             $dok->set('beboere', $beboere);
+                            $dok->set('denne_vakta', $denne_vakta);
                             $dok->set('skjulMeny', 1);
                             $dok->vis('vaktbytte.php');
                             break;
                         } else {
                             if ($sistearg == "TORILD") {
-
                             } else {
                                 $bokstav = $sistearg;
-
                                 $beboere = BeboerListe::aktive();
                                 $aktuelle = array();
                                 foreach ($beboere as $beboer) {
-                                    if (($beboer->getRolleId() == 1 || $beboer->getRolleId() == 2) && Funk::startsWith($beboer->getEtternavn(), $bokstav)) {
+                                    if (($beboer->getRolleId() == 1 || $beboer->getRolleId() == 2) && Funk::startsWith($beboer->getEtternavn(), $bokstav) && !$beboer->harUtvalgVerv()) {
                                         $aktuelle[] = $beboer;
                                     }
                                 }
@@ -196,7 +199,7 @@ class JournalCtrl extends AbstraktCtrl
                         $denne_vakta = VaktSesjon::getLatest();
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if(isset($post['beboerId']) && is_numeric($post['beboerId'])){
+                            if (isset($post['beboerId']) && is_numeric($post['beboerId'])) {
                                 $denne_vakta = VaktSesjon::avsluttVakt($denne_vakta);
                             }
                         }
@@ -218,9 +221,10 @@ class JournalCtrl extends AbstraktCtrl
                         break;
                     case 'logout':
                     default:
-                        setcookie('brukernavn', '', -1);
-                        setcookie('passord', '', -1);
-                        setcookie('du', '', -1);
+                        //setcookie('brukernavn', '', -1);
+                        //setcookie('passord', '', -1);
+                        //setcookie('du', '', -1);
+                        session_destroy();
                         Header('Location: ' . $_GET['ref']);
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
@@ -229,9 +233,10 @@ class JournalCtrl extends AbstraktCtrl
                 }
             }
         } else {
-            setcookie('brukernavn', '', -1);
-            setcookie('passord', '', -1);
-            setcookie('du', '', -1);
+            //setcookie('brukernavn', '', -1);
+            //setcookie('passord', '', -1);
+            //setcookie('du', '', -1);
+            session_destroy();
             Header('Location: ' . $_GET['ref']);
             $dok = new Visning($this->cd);
             $dok->set('skjulMeny', 1);

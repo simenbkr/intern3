@@ -98,14 +98,8 @@ class Journal {
     }
 
     public function getKrysseInfo(){
-
         $info_arr = array();
         $perioden = self::getPeriode();
-
-/*        $perioden = array(
-            'fra' => date('2015-08-17'),
-            'til' => date('2015-08-24')
-        );*/
 
         //Henter ut siste kryssing/vaktbytte/overføring fra forrige periode.
         $st = DB::getDB()->prepare('SELECT * FROM journal WHERE dato>=:start AND dato <=:slutt ORDER BY dato DESC');
@@ -127,7 +121,7 @@ class Journal {
         $indeks = 0;
         foreach($journalen as $vakt){
             $denne_vakta = array();
-            $vakten = ($vakt['beboer_id'] > 0 ? Beboer::medId($vakt['beboer_id']) : Ansatt::medId(0));
+            $vakten = ($vakt['beboer_id'] > 1 ? Beboer::medId($vakt['beboer_id']) : Ansatt::medId(1));
             $denne_vakta['vakthavende'] = $vakten->getFulltNavn();
             $denne_vakta['vaktnr'] = $vakt['vakt'];
             $denne_vakta['dato'] = $vakt['dato'];
@@ -158,11 +152,7 @@ class Journal {
 
             $endelig_array[] = $denne_vakta;
         }
-
-
         return $endelig_array;
-
-
     }
-
 }
+?>

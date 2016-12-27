@@ -1,6 +1,6 @@
 <?php
-require_once('topp.php');
 require_once ('topp_journal.php');
+require_once('topp.php');
 
 $beboere_med_depositum = array();
 

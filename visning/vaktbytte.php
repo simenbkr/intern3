@@ -1,6 +1,6 @@
 <?php
-require_once('topp.php');
 require_once ('topp_journal.php');
+require_once('topp.php');
 ?>
     <script>
         function bytte(beboerId) {
@@ -10,16 +10,17 @@ require_once ('topp_journal.php');
                 data: 'beboerId=' + beboerId,
                 method: 'POST',
                 success: function (data) {
-                    $("#ramme").replaceWith($('.container', $(data)));
+                    //$(".container").replaceWith($('.container', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
+            location.reload();
         }
     </script>
 
-    <div class="container">
+    <div class="container" id="container">
         <div class="row">
             <div class="col-lg-12 text-center">
                 <h1>Nå sitter
@@ -27,7 +28,7 @@ require_once ('topp_journal.php');
                         echo $vakt->getFulltNavn();
                     } else {
                         echo "TORILD FIVE";
-                    } ?> vakt.
+                    } echo " " . $denne_vakta->getVaktNr() . ".";?> vakt.
                 </h1>
                 <h2> Bytte vakt? Trykk på første bokstav i ditt etternavn </h2>
                 <h2>
