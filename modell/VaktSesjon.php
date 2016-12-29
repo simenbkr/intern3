@@ -7,6 +7,7 @@ class VaktSesjon
 
     private $id;
     private $beboerId;
+    private $beboer;
     private $vaktnr;
     private $dato;
 
@@ -23,6 +24,7 @@ class VaktSesjon
 
         $this->id = $id;
         $this->beboerId = $beboerId;
+        $this->beboer = Beboer::medId($beboerId);
         $this->vaktnr = $vaktnr;
         $this->dato = $dato;
 
@@ -159,6 +161,10 @@ WHERE kryss_id=:id');
         return $this->beboerId;
     }
 
+    public function getBeboer(){
+        return $this->beboer;
+    }
+
     public function getVaktnr()
     {
         return $this->vaktnr;
@@ -192,6 +198,7 @@ WHERE kryss_id=:id');
     public function setBeboerId($beboer_id)
     {
         $this->beboerId = $beboer_id;
+        $this->beboer = Beboer::medId($beboer_id);
         $this->Oppdater();
     }
 

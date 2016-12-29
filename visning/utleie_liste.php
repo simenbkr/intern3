@@ -1,7 +1,5 @@
 <?php
-
 require_once('topp.php');
-
 ?>
 <script>
     function meldPa(utleieid, felt) {
@@ -18,7 +16,6 @@ require_once('topp.php');
             }
         });
     }
-
     function meldAv(utleieid) {
         $.ajax({
             type: 'POST',
@@ -51,10 +48,9 @@ require_once('topp.php');
         </div>
         <?php
     } ?>
-
-
     <div class="col-md-12">
-        <h1>Utleier</h1>
+        <h1>Utleie » Påmelding</h1>
+        <p>Her kan du melde deg på som barvakt/vaskehjelp.</p>
         <table class="table-bordered table">
             <tr>
                 <th>Dato</th>
@@ -67,9 +63,7 @@ require_once('topp.php');
 
             <?php
             foreach ($utleier as $utleiet) {
-
                 ?>
-
                 <tr>
                     <td><?php echo $utleiet->getDato(); ?></td>
                     <td><?php echo $utleiet->getRom(); ?></td>
@@ -79,8 +73,6 @@ require_once('topp.php');
                     <td><?php echo $utleiet->getBeboer3() != null ? $utleiet->getBeboer3()->getFulltNavn() : ($utleiet->erBeboerPameldt($aktuell_beboer) ? '' : "<input class=\"btn btn-primary\" type=\"submit\" value=\"Meld på\" onclick=\"meldPa(" . $utleiet->getId() . ",3)\""); ?></td>
                     <td><?php echo $utleiet->erBeboerPameldt($aktuell_beboer) ? "<input class=\"btn btn-primary\" type=\"submit\" value=\"Meld av\" onclick=\"meldAv(" . $utleiet->getId() . ")\"" : ''; ?></td>
                 </tr>
-
-
                 <?php
             }
             ?>
@@ -88,7 +80,5 @@ require_once('topp.php');
     </div>
 </div>
 <?php
-
 require_once('bunn.php');
-
 ?>

@@ -1,14 +1,7 @@
 <?php
 require_once ('topp_journal.php');
 require_once ('topp.php');
-
 ?>
-
-<?php
-
-require_once('topp.php');
-?>
-
     <script>
         window.onload = function(){
             changeKnapp();
@@ -79,7 +72,6 @@ require_once('topp.php');
             });
         }
     </script>
-
     <style>
         @media screen and (min-device-width:698px) {
             div#showgrid {
@@ -133,8 +125,8 @@ require_once('topp.php');
             cursor:pointer;
             color:#ffffff;
             font-family:Verdana;
-            font-size:34px;
-            padding:60px 70px;
+            font-size:28px;
+            padding:50px 60px;
             text-decoration:none;
             text-shadow:1px 0px 0px #283966;
         }
@@ -155,20 +147,29 @@ require_once('topp.php');
 
 
         .btn-huge{
-            padding-top:55px;
-            padding-bottom:55px;
-            padding-left:65px;
-            padding-right:65px;
+            padding-top:35px;
+            padding-bottom:35px;
+            padding-left:55px;
+            padding-right:55px;
             font-family: Verdana;
-            font-size: 40px;
+            font-size: 32px;
             margin-bottom: 5px;
         }
 
 
     </style>
-
-    <h1 style="text-align: center; font-size:2vw;">Påfyll for vakt: <?php echo $vakta->getFulltNavn(); ?></h1><br/>
+    <h1 style="text-align: center; font-size:2vw;">Påfyll for <?php echo $vaktSesj->getVaktnr();?>. vakt: <?php echo $vakta->getFulltNavn() . " "; echo date('Y-m-d', strtotime($vaktSesj->getDato()));?></h1><br/>
     <div class="container" id="container" style="text-align:center;">
+        <?php
+        if (isset($pafylt)){
+            ?>
+            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                Du fylte på! Wooohoo!
+            </div><br/>
+            <?php
+            unset($pafylt);
+        }?>
         <h1>
             <ul class="list-inline">
                 <li><button class="btn btn-primary btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
@@ -200,16 +201,6 @@ require_once('topp.php');
             </div>
         </div>
         <br/><hr>
-        <?php
-        if (isset($pafylt)){
-            ?>
-            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Du fylte på! Bra jobba! :)
-            </div>
-            <?php
-            unset($pafylt);
-        }?>
         <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss()"></button>
         <br/>
         <h1><a href="javascript:history.back()">TILBAKE</a></h1>

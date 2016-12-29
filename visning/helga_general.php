@@ -85,6 +85,7 @@ require_once('topp.php');
                 </div>
             </div>
         </div>
+        <?php /*
         <div class="col-lg-6">
             <h3>Eposten vil bli seende (omtrent) slik ut:</h3>
 
@@ -110,7 +111,7 @@ require_once('topp.php');
         </div>
 
 
-
+*/ ?>
     </div>
 <?php
 require_once('bunn.php');

@@ -155,12 +155,12 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 
 
     .btn-huge{
-        padding-top:55px;
-        padding-bottom:55px;
-        padding-left:65px;
-        padding-right:65px;
+        padding-top:35px;
+        padding-bottom:35px;
+        padding-left:55px;
+        padding-right:55px;
         font-family: Verdana;
-        font-size: 40px;
+        font-size: 32px;
         margin-bottom: 5px;
     }
 

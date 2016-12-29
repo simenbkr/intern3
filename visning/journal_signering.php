@@ -23,8 +23,7 @@ require_once('topp.php');
         <hr>
         </br>
         <div class="col-lg-6">
-            <h2><?php echo $vakta->getFulltNavn(); ?> sitter <?php echo $denne_vakta->getVaktnr(); ?>. vakt nå.</h2>
-
+            <h2><?php echo $vakta->getFulltNavn(); ?> sitter <?php echo $denne_vakta->getVaktnr(); ?>. vakt nå. (<?php echo date('Y-m-d',strtotime($denne_vakta->getDato()));?>)</h2>
             <table class="table table-bordered table-responsive">
                 <tr>
                     <th>Status</th>
@@ -33,7 +32,6 @@ require_once('topp.php');
                     <th>Carlsberg</th>
                     <th>Rikdom</th>
                 </tr>
-
                 <tr>
                     <td>Mottatt</td>
                     <td><?php echo $denne_vakta->getOl()['mottatt']; ?></td>
@@ -41,7 +39,6 @@ require_once('topp.php');
                     <td><?php echo $denne_vakta->getCarlsberg()['mottatt']; ?></td>
                     <td><?php echo $denne_vakta->getRikdom()['mottatt']; ?></td>
                 </tr>
-
                 <tr>
                     <td>Påfyll</td>
                     <td><?php echo $denne_vakta->getOl()['pafyll']; ?></td>
@@ -49,7 +46,6 @@ require_once('topp.php');
                     <td><?php echo $denne_vakta->getCarlsberg()['pafyll']; ?></td>
                     <td><?php echo $denne_vakta->getRikdom()['pafyll']; ?></td>
                 </tr>
-
                 <tr>
                     <td>Krysset</td>
                     <td><?php echo $denne_vakta->getOl()['utavskap']; ?></td>
@@ -57,7 +53,6 @@ require_once('topp.php');
                     <td><?php echo $denne_vakta->getCarlsberg()['utavskap']; ?></td>
                     <td><?php echo $denne_vakta->getRikdom()['utavskap']; ?></td>
                 </tr>
-
                 <tr>
                     <td>Avlevert</td>
                     <td><?php echo $denne_vakta->getOl()['avlevert']; ?></td>
@@ -65,11 +60,8 @@ require_once('topp.php');
                     <td><?php echo $denne_vakta->getCarlsberg()['avlevert']; ?></td>
                     <td><?php echo $denne_vakta->getRikdom()['avlevert']; ?></td>
                 </tr>
-
             </table>
-
             <input type="submit" value="Avslutt vakt" onclick="avslutt(<?php echo $vakta->getId(); ?>)" class="btn btn-block btn-primary">
-
         </div>
     </div>
 <?php

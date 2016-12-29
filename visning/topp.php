@@ -25,7 +25,9 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-    print_r($_COOKIE);
+    //print_r($_COOKIE);
+//echo "<br/><br/>";
+//print_r($_SESSION);
 	/* Meny start */
 	?>
 
@@ -97,7 +99,7 @@ if ($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->harUtva
 if ($cd->getAktivBruker()->getPerson()->erBeboer()) {
 	?>
 									<li><a href="<?php echo $cd->getBase(); ?>romskjema">Romskjema (<?php echo $cd->getAktivBruker()->getPerson()->getRomhistorikk()->getAktivtRom()->getNavn(); ?>)</a></li>
-									<li><a href="<?php echo $cd->getBase(); ?>rombytte">Rombytte</a></li>
+									<?php /*<li><a href="<?php echo $cd->getBase(); ?>rombytte">Rombytte</a></li> */ ?>
 									<li><a href="<?php echo $cd->getBase(); ?>utflytting">Utflytting</a></li>
 <?php
 }
@@ -175,6 +177,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/generer">Generer vaktliste</a></li>
 					<li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/ukerapport">Ukerapport</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapport">Krysserapport</a></li>
+                   <!-- <li><a href="<?php //echo $cd->getBase();?>utvalg/vaktsjef/kryss">Kryss minutt for minutt</a></li>-->
                 </ul>
               </li>
             </ul>

@@ -148,7 +148,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
                 $dok->vis('utvalg_vaktsjef_krysserapport_utskrift.php');
                 break;
-
+            case 'kryss':
+                $dok = new Visning($this->cd);
+                $dok->vis('utvalg_vaktsjef_kryss.php');
+                break;
             case 'vaktstyring_dobbelvakt':
                 if (isset($_POST['vaktId_1']) && isset($_POST['dobbelvakt'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);

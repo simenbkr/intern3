@@ -75,8 +75,8 @@ class HelgaCtrl extends AbstraktCtrl
                                 $dagen = $dag_array[$gjesten->getDag()];
                                 $datoen = date('Y-m-d', strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
                                 $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
-                                //$beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til " . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem</body></html>";
-                                $beskjed = $denne_helga->getEpostTekst() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Med vennlig hilsen<br/>" . $denne_helga->getTema() . "-Helga 2017";
+                                $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til " . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem<br/><br/><br/><br/>Dette er en automatisert melding. Feil? Vennligst ta kontakt med data@singsaker.no.</body></html>";
+                                //$beskjed = $denne_helga->getEpostTekst() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Med vennlig hilsen<br/>" . $denne_helga->getTema() . "-Helga 2017";
                                 Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
                                 $gjesten->setSendt(1);
                                 $dok->set('epostSendt', 1);

@@ -277,9 +277,9 @@ class Krysseliste
         return $kryss;
     }
 
-    public static function getKryssbyDay($beboer_id, $dato)
+    public static function getKryssbyDay($beboer_id, $dato=null)
     {
-        $datoen = date('Y-m-d', strtotime($dato));
+        $datoen = isset($dato) ? date('Y-m-d', strtotime($dato)) : date('Y-m-d',strtotime('now'));
         $id = $beboer_id;
         $st = DB::getDB()->prepare('SELECT * from krysseliste WHERE beboer_id=:id');
 
@@ -321,6 +321,18 @@ class Krysseliste
             }
         }
         return $kryss;
+    }
+
+    public static function getAlleKryssByBeboerByDay($beboer_id,$dato){
+        //TODO fix this shit.
+        $drikke_rader = self::medBeboerId($beboer_id);
+    }
+
+    public static function getAlleKryssByDay($dato=null){
+        //TODO fix this shit.
+        $datoen = isset($dato) ? date('Y-m-d', strtotime($dato)) : date('Y-m-d', strtotime('now'));
+        $alleKryss = array();
+
     }
 
     public static function setPeriodeFakturert(){
