@@ -9,6 +9,7 @@ class Vakt
     private $brukerId;
     private $vakttype;
     private $dato;
+    private $bytte;
     private $bekreftet;
     private $autogenerert;
     private $dobbelvakt;
@@ -45,6 +46,7 @@ class Vakt
         $instance->brukerId = $rad['bruker_id'];
         $instance->vakttype = $rad['vakttype'];
         $instance->dato = $rad['dato'];
+        $instance->bytte = $rad['bytte'] == 1 ? true : false;
         $instance->bekreftet = $rad['bekreftet'];
         $instance->autogenerert = $rad['autogenerert'];
         $instance->dobbelvakt = $rad['dobbelvakt'];
@@ -54,6 +56,10 @@ class Vakt
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getBytte(){
+        return $this->bytte;
     }
 
     public function getBrukerId()
