@@ -9,6 +9,7 @@ class Vaktbytte
     private $vaktId;
     private $gisBort;
     private $forslag;
+    private $forslagVaktListe;
     private $merknad;
     private $harPassord;
     private $passord;
@@ -42,7 +43,13 @@ class Vaktbytte
         $instance->id = $rad['id'];
         $instance->vaktId = $rad['vakt_id'];
         $instance->gisBort = $rad['gisbort'];
-        $instance->forslag = $rad['forslag'];
+        $instance->forslag = explode(',',$rad['forslag']);
+        if($instance->forslag != null){
+            $instance->forslagVaktListe = array();
+            foreach($instance->forslag as $id){
+                $instance->forslagVaktListe[] = Vakt::medId($id);
+            }
+        }
         $instance->merknad = $rad['merknad'];
         $instance->harPassord = $rad['har_passord'] == 0 ? false : true;
         $instance->passord = $instance->harPassord ? $rad['passord'] : null;
@@ -101,9 +108,13 @@ class Vaktbytte
         return $this->gisBort;
     }
 
-    public function getForslag()
+    public function getForslagIder()
     {
         return $this->forslag;
+    }
+
+    public function getForslagVakter(){
+        return $this->forslagVaktListe;
     }
 
     public function getMerknad()

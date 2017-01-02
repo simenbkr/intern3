@@ -103,6 +103,19 @@ class Vakt
         return $this->getVaktbytte() <> null;
     }
 
+    public function erForeslatt(){
+        $st = DB::getDB()->prepare('SELECT id FROM vaktbytte');
+        $st->execute();
+        $rows = $st->fetchAll();
+        foreach($rows as $row){
+            $instans = Vaktbytte::medId($row['id']);
+            if(in_array($this->id,$instans->getForslagIder())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function erFerdig()
     {
         $tid = strtotime($this->getDato());
