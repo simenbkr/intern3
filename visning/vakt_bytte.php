@@ -2,6 +2,15 @@
 require_once('topp.php');
 ?>
     <script>
+
+        function showElem(id){
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function hideElem(id){
+            document.getElementById(id).style.display = 'none';
+        }
+
         <?php
         foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
             $temp = $vakt->getId();

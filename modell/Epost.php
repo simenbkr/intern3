@@ -53,7 +53,7 @@ class Epost
         if ($epost == null) {
             return false;
         }
-        $this->mottakere[] = new Epost\Adressat($person->getFulltNavn, $epost);
+        $this->mottakere[] = new Epost\Adressat($person->getFulltNavn(), $epost);
         return true;
     }
 
