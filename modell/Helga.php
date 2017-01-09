@@ -11,6 +11,8 @@ class Helga
     private $aar;
     private $klar;
     private $max_gjester;
+    private $antall_gjester;
+    private $gjestelista;
 
     public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester = 15, $epost_tekst = null)
     {
@@ -27,6 +29,8 @@ class Helga
         $this->klar = $klar;
         $this->max_gjester = $max_gjester;
         $this->epost_tekst = $epost_tekst;
+        $this->antall_gjester = HelgaGjesteListe::getGjesteCount($this->aar);
+        $this->gjestelista = HelgaGjesteListe::getAlleGjesterAar($this->aar);
     }
 
     public function getStartDato()
@@ -42,6 +46,31 @@ class Helga
     public function getGeneraler()
     {
         return $this->generaler;
+    }
+
+    public function getGjesteliste(){
+        return $this->gjestelista;
+    }
+
+    public function getAntallGjester(){
+        return $this->antall_gjester;
+    }
+
+    public function getAntallPerDag(){
+        $antall_per_dag = array(
+            'torsdag' => 0,
+            'fredag' => 0,
+            'lordag' => 0
+        );
+
+        //public static function getGjesteCountDagBeboer($dag, $beboerid,$aar){
+        $beboerne = BeboerListe::aktive();
+        foreach ($beboerne as $beboer) {
+            $antall_per_dag['torsdag'] += HelgaGjesteListe::getGjesteCountDagBeboer(0, $beboer->getId(), $this->getAar());
+            $antall_per_dag['fredag'] += HelgaGjesteListe::getGjesteCountDagBeboer(1, $beboer->getId(), $this->getAar());
+            $antall_per_dag['lordag'] += HelgaGjesteListe::getGjesteCountDagBeboer(2, $beboer->getId(), $this->getAar());
+        }
+        return $antall_per_dag;
     }
 
     public function getAar(){
@@ -147,7 +176,7 @@ class Helga
     }
 
     public static function fraSQLRad($rad){
-        return new self($rad['aar'], $rad['start_dato'],$rad['slutt_dato'], $rad['generaler'], $rad['tema']);
+        return new self($rad['aar'], $rad['start_dato'],$rad['slutt_dato'], $rad['generaler'], $rad['tema'], $rad['klar'], $rad['max_gjest']);
     }
 
     public static function getLatestHelga()

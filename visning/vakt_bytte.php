@@ -12,6 +12,7 @@ require_once('topp.php');
         }
 
         <?php
+            //Lag en setAction og setPassord funksjon for hver eneste tingetang. Wooohoo.
         foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
             $temp = $vakt->getId();
             echo "var action$temp = 0; //1 = gisbort, 0 = byttes

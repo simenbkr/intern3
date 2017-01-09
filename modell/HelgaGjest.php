@@ -11,8 +11,9 @@ class HelgaGjest {
     private $sendt_epost;
     private $inne;
     private $dag;
+    private $aar;
 
-    public function __construct($id, $epost,$navn,$vert, $dag, $sendt_epost = null, $inne = null)
+    public function __construct($id, $epost,$navn,$vert, $dag, $sendt_epost = null, $inne = null, $aar)
     {
         $this->id = $id;
         $this->epost = $epost;
@@ -21,6 +22,12 @@ class HelgaGjest {
         $this->inne = $inne;
         $this->sendt_epost = $sendt_epost;
         $this->dag = $dag;
+        $this->aar = $aar;
+    }
+
+    public static function byRow($row){
+        $instans = new self($row['id'], $row['epost'], $row['navn'], $row['vert'], $row['dag'], $row['sendt_epost'], $row['inne'], $row['aar']);
+        return $instans;
     }
 
     public function getId(){
@@ -49,6 +56,10 @@ class HelgaGjest {
 
     public function getDag(){
         return $this->dag;
+    }
+
+    public function getAar(){
+        return $this->aar;
     }
 
     public function setDag($dag){
@@ -97,7 +108,7 @@ class HelgaGjest {
         $st->bindParam(':id', $id);
         $st->execute();
         $raden = $st->fetchAll()[0];
-        return new self($id, $raden['epost'], $raden['navn'], $raden['vert'], $raden['dag'], $raden['sendt_epost'], $raden['inne']);
+        return new self($id, $raden['epost'], $raden['navn'], $raden['vert'], $raden['dag'], $raden['sendt_epost'], $raden['inne'], $raden['aar']);
     }
 
     public static function addGjest($navn, $epost, $vert, $dag, $aar, $inne=0, $sendt_epost=0){

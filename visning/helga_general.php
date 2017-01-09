@@ -38,13 +38,16 @@ require_once('topp.php');
                 <hr>
                 <br/>
                 <h3> De modige generalene i år er: </h3><br/>
-                <p>
                     <?php
                     foreach ($helga->getGeneraler() as $general) {
                         echo $general->getFulltNavn() . "<br/>";
                     }
 
-                    ?></p>
+                    ?>
+                <h4>Antall gjester ALLE DAGER: <b><?php echo $helga->getAntallGjester(); ?></b></h4>
+                <h4>Torsdag: <?php echo $helga->getAntallPerDag()['torsdag']; ?></h4>
+                <h4>Fredag: <?php echo $helga->getAntallPerDag()['fredag']; ?></h4>
+                <h4>Lørdag: <?php echo $helga->getAntallPerDag()['lordag']; ?></h4>
 
             </div>
             <div class="col-lg-6">

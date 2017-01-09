@@ -16,7 +16,7 @@ class HelgaGjesteListe {
         $gjester = array();
 
         foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'],$gjest['sendt_epost'], $gjest['inne']);
+            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'],$gjest['sendt_epost'], $gjest['inne'], $gjest['aar']);
             $gjester[] = $instansen;
         }
         return $gjester;
@@ -35,7 +35,7 @@ class HelgaGjesteListe {
         $gjester = array();
 
         foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'], $gjest['sendt_epost'], $gjest['inne']);
+            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'], $gjest['sendt_epost'], $gjest['inne'], $gjest['aar']);
             $gjester[] = $instansen;
         }
         return $gjester;
@@ -52,10 +52,47 @@ class HelgaGjesteListe {
         $gjester = array();
 
         foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'] ,$gjest['sendt_epost'], $gjest['inne']);
+            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'] ,$gjest['sendt_epost'], $gjest['inne'], $gjest['aar']);
             $gjester[] = $instansen;
         }
         return $gjester;
+    }
+
+    public static function getGjesterUngrouped($aar, $dag){
+        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE (aar=:aar AND dag=:dag)');
+        $st->bindParam(':aar', $aar);
+        $st->bindParam(':dag', $dag);
+        $st->execute();
+        $gjestene = $st->fetchAll();
+        $gjestelista = array();
+        foreach($gjestene as $gjesterad){
+            $gjestelista[] = HelgaGjest::byRow($gjesterad);
+        }
+        return $gjestelista;
+    }
+
+    public static function getGjesterGroupedbyHost($aar, $dag){
+        //dag er et tall mellom 0 og 2 og representerer hhv torsdag, fredag og lørdag.
+
+        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE (aar=:aar AND dag=:dag) ORDER BY vert ASC');
+        $st->bindParam(':aar', $aar);
+        $st->bindParam(':dag', $dag);
+        $st->execute();
+        $gjestene = $st->fetchAll();
+        $gjesteListen = array();
+
+        foreach($gjestene as $gjest){
+            $gjest = HelgaGjest::byRow($gjest);
+            if(!isset($gjesteListen[$gjest->getVert()])){
+                $gjesteListen[$gjest->getVert()] = array($gjest);
+            }
+            else {
+                $gjesteListen[$gjest->getVert()][] = $gjest;
+            }
+        }
+
+        return $gjesteListen;
+
     }
 
     public static function getGjesteCount($aar){
@@ -69,7 +106,5 @@ class HelgaGjesteListe {
     public static function getGjesteCountDagBeboer($dag, $beboerid,$aar){
         return count(self::getGjesteListeDagByBeboerAar($dag, $beboerid, $aar));
     }
-
-
 }
 
