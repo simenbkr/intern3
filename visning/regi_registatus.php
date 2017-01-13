@@ -6,6 +6,8 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1>Regi &raquo; Registatus</h1>
+	Dette semesteret har Singsaker benyttet <b><?php echo $timer_brukt[0];?></b> av totalt <b><?php echo $timer_brukt[1] . ":00";?></b> regitimer. <hr>
+
 <?php
 
 $totaltTildelt = 0;

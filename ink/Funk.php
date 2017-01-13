@@ -18,6 +18,13 @@ class Funk {
 		$minutter = round($minutter);
 		return $fortegn * $timer . ($minutter > 0 ? ':' . $minutter : '');
 		}
+
+    public static function tidTilTimer($sek){
+        $min = (($sek/60)%60) == 0 ? "00" : (($sek/60)%60);
+        $timer = ($sek/60)/60;
+        return "$timer:$min";
+    }
+
     public static function startsWith($haystack, $needle)
     {
         $length = strlen($needle);

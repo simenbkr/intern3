@@ -38,11 +38,13 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                     break;
                 }
             default:
+                $timer_brukt = Arbeid::getTimerBruktPerSemester();
                 $sideinndeling = new SideinndelData();
                 $sideinndeling->setPerSide(200);
                 $sideinndeling->setSide($this->cd->getAktueltArg());
                 $dok->set('arbeidListe', ArbeidListe::alle($sideinndeling));
                 $dok->set('sideinndeling', $sideinndeling);
+                $dok->set('timer_brukt', $timer_brukt);
                 $dok->vis('utvalg_regisjef_arbeid.php');
                 break;
         }
@@ -57,7 +59,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
         }
         $godkjent = $underkjenn == '' || $underkjenn == '0' ? 1 : 0;
         $godkjentBrukerId = $this->cd->getAktivBruker()->getId();
-        $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=:godkjent,godkjent_bruker_id=:godkjent_bruker_id WHERE id=:id;');
+        $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=:godkjent,godkjent_bruker_id=:godkjent_bruker_id,tid_godkjent=CURRENT_TIME WHERE id=:id;');
         $st->bindParam(':godkjent', $godkjent);
         $st->bindParam(':godkjent_bruker_id', $godkjentBrukerId);
         $st->bindParam(':id', $id);

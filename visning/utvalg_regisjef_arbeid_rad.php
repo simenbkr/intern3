@@ -1,4 +1,17 @@
-				<td><?php echo $arbeid->getBruker()->getPerson()->getFulltNavn(); ?></td>
+<?php
+$godkjentNavn = "";
+if($arbeid->getGodkjent() == 0){
+	$godkjentNavn = "Ikke godkjent";
+}
+else {
+	$beboer = intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson();
+	if ($beboer != null){
+		$godkjentNavn = $beboer->getFulltNavn();
+	}
+}
+?>
+
+<td><?php echo $arbeid->getBruker()->getPerson()->getFulltNavn(); ?></td>
 				<td><?php echo $arbeid->getTidUtfort(); ?></td>
 				<td><?php
 
@@ -14,6 +27,7 @@
 ?></td>
 				<td><?php echo $arbeid->getTidBrukt(); ?></td>
 				<td><?php echo htmlspecialchars($arbeid->getKommentar()); ?></td>
-				<td><?php echo $arbeid->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
+				<td><?php echo $arbeid->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?>
+				<br/><br/><?php echo $arbeid->getGodkjent() == 0 ? "" : "Godkjent: " . $arbeid->getTidGodkjent();?> av <?php echo $godkjentNavn; ?></td>
 				<td><button onclick="godkjennArbeid(<?php echo $arbeid->getId() . ($arbeid->getGodkjent() > 0 ? ', \'underkjenn\'' : ''); ?>);">&#x<?php echo $arbeid->getGodkjent() > 0 ? '2718' : '2714'; ?>;</button></td>
 				<td><a class="btn btn-info" href="?a=utvalg/regisjef/arbeid/endre/<?php echo $arbeid->getId(); ?>">Endre</a></td>

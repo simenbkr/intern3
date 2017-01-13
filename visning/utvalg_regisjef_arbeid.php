@@ -25,6 +25,7 @@ function godkjennArbeid(id, underkjenn) {
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Regisjef &raquo; Arbeid</h1>
+	Dette semesteret har Singsaker benyttet <b><?php echo $timer_brukt[0];?></b> av totalt <b><?php echo $timer_brukt[1] . ":00";?></b> regitimer.
 	<?php if(isset($endret)){ ?>
 		<div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>

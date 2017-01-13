@@ -52,7 +52,7 @@ if (!isset($skjulMeny)) {
 									<li><a href="<?php echo $cd->getBase(); ?>regi/oppgave">Oppgaver</a></li>
 									<li><a href="<?php echo $cd->getBase(); ?>regi/rapport">Rapporter</a></li>
 									<li><a href="<?php echo $cd->getBase(); ?>regi/minregi">Min regi</a></li>
-									<li><a href="<?php echo $cd->getBase(); ?>regi/registatus">Registatus</a></li>
+									<?php /*<li><a href="<?php echo $cd->getBase(); ?>regi/registatus">Registatus</a></li>*/?>
 								</ul>
 							</li>
 							<li><a href="<?php echo $cd->getBase(); ?>verv">Verv</a></li>
@@ -152,6 +152,7 @@ if (isset($visUtvalgMeny)) {
                 <ul class="dropdown-menu">
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/arbeid">Arbeid</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/oppgave">Oppgave</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/registatus">Registatus</a></li>
                 </ul>
               </li>
             </ul>

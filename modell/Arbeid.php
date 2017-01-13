@@ -219,6 +219,38 @@ class Arbeid {
 
 		return $st->fetchColumn() > 0;
 	}
-}
 
+	public static function getTimerBruktPerSemester($dato=null){
+		$dato = isset($dato) ? $dato : date('Y-m-d');
+		$year = date('Y', strtotime($dato));
+		if(strtotime($dato) > strtotime("01-01-$year") && strtotime($dato) < strtotime("01-07-$year")){
+			//Vår-semesteret
+			$start = "$year-01-01";
+			$slutt = "$year-07-01";
+		} else {
+			$start = "$year-07-01";
+			$slutt = "$year-12-31";
+		}
+		$st = DB::getDB()->prepare('SELECT sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt)');
+		$st->bindParam(':start', $start);
+		$st->bindParam(':slutt', $slutt);
+		$st->execute();
+		$radene = $st->fetchAll();
+		$totalt_sek_utfort = 0;
+		foreach($radene as $rad){
+			$totalt_sek_utfort += $rad['sekunder_brukt'];
+		}
+		//$timer = gmdate("H:i", $totalt_sek_utfort);
+		$timer = Funk::tidTilTimer($totalt_sek_utfort);
+		$maks_timer = 0;
+
+		foreach(BeboerListe::aktive() as $beboer){
+			$rollen = $beboer->getRolle();
+			if($rollen != null){
+				$maks_timer += $rollen->getRegiTimer();
+			}
+		}
+		return array($timer, $maks_timer);
+	}
+}
 ?>
