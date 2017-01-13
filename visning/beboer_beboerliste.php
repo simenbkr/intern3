@@ -20,6 +20,9 @@ require_once('topp.php');
 <?php
 
 foreach ($beboerListe as $beboer){
+	if($beboer == null || !isset($beboer)){
+		continue;
+	}
 	?>
 		<tr>
 			<td><a href="<?php echo $cd->getBase(); ?>beboer/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>

@@ -142,7 +142,6 @@ $db->query('CREATE TABLE IF NOT EXISTS `straffevakt` (
 
 $db->query('CREATE TABLE IF NOT EXISTS `studie` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `skole_id` int(10) unsigned NOT NULL,
   `navn` varchar(20) collate utf8_unicode_ci NOT NULL,
   PRIMARY KEY  (`id`)
 )');
@@ -168,10 +167,12 @@ $db->query('CREATE TABLE IF NOT EXISTS `vaktbytte` (
 )');
 
 $db->query('CREATE TABLE IF NOT EXISTS `verv` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `navn` varchar(20) collate utf8_unicode_ci NOT NULL,
-  `regitimer` tinyint(3) unsigned default NULL,
-  PRIMARY KEY  (`id`)
+`id` int(10) unsigned NOT NULL auto_increment,
+  `navn` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `regitimer` tinyint(3) unsigned DEFAULT \'0\',
+  `utvalg` tinyint(1) DEFAULT \'0\',
+  `epost` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
 )');
 
 $db->query('CREATE TABLE IF NOT EXISTS `feil` (
