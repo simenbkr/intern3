@@ -74,7 +74,7 @@ if (!isset($skjulMeny)) {
                                     </li>
                                 </ul>
                             <?php
-                            } elseif(Helga::getLatestHelga()->getKlar()){
+                            } elseif(Helga::getLatestHelga() != null && Helga::getLatestHelga()->getKlar()){
                             ?>
                             <li><a href="<?php echo $cd->getBase(); ?>helga">Helga</a></li>
                             <?php } ?>
