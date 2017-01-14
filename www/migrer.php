@@ -29,8 +29,8 @@ function avbryt($melding)
 
 function byttTegnsett($streng)
 {
-    return iconv(mb_detect_encoding($streng), 'utf-8', $streng);
-    //return iconv('windows-1252', 'utf-8', $streng);
+    //return iconv(mb_detect_encoding($streng), 'utf-8', $streng);
+    return iconv('windows-1252', 'utf-8', $streng);
 //	return $streng;
 }
 
@@ -493,16 +493,24 @@ ORDER BY be.beboer_id;');
 if (pg_num_rows($hentBeboere) == 0) {
     avbryt('Ingen beboere? Ikke bra.');
 }
+
+function byttTegnsettBeboer($streng)
+{
+    //return iconv(mb_detect_encoding($streng), 'utf-8', $streng);
+    return iconv('windows-1252', 'utf-8', $streng);
+//	return $streng;
+}
+
 while ($beboer = pg_fetch_array($hentBeboere)) {
     $brukerId = isset($beboerBrukerKobling[$beboer['beboer_id']]) ? $beboerBrukerKobling[$beboer['beboer_id']] : null;
     // Innføring av begrepet mellomnavn (alt mellom fornavn og etternavn)
     $mellomnavn = $beboer['fornavn'] . ' ' . $beboer['etternavn'];
-    $mellomnavn = byttTegnsett($mellomnavn);
+    $mellomnavn = byttTegnsettBeboer($mellomnavn);
     $mellomnavn = trim(preg_replace('/[\s]{2,}/', ' ', $mellomnavn));
     $mellomnavn = explode(' ', $mellomnavn);
-    $etternavn = byttTegnsett(array_pop($mellomnavn));
-    $fornavn = byttTegnsett(array_shift($mellomnavn));
-    $mellomnavn = byttTegnsett(implode(' ', $mellomnavn));
+    $etternavn = array_pop($mellomnavn);
+    $fornavn = array_shift($mellomnavn);
+    $mellomnavn = implode(' ', $mellomnavn);
     /* Migrering av romhistorikk, start */
     $hentRomhistorikk = pg_query('SELECT * FROM romhistorikk WHERE beboer_id=' . $beboer['beboer_id'] . ' ORDER BY innflyttet;');
     $romhistorikk = new Romhistorikk();
@@ -526,6 +534,7 @@ while ($beboer = pg_fetch_array($hentBeboere)) {
     $alkoholdepositum = $beboer['alkodepositum'] == 't' ? 1 : 0;
     $rolleId = $rolleIder[$beboer['oppgave_id']];
     $epost = $beboer['epost'] == null ? null : strtolower($beboer['epost']);
+    $epost = iconv(mb_detect_encoding($epost), 'utf-8', $epost);
     $studieId = intval(Studie::medNavn(byttTegnsett($beboer['studie']))->getId());
     $skoleId = intval(Skole::medNavn(byttTegnsett($beboer['skole']))->getId());
     // Innsetting
