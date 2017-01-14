@@ -163,8 +163,8 @@ $db->query('CREATE TABLE IF NOT EXISTS `vaktbytte` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `vakt_id` int(10) unsigned NOT NULL,
   `gisbort` tinyint(1) default \'0\',
-  `har_passord`, tinyint(1) default \'0\',
-  `passord`, varchar(512),
+  `har_passord` tinyint(1) default \'0\',
+  `passord` varchar(512),
   `forslag` text collate utf8_unicode_ci COMMENT \'Hva man kan få i bytte\',
   `merknad` text collate utf8_unicode_ci,
   PRIMARY KEY  (`id`)
