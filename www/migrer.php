@@ -73,6 +73,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `beboer_verv` (
 $db->query('CREATE TABLE IF NOT EXISTS `bruker` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `passord` varchar(120) collate utf8_unicode_ci NOT NULL,
+  `salt` varchar(64) collate utf8_unicode_ci,
   PRIMARY KEY  (`id`)
 )');
 
@@ -152,6 +153,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `vakt` (
   `vakttype` varchar(1) collate utf8_unicode_ci NOT NULL,
   `dato` date NOT NULL,
   `bekreftet` tinyint(1) default NULL,
+  `bytte` tinyint(1),
   `autogenerert` tinyint(1) default \'1\',
   `dobbelvakt` tinyint(1) default NULL,
   PRIMARY KEY  (`id`)
@@ -161,6 +163,8 @@ $db->query('CREATE TABLE IF NOT EXISTS `vaktbytte` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `vakt_id` int(10) unsigned NOT NULL,
   `gisbort` tinyint(1) default \'0\',
+  `har_passord`, tinyint(1) default \'0\',
+  `passord`, varchar(512),
   `forslag` text collate utf8_unicode_ci COMMENT \'Hva man kan få i bytte\',
   `merknad` text collate utf8_unicode_ci,
   PRIMARY KEY  (`id`)
@@ -352,6 +356,10 @@ $db->query('CREATE TABLE IF NOT EXISTS `rolle` (
   PRIMARY KEY (`id`)
 )');
 
+$db->query('INSERT INTO `rolle` (`id`, `navn`, `regitimer`, `vakter_h`, `vakter_v`) VALUES
+(1, \'Halv vakt/regi\', 18, 5, 6),
+(2, \'Full vakt\', 0, 8, 9),
+(3, \'Full regi\', 48, 0, 0)');
 
 $db->query('TRUNCATE TABLE skole;');
 $db->query('TRUNCATE TABLE studie;');
