@@ -25,7 +25,7 @@ require_once ('topp_utvalg.php');
             </tr>
             <tr>
                 <th>Tid brukt:</th>
-                <td><input type="text" name="time" size="6" value="<?php echo $arbeidet->getTidBrukt (); ?>" placeholder="<?php echo $arbeidet->getTidBrukt (); ?>"> (timer ∈ ℝ, f.eks 1.5 for en og en halv time.)</td>
+                <td><input type="text" name="time" size="6" value="<?php echo $arbeidet->getTidBrukt (); ?>" placeholder="<?php echo $arbeidet->getTidBrukt (); ?>"> (timer på format H:m f.eks 1:20 for 1 time og 20 min.)</td>
             </tr>
             <tr>
                 <th>Kommentar:</th>

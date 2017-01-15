@@ -21,7 +21,7 @@ class Funk {
 
     public static function tidTilTimer($sek){
         $min = (($sek/60)%60) == 0 ? "00" : (($sek/60)%60);
-        $timer = ($sek/60)/60;
+        $timer = floor(($sek/60)/60);
         return "$timer:$min";
     }
 

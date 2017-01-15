@@ -231,7 +231,7 @@ class Arbeid {
 			$start = "$year-07-01";
 			$slutt = "$year-12-31";
 		}
-		$st = DB::getDB()->prepare('SELECT sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt)');
+		$st = DB::getDB()->prepare('SELECT sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt AND godkjent=1)');
 		$st->bindParam(':start', $start);
 		$st->bindParam(':slutt', $slutt);
 		$st->execute();
@@ -240,7 +240,6 @@ class Arbeid {
 		foreach($radene as $rad){
 			$totalt_sek_utfort += $rad['sekunder_brukt'];
 		}
-		//$timer = gmdate("H:i", $totalt_sek_utfort);
 		$timer = Funk::tidTilTimer($totalt_sek_utfort);
 		$maks_timer = 0;
 

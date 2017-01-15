@@ -162,6 +162,7 @@ if (isset($visUtvalgMeny)) {
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sekretær <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/apmandsverv">Åpmandsverv</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/apmandstimer">Endre regitimer for verv</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/utvalgsverv">Utvalgsverv</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/helga">Helga</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/sekretar/lister">Skrive ut lister</a></li>

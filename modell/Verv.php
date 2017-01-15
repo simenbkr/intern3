@@ -9,6 +9,7 @@ class Verv
     private $navn;
     private $utvalg;
     private $epost;
+    private $regitimer;
 
     // Latskap
     private $apmend = null;
@@ -40,6 +41,7 @@ class Verv
         $instance->navn = $rad['navn'];
         $instance->utvalg = isset($rad['utvalg']) ? $rad['utvalg'] : 0;
         $instance->epost = $rad['epost'];
+        $instance->regitimer = $rad['regitimer'];
         return $instance;
     }
 
@@ -86,6 +88,10 @@ class Verv
             $this->apmend = BeboerListe::medVervId($this->id);
         }
         return $this->apmend;
+    }
+
+    public function getRegitimer(){
+        return $this->regitimer;
     }
 
 }

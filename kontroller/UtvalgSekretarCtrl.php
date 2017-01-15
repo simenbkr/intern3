@@ -69,10 +69,9 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
             $helga = Helga::getLatestHelga();
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                if (isset($post['ny_helga']) && isset($post['aar']) && is_numeric($post['aar'])){
+                if (isset($post['ny_helga']) && isset($post['aar']) && is_numeric($post['aar'])) {
                     Helga::createBareBoneHelga($post['aar']);
-                }
-                elseif (isset($post['fjern']) && is_numeric($post['fjern']) && $post['fjern'] > 0) {
+                } elseif (isset($post['fjern']) && is_numeric($post['fjern']) && $post['fjern'] > 0) {
                     $beboerId = $post['fjern'];
                     $helga->removeGeneral($beboerId);
                 } elseif (isset($post['beboerid']) && is_numeric($post['beboerid']) && $post['beboerid'] > 0) {
@@ -89,7 +88,45 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
             $dok->vis('utvalg_sekretar_helga.php');
         } else if ($aktueltArg == 'lister') {
             $dok = new Visning($this->cd);
-            $dok->vis('utvalg_sekretar_lister.php');
+            $sisteArg = $this->cd->getSisteArg();
+            if($sisteArg == $aktueltArg){
+                $dok->vis('utvalg_sekretar_lister.php');
+                return;
+            }
+            switch($sisteArg){
+                case 'apmandsverv':
+                    $apmandsverv = VervListe::alle();
+                    $dok->set('apmandsverv', $apmandsverv);
+                    $dok->vis('utvalg_sekretar_lister_apmandsverv.php');
+                    return;
+                case 'apmandsverv_utskrift':
+                    $apmandsverv = VervListe::alle();
+                    $dok->set('apmandsverv', $apmandsverv);
+                    $dok->vis('utvalg_sekretar_lister_apmandsverv_utskrift.php');
+            }
+        }
+        else if($aktueltArg == 'apmandstimer'){
+            $dok = new Visning($this->cd);
+            //data: 'endreTimer=1&timer=' + timer + "&vervId=" + id,
+            if(isset($_POST)){
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                if(isset($post['endreTimer']) && $post['endreTimer'] == 1 && isset($post['timer']) && is_numeric($post['timer'])
+                && isset($post['vervId']) && is_numeric($post['vervId'])){
+                    $aktueltVerv = Verv::medId($post['vervId']);
+                    if ($aktueltVerv != null){
+                        $timer = $post['timer'];
+                        $id = $post['vervId'];
+                        $st = DB::getDB()->prepare('UPDATE verv SET regitimer=:timer WHERE id=:id');
+                        $st->bindParam(':timer', $timer);
+                        $st->bindParam(':id', $id);
+                        $st->execute();
+                    }
+                }
+            }
+
+            $apmandsverv = VervListe::alle();
+            $dok->set('apmandsverv', $apmandsverv);
+            $dok->vis('utvalg_sekretar_apmandstimer.php');
         } else if (is_numeric($aktueltArg)) {
             $beboer = Beboer::medId($aktueltArg);
             // Trenger feilhåndtering her.
