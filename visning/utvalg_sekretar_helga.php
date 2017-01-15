@@ -20,12 +20,12 @@ require_once ('topp_utvalg.php');
 <div class="container">
 <h1>Utvalget » Sekretær » Helga</h1>
 <div class="col-lg-6">
-    <p>Informasjon om siste Helga (lag ny hvis dette ikke stemmer!):</p>
+    <p>Informasjon om siste Helga (lag ny når helga er over eventuelt hver høst):</p>
     <div id="formen">
-    <h2><?php echo $helga->getTema() != null ? $helga->getTema() . '-' : '';?>Helga <?php echo $helga->getAar(); ?></h2>
-    <h3><?php if($helga->getStartDato() != null) {?>Fra <?php echo $helga->getStartDato(); ?> til <?php echo $helga->getSluttDato(); ?></h3><br/><?php } ?><h3>
+    <h2><?php echo ($helga != null && $helga->getTema() != null) ? $helga->getTema() . '-' : '';?>Helga <?php echo $helga->getAar(); ?></h2>
+    <h3><?php if($helga != null && $helga->getStartDato() != null) {?>Fra <?php echo $helga->getStartDato(); ?> til <?php echo $helga->getSluttDato(); ?></h3><br/><?php } ?><h3>
     <?php
-        if(count($helga->getGeneraler()) > 0){
+        if($helga != null && count($helga->getGeneraler()) > 0){
             echo "<h2>Generaler:<br/></h2>";
             foreach($helga->getGeneraler() as $general){
                 echo $general->getFulltNavn();
@@ -48,7 +48,7 @@ require_once ('topp_utvalg.php');
             <?php
             foreach ($BeboerListe as $beboer) {
 
-                if(!$beboer->erHelgaGeneral()){
+                if($beboer != null && !$beboer->erHelgaGeneral()){
                     ?>
             <option name="<?php echo $beboer->getId(); ?>" value="<?php echo $beboer->getId(); ?>">
                 <?php echo $beboer->getFulltNavn(); ?>
