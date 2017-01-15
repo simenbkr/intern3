@@ -82,18 +82,18 @@ function modal() {
                 } else {
                     echo '<a href="mailto:' . $epost . '">' . $epost . '</a>';
                 }
-                ?></td>
+                ?></td></tr>
             <?php
             }
             ?>
-        </tr>
+
 
 
         <!-- <input type="button" class="btn btn-sm btn-info" value="Endre"> -->
+    </table>
 
 </div>
 
-</table>
 <?php
 
 require_once('bunn.php');

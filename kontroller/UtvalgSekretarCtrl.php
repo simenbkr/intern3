@@ -66,6 +66,31 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
             $dok->set('vervListe', $vervListe);
             $dok->vis('utvalg_sekretar_utvalgsverv.php');
         } else if ($aktueltArg == 'helga') {
+            $sisteArg = $this->cd->getSisteArg();
+            if ($sisteArg != $aktueltArg) {
+                $aktuell_helga = Helga::getHelgaByAar($sisteArg);
+                if ($aktuell_helga != null) {
+                    if (is_numeric($sisteArg) && isset($_POST)) {
+                        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                        if (isset($post['sletthelga']) && $post['sletthelga'] == 1 && isset($post['aar']) && is_numeric($post['aar'])){
+                            $st = DB::getDB()->prepare('DELETE FROM helga WHERE aar=:aar');
+                            $aar = $post['aar'];
+                            $st->bindParam(':aar', $aar);
+                            $st->execute();
+                        }
+                        if (isset($post['tema']) && isset($post['start'])) {
+                            $aktuell_helga->changeTema($post['tema']);
+                            $aktuell_helga->changeDato($post['start']);
+                        }
+                    }
+                    if (is_numeric($sisteArg)) {
+                        $dok = new Visning($this->cd);
+                        $dok->set('helgaen', $aktuell_helga);
+                        $dok->vis('utvalg_sekretar_helga_endre.php');
+                        return;
+                    }
+                }
+            }
             $helga = Helga::getLatestHelga();
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -89,11 +114,11 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
         } else if ($aktueltArg == 'lister') {
             $dok = new Visning($this->cd);
             $sisteArg = $this->cd->getSisteArg();
-            if($sisteArg == $aktueltArg){
+            if ($sisteArg == $aktueltArg) {
                 $dok->vis('utvalg_sekretar_lister.php');
                 return;
             }
-            switch($sisteArg){
+            switch ($sisteArg) {
                 case 'apmandsverv':
                     $apmandsverv = VervListe::alle();
                     $dok->set('apmandsverv', $apmandsverv);
@@ -104,16 +129,16 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                     $dok->set('apmandsverv', $apmandsverv);
                     $dok->vis('utvalg_sekretar_lister_apmandsverv_utskrift.php');
             }
-        }
-        else if($aktueltArg == 'apmandstimer'){
+        } else if ($aktueltArg == 'apmandstimer') {
             $dok = new Visning($this->cd);
             //data: 'endreTimer=1&timer=' + timer + "&vervId=" + id,
-            if(isset($_POST)){
+            if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                if(isset($post['endreTimer']) && $post['endreTimer'] == 1 && isset($post['timer']) && is_numeric($post['timer'])
-                && isset($post['vervId']) && is_numeric($post['vervId'])){
+                if (isset($post['endreTimer']) && $post['endreTimer'] == 1 && isset($post['timer']) && is_numeric($post['timer'])
+                    && isset($post['vervId']) && is_numeric($post['vervId'])
+                ) {
                     $aktueltVerv = Verv::medId($post['vervId']);
-                    if ($aktueltVerv != null){
+                    if ($aktueltVerv != null) {
                         $timer = $post['timer'];
                         $id = $post['vervId'];
                         $st = DB::getDB()->prepare('UPDATE verv SET regitimer=:timer WHERE id=:id');

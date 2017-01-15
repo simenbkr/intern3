@@ -19,7 +19,7 @@ class Helga
         if ($start_dato != null) {
             $this->start_dato = date('Y-m-d', strtotime($start_dato));
             $this->slutt_dato = date('Y-m-d', strtotime($start_dato . ' + 2 days'));
-        }else {
+        } else {
             $this->start_dato = null;
             $this->slutt_dato = null;
         }
@@ -48,15 +48,18 @@ class Helga
         return $this->generaler;
     }
 
-    public function getGjesteliste(){
+    public function getGjesteliste()
+    {
         return $this->gjestelista;
     }
 
-    public function getAntallGjester(){
+    public function getAntallGjester()
+    {
         return $this->antall_gjester;
     }
 
-    public function getAntallPerDag(){
+    public function getAntallPerDag()
+    {
         $antall_per_dag = array(
             'torsdag' => 0,
             'fredag' => 0,
@@ -73,40 +76,48 @@ class Helga
         return $antall_per_dag;
     }
 
-    public function getAar(){
+    public function getAar()
+    {
         return $this->aar;
     }
 
-    public function getTema(){
+    public function getTema()
+    {
         return $this->tema;
     }
 
-    public function getKlar(){
+    public function getKlar()
+    {
         return $this->klar != 0;
     }
 
-    public function getMaxGjester(){
+    public function getMaxGjester()
+    {
         return $this->max_gjester;
     }
 
-    public function getEpostTekst(){
+    public function getEpostTekst()
+    {
         return $this->epost_tekst;
     }
 
-    public function getGeneralerAsFornavn(){
+    public function getGeneralerAsFornavn()
+    {
         $string = "";
-        foreach($this->generaler as $general){
+        foreach ($this->generaler as $general) {
             $string .= $general->getFornavn() . ',';
         }
         return rtrim($string, ',');
     }
 
-    public function setEpostTekst($epost_tekst){
+    public function setEpostTekst($epost_tekst)
+    {
         $this->epost_tekst = $epost_tekst;
         $this->oppdater();
     }
 
-    public function setMaxGjester($antall){
+    public function setMaxGjester($antall)
+    {
         $this->max_gjester = $antall;
         $this->oppdater();
     }
@@ -146,7 +157,7 @@ class Helga
     {
         $general_ider = array();
 
-        foreach($this->generaler as $general){
+        foreach ($this->generaler as $general) {
             $general_ider[] = $general->getId();
         }
 
@@ -161,7 +172,8 @@ class Helga
         $st->execute();
     }
 
-    public static function getAlleHelga(){
+    public static function getAlleHelga()
+    {
 
         $helgaene = array();
 
@@ -169,14 +181,15 @@ class Helga
         $st->execute();
         $rader = $st->fetchAll();
 
-        foreach($rader as $rad){
+        foreach ($rader as $rad) {
             $helgaene[] = self::fraSQLRad($rad);
         }
         return $helgaene;
     }
 
-    public static function fraSQLRad($rad){
-        return new self($rad['aar'], $rad['start_dato'],$rad['slutt_dato'], $rad['generaler'], $rad['tema'], $rad['klar'], $rad['max_gjest']);
+    public static function fraSQLRad($rad)
+    {
+        return new self($rad['aar'], $rad['start_dato'], $rad['slutt_dato'], $rad['generaler'], $rad['tema'], $rad['klar'], $rad['max_gjest']);
     }
 
     public static function getLatestHelga()
@@ -184,16 +197,15 @@ class Helga
         $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC LIMIT 1');
         $st->execute();
 
-        if ($st->rowCount() > 0){
+        if ($st->rowCount() > 0) {
             $rader = $st->fetchAll()[0];
-        }
-        else {
+        } else {
             return null;
         }
 
         $generaler = array();
         $json_generaler = json_decode($rader['generaler'], true);
-        if ( $json_generaler != null ){
+        if ($json_generaler != null) {
             foreach ($json_generaler as $general) {
                 $generaler[] = Beboer::medId($general);
             }
@@ -211,14 +223,18 @@ class Helga
         $res = $st->fetchAll()[0];
 
         $generaler = array();
-        $json_generaler = json_decode($res['generaler'],true);
+        $json_generaler = json_decode($res['generaler'], true);
         if ($json_generaler != null) {
             foreach ($json_generaler as $general) {
                 $generaler_ider[] = $general;
                 $generaler[] = Beboer::medId($general);
             }
         }
-        return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest'], $res['epost_tekst']);
+        if ($res != null) {
+            return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest'], $res['epost_tekst']);
+        } else {
+            return null;
+        }
     }
 
     public static function createHelga($start_dato)
@@ -241,9 +257,10 @@ class Helga
     }
 
 
-    public function erHelgaGeneral($beboer_id){
-        foreach($this->generaler as $general){
-            if($general->getId() == $beboer_id) {
+    public function erHelgaGeneral($beboer_id)
+    {
+        foreach ($this->generaler as $general) {
+            if ($general->getId() == $beboer_id) {
                 return true;
             }
         }

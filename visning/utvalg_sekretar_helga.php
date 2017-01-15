@@ -16,6 +16,10 @@ require_once ('topp_utvalg.php');
             }
         });
     }
+
+    function dummy(){
+        location.reload();
+    }
 </script>
 <div class="container">
 <h1>Utvalget » Sekretær » Helga</h1>
@@ -68,28 +72,55 @@ require_once ('topp_utvalg.php');
     </div>
 
     <div class="col-lg-6">
-
         <h2>Lag en ny Helga!</h2>
-
-        <form action="" method="post" id="nyhelga">
-
+        <form action="" method="post">
             <table class="table table-bordered table-responsive">
                 <tr>
                 <td>År:</td>
                 <td><input type="text" name="aar" value="YYYY"</td>
                 </tr>
-
                 <tr>
                     <td></td>
                     <td><input type="submit" class="btn btn-sm btn-info" value="Legg til" name="ny_helga"></td>
                 </tr>
             </table>
         </form>
-
-
-
     </div>
-
+    <div class="col-md-6">
+        <table class="table table-bordered table-responsive">
+            <tr>
+                <th>År</th>
+                <th>Tema</th>
+                <th>Generaler</th>
+                <th>Start-dato</th>
+            </tr>
+        <?php
+        foreach($alle_helga as $helga){
+            ?>
+            <tr>
+               <td><a href="<?php echo $cd->getBase();?>utvalg/sekretar/helga/<?php echo $helga->getAar();?>"><?php echo $helga->getAar();?></a></td>
+                <td><?php echo $helga->getTema(); ?></td>
+                <td>
+                    <?php
+                    $generaler_tekst = "";
+                    if(sizeof(json_decode($helga->getGeneraler(), true)) > 0) {
+                        foreach (json_decode($helga->getGeneraler(), true) as $general_id) {
+                            $generalen = \intern3\Beboer::medId($general_id);
+                            if ($generalen != null) {
+                                $generaler_tekst .= " " . $generalen->getFulltNavn() . ",";
+                            }
+                        }
+                        $generaler_tekst = rtrim($generaler_tekst, ',');
+                    }
+                    echo $generaler_tekst;
+                    ?>
+                </td>
+                <td><?php echo $helga->getStartDato(); ?></td>
+            </tr>
+            <?php
+        }
+        ?>
+    </div>
 </div>
 <?php
 require_once ('bunn.php');
