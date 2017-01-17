@@ -3,11 +3,48 @@
 require_once('topp_utvalg.php');
 
 ?>
-
+<script>
+	function endreRegi(){
+		var halv = document.getElementById("1").value;
+		var full = document.getElementById("3").value;
+		$.ajax({
+			type: 'POST',
+			url: '?a=utvalg/regisjef/registatus',
+			data: 'endreRegi=1&halv=' + halv + "&full=" + full,
+			method: 'POST',
+			success: function (data) {
+				location.reload();
+			},
+			error: function (req, stat, err) {
+				alert(err);
+			}
+		});
+	}
+</script>
 <div class="col-md-12">
 	<h1>Regi &raquo; Registatus</h1>
+	<div class="col-md-6" id="kake">
+		<table class="table table-bordered table-responsive small">
+			<tr>
+				<th>Rolle</th>
+				<th>Regitimer</th>
+			</tr>
+			<?php foreach($roller as $rollen){
+				if($rollen->getNavn() == "Full vakt") {continue;} ?>
+				<tr>
+					<td><?php echo $rollen->getNavn();?></td>
+					<td><input type="text" name="host" id="<?php echo $rollen->getId();?>" value="<?php echo $rollen->getRegitimer();?>" size="1"></td>
+				</tr>
+				<?php
+			}
+			?>
+			<tr>
+				<td></td>
+				<td><button class="btn btn-primary btn-sm" onclick="endreRegi()">Endre</button></td>
+			</tr>
+		</table>
+	</div>
 	Dette semesteret har Singsaker benyttet <b><?php echo ($timer_brukt[0] != null ? $timer_brukt[0] : '00:00');?></b> (godkjente) av totalt <b><?php echo ($timer_brukt[1] != null) ? $timer_brukt[1] . ":00" : '??';?></b> regitimer. <hr>
-
 <?php
 
 $totaltTildelt = 0;

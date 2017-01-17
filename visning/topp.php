@@ -179,6 +179,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/generer">Generer vaktliste</a></li>
 					<li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/ukerapport">Ukerapport</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapport">Krysserapport</a></li>
+                    <li><a href="<?php echo $cd->getBase();?>utvalg/vaktsjef/vaktliste_utskrift">Vaktliste Utskriftsvennlig</a></li>
                    <!-- <li><a href="<?php //echo $cd->getBase();?>utvalg/vaktsjef/kryss">Kryss minutt for minutt</a></li>-->
                 </ul>
               </li>

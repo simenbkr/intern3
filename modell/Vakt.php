@@ -85,6 +85,10 @@ class Vakt
         return $this->dato;
     }
 
+    public function getBekreftet(){
+        return $this->bekreftet;
+    }
+
     public function erLedig()
     {
         return $this->brukerId == 0 && $this->autogenerert;

@@ -13,15 +13,40 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $valgtCtrl->bestemHandling();
                 break;
             case 'vaktoversikt':
+
+                if (isset($_POST)) {
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    //'endreVakt=1&hosthalv=' + host_halv + "&vaarhalv=" + vaar_halv + "&hosthel=" + host_hel + "&vaarhel=" + vaar_hel,
+                    // [endreVakt] => 1 [hosthalv] => 5 [vaarhalv] => 6 [hosthel] => 1 [vaarhel] => 9
+                    if (isset($post['endreVakt']) && $post['endreVakt'] == 1 && isset($post['hosthalv']) && is_numeric($post['hosthalv'])
+                        && isset($post['vaarhalv']) && is_numeric($post['vaarhalv']) && isset($post['hosthel']) && is_numeric($post['hosthel'])
+                        && isset($post['vaarhel']) && is_numeric($post['vaarhel'])
+                    ) {
+                        $host_halv = $post['hosthalv'];
+                        $vaar_halv = $post['vaarhalv'];
+                        $host_hel = $post['hosthel'];
+                        $vaar_hel = $post['vaarhel'];
+                        $st = DB::getDB()->prepare('UPDATE rolle SET vakter_h=:host_halv, vakter_v=:vaar_halv WHERE id=1');
+                        $st->bindParam(':host_halv', $host_halv);
+                        $st->bindParam(':vaar_halv', $vaar_halv);
+                        $st->execute();
+                        $st2 = DB::getDB()->prepare('UPDATE rolle SET vakter_h=:hosthel, vakter_v=:vaarhel WHERE id=2');
+                        $st2->bindParam(':hosthel', $host_hel);
+                        $st2->bindParam(':vaarhel', $vaar_hel);
+                        $st2->execute();
+                    }
+                }
                 $beboerListe = BeboerListe::harVakt();
                 $antallVakter = Vakt::antallVakter();
                 $antallUfordelte = Vakt::antallUfordelte();
                 $antallUbekreftet = Vakt::antallUbekreftet();
+                $roller = RolleListe::alle();
                 $dok = new Visning($this->cd);
                 $dok->set('beboerListe', $beboerListe);
                 $dok->set('antallVakter', $antallVakter);
                 $dok->set('antallUfordelte', $antallUfordelte);
                 $dok->set('antallUbekreftet', $antallUbekreftet);
+                $dok->set('roller', $roller);
                 $dok->vis('utvalg_vaktsjef_vaktoversikt.php');
                 break;
             case 'vaktstyring':
@@ -159,6 +184,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $dobbelvakt = $post['dobbelvakt'];
                     Vakt::setDobbelVakt($vaktId_1, $dobbelvakt);
                 }
+                break;
+            case 'vaktliste_utskrift':
+                $dok = new Visning($this->cd);
+                $dok->vis('utvalg_vaktsjef_vaktliste_utskrivbar.php');
                 break;
             default:
                 $dok = new Visning($this->cd);

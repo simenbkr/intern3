@@ -138,13 +138,14 @@ class VaktCtrl extends AbstraktCtrl
                 }
                 //data: 'vaktbytte=7&fraId=' + fraId + '&tilId=' + tilId,
                 //Godta et bytteforslag
-                elseif(isset($post['vaktbytte']) && $post['vaktbytte'] == 7 && isset($post['fraId']) && isset($post['tilId'])){
+                elseif (isset($post['vaktbytte']) && $post['vaktbytte'] == 7 && isset($post['fraId']) && isset($post['tilId'])) {
                     $fraVakt = Vakt::medId($post['fraId']);
                     $tilVakt = Vakt::medId($post['tilId']);
                     $Vaktbyttet = Vaktbytte::medVaktId($fraVakt->getId());
                     $aktivBruker = LogginnCtrl::getAktivBruker();
-                    if($fraVakt != null && $tilVakt != null && $Vaktbyttet != null && $fraVakt->getBruker() == $aktivBruker
-                        && $fraVakt->getBytte() && in_array($tilVakt->getId(),$Vaktbyttet->getForslagIder())){
+                    if ($fraVakt != null && $tilVakt != null && $Vaktbyttet != null && $fraVakt->getBruker() == $aktivBruker
+                        && $fraVakt->getBytte() && in_array($tilVakt->getId(), $Vaktbyttet->getForslagIder())
+                    ) {
 
                         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bruker_id,bytte=0,bekreftet=1,autogenerert=0 WHERE id=:id');
                         $st->bindParam(':bruker_id', $tilVakt->getBrukerId());
@@ -162,11 +163,25 @@ class VaktCtrl extends AbstraktCtrl
                         $st3->execute();
                     }
                 }
-                $dok->set('vaktbytteListe', $vaktbytteListe);
-                $dok->vis('vakt_bytte_liste.php');
             }
+            $dok->set('vaktbytteListe', $vaktbytteListe);
+            $dok->vis('vakt_bytte_liste.php');
         } else {
             $dok = new Visning($this->cd);
+            if(isset($_POST)){
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                //data: 'bekreft=1&id=' + id,
+                if(isset($post['bekreft']) && $post['bekreft'] == 1 && isset($post['id']) && is_numeric($post['id'])){
+                    $aktuell_vakt = Vakt::medId($post['id']);
+                    if($aktuell_vakt != null && $aktuell_vakt->getBrukerId() == LogginnCtrl::getAktivBruker()->getId()){
+                        $st = DB::getDB()->prepare('UPDATE vakt SET bekreftet=1 WHERE id=:id');
+                        $st->bindParam(':id', $aktuell_vakt->getId());
+                        $st->execute();
+                    }
+                }
+            }
+            $egne_vakter = VaktListe::medBrukerId(LogginnCtrl::getAktivBruker()->getId());
+            $dok->set('egne_vakter', $egne_vakter);
             $dok->set('denneUka', @date('W'));
             $dok->set('detteAret', @date('Y'));
             $dok->vis('vakt_vaktliste.php');

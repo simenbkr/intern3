@@ -4,7 +4,6 @@ require_once ('topp_utvalg.php');
 <script>
     function endreTimer(id){
         var timer = document.getElementById(id).value;
-        console.log(timer);
         $.ajax({
             type: 'POST',
             url: '?a=utvalg/sekretar/apmandstimer',

@@ -72,6 +72,8 @@ class RegiMinregiCtrl extends AbstraktCtrl
     private function godkjennArbeid()
     {
         $feil = array();
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        //TODO bruke sikker input!
         do {
             if (!isset($_POST['polymorfkategori_velger']) || !$_POST['polymorfkategori_velger']) {
                 $feil[] = 'Tilhørighet mangler.';
@@ -123,6 +125,32 @@ class RegiMinregiCtrl extends AbstraktCtrl
         if (!isset($_POST['kommentar']) || !$_POST['kommentar']) {
             $feil[] = 'Kommentar mangler.';
         }
+        do {
+            $tiden = date('Y-m-d', strtotime($post['tid_utfort']));
+            $aar_utfort = date('Y', strtotime($tiden));
+            $dagens_dato = date('Y-m-d');
+            $dagens_aar = date('Y');
+            $semester_start = null;
+            $semester_slutt = null;
+
+            if($tiden > $dagens_dato){
+                $feil[] = "Du kan ikke registrere regi for fremtiden!";
+            }
+
+            if(strtotime($tiden) > strtotime("$dagens_aar-01-01") && strtotime($tiden) < strtotime("$dagens_aar-07-01")){
+                //Vår semester
+                $semester_start = date('Y-m-d', strtotime("$dagens_aar-01-01"));
+                $semester_slutt = date('Y-m-d', strtotime("$dagens_aar-07-01"));
+            } else {
+                //Høst semester
+                $semester_start = date('Y-m-d', strtotime("$dagens_aar-07-01"));
+                $semester_slutt = date('Y-m-d', strtotime("$dagens_aar-12-31"));
+            }
+
+            if ($tiden > $semester_slutt || $tiden < $semester_start){
+                $feil[] = 'Du kan ikke registrere regi for et annet semester!';
+            }
+        } while(false);
         return $feil;
     }
 
