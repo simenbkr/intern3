@@ -160,11 +160,11 @@ class Helga
         foreach ($this->generaler as $general) {
             $general_ider[] = $general->getId();
         }
-
+        $general_ider = json_encode($general_ider);
         $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest, epost_tekst=:epost_tekst WHERE aar=:aar');
         $st->bindParam(':start_dato', $this->start_dato);
         $st->bindParam(':slutt_dato', $this->slutt_dato);
-        $st->bindParam(':generaler', json_encode($general_ider));
+        $st->bindParam(':generaler', $general_ider);
         $st->bindParam(':tema', $this->tema);
         $st->bindParam(':aar', $this->aar);
         $st->bindParam(':max_gjest', $this->max_gjester);
@@ -202,7 +202,6 @@ class Helga
         } else {
             return null;
         }
-
         $generaler = array();
         $json_generaler = json_decode($rader['generaler'], true);
         if ($json_generaler != null) {
@@ -219,22 +218,24 @@ class Helga
         $st = DB::getDB()->prepare('SELECT * from helga WHERE aar=:aar');
         $st->bindParam(':aar', $aar);
         $st->execute();
+        if ($st->rowCount() > 0) {
+            $res = $st->fetchAll()[0];
 
-        $res = $st->fetchAll()[0];
-
-        $generaler = array();
-        $json_generaler = json_decode($res['generaler'], true);
-        if ($json_generaler != null) {
-            foreach ($json_generaler as $general) {
-                $generaler_ider[] = $general;
-                $generaler[] = Beboer::medId($general);
+            $generaler = array();
+            $json_generaler = json_decode($res['generaler'], true);
+            if ($json_generaler != null) {
+                foreach ($json_generaler as $general) {
+                    $generaler_ider[] = $general;
+                    $generaler[] = Beboer::medId($general);
+                }
+            }
+            if ($res != null) {
+                return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest'], $res['epost_tekst']);
+            } else {
+                return null;
             }
         }
-        if ($res != null) {
-            return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest'], $res['epost_tekst']);
-        } else {
-            return null;
-        }
+        return null;
     }
 
     public static function createHelga($start_dato)

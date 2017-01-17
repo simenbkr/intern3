@@ -26,7 +26,8 @@ require_once ('topp_utvalg.php');
 <div class="col-lg-6">
     <p>Informasjon om siste Helga (lag ny når helga er over eventuelt hver høst):</p>
     <div id="formen">
-    <h2><?php echo ($helga != null && $helga->getTema() != null) ? $helga->getTema() . '-' : '';?>Helga <?php echo $helga->getAar(); ?></h2>
+    <h2><?php echo (isset($helga) && $helga != null && $helga->getTema() != null) ? $helga->getTema() . '-' : '';?>Helga
+        <?php echo (isset($helga) && $helga != null && $helga->getAar() != null) ? $helga->getAar() : ''; ?></h2>
     <h3><?php if($helga != null && $helga->getStartDato() != null) {?>Fra <?php echo $helga->getStartDato(); ?> til <?php echo $helga->getSluttDato(); ?></h3><br/><?php } ?><h3>
     <?php
         if($helga != null && count($helga->getGeneraler()) > 0){

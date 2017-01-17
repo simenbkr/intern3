@@ -9,6 +9,7 @@ require_once('topp_utvalg.php');
                 data: 'sletthelga=1&aar=' + aar,
                 method: 'POST',
                 success: function (data) {
+                    location.reload();
                 },
                 error: function (req, stat, err) {
                     alert(err);

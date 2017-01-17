@@ -92,7 +92,7 @@ foreach ($rolleListe as $rolle) {
         </select>
       </td>
     </tr>
-    <?php if ($beboer != null) { ?> <!-- fjerner romhistorikk på _nybeboer.php -->
+    <?php if (isset($beboer) && $beboer != null) { ?> <!-- fjerner romhistorikk på _nybeboer.php -->
     <tr>
       <td>Romhistorikk:</td>
       <td><?php

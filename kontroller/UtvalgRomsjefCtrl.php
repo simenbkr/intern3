@@ -95,7 +95,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $st->bindParam(':studie_id', $post['studie_id']);
                 $st->bindParam(':skole_id', $post['skole_id']);
                 $st->bindParam(':klassetrinn', $post['klasse']);
-                $alko = $post['alkodepositum'] == 'on' ? 1 : 0;
+                $alko = (isset($post['alkodepositum']) && $post['alkodepositum'] == 'on') ? 1 : 0;
                 $st->bindParam(':alko', $alko);
                 $st->bindParam(':rolle', $post['rolle_id']);
                 $st->bindParam(':epost', $post['epost']);

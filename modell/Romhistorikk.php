@@ -40,12 +40,14 @@ class Romhistorikk {
 	public static function fraJson($json) {
 		$strukt = json_decode($json);
 		$objekt = new self();
-		foreach ($strukt as $periode) {
-			$objekt->addPeriode(
+		if(count($strukt) > 0){
+			foreach ($strukt as $periode) {
+				$objekt->addPeriode(
 					$periode->romId,
 					$periode->innflyttet,
 					$periode->utflyttet
-			);
+				);
+			}
 		}
 		return $objekt;
 	}

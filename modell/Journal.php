@@ -73,13 +73,15 @@ class Journal {
             'fra' => date('2015-08-17'),
             'til' => date('2015-08-24')
         );*/
-        foreach($this->alle_kryss as $krysseliste){
-            $krysseliste = json_decode($krysseliste,true);
+        if(count($this->alle_kryss) > 0){
+            foreach($this->alle_kryss as $krysseliste){
+                $krysseliste = json_decode($krysseliste,true);
 
-            foreach($krysseliste as $enkelt_kryssing){
-                $tid = date($enkelt_kryssing['tid']);
-                if($tid <= $periode['til'] && $tid >= $periode['fra']){
-                    $resultatsArray[] = $enkelt_kryssing;
+                foreach($krysseliste as $enkelt_kryssing){
+                    $tid = date($enkelt_kryssing['tid']);
+                    if($tid <= $periode['til'] && $tid >= $periode['fra']){
+                        $resultatsArray[] = $enkelt_kryssing;
+                    }
                 }
             }
         }
@@ -100,13 +102,14 @@ class Journal {
     public function getKrysseInfo(){
         $info_arr = array();
         $perioden = self::getPeriode();
-
+        $start = date('Y-m-d',strtotime('-1 week',strtotime($perioden['fra'])));
+        $slutt = date('Y-m-d',strtotime('-1 week',strtotime($perioden['til'])));
         //Henter ut siste kryssing/vaktbytte/overføring fra forrige periode.
         $st = DB::getDB()->prepare('SELECT * FROM journal WHERE dato>=:start AND dato <=:slutt ORDER BY dato DESC');
-        $st->bindParam(':start',date('Y-m-d',strtotime('-1 week',strtotime($perioden['fra']))));
-        $st->bindParam(':slutt',date('Y-m-d',strtotime('-1 week',strtotime($perioden['til']))));
+        $st->bindParam(':start', $start);
+        $st->bindParam(':slutt', $slutt);
         $st->execute();
-        $forrige = $st->fetchAll()[0];
+        //$forrige = $st->fetchAll()[0];
 
         //Henter ut hele journalen for nåværende uke.
         $st = DB::getDB()->prepare('SELECT * FROM journal WHERE dato>=:start AND dato<=:slutt ORDER BY dato ASC');

@@ -1,10 +1,9 @@
 <?php
 require_once('topp_utvalg.php');
-//TODO: Lage drop-down meny sånn at man kan generere rapport for vilkårlig uke.
 ?>
     <script>
         var ukenr = null;
-        var aaret = 2016;
+        var aaret = 2007;
         function velgUke(nr) {
             $.get('?a=utvalg/vaktsjef/ukerapport_tabell/' + nr + '/' + aaret, function (data) {
                 $('#kryss').html(data);
@@ -24,7 +23,6 @@ require_once('topp_utvalg.php');
         <h1>Utvalget &raquo; Vaktsjef &raquo; Ukesrapport</h1>
         <p>Velg Uke: <select onchange="velgUke(this.value)">
                 <option value="0">- Velg Uke -</option>
-
                 <?php
                 $uker = 52;
 
@@ -38,10 +36,10 @@ require_once('topp_utvalg.php');
 
 
         <p>Velg År: <select onchange="velgAar(this.value)">
-                <option value="2016">2016</option>
+                <option value="2007">2007</option>
 
                 <?php
-                $start = 2007;
+                $start = 2008;
                 $årene = date('Y')-$start;
                 $uker = 52;
 

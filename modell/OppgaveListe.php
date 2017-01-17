@@ -5,7 +5,7 @@ namespace intern3;
 class OppgaveListe extends Liste {
 
 	public static function alle ($Sideinndeling = null) {
-	return self::listeFraSql('Oppgave::medId' , 'SELECT id FROM oppgave ORDER BY godkjent ASC,tid_oppretta DESC,id DESC' . $Grense . ';' , array() , $Sideinndeling);
+	return self::listeFraSql('Oppgave::medId' , 'SELECT id FROM oppgave ORDER BY godkjent ASC,tid_oppretta DESC,id DESC' . /*$Grense .*/ ';' , array() , $Sideinndeling);
 	}
 	public static function alleSammen ($Start = false , $Lengde = false) { // Denne er teit
 		if (is_int($Lengde)) {
