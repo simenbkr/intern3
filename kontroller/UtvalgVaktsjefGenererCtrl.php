@@ -19,7 +19,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 		} while(false);
 		$dok = new Visning($this->cd);
 		$dok->set('feilVarighet', $feilVarighet);
-		$dok->set('feilEnkelt', $feilEnkelt);	
+		$dok->set('feilEnkelt', $feilEnkelt);
 		$dok->set('feilPeriode', $feilPeriode);
 		$dok->vis('utvalg_vaktsjef_generer.php');
 	}

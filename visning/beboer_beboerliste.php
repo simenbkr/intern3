@@ -6,7 +6,8 @@ require_once('topp.php');
 
 <div class="col-md-12">
 	<h1>Beboer &raquo; Beboerliste</h1>
-	<p>[ Beboerliste ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]</p>
+	<p>[ Beboerliste ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]
+		[ <a href="<?php echo $cd->getBase(); ?>beboer/kart">Beboerkart</a> ]</p>
 	<table class="table table-bordered table-responsive">
 		<tr>
 			<th>Navn</th>

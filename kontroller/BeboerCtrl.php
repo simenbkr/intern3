@@ -16,6 +16,12 @@ class BeboerCtrl extends AbstraktCtrl {
 		else if ($aktueltArg == 'statistikk') {
 			$this->visStatistikk();
 		}
+		else if($aktueltArg == 'kart'){
+			$dok = new Visning($this->cd);
+			$beboerlista = BeboerListe::aktive();
+			$dok->set('beboerlista',$beboerlista);
+			$dok->vis('beboer_kart.php');
+		}
 		else if (is_numeric($aktueltArg)) {
 			$beboer = Beboer::medId($aktueltArg);
 			// Trenger feilhåndtering her.
