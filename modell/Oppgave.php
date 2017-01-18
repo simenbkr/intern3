@@ -19,7 +19,7 @@ class Oppgave
     private $db;
 
     //latskapsinstansiering
-    private $pameldte;
+    private $paameldte;
     private $arbeidListe; //arbeidListe er flertallsformen av arbeid
     private $arbeidListeBrukerId;
 
@@ -46,6 +46,7 @@ class Oppgave
             $this->godkjent = $rad['godkjent'];
             $this->tid_godkjent = $rad['tid_godkjent'];
             $this->godkjent_bruker_id = $rad['godkjent_bruker_id'];
+            $this->pameldte = $rad['paameldte'];
 
             $this->brukere = null;
         }
@@ -113,7 +114,10 @@ class Oppgave
 
     public function getGodkjentBruker()
     {
-        return Person::medId($this->godkjent_bruker_id);
+        if($this->godkjent_bruker_id != null){
+            return Bruker::medId($this->godkjent_bruker_id);
+        }
+        return null;
     }
 
     public function getPrioritet()
@@ -178,13 +182,19 @@ class Oppgave
     /*
      * Funksjonene nedenfor instansierer variabler ved behov.
      */
-    public function getPameldte()
+    public function getPameldteId()
     {
-        if (!$this->pameldte) {
-            // lazyinit
-            $this->pameldte = PersonListe::medOppgaveId($this->id);
+        return json_decode($this->pameldte, true);
+    }
+
+    public function getPameldteBeboere(){
+        $beboerne = array();
+        if($this->getPameldteId() != null){
+            foreach($this->getPameldteId() as $id){
+                $beboerne[] = Beboer::medId($id);
+            }
         }
-        return $this->pameldte;
+        return $beboerne;
     }
 
     public function getArbeidListe()
@@ -218,7 +228,7 @@ class Oppgave
 
     public function getPrioritetId()
     {
-        if (!$this->prioritet_id) {
+        /*if (!$this->prioritet_id) {
             // lazyinit
             $pri = array();
             foreach (RapportListe::medOppgaveId($this->id) as $Rapport) {
@@ -228,7 +238,8 @@ class Oppgave
             $pri = array_keys($pri);
             $this->prioritet_id = $pri[0];
         }
-        return $this->prioritet_id;
+        return $this->prioritet_id;*/
+        return $this->prioritet_id == null || $this->prioritet_id == 0 ? 1 : $this->prioritet_id;
     }
 }
 

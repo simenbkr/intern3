@@ -19,6 +19,9 @@ class JournalCtrl extends AbstraktCtrl
                         //setcookie('brukernavn', 'journal', NULL, NULL, NULL, NULL, TRUE);
                         //setcookie('passord', $passord_hash, NULL, NULL, NULL, NULL, TRUE);
                         //setcookie('du', '', -1);
+                        session_destroy();
+                        session_set_cookie_params(2147483647,"/");
+                        session_start();
                         $_SESSION['brukernavn'] = 'journal';
                         $_SESSION['passord'] = $passord_hash;
                         Header('Location: ' . $_GET['ref']);

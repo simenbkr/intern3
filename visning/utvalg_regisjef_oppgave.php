@@ -6,6 +6,12 @@ require_once('topp_utvalg.php');
 
 <div class="col-md-12">
     <h1>Utvalget &raquo; Regisjef &raquo; Oppgave</h1>
+    <?php if(isset($feilSubmit)){ ?>
+        <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            Oppgaven ble ikke lagt inn - du manglet et felt.
+        </div>
+    <?php } unset($feilSubmit); ?>
 </div>
 
 <script>
@@ -15,9 +21,26 @@ require_once('topp_utvalg.php');
             url: '?a=utvalg/regisjef/oppgave/',
             data: 'fjern=' + id,
             method: 'POST',
-            success: function (data) {
-                $('#oppgave_' + id).html(data);
-                location.reload();
+            success: function (html) {
+                $(".container").replaceWith($('.container', $(html)));
+                //location.reload();
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+    }
+
+    function slett(id) {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/oppgave/',
+            data: 'slett=' + id,
+            method: 'POST',
+            success: function (html) {
+                $(".container").replaceWith($('.container', $(html)));
+                //$('#oppgave_' + id).html(data);
+                //location.reload();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -31,9 +54,10 @@ require_once('topp_utvalg.php');
             url: '?a=utvalg/regisjef/oppgave/',
             data: 'godkjenn=' + id,
             method: 'POST',
-            success: function (data) {
-                $('#oppgave_' + id).html(data);
-                location.reload();
+            success: function (html) {
+                $(".container").replaceWith($('.container', $(html)));
+                //$('#oppgave_' + id).html(data);
+                //location.reload();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -66,7 +90,7 @@ require_once('topp_utvalg.php');
     });
 
 </script>
-
+<div class="container">
 <div class="col-md-6 col-sm-12">
     <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         <table class="table table-bordered">
@@ -120,6 +144,7 @@ require_once('topp_utvalg.php');
             <th>Opprettet</th>
             <th>Godkjent</th>
             <th>Godkjenn/Fjern</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -136,30 +161,40 @@ require_once('topp_utvalg.php');
             $tidgodkjent = $oppgave->getTidGodkjent();
             $godkjent = $oppgave->getGodkjent();
             $godkjentav = '';
-            //TODO FIX THIS SHIT MAN
-            if ($godkjent == -1) {
-                $godkjentav = intern3\Bruker::medId($oppgave->getGodkjentBrukerId()) == null ? intern3\Bruker::medId($oppgave->getGodkjentBruker())->getPerson()->getFulltNavn() : intern3\Beboer::medId($oppgave->getGodkjentBrukerId())->getFulltNavn();
-                //$godkjentav = $oppgave->getGodkjentBrukerId();
+            if($oppgave->getGodkjent() && $oppgave->getGodkjentBrukerId() != null && $oppgave->getGodkjentBruker()->getPerson() != null){
+                $godkjentav = $oppgave->getGodkjentBruker()->getPerson()->getFulltNavn();
             }
-
+            $paameldte = "";
+            if(sizeof($oppgave->getPameldteBeboere()) > 0){
+                foreach($oppgave->getPameldteBeboere() as $beboer){
+                    $paameldte .= $beboer->getFulltNavn() . ',';
+                }
+                rtrim($paameldte, ',');
+            }
             ?>
             <tr id="<?php echo $id;?>">
                 <td><?php echo $navn; ?> </td>
                 <td><?php echo $pri; ?> </td>
                 <td><?php echo $timer; ?></td>
-                <td><?php echo $pri; ?></td>
                 <td><?php echo $personer; ?></td>
+                <td><?php echo $paameldte; ?></td>
                 <td><?php echo $beskrivelse; ?></td>
                 <td><?php echo $oppretta; ?></td>
-                <td><?php echo $oppgave->getTidGodkjent() != null ? '<span title="Godkjent av ' . $godkjentav
-                        . '" > ' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>
+                <?php /*<td><?php echo $oppgave->getGodkjent () != 0 ? '<span title="Godkjent av ' . $godkjentav
+                        . '" > ' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>*/?>
+                <td><?php
+                    if($oppgave->getGodkjent() != 0){ ?>
+                    Godkjent av <?php echo $godkjentav; ?>, <?php echo $tidgodkjent; ?>
+                    <?php
+                    }
+                    ?></td>
 
                 <td><?php if ($godkjent == 0) { ?>
                     <button class="btn btn-default" onclick="godkjenn(<?php echo $id; ?>)">Godkjenn</button><?php } ?>
                     <button class="btn btn-default" onclick="fjern(<?php echo $id; ?>)">Fjern</button>
                 </td>
+                <td><button class="btn btn-sm btn-danger" onclick="slett(<?php echo $oppgave->getId(); ?>)">Slett oppgaven</button></td>
             </tr>
-
             <?php
         }
 
@@ -168,7 +203,7 @@ require_once('topp_utvalg.php');
         </tbody>
     </table>
 </div>
-
+</div>
 <?php
 
 require_once('bunn.php');
