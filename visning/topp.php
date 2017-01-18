@@ -25,7 +25,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-    //print_r($_COOKIE);
+   // print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
 	/* Meny start */
@@ -130,7 +130,6 @@ else {
 if (isset($visUtvalgMeny)) {
 /* Utvalgmeny start */
 ?>
-
         <div class="container-fluid">
           <div class="navbar-header">
             <a class="navbar-brand" href="?a=utvalg">Utvalget</a>
@@ -139,13 +138,13 @@ if (isset($visUtvalgMeny)) {
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Romsjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/beboerliste">Beboerliste</a></li>
+                    <li><a href="<?php echo $cd->getBase();?>utvalg/romsjef/gammelbeboer_tabell">Gamle beboerliste</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
-                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endrebeboer">Endre beboer</a></li>
-                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endregammelbeboer">Endre Gammel beboer</a></li>
+                  <?php /*<li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endrebeboer">Endre beboer</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endregammelbeboer">Endre Gammel beboer</a></li>*/ ?>
                 </ul>
               </li>
             </ul>
-
             <ul class="nav navbar-nav">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regisjef <span class="caret"></span></a>

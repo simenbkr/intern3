@@ -23,7 +23,7 @@ require_once('topp_utvalg.php');
 foreach ($beboerListe as $beboer){
 	?>
 		<tr>
-			<td><a href="?a=beboer/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
+			<td><a href="?a=utvalg/romsjef/beboerliste/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
 			<td><?php echo $beboer->getRom()->getNavn(); ?></td>
 			<td><?php echo $beboer->getTelefon(); ?></td>
 			<td><a href="mailto:<?php echo $beboer->getEpost(); ?>"><?php echo $beboer->getEpost(); ?></a></td>
