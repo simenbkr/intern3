@@ -211,6 +211,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `oppgave` (
   `anslag_timer` varchar(32) CHARACTER SET utf8 COLLATE utf8_swedish_ci DEFAULT NULL,
   `ansvarsomrade_id` int(1) DEFAULT NULL,
   `anslag_personer` varchar(32) CHARACTER SET utf8 COLLATE utf8_swedish_ci DEFAULT NULL,
+  `paameldte` varchar(1024) CHARACTER SET utf8 COLLATE utf8_swedish_ci DEFAULT NULL,
   `prioritet_id` int(1) NOT NULL,
   `navn` varchar(128) CHARACTER SET utf8 COLLATE utf8_swedish_ci NOT NULL,
   `beskrivelse` text CHARACTER SET utf8 COLLATE utf8_swedish_ci NOT NULL,
