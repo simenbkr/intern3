@@ -119,6 +119,10 @@ class Utleie
         return $this->beboer3;
     }
 
+    public function getBarvakter(){
+        return array($this->beboer1, $this->beboer2);
+    }
+
     public function getRom()
     {
         return $this->rom;

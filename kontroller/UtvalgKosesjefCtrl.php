@@ -52,6 +52,25 @@ class UtvalgKosesjefCtrl extends AbstraktCtrl
                     $st->bindParam(':rom', $post['rom']);
                     $st->execute();
                     $dok->set('success', 1);
+
+                    $mottakere = "";
+                    foreach (BeboerListe::aktive() as $beboer) {
+                        if ($beboer->vilHaUtleieVarsel()) {
+                            $mottakere .= $beboer->getEpost() . ",";
+                        }
+                    }
+                    $df = new IntlDateFormatter('nb_NO',
+                        IntlDateFormatter::TRADITIONAL, IntlDateFormatter::NONE,
+                        'Europe/Oslo');
+
+                    //$mottakere = rtrim($mottakere, ','); TODO UNCOMMENT
+                    $mottakere = "data@singsaker.no";
+                    $tittel = "[SING-INTERN] Kosesjef har lagt til et nytt utleie";
+                    $tekst = "<html>(Dette er en automatisert melding. Du kan melde deg av på <a href='https://intern.singsaker.no'>Internsida</a>." .
+                        "<br/><br/>Kosesjef har registrert et nytt utleie. Utleie skjer " . $df->format(date('Y-m-d',$post['dato'])) . " i " . $post['rom'] .
+                        "<br/>Meld deg på som barvakt eller vasking mot regi på <a href='https://intern.singsaker.no'>Internsida</a>." .
+                        "<br/><br/>";
+                    Epost::sendEpost($mottakere,$tittel,$tekst);
                 }
             }
             $utleier = Utleie::getUtleierFremover();
