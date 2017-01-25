@@ -51,7 +51,6 @@ class KjellerCtrl extends AbstraktCtrl
                     $vinen = Vin::medId($sisteArg);
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                        foreach($post as $key=>$val){setcookie($key,$val);}
                         if (isset($_FILES['image']) && $_FILES['image']['size'] > 100 && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
                             && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
                         ) {
@@ -247,6 +246,26 @@ class KjellerCtrl extends AbstraktCtrl
                     }
                 }
                 $dok->vis('kjeller_lister.php');
+                break;
+            case 'add_type':
+                if(isset($_POST)){
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    if(LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()){
+                        if(isset($post['navn'])){
+                            $st = DB::getDB()->prepare('INSERT INTO vintype (navn) VALUES(:navn)');
+                            $st->bindParam(':navn', $post['navn']);
+                            $st->execute();
+                        }
+                        elseif(isset($post['slett']) && is_numeric($post['slett'])){
+                            $st = DB::getDB()->prepare('DELETE FROM vintype WHERE id=:id');
+                            $st->bindParam(':id', $post['slett']);
+                            $st->execute();
+                        }
+                    }
+                }
+                $vintyper = Vintype::getAlle();
+                $dok->set('vintyper', $vintyper);
+                $dok->vis('kjeller_add_type.php');
                 break;
             default:
                 $dok->vis('kjeller_hoved.php');
