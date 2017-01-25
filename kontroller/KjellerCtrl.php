@@ -27,7 +27,7 @@ class KjellerCtrl extends AbstraktCtrl
                         if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
                             $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
                             move_uploaded_file($tmp_file, "vinbilder/" . $bildets_navn);
-                            chmod("vinbilder/" . $bildets_navn, 644);
+                            chmod("vinbilder/" . $bildets_navn, 0644);
                             $this->insertVin(true, $bildets_navn);
                         }
                     } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
@@ -62,7 +62,7 @@ class KjellerCtrl extends AbstraktCtrl
                             if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
                                 $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
                                 move_uploaded_file($tmp_file, "vinbilder/" . $bildets_navn);
-                                chmod("vinbilder/" . $bildets_navn, 644);
+                                chmod("vinbilder/" . $bildets_navn, 0644);
                                 $this->updateVin(true, $bildets_navn, $vinen->getId());
                             }
 
