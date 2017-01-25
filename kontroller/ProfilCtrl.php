@@ -16,7 +16,7 @@ class ProfilCtrl extends AbstraktCtrl
                     $feil = array_merge($feil, $this->endrePassord());
                     break;
                 case 'bilde':
-                    //$feil = array_merge($feil, $this->endreBilde());
+                    $feil = array_merge($feil, $this->endreBilde());
                     break;
                 case 'varsler':
                     $feil = array_merge($feil, $this->endreVarsler());
@@ -32,6 +32,34 @@ class ProfilCtrl extends AbstraktCtrl
         $dok->set('epostInst', $epostInst);
         $dok->set('feil', $feil);
         $dok->vis('profil.php');
+    }
+
+    private function endreBilde(){
+        $tillatte_filtyper = array('jpg', 'jpeg', 'png', 'gif');
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if (isset($_FILES['image'])) {
+
+            $file_name = $_FILES['image']['name'];
+            $file_size = $_FILES['image']['size'];
+            $tmp_file = $_FILES['image']['tmp_name'];
+            $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+
+            if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
+                $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
+                move_uploaded_file($tmp_file, "profilbilder/" . $bildets_navn);
+                chmod("vinbilder/" . $bildets_navn, 0644);
+                $id = LogginnCtrl::getAktivBruker()->getPerson()->getId();
+                $st = DB::getDB()->prepare('UPDATE beboer SET bilde=:bilde WHERE id=:id');
+                $st->bindParam(':bilde', $bildets_navn);
+                $st->bindParam(':id', $id);
+                $st->execute();
+            } else {
+                return array('Det var ikke et gyldig bilde!');
+            }
+        } else {
+            return array('Du valgte ikke et bilde!');
+        }
+        return null;
     }
 
     private function endreVarsler()

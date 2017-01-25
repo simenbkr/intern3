@@ -109,12 +109,22 @@ foreach (intern3\StudieListe::alle() as $studie) {
 	</form>
 </div>
 <div class="col-md-4 col-sm-6">
-	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-		<h2>Bytt profilbilde<input type="hidden" name="endre" value="bilde"></h2>
-		<p style="color: #990;">Du har for øyeblikket ikke noe profilbilde.</p>
-		<p style="color: #900;">Hakke implementert dette heller.</p>
-		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
-	</form>
+	<?php if(strlen($beboer->getBilde()) > 0){ ?>
+	<img style="width: 200px;" src="profilbilder/<?php echo $beboer->getBilde();?>">
+	<?php } ?>
+		<form action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="endre" value="bilde">
+			<table class="table table-bordered table-responsive">
+				<tr>
+					<td>Bilde:</td>
+					<td><input type="file" name="image"/></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input class="btn btn-primary" type="submit" value="Legg til"></td>
+				</tr>
+			</table>
+		</form>
 </div>
 <div class="col-md-4 col-sm-6">
 	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">

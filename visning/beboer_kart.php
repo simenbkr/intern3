@@ -90,14 +90,17 @@ foreach($beboerlista as $beboer){
     $navn = $beboer->getFornavn() . ' ' . $beboer->getEtternavn();
     $navn = strlen($navn) > 21 ? substr($navn,0,21) . '...' : $navn;
 
-    $rom[$beboer->getRom()->getNavn()][] = array("navn" => $navn, "bilde" => "");
+    $rom[$beboer->getRom()->getNavn()][] = array("navn" => $navn, "bilde" => $beboer->getBilde());
 }
 
 foreach($rom as $nr => $d)
 {
     foreach($d as $data)
     {
-        $image_url = 'beboerkart/ayy.jpg';
+        $image_url = "profilbilder/$data[bilde]";
+
+        if(!file_exists($image_url) || strlen($image_url) == strlen('profilbilder/'))
+            $image_url = 'beboerkart/ayy.jpg';
 
         $src = imagecreatefromjpeg($image_url);
         $dest = imagecreatetruecolor($image_width, $image_height);

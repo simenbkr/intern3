@@ -62,6 +62,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `beboer` (
   `rolle_id` int(10) DEFAULT NULL,
   `epost` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `romhistorikk` text COLLATE utf8_unicode_ci,
+  `bilde` VARCHAR(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )');
 

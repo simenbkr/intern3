@@ -21,6 +21,7 @@ class Beboer implements Person
     private $rolleId;
     private $epost;
     private $romhistorikk;
+    private $bilde;
 
     // Latskap
     private $studie;
@@ -72,6 +73,7 @@ class Beboer implements Person
         $instance->rolleId = $rad['rolle_id'];
         $instance->epost = $rad['epost'];
         $instance->romhistorikk = $rad['romhistorikk'];
+        $instance->bilde = $rad['bilde'];
         $instance->studie = null;
         $instance->skole = null;
         $instance->romId = null;
@@ -133,6 +135,10 @@ class Beboer implements Person
     public function getFodselsdato()
     {
         return $this->fodselsdato;
+    }
+
+    public function getBilde(){
+        return $this->bilde;
     }
 
     public function getFodselsar()
