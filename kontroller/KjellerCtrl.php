@@ -113,6 +113,10 @@ class KjellerCtrl extends AbstraktCtrl
                             $st->bindParam(':vinId', $post['vin']);
                             $st->bindParam(':beboerId', $post['beboer']);
                             $st->execute();
+
+                            $string = "Du registrerte " . $post['antall'] . " vin med navn " . $vinen->getNavn() . " på " . $beboeren->getFulltNavn();
+                            $dok->set('tilbakemelding', 1);
+                            $dok->set('tilbakemeldingstring', $string);
                         }
                     }
                 }
@@ -167,7 +171,7 @@ class KjellerCtrl extends AbstraktCtrl
                                     'vin' => '');
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
-                                    if (!in_array($vin_kryss->getVinId(), $vin_array)) {
+                                    if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
                                         $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());

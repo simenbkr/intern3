@@ -21,6 +21,39 @@ require_once ('topp.php');
             },
         });
     });
+    function submitForm(){
+        var beboerfelt = document.getElementById("beboer");
+        var beboerid = beboerfelt.options[beboerfelt.selectedIndex].value;
+
+        var vinfelt = document.getElementById("vin");
+        var vinid = vinfelt.options[vinfelt.selectedIndex].value;
+
+        var antall_felt = document.getElementById("antall");
+        var antall = antall_felt.value;
+
+        var datofelt = document.getElementById("datepicker");
+        var dato = datofelt.value;
+
+        $.ajax({
+            type: 'POST',
+            url: '?a=kjeller/regning',
+            data: 'beboer=' + beboerid + "&vin=" + vinid + "&antall=" + antall + "&dato=" + dato,
+            method: 'POST',
+            success: function (data) {
+                $(".tilbakemelding").replaceWith($('.tilbakemelding', $(data)));
+                //$("#antall").replaceWith($('#antall', $(data)));
+                //$("#datepicker").replaceWith($('#datepicker', $(data)));
+                //$(".letsgo").replaceWith($('.letsgo', $(data)));
+                document.getElementById("antall").value = "";
+                document.getElementById("datepicker").value = "";
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+
+    }
+
 </script>
 <div class="container">
     <h1>Kjellermester » Registrer regning</h1>
@@ -29,11 +62,23 @@ require_once ('topp.php');
         [ Regning] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
     <div class="col-md-12">
-        <form action="" method="post" enctype="multipart/form-data">
+        <div class="tilbakemelding">
+            <?php if(isset($tilbakemelding)){ ?>
+
+                <div class="alert alert-success" id="success" style="display:table; margin: auto; margin-top: 5%">
+                    <hr>
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $tilbakemeldingstring;?>
+                    <hr>
+                </div>
+                <br/><br/>
+            <?php } ?>
+        </div>
+        <form onSubmit="submitForm(); return false;" action="javascript:void(0);">
             <table class="table table-bordered table-responsive">
                 <tr>
                     <td>Beboer:</td>
-                    <td><select name="beboer">
+                    <td><select id="beboer" name="beboer">
                             <?php
                             foreach ($beboerlista as $beboeren) {
                                 ?>
@@ -46,7 +91,7 @@ require_once ('topp.php');
                 </tr>
                 <tr>
                     <td>Vin:</td>
-                    <td><select name="vin">
+                    <td><select id="vin" name="vin">
                             <?php
                             foreach($vinene as $vinen){
                                 if($vinen->getAntall() < 1){
@@ -58,9 +103,10 @@ require_once ('topp.php');
                             ?>
                         </select></td>
                 </tr>
+                <div class="letsgo">
                 <tr>
                     <td>Antall: (Tall, ikke operasjoner. F.eks IKKE 1/3, men 0.33)</td>
-                    <td><input type="text" name="antall"></td>
+                    <td><input id="antall" type="text" name="antall"></td>
                 </tr>
                 <tr>
                     <td>Dato:</td>
@@ -68,9 +114,10 @@ require_once ('topp.php');
                         <input type="text" name="dato" id="datepicker"/>
                     </td>
                 </tr>
+                </div>
                 <tr>
                     <td></td>
-                    <td><input class="btn btn-primary" type="submit" value="Legg til"></td>
+                    <td><input class="btn btn-danger" type="submit" value="Registrer"></td>
                 </tr>
             </table>
         </form>
