@@ -148,6 +148,14 @@ class KjellerCtrl extends AbstraktCtrl
                             $dok->vis('kjeller_lister_rapport.php');
                             exit();
                         case 'beboere_vin':
+                            if(isset($_POST) && isset($_POST['fakturer']) && $_POST['fakturer'] == 1){
+                                $st = DB::getDB()->prepare('UPDATE vinkryss SET fakturert=1 WHERE fakturert=0');
+                                $st->execute();
+
+                                $st2 = DB::getDB()->prepare('INSERT INTO vin_fakturert () VALUES ()');
+                                $st2->execute();
+                            }
+
                             $beboerlista = BeboerListe::aktive();
                             $beboer_antall_vin = array();
                             foreach ($beboerlista as $beboer) {

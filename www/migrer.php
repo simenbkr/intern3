@@ -407,6 +407,12 @@ $db->query('CREATE TABLE IF NOT EXISTS `vinpafyll` (
 PRIMARY KEY (`id`)
 )');
 
+$db->query('CREATE TABLE IF NOT EXISTS vin_fakturert(
+`id` INT(10) unsigned NOT NULL auto_increment,
+`tiden` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY (`id`)
+ )');
+
 $db->query('TRUNCATE TABLE skole;');
 $db->query('TRUNCATE TABLE studie;');
 $db->query('TRUNCATE TABLE rom;');
