@@ -102,7 +102,19 @@ foreach($rom as $nr => $d)
         if(!file_exists($image_url) || strlen($image_url) == strlen('profilbilder/'))
             $image_url = 'beboerkart/ayy.jpg';
 
-        $src = imagecreatefromjpeg($image_url);
+        $exploded = explode('.',$image_url);
+        $ext = $exploded[count($exploded) - 1];
+
+        if (preg_match('/jpg|jpeg/i',$ext))
+            $imageTmp=imagecreatefromjpeg($image_url);
+        else if (preg_match('/png/i',$ext))
+            $imageTmp=imagecreatefrompng($image_url);
+        else if (preg_match('/gif/i',$ext))
+            $imageTmp=imagecreatefromgif($image_url);
+        else
+            $imageTmp = imagecreatefromjpeg('beboerkart/ayy.jpg');
+
+        $src = $imageTmp;//imagecreatefromjpeg($image_url);
         $dest = imagecreatetruecolor($image_width, $image_height);
 
         list($width, $height) = getimagesize($image_url);
