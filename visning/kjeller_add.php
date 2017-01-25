@@ -3,6 +3,9 @@ require_once('topp.php');
 ?>
 <div class="container">
     <h1>Kjellermester » Legg til vin</h1>
+    <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ Legg til vin ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]</p>
     <hr>
     <?php if (isset($error)){ ?>
     <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">

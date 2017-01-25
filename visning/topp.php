@@ -82,11 +82,13 @@ if (!isset($skjulMeny)) {
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kjellermester <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a></li>
-                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Administrer vintyper</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Legg til/endre vintyper</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/regning">Registrer regning</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Registrer svinn</a></li>
                                 </ul>
                             </li>
                                 <?php

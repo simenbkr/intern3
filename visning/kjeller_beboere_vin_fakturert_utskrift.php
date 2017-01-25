@@ -32,6 +32,9 @@
             </tr>
             <?php
             foreach ($vin as $vin_krysset) {
+                if($vin_krysset['aktuell_vin'] == null){
+                    continue;
+                }
                 $antall += $vin_krysset['antall'];
                 $sum += $vin_krysset['kostnad'];
                 ?>

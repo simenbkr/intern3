@@ -83,7 +83,10 @@ class Vinkryss
     }
 
     public function getKostnad(){
-        return $this->antall * $this->vinen->getPris();
+        if($this->vinen != null) {
+            return $this->antall * $this->vinen->getPris();
+        }
+        return 0;
     }
 
     public static function getAlleIkkeFakturert(){

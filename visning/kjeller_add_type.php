@@ -21,6 +21,9 @@ require_once('topp.php');
 </script>
     <div class="container">
     <h1>Kjellermester » Legg til vintype</h1>
+        <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ Vintyper ]
+            [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
+            [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]</p>
     <hr>
     <?php if (isset($error)){ ?>
     <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
@@ -52,7 +55,7 @@ require_once('topp.php');
                 <?php foreach ($vintyper as $vintypen) {
                     ?>
                     <tr>
-                        <td><?php echo $vintypen->getNavn();?></td>
+                        <td><a href="?a=kjeller/add_type/<?php echo $vintypen->getId();?>"><?php echo $vintypen->getNavn();?></a></td>
                         <td><button class="btn btn-danger btn-sm" onclick="slett(<?php echo $vintypen->getId();?>)">Slett</button></td>
                     </tr>
                     <?php

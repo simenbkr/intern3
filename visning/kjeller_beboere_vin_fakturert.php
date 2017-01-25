@@ -3,6 +3,9 @@ require_once ('topp.php');
 ?>
     <div class="container">
         <h1>Kjellermester » Beboere og vin</h1>
+        <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
+            [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
+            [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]</p>
         <hr>
         <b>Dette er fakturerte!</b>
         <table class="table table-responsive table-bordered">
@@ -29,6 +32,9 @@ require_once ('topp.php');
                 </tr>
                 <?php
                 foreach($vin as $vin_krysset){
+                    if($vin_krysset['aktuell_vin'] == null){
+                        continue;
+                    }
                     $antall += $vin_krysset['antall'];
                     $sum += $vin_krysset['kostnad'];
                     ?>

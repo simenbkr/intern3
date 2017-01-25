@@ -12,6 +12,7 @@ class Vin
     private $antall;
     private $typeId;
     private $type;
+    private $svinn;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -26,6 +27,13 @@ class Vin
         $instance->antall = $rad['antall'];
         $instance->typeId = $rad['typeId'];
         $instance->type = Vintype::medId($instance->typeId);
+        $instance->svinn = 0;
+        $st = DB::getDB()->prepare('SELECT * FROM vinsvinn WHERE vin_id=:id');
+        $st->bindParam(':id', $instance->id);
+        $st->execute();
+        foreach($st->fetchAll() as $rad){
+            $instance->svinn += $rad['antall'];
+        }
         return $instance;
     }
 
@@ -71,6 +79,9 @@ class Vin
         return $this->type;
     }
 
+    public function getSvinn(){
+        return $this->svinn;
+    }
 
     public static function getAlle(){
         $st = DB::getDB()->prepare('SELECT * FROM vin');

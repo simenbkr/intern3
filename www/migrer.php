@@ -390,6 +390,23 @@ $db->query('CREATE TABLE IF NOT EXISTS `vinkryss` (
 PRIMARY KEY(`id`)
 )');
 
+$db->query('CREATE TABLE IF NOT EXISTS `vinsvinn` (
+`id` INT(10) unsigned NOT NULL auto_increment,
+`antall` INT(10),
+`registrert` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+`tidspunkt` TIMESTAMP DEFAULT 0,
+`vin_id` INT(10),
+PRIMARY KEY (`id`)
+)');
+
+$db->query('CREATE TABLE IF NOT EXISTS `vinpafyll` (
+`id` INT(10) unsigned NOT NULL auto_increment,
+`antall` INT(10),
+`tid` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+`vin_id` INT(10),
+PRIMARY KEY (`id`)
+)');
+
 $db->query('TRUNCATE TABLE skole;');
 $db->query('TRUNCATE TABLE studie;');
 $db->query('TRUNCATE TABLE rom;');
