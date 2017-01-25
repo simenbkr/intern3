@@ -382,7 +382,7 @@ PRIMARY KEY(`id`)
 $db->query('CREATE TABLE IF NOT EXISTS `vinkryss` (
 `id` INT(10) unsigned NOT NULL auto_increment,
 `antall` DOUBLE(20,9),
-`tiden` TIMESTAMP,
+`tiden` TIMESTAMP DEFAULT 0,
 `fakturert` TINYINT(1),
 `vinId` INT(10),
 `beboerId` INT(10),
