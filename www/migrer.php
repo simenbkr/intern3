@@ -362,6 +362,34 @@ $db->query('INSERT INTO `rolle` (`id`, `navn`, `regitimer`, `vakter_h`, `vakter_
 (2, \'Full vakt\', 0, 8, 9),
 (3, \'Full regi\', 48, 0, 0)');
 
+
+$db->query('CREATE TABLE IF NOT EXISTS `vintype` (
+`id` INT(10) unsigned NOT NULL auto_increment,
+`navn` VARCHAR(256),
+PRIMARY KEY(`id`)
+)');
+
+$db->query('CREATE TABLE IF NOT EXISTS `vin` (
+`id` INT(10) unsigned NOT NULL auto_increment,
+`navn` VARCHAR(128),
+`bilde` VARCHAR(512),
+`pris` DOUBLE(13,3),
+`antall` INT(10),
+`typeId` INT(10),
+PRIMARY KEY(`id`)
+)');
+
+$db->query('CREATE TABLE IF NOT EXISTS `vinkryss` (
+`id` INT(10) unsigned NOT NULL auto_increment,
+`antall` DOUBLE(20,9),
+`tiden` TIMESTAMP,
+`fakturert` TINYINT(1),
+`vinId` INT(10),
+`beboerId` INT(10),
+`lagt_inn` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY(`id`)
+)');
+
 $db->query('TRUNCATE TABLE skole;');
 $db->query('TRUNCATE TABLE studie;');
 $db->query('TRUNCATE TABLE rom;');

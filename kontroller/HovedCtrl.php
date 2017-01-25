@@ -80,6 +80,9 @@ class HovedCtrl extends AbstraktCtrl
             case 'journal':
                 $valgtCtrl = new JournalCtrl($this->cd->skiftArg());
                 break;
+            case 'kjeller':
+                $valgtCtrl = new KjellerCtrl($this->cd->skiftArg());
+                break;
             case 'diverse':
             default:
                 $valgtCtrl = new DiverseCtrl($this->cd->skiftArg());

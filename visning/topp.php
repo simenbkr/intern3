@@ -25,7 +25,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-   // print_r($_COOKIE);
+  // print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
 	/* Meny start */
@@ -78,9 +78,18 @@ if (!isset($skjulMeny)) {
                             ?>
                             <li><a href="<?php echo $cd->getBase(); ?>helga">Helga</a></li>
                             <?php } ?>
-							<li><a href="<?php echo $cd->getBase(); ?>kjeller">(Vinkjeller)</a></li>
-<?php
-
+                            <?php if($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->erKjellerMester()) { ?>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kjellermester <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/regning">Registrer regning</a></li>
+                                </ul>
+                            </li>
+                                <?php
+                            }
 if ($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 ?>
 							<li><a href="<?php echo $cd->getBase(); ?>utvalg">Utvalget</a></li>

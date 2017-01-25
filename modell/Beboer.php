@@ -291,6 +291,13 @@ class Beboer implements Person
         return $this->vervListe;
     }
 
+    public function erKjellerMester(){
+        $st = DB::getDB()->prepare('SELECT * FROM beboer_verv WHERE beboer_id=:id AND verv_id=45');
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+        return $st->rowCount() > 0;
+    }
+
     public function harDataVerv()
     {
         $id = $this->getId();

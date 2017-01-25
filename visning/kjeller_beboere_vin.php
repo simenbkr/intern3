@@ -1,0 +1,58 @@
+<?php
+require_once ('topp.php');
+?>
+<div class="container">
+<h1>Kjellermester » Beboere og vin</h1>
+    <hr>
+    <b>Dette er IKKE-fakturerte!</b>
+    <table class="table table-responsive table-bordered">
+        <tr>
+            <th>Beboer</th>
+            <th>Vin</th>
+            <th>Antall</th>
+            <th>Kostnad</th>
+        </tr>
+    <?php
+    $antall = 0;
+    $sum = 0;
+    foreach($beboer_vin as $beboeren_med_vin){
+        $beboeren = $beboeren_med_vin['beboer'];
+        $vin = $beboeren_med_vin['vin'];
+        if($beboeren == null || $vin == 0 || count($vin) < 1){
+            continue;
+        } ?>
+        <tr>
+            <td><b><?php echo $beboeren->getFulltNavn();?></b></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <?php
+        foreach($vin as $vin_krysset){
+            $antall += $vin_krysset['antall'];
+            $sum += $vin_krysset['kostnad'];
+            ?>
+            <tr>
+                <td></td>
+                <td><?php echo $vin_krysset['aktuell_vin']->getNavn();?></td>
+                <td><?php echo $vin_krysset['antall'];?></td>
+                <td><?php echo $vin_krysset['kostnad'];?></td>
+            </tr>
+            <?php
+
+        }
+        ?>
+<?php
+    }
+    ?>
+        <tr>
+            <td><h2>TOTALT</h2></td>
+            <td></td>
+            <td><?php echo $antall;?></td>
+            <td><?php echo $sum;?></td>
+        </tr>
+</table>
+</div>
+<?php
+require_once ('bunn.php');
+?>

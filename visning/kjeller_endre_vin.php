@@ -1,0 +1,52 @@
+<?php
+require_once ('topp.php');
+?>
+<div class="container">
+    <h1>Kjellermester » Vinadministrasjon » Endre vin</h1>
+
+    <form action="" method="post" enctype="multipart/form-data" onsubmit="setTimeout(function () { window.location.reload(); }, 10)">
+        <table class="table table-bordered table-responsive">
+            <tr>
+                <td>Navn:</td>
+                <td><input type="text" name="navn" value="<?php echo $vinen->getNavn(); ?>"></td>
+            </tr>
+            <tr>
+                <td>Pris:</td>
+                <td><input type="text" name="pris" value="<?php echo $vinen->getPris(); ?>"></td>
+            </tr>
+            <tr>
+                <td>Antall i beholdning:</td>
+                <?php /*<td><input type="text" name="antall" value="<?php echo $vinen->getAntall();?>"></td>*/?>
+                <td><?php echo $vinen->getAntall();?></td>
+            </tr>
+            <tr>
+                <td>Type:</td>
+                <td><select name="type">
+                        <?php
+                        foreach($vintyper as $vintypen){
+                            ?>
+                            <option value="<?php echo $vintypen->getId();?>"<?php
+                            if($vinen->getTypeId() == $vintypen->getId()){
+                                echo 'selected=\"selected\"';
+                            }
+                            ?>><?php echo $vintypen->getNavn();?></option>
+                            <?php
+                        }
+                        ?>
+                    </select></td>
+            </tr>
+            <tr>
+                <td>Bilde:</td>
+                <td><input type="file" name="image" /><img height="200px" src="vinbilder/<?php echo $vinen->getBilde();?>"</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input class="btn btn-primary" type="submit" value="Endre"></td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+<?php
+require_once ('bunn.php');
+?>
