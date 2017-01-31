@@ -1,18 +1,21 @@
 <?php
 require_once('topp.php');
+$aktiv_bruker = \intern3\LogginnCtrl::getAktivBruker();
+$rolle = $aktiv_bruker->getPerson()->getRolleId();
+$har_vakt = $rolle == 1 || $rolle == 2;
 ?>
     <script>
 
-        function showElem(id){
+        function showElem(id) {
             document.getElementById(id).style.display = 'block';
         }
 
-        function hideElem(id){
+        function hideElem(id) {
             document.getElementById(id).style.display = 'none';
         }
 
         <?php
-            //Lag en setAction og setPassord funksjon for hver eneste tingetang. Wooohoo.
+        //Lag en setAction og setPassord funksjon for hver eneste tingetang. Wooohoo.
         foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
             $temp = $vakt->getId();
             echo "var action$temp = 0; //1 = gisbort, 0 = byttes
@@ -43,8 +46,10 @@ require_once('topp.php');
                 data: 'vaktbytte=1&id=' + id + '&action=' + window['action' + id] + "&passord=" + window['passord' + id] + "&passordet=" + passordet + "&merknad=" + merknad,
                 method: 'POST',
                 success: function (data) {
+                    //$('#ledig' + id).('hide');
+                    $('.modal-backdrop').hide();
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $(".container").replaceWith($('.container', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -60,7 +65,7 @@ require_once('topp.php');
                 method: 'POST',
                 success: function (data) {
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -76,7 +81,8 @@ require_once('topp.php');
                 method: 'POST',
                 success: function (data) {
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $('.modal-backdrop').hide();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -93,7 +99,8 @@ require_once('topp.php');
                 method: 'POST',
                 success: function (data) {
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $('.modal-backdrop').hide();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -102,15 +109,17 @@ require_once('topp.php');
         }
 
         <?php /*leggTilForslag(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId();?>*/ ?>
-        function leggTilForslag(fraId, tilId) {
+        function leggTilForslag(fraId, tilId, modalId) {
             $.ajax({
                 type: 'POST',
                 url: '?a=vakt/bytte/',
                 data: 'vaktbytte=5&fraId=' + fraId + '&tilId=' + tilId,
                 method: 'POST',
                 success: function (data) {
+                    $('#' + modalId).modal('hide');
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $('.modal-backdrop').hide();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -118,7 +127,7 @@ require_once('topp.php');
             });
         }
 
-        function leggTilForslagMedPassord(fraId, tilId) {
+        function leggTilForslagMedPassord(fraId, tilId, modalId) {
             var passordet = document.getElementById(fraId * 10000).value;
             $.ajax({
                 type: 'POST',
@@ -126,8 +135,10 @@ require_once('topp.php');
                 data: 'vaktbytte=6&fraId=' + fraId + '&tilId=' + tilId + "&passordet=" + passordet,
                 method: 'POST',
                 success: function (data) {
+                    //$('#' + modalId).modal('hide');
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $('.modal-backdrop').hide();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -142,8 +153,10 @@ require_once('topp.php');
                 data: 'vaktbytte=7&fraId=' + fraId + '&tilId=' + tilId,
                 method: 'POST',
                 success: function (data) {
+                    $('#' + (306 * fraId)).modal("hide");
                     //$(".container").replaceWith($('.container', $(data)));
-                    location.reload();
+                    $('.modal-backdrop').hide();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -157,22 +170,23 @@ require_once('topp.php');
         <p>[ <a href="<?php echo $cd->getBase(); ?>vakt">Vaktliste</a> ] [ Vaktbytte ]</p>
     </div>
     <div class="container">
-        <?php if (isset($feilPassord)) {
-            ?>
-            <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Feil passord! Byttet IKKE vakt!
-            </div>
-            <?php
-        }
-        if (isset($byttetVakt)) {
-            ?>
+        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
             <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Byttet vakt!
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <?php
+        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
             </div>
             <?php
         }
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
+        unset($_SESSION['msg']);
         ?>
         <div class="col-md-3 col-sm-6 col-sx-12">
             <?php
@@ -197,19 +211,19 @@ require_once('topp.php');
                                     <td class="celle_graa"><?php echo $tekst; ?></td>
                                     <?php
                                 }
-                            } elseif($vakt->erForeslatt()){
+                            } elseif ($vakt->erForeslatt()) {
                                 ?>
-                                <td disabled><span title="Foreslått i bytte" class="glyphicon glyphicon-refresh"></span>  <?php echo $tekst; ?></td>
+                                <td disabled><span title="Foreslått i bytte"
+                                                   class="glyphicon glyphicon-refresh"></span> <?php echo $tekst; ?>
+                                </td>
                                 <?php
-                            }
-                            else {
+                            } else {
                                 ?>
                                 <td>
                                     <input type="button" class="btn btn-default"
                                            value="<?php echo $tekst ?>" data-toggle="modal"
                                            data-target="#ledig<?php echo $vakt->getId(); ?>"></td>
                                 <div class="modal fade" id="ledig<?php echo $vakt->getId(); ?>" role="dialog">
-                                    test
                                     <div class="modal-dialog modal-sm">
                                         <div class="modal-content panel-primary">
                                             <div class="modal-header panel-heading">
@@ -272,7 +286,15 @@ require_once('topp.php');
                 </table>
                 <?php
             }
-            visDineVakter();
+
+            if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
+                visDineVakter();
+            } else {
+                ?>
+                <p><span class="tekst_dinevakter">Du skal ikke sitte vakt eller så har du ingen vakter å bytte!</span>
+                </p>
+                <?php
+            }
             ?>
         </div>
         <?php
@@ -297,6 +319,7 @@ require_once('topp.php');
                             <tr>
                             <td>
                                 <?php
+
                                 if ($vaktbytte->harPassord()) {
                                     echo "<span title=\"Passordlåst\" class=\"glyphicon glyphicon-lock\"></span>";
                                 }
@@ -313,7 +336,7 @@ require_once('topp.php');
                                     <input class="btn btn-sm btn-danger pull-right" type="button" value="Trekk"
                                            onclick="fjernVaktBytte(<?php echo $vaktbytte->getId(); ?>, <?php echo $vaktbytte->getVaktId(); ?>)">
                                     <?php
-                                    if (!$vaktbytte->getGisBort()) { ?>
+                                    if (!$vaktbytte->getGisBort() && $har_vakt) { ?>
                                         <input class="btn btn-sm btn-warning pull-right" type="button"
                                                value="Se forslag"
                                                data-toggle="modal"
@@ -328,6 +351,7 @@ require_once('topp.php');
                                 if ($merknaden != null) {
                                     echo "<br/>" . $vaktbytte->getMerknad();
                                 }
+
                                 ?>
                                 <div class="modal fade" id="<?php echo $vaktbytte->getId() * 306; ?>" role="dialog">
                                     <?php //Dette er modalen for å se forslag til et vaktbytte. ?>
@@ -341,16 +365,22 @@ require_once('topp.php');
                                             <div class="modal-body" align="center">
                                                 <table class="table table-bordered">
                                                     <?php
-                                                    foreach ($vaktbytte->getForslagVakter() as $forslag) {
-                                                        if ($forslag != null) {
-                                                            echo $forslag->getBruker()->getPerson()->getFulltNavn();
-                                                            $output = $forslag->getVakttype() . '. vakt ' . strftime('%A %d/%m', strtotime($forslag->getDato()));
-                                                            ?>:<br/>
-                                                            <input class="btn btn-primary" type="button"
-                                                                   value="<?php echo $output; ?>"
-                                                                   onclick="byttVakt(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $forslag->getId(); ?>)"><br/>
-                                                            <?php
+                                                    if (sizeof($vaktbytte->getForslagVakter()) > 0 && $vaktbytte->getForslagVakter() != null) {
+                                                        foreach ($vaktbytte->getForslagVakter() as $forslag) {
+                                                            if ($forslag != null) {
+                                                                echo $forslag->getBruker()->getPerson()->getFulltNavn();
+                                                                $output = $forslag->getVakttype() . '. vakt ' . strftime('%A %d/%m', strtotime($forslag->getDato()));
+                                                                ?>:<br/>
+                                                                <input class="btn btn-primary" type="button"
+                                                                       value="<?php echo $output; ?>"
+                                                                       onclick="byttVakt(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $forslag->getId(); ?>)">
+                                                                <br/>
+                                                                <?php
+                                                            }
                                                         }
+                                                    } elseif(count($vaktbytte->getForslagVakter()) < 0 || $vaktbytte->getForslagVakter() == null) { ?>
+                                                        <p>Det ser ikke ut til at du har fått noe bytteforslag (enda).</p>
+                                                        <?php
                                                     }
                                                     ?>
                                                 </table>
@@ -379,7 +409,7 @@ require_once('topp.php');
                                                     <table class="table table-bordered">
                                                         <?php //visDineVakter(false);
                                                         foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                            if ($vakt == null || $vakt->erFerdig() || in_array($vakt->getId(), $vaktbytte->getForslagIder())) {
+                                                            if ($vakt == null || $vakt->erFerdig() || $vakt->erForeslatt()) {
                                                                 continue;
                                                             }
                                                             $tid = strtotime($vakt->getDato());
@@ -389,7 +419,7 @@ require_once('topp.php');
                                                                 <td>
                                                                     <input class="btn btn-primary" type="button"
                                                                            value="<?php echo $tekst; ?>"
-                                                                           onclick="leggTilForslag(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>)">
+                                                                           onclick="leggTilForslag(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>,'<?php echo $modalId; ?>')">
                                                                 </td>
                                                             </tr>
                                                             <?php
@@ -402,7 +432,7 @@ require_once('topp.php');
                                                     <table class="table table-bordered">
                                                         <?php
                                                         foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                            if ($vakt == null || $vakt->erFerdig() || in_array($vakt->getId(), $vaktbytte->getForslagIder())) {
+                                                            if ($vakt == null || $vakt->erFerdig() || $vakt->erForeslatt()) {
                                                                 continue;
                                                             }
                                                             $tid = strtotime($vakt->getDato());
@@ -412,7 +442,7 @@ require_once('topp.php');
                                                                 <td>
                                                                     <input class="btn btn-primary" type="button"
                                                                            value="<?php echo $tekst; ?>"
-                                                                           onclick="leggTilForslagMedPassord(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>)">
+                                                                           onclick="leggTilForslagMedPassord(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>,'<?php echo $modalId; ?>')">
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>

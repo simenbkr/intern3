@@ -36,7 +36,6 @@ class RegiOppgaveCtrl extends AbstraktCtrl
                 $oppgaven = Oppgave::medId($post['id']);
                 $beboeren = LogginnCtrl::getAktivBruker()->getPerson();
                 if ($oppgaven != null && LogginnCtrl::getAktivBruker() != null && $beboeren != null && in_array($beboeren, $oppgaven->getPameldteBeboere())) {
-                    setcookie('1','21');
                     $paameldt_array = $oppgaven->getPameldteId();
                     $ny_paameldt_array = array();
                     foreach ($paameldt_array as $id) {
@@ -46,7 +45,6 @@ class RegiOppgaveCtrl extends AbstraktCtrl
                         $ny_paameldt_array[] = $id;
                     }
                     $ny_paameldt_json = json_encode($ny_paameldt_array);
-                    setcookie('ting', $ny_paameldt_json);
                     $id = $oppgaven->getId();
                     $st = DB::getDB()->prepare('UPDATE oppgave SET paameldte=:paameldte WHERE id=:id');
                     $st->bindParam(':paameldte', $ny_paameldt_json);

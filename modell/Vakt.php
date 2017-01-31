@@ -18,6 +18,8 @@ class Vakt
     private $bruker;
     private $vaktbytte;
 
+    private $vaktbytteDenneErMedIId;
+
     public static function medId($id)
     {
         $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE id=:id;');
@@ -50,6 +52,7 @@ class Vakt
         $instance->bekreftet = $rad['bekreftet'];
         $instance->autogenerert = $rad['autogenerert'];
         $instance->dobbelvakt = $rad['dobbelvakt'];
+        $instance->vaktbytteDenneErMedIId = $rad['vaktbytte_id'];
         return $instance;
     }
 
@@ -58,7 +61,8 @@ class Vakt
         return $this->id;
     }
 
-    public function getBytte(){
+    public function getBytte()
+    {
         return $this->bytte;
     }
 
@@ -85,7 +89,8 @@ class Vakt
         return $this->dato;
     }
 
-    public function getBekreftet(){
+    public function getBekreftet()
+    {
         return $this->bekreftet;
     }
 
@@ -107,13 +112,14 @@ class Vakt
         return $this->getVaktbytte() <> null;
     }
 
-    public function erForeslatt(){
+    public function erForeslatt()
+    {
         $st = DB::getDB()->prepare('SELECT id FROM vaktbytte');
         $st->execute();
         $rows = $st->fetchAll();
-        foreach($rows as $row){
+        foreach ($rows as $row) {
             $instans = Vaktbytte::medId($row['id']);
-            if(in_array($this->id,$instans->getForslagIder())){
+            if (count($instans->getForslagIder()) > 0 && in_array($this->id, $instans->getForslagIder())) {
                 return true;
             }
         }
@@ -226,43 +232,57 @@ class Vakt
         return $res['antall'];
     }
 
-    public static function slettVakt($vaktId){
+    public static function slettVakt($vaktId)
+    {
         $st = DB::getDB()->prepare('DELETE FROM vakt WHERE id=:id');
-        $st->bindParam(':id',$vaktId);
+        $st->bindParam(':id', $vaktId);
         $st->execute();
     }
 
-    public static function setDobbelVakt($vaktId){
+    public static function setDobbelVakt($vaktId)
+    {
         $st = DB::getDB()->prepare('UPDATE vakt SET dobbelvakt=1 WHERE id=:id');
-        $st->bindParam(':id',$vaktId);
+        $st->bindParam(':id', $vaktId);
         $st->execute();
     }
 
-    public static function byttVakt($vaktId1,$vaktId2){
+    public static function byttVakt($vaktId1, $vaktId2)
+    {
         //Hent ut relevant info.
         $st = DB::getDB()->prepare('SELECT bruker_id FROM vakt WHERE id=:id');
-        $st->bindParam(':id',$vaktId1);
+        $st->bindParam(':id', $vaktId1);
         $st->execute();
         $forste = $st->fetchColumn();
 
         $st = DB::getDB()->prepare('SELECT bruker_id FROM vakt WHERE id=:id');
-        $st->bindParam(':id',$vaktId2);
+        $st->bindParam(':id', $vaktId2);
         $st->execute();
         $andre = $st->fetchColumn();
 
         //Oppdatere de to.
         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bruker_id WHERE id=:id');
-        $st->bindParam(':bruker_id',$andre['bruker_id']);
-        $st->bindParam(':id',$vaktId1);
+        $st->bindParam(':bruker_id', $andre['bruker_id']);
+        $st->bindParam(':id', $vaktId1);
         $st->execute();
 
         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bruker_id WHERE id=:id');
-        $st->bindParam(':bruker_id',$forste['bruker_id']);
-        $st->bindParam(':id',$vaktId2);
+        $st->bindParam(':bruker_id', $forste['bruker_id']);
+        $st->bindParam(':id', $vaktId2);
         $st->execute();
     }
 
+    public function getVaktbytteDenneErMedIId()
+    {
+        return $this->vaktbytteDenneErMedI;
+    }
 
+    public function toString()
+    {
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+        return $this->getVakttype() . ". vakt " . $df->format(strtotime($this->getDato()));
+    }
 }
 
 ?>

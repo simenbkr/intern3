@@ -43,12 +43,15 @@ class Vaktbytte
         $instance->id = $rad['id'];
         $instance->vaktId = $rad['vakt_id'];
         $instance->gisBort = $rad['gisbort'];
-        $instance->forslag = explode(',',$rad['forslag']);
+        $instance->forslag = $rad['forslag'] != null && strlen($rad['forslag']) ? explode(',',$rad['forslag']) : null;
         if($instance->forslag != null){
             $instance->forslagVaktListe = array();
             foreach($instance->forslag as $id){
                 $instance->forslagVaktListe[] = Vakt::medId($id);
             }
+        } else {
+            $instance->forslag = null;
+            $instance->forslagVaktListe = null;
         }
         $instance->merknad = $rad['merknad'];
         $instance->harPassord = $rad['har_passord'] == 0 ? false : true;
@@ -128,6 +131,10 @@ class Vaktbytte
 
     public function stemmerPassord($pass){
         return $pass == $this->passord || trim($pass) == $this->passord;
+    }
+
+    public function erVaktMedIByttet($vaktId){
+        return in_array(Vakt::medId($vaktId), $this->forslagVaktListe);
     }
 
 }
