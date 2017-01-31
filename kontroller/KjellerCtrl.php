@@ -19,7 +19,7 @@ class KjellerCtrl extends AbstraktCtrl
             case 'leggtil':
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if (isset($_FILES['image']) && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
+                    if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
                         && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
                     ) {
 
@@ -39,9 +39,9 @@ class KjellerCtrl extends AbstraktCtrl
                     ) {
                         $this->insertVin(false, null);
                     } elseif (sizeof($post) > 0) {
-                        $dok->set('error', 1);
+                        $_SESSION['error'] = 1;
+                        $_SESSION['msg'] = "Noe gikk galt.. Prøv på nytt";
                         $vintypene = Vintype::getAlle();
-                        $dok->vis('kjeller_add.php');
                     }
                 }
 
@@ -54,8 +54,8 @@ class KjellerCtrl extends AbstraktCtrl
                     $vinen = Vin::medId($sisteArg);
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                        if (isset($_FILES['image']) && $_FILES['image']['size'] > 100 && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
-                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
+                        if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
+                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
                         ) {
                             $file_name = $_FILES['image']['name'];
                             $file_size = $_FILES['image']['size'];
@@ -69,8 +69,8 @@ class KjellerCtrl extends AbstraktCtrl
                                 $this->updateVin(true, $bildets_navn, $vinen->getId());
                             }
 
-                        } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
-                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
+                        } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
+                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
                         ) {
                             $this->updateVin(true, $vinen->getBilde(), $vinen->getId());
                         }
@@ -144,7 +144,7 @@ class KjellerCtrl extends AbstraktCtrl
                                 $alle_kryss = Vinkryss::getAlleIkkeFakturertByBeboerId($beboer->getId());
                                 foreach ($alle_kryss as $krysset) {
                                     $beboer_vin['antall'] += round($krysset->getAntall(), 2);
-                                    $beboer_vin['kostnad'] += round($krysset->getKostnad(), 2);
+                                    $beboer_vin['kostnad'] += round($krysset->getKostnad()*$krysset->getVin()->getAvanse(), 2);
                                 }
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
@@ -172,11 +172,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -199,11 +199,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!in_array($vin_kryss->getVinId(), $vin_array)) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -226,11 +226,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!in_array($vin_kryss->getVinId(), $vin_array)) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -253,11 +253,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!in_array($vin_kryss->getVinId(), $vin_array)) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -366,14 +366,15 @@ class KjellerCtrl extends AbstraktCtrl
 
     private function insertVin($medbilde = false, $bildenavn)
     {
-        $bildet = $medbilde ? $bildenavn : '';
+        $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $st = DB::getDB()->prepare('INSERT INTO vin (navn,bilde,pris,antall,typeId) VALUES(
-:navn,:bilde,:pris,:antall,:typeId)');
+        $st = DB::getDB()->prepare('INSERT INTO vin (navn,bilde,pris,avanse,antall,typeId) VALUES(
+:navn,:bilde,:pris,:avanse,:antall,:typeId)');
 
         $st->bindParam(':navn', $post['navn']);
         $st->bindParam(':bilde', $bildet);
         $st->bindParam(':pris', $post['pris']);
+        $st->bindParam(':avanse', $post['avanse']);
         $st->bindParam(':antall', $post['antall']);
         $st->bindParam(':typeId', $post['type']);
         $st->execute();
@@ -381,15 +382,15 @@ class KjellerCtrl extends AbstraktCtrl
 
     private function updateVin($medbilde = false, $bildenavn, $id)
     {
-        $bildet = $medbilde ? $bildenavn : '';
+        $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,bilde=:bilde,pris=:pris,antall=:antall,typeId=:typeId WHERE id=:id');
+        $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,bilde=:bilde,pris=:pris,avanse=:avanse,typeId=:typeId WHERE id=:id');
 
         $st->bindParam(':id', $id);
         $st->bindParam(':navn', $post['navn']);
         $st->bindParam(':bilde', $bildet);
         $st->bindParam(':pris', $post['pris']);
-        $st->bindParam(':antall', $post['antall']);
+        $st->bindParam(':avanse', $post['avanse']);
         $st->bindParam(':typeId', $post['type']);
         $st->execute();
     }

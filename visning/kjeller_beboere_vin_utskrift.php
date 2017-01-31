@@ -12,7 +12,7 @@
             <th class="heading">Beboer</th>
             <th class="heading">Vin</th>
             <th class="heading">Antall</th>
-            <th class="heading">Kostnad</th>
+            <th class="heading">Kostnad (eks. mva)</th>
         </tr>
         <?php
         $antall = 0;
@@ -35,13 +35,13 @@
                     continue;
                 }
                 $antall += $vin_krysset['antall'];
-                $sum += $vin_krysset['kostnad'];
+                $sum += $vin_krysset['kostnad']/1.25;
                 ?>
                 <tr>
                     <td></td>
                     <td><?php echo $vin_krysset['aktuell_vin']->getNavn(); ?></td>
                     <td><?php echo $vin_krysset['antall']; ?></td>
-                    <td><?php echo $vin_krysset['kostnad']; ?></td>
+                    <td><?php echo ceil($vin_krysset['kostnad']/1.25); ?></td>
                 </tr>
                 <?php
 

@@ -17,11 +17,11 @@
         <tr>
             <td><?php echo $beboer_antall_vin_objekt['beboer']->getFulltNavn(); ?></td>
             <td><?php echo $beboer_antall_vin_objekt['antall']; ?></td>
-            <td><?php echo $beboer_antall_vin_objekt['kostnad']; ?></td>
+            <td><?php echo round($beboer_antall_vin_objekt['kostnad']/1.25,2); ?></td>
         </tr>
         <?php
         $antall += $beboer_antall_vin_objekt['antall'];
-        $sum += $beboer_antall_vin_objekt['kostnad'];
+        $sum += round($beboer_antall_vin_objekt['kostnad']/1.25,2);
 
     } ?>
     <tr>

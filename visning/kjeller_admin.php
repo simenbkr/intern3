@@ -28,7 +28,9 @@ require_once ('topp.php');
     <table class="table table-bordered table-responsive">
         <tr>
             <th>Navn</th>
-            <th>Pris</th>
+            <th>Pris (innkjøp)</th>
+            <th>Avanse</th>
+            <th>Pris (beboere)</th>
             <th>Antall</th>
             <th>Svinn</th>
             <th>Type</th>
@@ -45,6 +47,8 @@ require_once ('topp.php');
             <tr>
                 <td><a href="?a=kjeller/admin/<?php echo $vin->getId();?>"><?php echo $vin->getNavn();?></a></td>
                 <td><?php echo round($vin->getPris(),2);?></td>
+                <td><?php echo round($vin->getAvanse(),2); ?></td>
+                <td><?php echo round($vin->getPris()*$vin->getAvanse(),2);?></td>
                 <td><?php echo $vin->getAntall();?></td>
                 <td>
                     <?php echo $vin->getSvinn();?>

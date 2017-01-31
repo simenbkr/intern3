@@ -18,6 +18,10 @@ require_once ('topp.php');
                 <td><input type="text" name="pris" value="<?php echo $vinen->getPris(); ?>"></td>
             </tr>
             <tr>
+                <td>Avanse:</td>
+                <td><input type="text" name="avanse" value="<?php echo $vinen->getAvanse();?>"</td>
+            </tr>
+            <tr>
                 <td>Antall i beholdning:</td>
                 <?php /*<td><input type="text" name="antall" value="<?php echo $vinen->getAntall();?>"></td>*/?>
                 <td><?php echo $vinen->getAntall();?></td>

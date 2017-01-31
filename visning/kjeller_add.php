@@ -7,13 +7,27 @@ require_once('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
-    <?php if (isset($error)){ ?>
-    <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        Noe gikk galt! Vinen ble ikke lagt til!
-        <?php }
-        unset($error) ?>
-    </div>
+    <div class="tilbakemelding">
+    <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+        <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $_SESSION['msg']; ?>
+            <br/>
+        </div>
+        <?php
+    } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+        <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $_SESSION['msg']; ?>
+            <br/>
+        </div>
+        <?php
+    }
+    unset($_SESSION['success']);
+    unset($_SESSION['error']);
+    unset($_SESSION['msg']);
+    ?></div>
     <div class="col-md-12">
         <form action="" method="post" enctype="multipart/form-data">
             <table class="table table-bordered table-responsive">
@@ -24,6 +38,10 @@ require_once('topp.php');
                 <tr>
                     <td>Pris:</td>
                     <td><input type="text" name="pris" value=""></td>
+                </tr>
+                <tr>
+                    <td>Avanse:</td>
+                    <td><input type="text" name="avanse" value=""</td>
                 </tr>
                 <tr>
                     <td>Antall innkjøpt:</td>

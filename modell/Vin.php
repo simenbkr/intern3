@@ -13,6 +13,7 @@ class Vin
     private $typeId;
     private $type;
     private $svinn;
+    private $avanse;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -26,6 +27,7 @@ class Vin
         $instance->pris = $rad['pris'];
         $instance->antall = $rad['antall'];
         $instance->typeId = $rad['typeId'];
+        $instance->avanse = $rad['avanse'];
         $instance->type = Vintype::medId($instance->typeId);
         $instance->svinn = 0;
         $st = DB::getDB()->prepare('SELECT * FROM vinsvinn WHERE vin_id=:id');
@@ -91,6 +93,10 @@ class Vin
             $vinene[] = self::init($st);
         }
         return $vinene;
+    }
+
+    public function getAvanse(){
+        return $this->avanse;
     }
 
 }

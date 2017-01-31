@@ -376,6 +376,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `vin` (
 `navn` VARCHAR(128),
 `bilde` VARCHAR(512),
 `pris` DOUBLE(13,3),
+`avanse` DOUBLE(13,3),
 `antall` INT(10),
 `typeId` INT(10),
 PRIMARY KEY(`id`)
