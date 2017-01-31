@@ -378,8 +378,9 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                                 <?php
                                                             }
                                                         }
-                                                    } elseif(count($vaktbytte->getForslagVakter()) < 0 || $vaktbytte->getForslagVakter() == null) { ?>
-                                                        <p>Det ser ikke ut til at du har fått noe bytteforslag (enda).</p>
+                                                    } elseif (count($vaktbytte->getForslagVakter()) < 0 || $vaktbytte->getForslagVakter() == null) { ?>
+                                                        <p>Det ser ikke ut til at du har fått noe bytteforslag
+                                                            (enda).</p>
                                                         <?php
                                                     }
                                                     ?>
