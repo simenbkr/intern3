@@ -18,7 +18,7 @@ class Vakt
     private $bruker;
     private $vaktbytte;
 
-    private $vaktbytteDenneErMedIId;
+    private $vaktbytteDenneErMedI;
 
     public static function medId($id)
     {
@@ -52,7 +52,7 @@ class Vakt
         $instance->bekreftet = $rad['bekreftet'];
         $instance->autogenerert = $rad['autogenerert'];
         $instance->dobbelvakt = $rad['dobbelvakt'];
-        $instance->vaktbytteDenneErMedIId = $rad['vaktbytte_id'];
+        $instance->vaktbytteDenneErMedI = $rad['vaktbytte_id'];
         return $instance;
     }
 

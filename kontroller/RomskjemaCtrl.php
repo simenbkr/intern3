@@ -91,7 +91,7 @@ class RomskjemaCtrl extends AbstraktCtrl {
 		$mottaker = "data@singsaker.no";
 		$tittel = "[SING-INTERN] Ny feil registrert av " . $registrant->getFornavn() . " på rom " . $registrant->getRom()->getNavn();
 		$tekst = "<html>Dette er en automatisert melding.<br/><br/>" . $registrant->getFulltNavn() . " på rom " . $registrant->getRom()->getNavn() .
-			" har opprettet en ny feil på <a href=\"https://intern.singsaker.no\" med følgende kommentar:<br/><br/>" . $kommentar .
+			" har opprettet en ny feil på <a href='https://intern.singsaker.no'>Internsida</a> med følgende kommentar:<br/><br/>" . $kommentar .
 			"<br/><br/>Feil? Ta kontakt med <a href=\"mailto:data@singsaker.no\">Datagutta</a></html>";
 		Epost::sendEpost($mottaker,$tittel,$tekst);
 	}

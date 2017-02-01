@@ -63,6 +63,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `beboer` (
   `epost` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `romhistorikk` text COLLATE utf8_unicode_ci,
   `bilde` VARCHAR(256) DEFAULT NULL,
+  `ansiennitet` DOUBLE(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )');
 
@@ -390,6 +391,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `vinkryss` (
 `vinId` INT(10),
 `beboerId` INT(10),
 `lagt_inn` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`prisen` DOUBLE(10,4),
 PRIMARY KEY(`id`)
 )');
 

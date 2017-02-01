@@ -14,6 +14,7 @@ class Vinkryss
     private $vinen;
     private $beboerId;
     private $beboeren;
+    private $prisen;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -29,6 +30,7 @@ class Vinkryss
         $instance->vinen = Vin::medId($instance->vinId);
         $instance->beboerId = $rad['beboerId'];
         $instance->beboeren = Beboer::medId($instance->beboerId);
+        $instance->prisen = $rad['prisen'];
         return $instance;
     }
 
@@ -52,6 +54,10 @@ class Vinkryss
 
     public function getId(){
         return $this->id;
+    }
+
+    public function getPrisen(){
+        return $this->prisen;
     }
 
     public function getAntall(){

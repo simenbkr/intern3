@@ -88,7 +88,9 @@ class KjellerCtrl extends AbstraktCtrl
                     if (isset($post['slett']) && is_numeric($post['slett']) && Vin::medId($post['slett']) != null) {
                         $st = DB::getDB()->prepare('DELETE FROM vin WHERE id=:id');
                         $st->bindParam(':id', $post['slett']);
-                        $st->execute();
+                        //$st->execute();
+                        // Vil egentlig ikke tillate sletting av vin-objekter da det er mye
+                        // avhengighet rundt dette.
                     }
                 }
                 $vinene = Vin::getAlle();
@@ -106,21 +108,21 @@ class KjellerCtrl extends AbstraktCtrl
                         $vinen = Vin::medId($post['vin']);
 
                         if ($vinen != null && $beboeren != null) {
-                            $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall,tiden,fakturert,vinId,beboerId) VALUES(
-                            :antall,:tiden,0,:vinId,:beboerId)');
+                            $prisen = $post['antall'] * $vinen->getPris() * $vinen->getAvanse();
+                            $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall,tiden,fakturert,vinId,beboerId,prisen) VALUES(
+                            :antall,:tiden,0,:vinId,:beboerId,:prisen)');
                             $st->bindParam(':antall', $post['antall']);
                             $st->bindParam(':tiden', $post['dato']);
                             $st->bindParam(':vinId', $post['vin']);
                             $st->bindParam(':beboerId', $post['beboer']);
+                            $st->bindParam(':prisen', $prisen);
                             $st->execute();
-
                             $string = "Du registrerte " . $post['antall'] . " vin med navn " . $vinen->getNavn() . " på " . $beboeren->getFulltNavn();
                             $dok->set('tilbakemelding', 1);
                             $dok->set('tilbakemeldingstring', $string);
                         }
                     }
                 }
-
                 $beboerlista = BeboerListe::aktive();
                 $dok->set('vinene', $vinene);
                 $dok->set('beboerlista', $beboerlista);
@@ -198,7 +200,7 @@ class KjellerCtrl extends AbstraktCtrl
                                     'vin' => '');
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
-                                    if (!in_array($vin_kryss->getVinId(), $vin_array)) {
+                                    if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
                                         $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
@@ -225,7 +227,7 @@ class KjellerCtrl extends AbstraktCtrl
                                     'vin' => '');
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
-                                    if (!in_array($vin_kryss->getVinId(), $vin_array)) {
+                                    if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
                                         $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());

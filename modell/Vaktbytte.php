@@ -136,6 +136,5 @@ class Vaktbytte
     public function erVaktMedIByttet($vaktId){
         return in_array(Vakt::medId($vaktId), $this->forslagVaktListe);
     }
-
 }
 ?>

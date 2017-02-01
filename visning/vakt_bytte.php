@@ -163,6 +163,24 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                 }
             });
         }
+        <?php /*onclick="fjernForslag(<?php echo $vaktbytte->getId();?>,<?php echo $vakt->getId();?>)">*/?>
+        function fjernForslag(vaktbytte, vakt) {
+            $.ajax({
+                type: 'POST',
+                url: '?a=vakt/bytte/',
+                data: 'vaktbytte=8&vaktbyttet=' + vaktbytte + '&vakt=' + vakt,
+                method: 'POST',
+                success: function (data) {
+                    //$(".container").replaceWith($('.container', $(data)));
+                    $('.modal-backdrop').hide();
+                    $("#innhold").replaceWith($('#innhold', $(data)));
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
 
     </script>
     <div class="col-md-12">
@@ -409,21 +427,40 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                     <p>Hvilken vakt vil du foreslå å bytte?</p>
                                                     <table class="table table-bordered">
                                                         <?php //visDineVakter(false);
-                                                        foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                            if ($vakt == null || $vakt->erFerdig() || $vakt->erForeslatt()) {
-                                                                continue;
+                                                        if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
+                                                            foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
+                                                                if ($vakt == null || $vakt->erFerdig() || ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())) {
+                                                                    continue;
+                                                                }
+                                                                $tid = strtotime($vakt->getDato());
+                                                                if ($vakt->getVaktbytteDenneErMedIId() == $vaktbytte->getId()) {
+                                                                    $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input class="btn btn-danger" type="button"
+                                                                                   value="Trekk forslag: <?php echo $tekst; ?>"
+                                                                                   onclick="fjernForslag(<?php echo $vaktbytte->getId(); ?>,<?php echo $vakt->getId(); ?>)">
+                                                                        </td>
+                                                                    </tr>
+                                                                    <?php
+                                                                } elseif ($vakt->getVaktbytteDenneErMedIId() != 0 && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId()) {
+                                                                    continue;
+                                                                } else {
+                                                                    $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input class="btn btn-primary" type="button"
+                                                                                   value="<?php echo $tekst; ?>"
+                                                                                   onclick="leggTilForslag(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>,'<?php echo $modalId; ?>')">
+                                                                        </td>
+                                                                    </tr>
+                                                                    <?php
+                                                                }
                                                             }
-                                                            $tid = strtotime($vakt->getDato());
-                                                            $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
-                                                            ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <input class="btn btn-primary" type="button"
-                                                                           value="<?php echo $tekst; ?>"
-                                                                           onclick="leggTilForslag(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>,'<?php echo $modalId; ?>')">
-                                                                </td>
-                                                            </tr>
-                                                            <?php
+                                                        } else {
+                                                            echo "Du har ingen vakter å bytte bort!";
                                                         }
                                                         ?>
                                                     </table>
@@ -432,21 +469,37 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                     <p>Hvilken vakt vil du foreslå å bytte?</p>
                                                     <table class="table table-bordered">
                                                         <?php
-                                                        foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                            if ($vakt == null || $vakt->erFerdig() || $vakt->erForeslatt()) {
-                                                                continue;
+                                                        if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
+                                                            foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
+                                                                if ($vakt == null || $vakt->erFerdig() || ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())) {
+                                                                    continue;
+                                                                }
+                                                                $tid = strtotime($vakt->getDato());
+                                                                $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
+                                                                if ($vakt->getVaktbytteDenneErMedIId() == $vaktbytte->getId()) { ?>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input class="btn btn-danger" type="button"
+                                                                                   value="Trekk forslag: <?php echo $tekst; ?>"
+                                                                                   onclick="fjernForslag(<?php echo $vaktbytte->getId(); ?>,<?php echo $vakt->getId(); ?>)">
+                                                                        </td>
+                                                                    </tr>
+                                                                    <?php
+                                                                } else {
+                                                                    ?>
+
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input class="btn btn-primary" type="button"
+                                                                                   value="<?php echo $tekst; ?>"
+                                                                                   onclick="leggTilForslagMedPassord(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>,'<?php echo $modalId; ?>')">
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php }
                                                             }
-                                                            $tid = strtotime($vakt->getDato());
-                                                            $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
-                                                            ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <input class="btn btn-primary" type="button"
-                                                                           value="<?php echo $tekst; ?>"
-                                                                           onclick="leggTilForslagMedPassord(<?php echo $vaktbytte->getVaktId(); ?>,<?php echo $vakt->getId(); ?>,'<?php echo $modalId; ?>')">
-                                                                </td>
-                                                            </tr>
-                                                        <?php } ?>
+                                                        } else {
+                                                            echo "Du har ingen vakter å bytte bort!";
+                                                        } ?>
                                                     </table>
                                                     Dette vaktbyttet er passordbeskyttet. Vennligst skriv inn passordet under.
                                                     <input type="password"

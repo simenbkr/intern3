@@ -4,7 +4,6 @@ namespace intern3;
 
 class Beboer implements Person
 {
-
     private $id;
     private $brukerId;
     private $fornavn;
@@ -22,6 +21,7 @@ class Beboer implements Person
     private $epost;
     private $romhistorikk;
     private $bilde;
+    private $ansiennitet;
 
     // Latskap
     private $studie;
@@ -74,6 +74,7 @@ class Beboer implements Person
         $instance->epost = $rad['epost'];
         $instance->romhistorikk = $rad['romhistorikk'];
         $instance->bilde = $rad['bilde'];
+        $instance->ansiennitet = $rad['ansiennitet'];
         $instance->studie = null;
         $instance->skole = null;
         $instance->romId = null;
@@ -164,6 +165,10 @@ class Beboer implements Person
     public function getPostnummer()
     {
         return $this->postnummer;
+    }
+
+    public function getAnsiennitet(){
+        return $this->ansiennitet;
     }
 
     public function getTelefon()
