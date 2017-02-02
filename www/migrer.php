@@ -710,9 +710,9 @@ while ($vakt = pg_fetch_array($hentVakter)) {
     $bekreftet = $vakt['bekreftet'] == 't';
     $autogenerert = $vakt['manual'] != 't';
     $st = $db->prepare('INSERT INTO vakt(
-	bruker_id,vakttype,dato,bekreftet,autogenerert
+	bruker_id,vakttype,dato,bekreftet,autogenerert,bytte,dobbelvakt,vaktbytte_id
 ) VALUES(
-	:brukerId,:vakttype,:dato,:bekreftet,:autogenerert
+	:brukerId,:vakttype,:dato,:bekreftet,:autogenerert,0,0,0
 );');
     $st->bindParam(':brukerId', $brukerId);
     $st->bindParam(':vakttype', $vakttype);
@@ -726,7 +726,7 @@ while ($vakt = pg_fetch_array($hentVakter)) {
 /* Migrering av vakter, slutt */
 
 /* Migrering av vaktbytter, start */
-
+/* Fjerner dette da det er inkompatibelt med nytt vaktbyttesystem. Folk får heller legge til vaktbytter igjen etter migrering.
 $hentVaktbytter = pg_query('SELECT * FROM pb_ledigevakter ORDER BY id;');
 while ($vaktbytte = pg_fetch_array($hentVaktbytter)) {
     $vaktId = $vaktIdFornyelse[$vaktbytte['vakt_id']];
@@ -744,6 +744,7 @@ while ($vaktbytte = pg_fetch_array($hentVaktbytter)) {
     $st->bindParam(':merknad', $merknad);
     $st->execute();
 }
+*/
 
 /* Migrering av vaktbytter, slutt */
 
