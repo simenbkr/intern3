@@ -67,9 +67,9 @@ require_once('topp.php');
                 <td><?php $tekst = "";
                     if(sizeof($oppgave->getPameldteBeboere()) > 0) {
                         foreach ($oppgave->getPameldteBeboere() as $beboer) {
-                            $tekst .= $beboer->getFulltNavn() . ',';
+                            $tekst .= $beboer->getFulltNavn() . ', ';
                         }
-                        $tekst = rtrim($tekst, ',');
+                        $tekst = rtrim($tekst, ', ');
                     }
                     echo $tekst
                     ?></td>

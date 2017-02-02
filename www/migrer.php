@@ -179,7 +179,17 @@ $db->query('CREATE TABLE IF NOT EXISTS `verv` (
   `regitimer` tinyint(3) unsigned DEFAULT \'0\',
   `utvalg` tinyint(1) DEFAULT \'0\',
   `epost` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `beskrivelse` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`)
+)');
+
+$db->query('CREATE TABLE IF NOT EXISTS `verv_melding` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `dato` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `tekst` TEXT NOT NULL,
+  `verv_id` INT(10) NOT NULL,
+  `beboer_id` INT(10) NOT NULL,
+  PRIMARY KEY(`id`)
 )');
 
 $db->query('CREATE TABLE IF NOT EXISTS `feil` (

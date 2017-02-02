@@ -10,6 +10,7 @@ class Verv
     private $utvalg;
     private $epost;
     private $regitimer;
+    private $beskrivelse;
 
     // Latskap
     private $apmend = null;
@@ -42,6 +43,7 @@ class Verv
         $instance->utvalg = isset($rad['utvalg']) ? $rad['utvalg'] : 0;
         $instance->epost = $rad['epost'];
         $instance->regitimer = $rad['regitimer'];
+        $instance->beskrivelse = $rad['beskrivelse'];
         return $instance;
     }
 
@@ -92,6 +94,10 @@ class Verv
 
     public function getRegitimer(){
         return $this->regitimer;
+    }
+
+    public function getBeskrivelse(){
+        return $this->beskrivelse;
     }
 
 }

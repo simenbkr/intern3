@@ -50,6 +50,23 @@ class Drikke {
 		return $this->vin;
 	}
 
+	public static function alle(){
+	    $st = DB::getDB()->prepare('SELECT * FROM drikke');
+        $st->execute();
+        $drikkene = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $drikkene[] = self::init($st);
+        }
+        return $drikkene;
+    }
+
+    public function oppdaterDrikkePris($pris){
+        $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris WHERE id=:id');
+        $st->bindParam(':pris', $pris);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+    }
+
 }
 
 ?>

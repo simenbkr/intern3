@@ -15,7 +15,7 @@ require_once('topp.php');
 
 foreach ($vervListe as $verv) {
 	?>		<tr>
-			<td><?php echo $verv->getNavn(); ?></td>
+			<td><a href="?a=verv/<?php echo $verv->getId();?>"><?php echo $verv->getNavn(); ?></a></td>
 			<td><?php
 	$i = 0;
 	foreach ($verv->getApmend() as $apmand) {

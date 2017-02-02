@@ -13,9 +13,22 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $valgtCtrl->bestemHandling();
                 break;
             case 'vaktoversikt':
-
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $test = false;
+                    foreach($post as $key => $val){
+                        if(in_array($key, array(1,2,3,4,5)) && is_numeric($val)){
+                            $test = true;
+                        }
+                        else {
+                            $test = false;
+                        }
+                    }
+                    if($test/*isset($post['1'] && isset($post['2']) && isset($post['3']) && isset($post['4']) && isset($post['5'])*/){
+                        foreach(Drikke::alle() as $drikke){
+                            $drikke->oppdaterDrikkePris($post[$drikke->getId()]);
+                        }
+                    }
                     //'endreVakt=1&hosthalv=' + host_halv + "&vaarhalv=" + vaar_halv + "&hosthel=" + host_hel + "&vaarhel=" + vaar_hel,
                     // [endreVakt] => 1 [hosthalv] => 5 [vaarhalv] => 6 [hosthel] => 1 [vaarhel] => 9
                     if (isset($post['endreVakt']) && $post['endreVakt'] == 1 && isset($post['hosthalv']) && is_numeric($post['hosthalv'])
@@ -36,12 +49,14 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $st2->execute();
                     }
                 }
+                $drikke = Drikke::alle();
                 $beboerListe = BeboerListe::harVakt();
                 $antallVakter = Vakt::antallVakter();
                 $antallUfordelte = Vakt::antallUfordelte();
                 $antallUbekreftet = Vakt::antallUbekreftet();
                 $roller = RolleListe::alle();
                 $dok = new Visning($this->cd);
+                $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe);
                 $dok->set('antallVakter', $antallVakter);
                 $dok->set('antallUfordelte', $antallUfordelte);
