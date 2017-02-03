@@ -1134,7 +1134,7 @@ rikdom_mottatt,rikdom_pafyll,rikdom_avlevert,rikdom_utavskap) VALUES(:kryss_id,:
 
 }
 /*Migrering av kryssejournal slutt*/
-ferdig();
+//ferdig();
 // Alt heretter går veldig sakte. TODO Endre ferdig() til senere før "ekte" migrering!
 $db->query('TRUNCATE TABLE krysseliste;');
 
@@ -1163,7 +1163,7 @@ while ($kryss = pg_fetch_array($hentKryss)) {
 
 /* Migrering av krysseliste, slutt */
 
-
+echo "FIN";
 ferdig();
 
 function ferdig()
