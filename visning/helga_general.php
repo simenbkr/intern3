@@ -2,6 +2,27 @@
 require_once('topp.php');
 ?>
     <script>
+        $(function() {
+            $('#datepicker').datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function(datetext){
+                    var d = new Date(); // for now
+                    var h = d.getHours();
+                    h = (h < 10) ? ("0" + h) : h ;
+
+                    var m = d.getMinutes();
+                    m = (m < 10) ? ("0" + m) : m ;
+
+                    var s = d.getSeconds();
+                    s = (s < 10) ? ("0" + s) : s ;
+
+                    datetext = datetext + " " + h + ":" + m + ":" + s;
+                    $('#datepicker').val(datetext);
+                },
+            });
+        });
+
+
         $("#ajaxform").submit(function (e) {
             var postData = $(this).serializeArray();
             var formURL = $(this).attr("action");
@@ -62,7 +83,7 @@ require_once('topp.php');
                             <input type="hidden" name="aar" value="<?php echo $helga->getAar(); ?>">
                             <tr>
                                 <td>Start-dato</td>
-                                <td><input type="text" name="start" value="<?php echo $helga->getStartDato(); ?>"/></td>
+                                <td><input type="text" name="dato" id="datepicker" class="datepicker" value="<?php echo $helga->getStartDato();?>"></td>
                             </tr>
                             <tr>
                                 <td>Tema:</td>

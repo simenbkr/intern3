@@ -21,17 +21,19 @@ class HelgaCtrl extends AbstraktCtrl
             switch ($aktueltArg) {
                 case 'general':
                     //Hvis bruker ikke er general går man til default. Ganske smart.
-                    if ($beboer->erHelgaGeneral()) {
+                    if ($beboer->erHelgaGeneral() || $beboer->harUtvalgsverv()) {
                         $dok = new Visning($this->cd);
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                            //foreach($post as $key=>$val){setcookie($key,$val);}
                             if (isset($post['endre']) && isset($post['epost_tekst'])) {
                                 $denne_helga->setEpostTekst($post['epost_tekst']);
                                 $dok->set('oppdatert', 1);
-                            } elseif (isset($post['start']) && isset($post['aar'])) {
+                            } elseif (isset($post['dato']) && isset($post['aar'])) {
+                                setcookie('sadasd','satan');
                                 $klar = $post['klar'] == 'on' ? 1 : 0;
                                 $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
-                                $st->bindParam(':start', $post['start']);
+                                $st->bindParam(':start', $post['dato']);
                                 $st->bindParam(':tema', $post['tema']);
                                 $st->bindParam(':aar', $post['aar']);
                                 $st->bindParam(':klar', $klar);
@@ -140,7 +142,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $st->bindParam(':nokkel', $nokkel);
                                 $st->execute();
 
-                                \QRCode::png("http://intern3.singsaker.no/helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
+                                \QRCode::png("http://intern3.singsaker.no/?a=helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
 
                             } else {
                                 $dok->set('epostError', 1);
@@ -166,7 +168,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til "
                                     . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() .
                                     "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
-                                    Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='https://" . $nettsiden . "'>her</a><br/><br/>
+                                    Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
                                     Med vennlig hilsen<br/>Helga-" . $denne_helga->getAar() . "<br/><br/>
                                     <br/><br/>Dette er en automatisert melding. Feil? Vennligst ta kontakt
                                      med data@singsaker.no.</body></html>";

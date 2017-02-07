@@ -72,7 +72,7 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                 if ($aktuell_helga != null) {
                     if (is_numeric($sisteArg) && isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                        if (isset($post['sletthelga']) && $post['sletthelga'] == 1 && isset($post['aar']) && is_numeric($post['aar'])){
+                        if (isset($post['sletthelga']) && $post['sletthelga'] == 1 && isset($post['aar']) && is_numeric($post['aar'])) {
                             $st = DB::getDB()->prepare('DELETE FROM helga WHERE aar=:aar');
                             $aar = $post['aar'];
                             $st->bindParam(':aar', $aar);
@@ -81,6 +81,8 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                         if (isset($post['tema']) && isset($post['start'])) {
                             $aktuell_helga->changeTema($post['tema']);
                             $aktuell_helga->changeDato($post['start']);
+                            header('Location: ?a=utvalg/sekretar/helga');
+                            exit();
                         }
                     }
                     if (is_numeric($sisteArg)) {
@@ -96,7 +98,7 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 if (isset($post['ny_helga']) && isset($post['aar']) && is_numeric($post['aar'])) {
                     Helga::createBareBoneHelga($post['aar']);
-                } elseif (isset($post['fjern']) && is_numeric($post['fjern']) && $post['fjern'] > 0) {
+                } elseif (isset($post['fjern']) && is_numeric($post['fjern'])) {
                     $beboerId = $post['fjern'];
                     $helga->removeGeneral($beboerId);
                 } elseif (isset($post['beboerid']) && is_numeric($post['beboerid']) && $post['beboerid'] > 0) {

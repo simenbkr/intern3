@@ -1,14 +1,11 @@
 <?php
 namespace intern3;
+require_once ('../ink/phpqrcode.php');
 require_once("../ink/autolast.php");
+setlocale(LC_ALL, 'nb_NO.utf-8');date_default_timezone_set('Europe/Oslo');
 
-// Vakt::lagVakt('2','2017-01-10');
+$a = Helga::getLatestHelga()
 
-$modalId ='modal-2017-01-10-1';
-$vakttype = substr($modalId,-1);
-$dato = substr($modalId,6,-2);
-echo $vakttype;
-echo '<br/>';
-echo $dato;
+var_dump($);
 
 ?>

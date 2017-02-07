@@ -102,7 +102,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                   $vakttype = substr($modalId,-1);
                   $dato = substr($modalId,6,-2);
                   Vakt::lagVakt($vakttype, $dato);
-                  setcookie('modalId',$modalId);
                 }
                 break;
             case 'vaktstyring_byttvakt':

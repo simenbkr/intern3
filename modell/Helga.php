@@ -13,8 +13,9 @@ class Helga
     private $max_gjester;
     private $antall_gjester;
     private $gjestelista;
+    private $epost_tekst;
 
-    public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester = 15, $epost_tekst = null)
+    /*public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester = 15, $epost_tekst = null)
     {
         if ($start_dato != null) {
             $this->start_dato = date('Y-m-d', strtotime($start_dato));
@@ -31,6 +32,36 @@ class Helga
         $this->epost_tekst = $epost_tekst;
         $this->antall_gjester = HelgaGjesteListe::getGjesteCount($this->aar);
         $this->gjestelista = HelgaGjesteListe::getAlleGjesterAar($this->aar);
+    }*/
+
+    public static function init(\PDOStatement $st)
+    {
+        $rad = $st->fetch();
+        if ($rad == null) {
+            return null;
+        }
+        $instance = new self();
+        $instance->aar = $rad['aar'];
+
+        if($rad['start_dato'] != null){
+            $instance->start_dato = date('Y-m-d', strtotime($rad['start_dato']));
+            $instance->slutt_dato = date('Y-m-d', strtotime($rad['start_dato'] . ' + 2 days'));
+        } else {
+            $instance->start_dato = null;
+            $instance->slutt_dato = null;
+        }
+        if($rad['generaler'] != null) {
+            $instance->generaler = json_decode($rad['generaler'], true);
+        } else {
+            $instance->generaler = array();
+        }
+        $instance->tema = $rad['tema'];
+        $instance->klar = $rad['klar'];
+        $instance->max_gjester = $rad['max_gjest'];
+        $instance->epost_tekst = $rad['epost_tekst'];
+        $instance->antall_gjester = HelgaGjesteListe::getGjesteCount($instance->aar);
+        $instance->gjestelista = HelgaGjesteListe::getGjesteCount($instance->aar);
+        return $instance;
     }
 
     public function getStartDato()
@@ -43,9 +74,24 @@ class Helga
         return $this->slutt_dato;
     }
 
-    public function getGeneraler()
+    public function getGeneralIder()
     {
         return $this->generaler;
+    }
+
+    public function getGeneraler(){
+        $generalene = array();
+        if(count($this->generaler) > 0){
+            foreach ($this->generaler as $id) {
+                $beboeren = Beboer::medId($id);
+                if($beboeren != null){
+                    $generalene[] = $beboeren;
+                }
+            }
+        } else {
+            return null;
+        }
+        return $generalene;
     }
 
     public function getGjesteliste()
@@ -67,8 +113,7 @@ class Helga
         );
 
         //public static function getGjesteCountDagBeboer($dag, $beboerid,$aar){
-        $beboerne = BeboerListe::aktive();
-        foreach ($beboerne as $beboer) {
+        foreach (BeboerListe::aktive() as $beboer) {
             $antall_per_dag['torsdag'] += HelgaGjesteListe::getGjesteCountDagBeboer(0, $beboer->getId(), $this->getAar());
             $antall_per_dag['fredag'] += HelgaGjesteListe::getGjesteCountDagBeboer(1, $beboer->getId(), $this->getAar());
             $antall_per_dag['lordag'] += HelgaGjesteListe::getGjesteCountDagBeboer(2, $beboer->getId(), $this->getAar());
@@ -105,9 +150,9 @@ class Helga
     {
         $string = "";
         foreach ($this->generaler as $general) {
-            $string .= $general->getFornavn() . ',';
+            $string .= $general->getFornavn() . ', ';
         }
-        return rtrim($string, ',');
+        return rtrim($string, ', ');
     }
 
     public function setEpostTekst($epost_tekst)
@@ -124,16 +169,16 @@ class Helga
 
     public function addGeneral($beboer_id)
     {
-        $this->generaler[] = Beboer::medId($beboer_id);
+        $this->generaler[] = $beboer_id;
         $this->oppdater();
     }
 
     public function removeGeneral($beboer_id)
     {
         $nye_generaler = array();
-        foreach ($this->generaler as $generalen) {
-            if ($generalen->getId() != $beboer_id) {
-                $nye_generaler[] = $generalen;
+        foreach ($this->generaler as $id) {
+            if ($id != $beboer_id) {
+                $nye_generaler[] = $id;
             }
         }
         $this->generaler = $nye_generaler;
@@ -155,12 +200,12 @@ class Helga
 
     private function oppdater()
     {
-        $general_ider = array();
+        /*$general_ider = array();
 
         foreach ($this->generaler as $general) {
             $general_ider[] = $general->getId();
-        }
-        $general_ider = json_encode($general_ider);
+        }*/
+        $general_ider = json_encode($this->generaler);
         $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest, epost_tekst=:epost_tekst WHERE aar=:aar');
         $st->bindParam(':start_dato', $this->start_dato);
         $st->bindParam(':slutt_dato', $this->slutt_dato);
@@ -179,10 +224,9 @@ class Helga
 
         $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC');
         $st->execute();
-        $rader = $st->fetchAll();
 
-        foreach ($rader as $rad) {
-            $helgaene[] = self::fraSQLRad($rad);
+        for($i = 0; $i < $st->rowCount(); $i++) {
+            $helgaene[] = self::init($st);
         }
         return $helgaene;
     }
@@ -197,6 +241,11 @@ class Helga
         $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC LIMIT 1');
         $st->execute();
 
+        if($st->rowCount() > 0){
+            return self::init($st);
+        }
+        return null;
+/*
         if ($st->rowCount() > 0) {
             $rader = $st->fetchAll()[0];
         } else {
@@ -210,7 +259,7 @@ class Helga
             }
         }
 
-        return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest'], $rader['epost_tekst']);
+        return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest'], $rader['epost_tekst']);*/
     }
 
     public static function getHelgaByAar($aar)
@@ -218,22 +267,9 @@ class Helga
         $st = DB::getDB()->prepare('SELECT * from helga WHERE aar=:aar');
         $st->bindParam(':aar', $aar);
         $st->execute();
-        if ($st->rowCount() > 0) {
-            $res = $st->fetchAll()[0];
 
-            $generaler = array();
-            $json_generaler = json_decode($res['generaler'], true);
-            if ($json_generaler != null) {
-                foreach ($json_generaler as $general) {
-                    $generaler_ider[] = $general;
-                    $generaler[] = Beboer::medId($general);
-                }
-            }
-            if ($res != null) {
-                return new self($res['aar'], $res['start_dato'], $res['slutt_dato'], $generaler, $res['tema'], $res['klar'], $res['max_gjest'], $res['epost_tekst']);
-            } else {
-                return null;
-            }
+        if($st->rowCount() > 0){
+            return self::init($st);
         }
         return null;
     }
@@ -257,15 +293,9 @@ class Helga
         $st->execute();
     }
 
-
     public function erHelgaGeneral($beboer_id)
     {
-        foreach ($this->generaler as $general) {
-            if ($general->getId() == $beboer_id) {
-                return true;
-            }
-        }
-        return false;
+        return in_array($beboer_id, $this->generaler);
     }
 
 }

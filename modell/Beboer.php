@@ -404,16 +404,7 @@ class Beboer implements Person
 
     public function erHelgaGeneral()
     {
-        $denne_helga = Helga::getLatestHelga();
-        if($denne_helga != null){
-            $generaler = $denne_helga->getGeneraler();
-            foreach ($generaler as $general) {
-                if ($this->getId() == $general->getId()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return Helga::getLatestHelga()->erHelgaGeneral($this->id);
     }
 }
 
