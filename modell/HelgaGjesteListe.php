@@ -11,13 +11,10 @@ class HelgaGjesteListe {
         $st->bindParam(':aar',  $aar);
         $st->execute();
 
-        $resultat = $st->fetchAll();
-
         $gjester = array();
 
-        foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'],$gjest['sendt_epost'], $gjest['inne'], $gjest['aar']);
-            $gjester[] = $instansen;
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $gjester[] = HelgaGjest::init($st);
         }
         return $gjester;
     }
@@ -30,13 +27,9 @@ class HelgaGjesteListe {
         $st->bindParam(':dag', $dag);
         $st->execute();
 
-        $resultat = $st->fetchAll();
-
         $gjester = array();
-
-        foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'], $gjest['sendt_epost'], $gjest['inne'], $gjest['aar']);
-            $gjester[] = $instansen;
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $gjester[] = HelgaGjest::init($st);
         }
         return $gjester;
     }
@@ -47,13 +40,10 @@ class HelgaGjesteListe {
         $st->bindParam(':aar',  $aar);
         $st->execute();
 
-        $resultat = $st->fetchAll();
-
         $gjester = array();
 
-        foreach( $resultat as $gjest ){
-            $instansen = new HelgaGjest($gjest['id'], $gjest['epost'], $gjest['navn'], $gjest['vert'], $gjest['dag'] ,$gjest['sendt_epost'], $gjest['inne'], $gjest['aar']);
-            $gjester[] = $instansen;
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $gjester[] = HelgaGjest::init($st);
         }
         return $gjester;
     }
@@ -63,12 +53,11 @@ class HelgaGjesteListe {
         $st->bindParam(':aar', $aar);
         $st->bindParam(':dag', $dag);
         $st->execute();
-        $gjestene = $st->fetchAll();
-        $gjestelista = array();
-        foreach($gjestene as $gjesterad){
-            $gjestelista[] = HelgaGjest::byRow($gjesterad);
+        $gjester = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $gjester[] = HelgaGjest::init($st);
         }
-        return $gjestelista;
+        return $gjester;
     }
 
     public static function getGjesterGroupedbyHost($aar, $dag){
@@ -83,16 +72,14 @@ class HelgaGjesteListe {
 
         foreach($gjestene as $gjest){
             $gjest = HelgaGjest::byRow($gjest);
-            if(!isset($gjesteListen[$gjest->getVert()])){
-                $gjesteListen[$gjest->getVert()] = array($gjest);
+            if(!isset($gjesteListen[$gjest->getVertId()])){
+                $gjesteListen[$gjest->getVertId()] = array($gjest);
             }
             else {
-                $gjesteListen[$gjest->getVert()][] = $gjest;
+                $gjesteListen[$gjest->getVertId()][] = $gjest;
             }
         }
-
         return $gjesteListen;
-
     }
 
     public static function getGjesteCount($aar){

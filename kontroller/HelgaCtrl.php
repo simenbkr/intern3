@@ -49,15 +49,15 @@ class HelgaCtrl extends AbstraktCtrl
                     }
                 case 'inngang':
                     $dok = new Visning($this->cd);
-
-                    if(isset($_POST)){
+                    if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         $bruker = LogginnCtrl::getAktivBruker();
-                        if($bruker != null && $denne_helga->erHelgaGeneral($bruker->getPerson()->getId())
-                        && isset($post['registrer']) && isset($post['gjestid']) && isset($post['verdi'])){
+                        if ($bruker != null && $denne_helga->erHelgaGeneral($bruker->getPerson()->getId())
+                            && isset($post['registrer']) && isset($post['gjestid']) && isset($post['verdi'])
+                        ) {
                             $gjesten = HelgaGjest::byId($post['gjestid']);
                             //data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
-                            if($gjesten != null && $gjesten->getAar() == $denne_helga->getAar()){
+                            if ($gjesten != null && $gjesten->getAar() == $denne_helga->getAar()) {
                                 $verdi = $post['verdi'] == 0 ? 0 : 1;
                                 $gjesten->setInne($verdi);
                             }
@@ -81,7 +81,7 @@ class HelgaCtrl extends AbstraktCtrl
                     $gjesteliste_dag = HelgaGjesteListe::getGjesterUngrouped($denne_helga->getAar(), $dag);
                     $gjesteliste_dag_gruppert = HelgaGjesteListe::getGjesterGroupedbyHost($denne_helga->getAar(), $dag);
                     $beboerlista = array();
-                    foreach(BeboerListe::aktive() as $beboer){
+                    foreach (BeboerListe::aktive() as $beboer) {
                         $beboerlista[$beboer->getId()] = $beboer;
                     }
                     $dok->set('gjesteliste_dag', $gjesteliste_dag);
@@ -90,6 +90,33 @@ class HelgaCtrl extends AbstraktCtrl
                     $dok->set('beboerliste', $beboerlista);
                     $dok->vis('helga_inngang.php');
                     break;
+                case 'reg':
+                    $sisteArg = $this->cd->getSisteArg();
+                    if ($sisteArg != 'reg' && strlen($sisteArg) == 128) {
+                        $dok = new Visning($this->cd);
+
+                        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE api_nokkel=:nokkel');
+                        $st->bindParam(':nokkel', $sisteArg);
+                        $st->execute();
+                        $success = 0;
+                        $gjesten = null;
+                        if($st->rowCount() > 0){
+                            $gjesten = HelgaGjest::init($st);
+                            if($gjesten != null) {
+                                $success = 1;
+                                $dok->set('gjesten', $gjesten);
+                                $dok->set('success', 1);
+                                $gjesten->setInne(1);
+                            }
+                        }
+                        $dok->vis('helga_reg_gjest.php');
+                        exit();
+                    } else {
+                        $dok = new Visning($this->cd);
+                        $dok->set('success', 0);
+                        $dok->vis('helga_reg_gjest.php');
+                        exit();
+                    }
                 case 'helga':
                 default:
                     $dok = new Visning($this->cd);
@@ -98,7 +125,23 @@ class HelgaCtrl extends AbstraktCtrl
                         if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
                             //Legg til gjest.
                             if (Funk::isValidEmail($post['epost'])) {
-                                HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
+                                //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
+                                $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
+                                VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
+                                $nokkel = hash('sha512', $post['epost'] . $beboer_id . $post['add'] . time());
+                                $null = 0;
+                                $st->bindParam(':navn', $post['navn']);
+                                $st->bindParam(':aar', $aar);
+                                $st->bindParam(':epost', $post['epost']);
+                                $st->bindParam(':vert', $beboer_id);
+                                $st->bindParam(':inne', $null);
+                                $st->bindParam(':sendt_epost', $null);
+                                $st->bindParam(':dag', $post['add']);
+                                $st->bindParam(':nokkel', $nokkel);
+                                $st->execute();
+
+                                \QRCode::png("http://intern3.singsaker.no/helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
+
                             } else {
                                 $dok->set('epostError', 1);
                             }
@@ -116,10 +159,19 @@ class HelgaCtrl extends AbstraktCtrl
                             $gjesteid = $post['gjestid'];
                             $gjesten = HelgaGjest::byId($gjesteid);
                             if (HelgaGjest::belongsToBeboer($gjesteid, $beboer_id) && Funk::isValidEmail($gjesten->getEpost())) {
+                                $nettsiden = "http://intern3.singsaker.no/qrkoder/" . $gjesten->getNokkel() . ".png";
                                 $dagen = $dag_array[$gjesten->getDag()];
                                 $datoen = date('Y-m-d', strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
                                 $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
-                                $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til " . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Vi håper du ønsker å ta turen!<br/><br/>Med vennlig hilsen<br/>Singsaker Studenterhjem<br/><br/><br/><br/>Dette er en automatisert melding. Feil? Vennligst ta kontakt med data@singsaker.no.</body></html>";
+                                $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til "
+                                    . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() .
+                                    "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
+                                    Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='https://" . $nettsiden . "'>her</a><br/><br/>
+                                    Med vennlig hilsen<br/>Helga-" . $denne_helga->getAar() . "<br/><br/>
+                                    <br/><br/>Dette er en automatisert melding. Feil? Vennligst ta kontakt
+                                     med data@singsaker.no.</body></html>";
+
+
                                 //$beskjed = $denne_helga->getEpostTekst() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Med vennlig hilsen<br/>" . $denne_helga->getTema() . "-Helga 2017";
                                 Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
                                 $gjesten->setSendt(1);

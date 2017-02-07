@@ -37,7 +37,6 @@ switch ($dag_tall) {
                 }
             });
         }
-
         function test() {
             var shownVal = document.getElementById("tekstinput").value;
             var gjestid = document.querySelector("#gjester option[value='"+shownVal+"']").dataset.value;
@@ -45,6 +44,22 @@ switch ($dag_tall) {
             document.getElementById("tekstinput").value = "";
         }
 
+        function refresh(){
+            $.ajax({
+                type: 'GET',
+                url: '?a=helga/inngang',
+                method: 'GET',
+                success: function (html) {
+                    $(".container").replaceWith($('.container', $(html)));
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+        setInterval(function(){
+            refresh()
+        }, 5000);
     </script>
     <div class="container">
 
@@ -58,7 +73,7 @@ switch ($dag_tall) {
         foreach ($gjesteliste_dag_gruppert as $beboers_id => $beboers_gjester) { ?>
             <table class="table table-bordered table-responsive">
                 <tr class="bg-info">
-                    <td><b><?php echo $beboerliste[$beboers_id]->getFulltNavn(); ?></b></td>
+                    <td><b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() : ''; ?></b></td>
                 </tr>
                 <?php
                 foreach ($beboers_gjester as $gjest) {
@@ -72,7 +87,7 @@ switch ($dag_tall) {
             <?php
         }
         ?>
-    </div>
+
     <datalist id="gjester">
         <?php
         foreach ($gjesteliste_dag as $gjest) {
@@ -85,6 +100,7 @@ switch ($dag_tall) {
         }
         ?>
     </datalist>
+    </div>
 <?php
 require_once('bunn.php');
 ?>

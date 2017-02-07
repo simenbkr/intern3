@@ -1035,6 +1035,7 @@ $st = DB::getDB()->prepare("CREATE TABLE `helgagjest`
 `inne` TINYINT(1) NOT NULL ,
 `aar` INT(4) NOT NULL ,
 `klar` TINYINT(1) NOT NULL,
+`api_nokkel` VARCHAR(512),
  PRIMARY KEY (`id`))");
 
 $st->execute();
