@@ -93,16 +93,16 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     Vakt::settVakt($brukerId, $vaktId_1);
                   }
                 }
-                // Hvis det skal settes ny vakt som ikke eksisterer i databasen
-                // elseif (isset($_POST['beboerId'])) {
-                //   $beboer = Beboer::medId($beboerId);
-                //   if ($beboer == NULL) {
-                //     exit();
-                //   } else {
-                //     $brukerId = $beboer->getBrukerId();
-                //     Vakt::lagVakt($brukerId);
-                //   }
-                // }
+                break;
+            case 'vaktstyring_lagvakt':
+                if (isset($_POST['modalId'])) {
+                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                  $modalId = $post['modalId'];
+                  $vakttype = substr($modalId,-1);
+                  $dato = substr($modalId,6,-2);
+                  Vakt::lagVakt($vakttype, $dato);
+                  setcookie('modalId',$modalId);
+                }
                 break;
             case 'vaktstyring_byttvakt':
                 if (isset($_POST['vaktId_1']) && isset($_POST['vaktId_2'])) {
@@ -145,6 +145,14 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                   $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                   $vaktId_1 = $post['vaktId_1'];
                   Vakt::slettVakt($vaktId_1);
+                  exit;
+                }
+                break;
+            case 'vaktstyring_torildvakt':
+                if (isset($_POST['vaktId_1'])) {
+                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                  $vaktId_1 = $post['vaktId_1'];
+                  Vakt::settVakt(443, $vaktId_1); // 443 Torild
                   exit;
                 }
                 break;

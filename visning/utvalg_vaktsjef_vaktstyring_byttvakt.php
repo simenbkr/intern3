@@ -18,17 +18,6 @@ function bytt(vaktId_1, vaktId_2) {
     }
   });
 }
-// function settVakt(vaktId_1, brukerId) {
-//   $.ajax({
-//     cache: false,
-//     type: 'POST',
-//     url: '?a=utvalg/vaktsjef/vaktstyring_settvakt',
-//     data: 'vaktId_1=' + vaktId_1 + '&brukerId=' + brukerId,
-//     success: function(data) {
-//       location.reload();
-//     }
-//   });
-// }
 </script>
 <div>
   <p> </p>

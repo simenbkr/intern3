@@ -75,6 +75,18 @@ function slettVakt() {
     }
   });
 }
+function torildVakt() {
+  var vaktId_1 = '<?php echo $vaktId_1; ?>';
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring_torildvakt',
+    data: 'vaktId_1=' + vaktId_1,
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
 </script>
 <!-- Modal for vakter -->
 <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
@@ -91,6 +103,7 @@ function slettVakt() {
         <input type="button" onclick="dobbelvakt()" class="btn btn-sm btn-primary" value="Dobbelvakt">
         <input type="button" onclick="straffevakt()" class="btn btn-sm btn-warning" value="Straffevakt">
         <input type="button" class="btn btn-sm btn-danger" value="Slett vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-slettvakt">
+        <input type="button" onclick="torildVakt()" class="btn btn-sm btn-info" value="Torild">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Lukk</button>

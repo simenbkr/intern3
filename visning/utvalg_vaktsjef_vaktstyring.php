@@ -25,6 +25,17 @@ function modal() {
     }
   });
 }
+function lagVakt(modalId) {
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring_lagvakt',
+    data: 'modalId=' + modalId,
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
 </script>
 
 <div class="col-md-12">
@@ -79,7 +90,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
       //   // continue; // TODO må fjernes
 			// }
 			if ($vakt == null) {
-				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Legg til vakt" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" onclick="lagVakt(\'' . $modalId . '\')" class="btn btn-sm btn-info" value="Legg til vakt">' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
 				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;

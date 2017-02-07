@@ -2,12 +2,13 @@
 namespace intern3;
 require_once("../ink/autolast.php");
 
-Vakt::settVakt(443,4);
-/*$en = 1;
-$st_1 = DB::getDB()->prepare('SELECT bruker_id FROM vakt WHERE id=:id');
-$st_1->bindParam(':id', $en);
-$st_1->execute();
-$forste = $st_1->fetchColumn();
-var_dump($forste);*/
+// Vakt::lagVakt('2','2017-01-10');
+
+$modalId ='modal-2017-01-10-1';
+$vakttype = substr($modalId,-1);
+$dato = substr($modalId,6,-2);
+echo $vakttype;
+echo '<br/>';
+echo $dato;
 
 ?>

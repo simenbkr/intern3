@@ -255,13 +255,11 @@ class Vakt
       $st->execute();
     }
 
-    public static function lagVakt($brukerId)
+    public static function lagVakt($vakttype, $dato)
     {
-      $st = DB::getDB()->prepare('INSERT INTO vakt SET bruker_id=:bruker_id, vakttype=:vakttype, dato=:dato, autogenerer=0');
-      $st->bindParam(':bruker_id', $brukerId);
+      $st = DB::getDB()->prepare('INSERT INTO vakt SET vakttype=:vakttype, dato=:dato, autogenerert=0');
       $st->bindParam(':vakttype', $vakttype);
       $st->bindParam(':dato', $dato);
-      $st->bindParam(':id', $vaktId);
       $st->execute();
     }
 
