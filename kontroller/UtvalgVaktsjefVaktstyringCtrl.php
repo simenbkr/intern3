@@ -6,7 +6,7 @@ class UtvalgVaktsjefVaktstyringCtrl extends AbstraktCtrl {
 	public function bestemHandling() {
 		$aktueltArg = $this->cd->getAktueltArg();
 		switch ($aktueltArg) {
-			case 'settvakt':
+			case 'byttvakt':
 				$beboer = Beboer::medId($this->cd->getArg($this->cd->getAktuellArgPos()+1));
         if ($beboer == NULL) {
           exit();
@@ -14,7 +14,7 @@ class UtvalgVaktsjefVaktstyringCtrl extends AbstraktCtrl {
         else {
   				$dok = new Visning($this->cd);
           $dok->set('beboer', $beboer);
-  				$dok->vis('utvalg_vaktsjef_vaktstyring_settvakt.php');
+  				$dok->vis('utvalg_vaktsjef_vaktstyring_byttvakt.php');
         }
 				break;
 			case 'modal':

@@ -65,15 +65,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->vis('utvalg_vaktsjef_vaktoversikt.php');
                 break;
             case 'vaktstyring':
-                if (isset($_POST['vaktId_1']) && isset($_POST['vaktId_2'])) {
-                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    $vaktId_1 = $post['vaktId_1'];
-                    $vaktId_2 = $post['vaktId_2'];
-                    Vakt::byttVakt($vaktId_1, $vaktId_2);
-                    $page = '?a=utvalg/vakstsjef/vaktstyring';
-                    header('Location: ' . $page, true, 303);
-                    exit;
-                }
                 $beboerListe = BeboerListe::harVakt();
                 $torild = Ansatt::medId(1);
                 $dok = new Visning($this->cd);
@@ -83,8 +74,43 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('beboerListe', $beboerListe);
                 $dok->vis('utvalg_vaktsjef_vaktstyring.php');
                 break;
+            case 'vaktstyring_modal':
+                $beboerListe = BeboerListe::harVakt();
+                $dok = new Visning($this->cd);
+                $dok->set('beboerListe', $beboerListe);
+                $dok->vis('utvalg_vaktsjef_vaktstyring_modal.php');
+                break;
             case 'vaktstyring_settvakt':
-                if (isset($_POST['beboerId'])) {
+                if (isset($_POST['$brukerId']) && isset($_POST['vaktId_1'])) {
+                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                  $beboerId = $post['beboerId'];
+                  $vaktId_1 = $post['vaktId_1'];
+                  $beboer = Beboer::medId($beboerId);
+                }
+                break;
+            case 'vaktstyring_settvakt_lagre':
+                if (isset($_POST['beboerId']) && isset($_POST['vaktId_1'])) {
+                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                  $beboerId = $post['beboerId'];
+                  $vaktId_1 = $post['vaktId_1'];
+                  $beboer = Beboer::medId($beboerId);
+                  if ($beboer == NULL) {
+                    exit();
+                  } else {
+                    $brukerId = $beboer->getBrukerId();
+                    Vakt::settVakt($brukerId, $vaktId_1);
+                  }
+                }
+                break;
+            case 'vaktstyring_byttvakt':
+                if (isset($_POST['vaktId_1']) && isset($_POST['vaktId_2'])) {
+                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                  $vaktId_1 = $post['vaktId_1'];
+                  $vaktId_2 = $post['vaktId_2'];
+                  Vakt::byttVakt($vaktId_1, $vaktId_2);
+                  exit;
+                }
+                elseif (isset($_POST['beboerId'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $beboerId = $post['beboerId'];
                     $beboer = Beboer::medId($beboerId);
@@ -94,29 +120,17 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         $dok->set('visFerdig', 1);
                         $dok->set('beboer', $beboer);
-                        $dok->vis('utvalg_vaktsjef_vaktstyring_settvakt.php');
+                        $dok->vis('utvalg_vaktsjef_vaktstyring_byttvakt.php');
                     }
                 }
                 break;
-            case 'vaktstyring_settvakt_lagre':
-                if (isset($_POST['$brukerId']) && isset($_POST['vaktId_1'])) {
-                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    $beboerId = $post['beboerId'];
-                    $vaktId_1 = $post['vaktId_1'];
-                    $beboer = Beboer::medId($beboerId);
-                    if ($beboer == NULL) {
-                        exit();
-                    } else {
-                        $brukerId = $beboer->getBrukerId();
-                        Vakt::settVakt($brukerId, $vaktId_1);
-                    }
+            case 'vaktstyring_slettvakt':
+                if (isset($_POST['vaktId_1'])) {
+                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                  $vaktId_1 = $post['vaktId_1'];
+                  Vakt::slettVakt($vaktId_1);
+                  exit;
                 }
-                break;
-            case 'vaktstyring_modal':
-                $beboerListe = BeboerListe::harVakt();
-                $dok = new Visning($this->cd);
-                $dok->set('beboerListe', $beboerListe);
-                $dok->vis('utvalg_vaktsjef_vaktstyring_modal.php');
                 break;
             case 'ukerapport':
                 $Uke = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
@@ -153,8 +167,8 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $dok->set('beboer', $beboer);
                     $dok->set('beboersKrysseliste', $beboersKrysseliste);
                     $dok->vis('utvalg_vaktsjef_detaljkryss.php');
-                    break;
                 }
+                break;
             case 'krysserapport':
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
