@@ -239,12 +239,6 @@ class VaktCtrl extends AbstraktCtrl
 
                         DB::getDB()->query('UPDATE vakt SET vaktbytte_id=0 WHERE ' . $ting);
 
-                        //echo implode(' OR id=', $ider);
-
-                        /*foreach($Vaktbyttet->getForslagIder() as $id){
-                            $idene .= ' id=' . $id;
-                        }*/
-
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Du godtok en byttehandel - du ga bort " . $fraVakt->toString() . " og mottok
                          " . $tilVakt->toString();

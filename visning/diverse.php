@@ -108,28 +108,11 @@ require_once('topp.php');
     </table>
 </div>
 
-<div class="col-lg-6">
-    <h1>Meldinger fra åpmend</h1>
-    <hr>
-    <table class="table table-responsive table-bordered">
-        <?php foreach ($verv_meldinger as $verv_melding) {
-            if($verv_melding == null || $verv_melding->getVerv() == null || $verv_melding->getBeboer() == null || strlen($verv_melding->getTekst()) < 3){
-                continue;
-            }
-            ?>
-            <tr>
-                <td><?php echo $verv_melding->getVerv()->getNavn(); ?>, <?php echo $verv_melding->getBeboer()->getFulltNavn(); ?> (<?php echo $verv_melding->getDato();?>):
-                </td>
-                <td><p><?php echo substr($verv_melding->getTekst(),0,50); ?>
-                        <?php if(strlen($verv_melding->getTekst()) > 50) { ?><span class="read-more-content"><?php echo substr($verv_melding->getTekst(),50,strlen($verv_melding->getTekst())); ?></span><?php } ?></p>
-                </td>
-            </tr>
-        <?php } ?>
-    </table>
-</div>
+
 
 <div class="col-sm-6 col-xs-12">
     <h1>Regioppgaver <a href="?a=regi/oppgave"><button class="btn btn-primary btn-sm">Påmelding</button></a><br/></h1>
+    <hr>
     <table class="table-bordered table-responsive table">
         <thead>
         <tr>
@@ -152,6 +135,26 @@ require_once('topp.php');
     </table>
 </div>
 
+
+<div class="col-lg-6">
+    <h1>Meldinger fra åpmend</h1>
+    <hr>
+    <table class="table table-responsive table-bordered">
+        <?php foreach ($verv_meldinger as $verv_melding) {
+            if($verv_melding == null || $verv_melding->getVerv() == null || $verv_melding->getBeboer() == null || strlen($verv_melding->getTekst()) < 3){
+                continue;
+            }
+            ?>
+            <tr>
+                <td><?php echo $verv_melding->getVerv()->getNavn(); ?>, <?php echo $verv_melding->getBeboer()->getFulltNavn(); ?> (<?php echo $verv_melding->getDato();?>):
+                </td>
+                <td><p><?php echo substr($verv_melding->getTekst(),0,50); ?>
+                        <?php if(strlen($verv_melding->getTekst()) > 50) { ?><span class="read-more-content"><?php echo substr($verv_melding->getTekst(),50,strlen($verv_melding->getTekst())); ?></span><?php } ?></p>
+                </td>
+            </tr>
+        <?php } ?>
+    </table>
+</div>
 <?php
 
 require_once('bunn.php');

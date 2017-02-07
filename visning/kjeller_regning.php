@@ -64,13 +64,12 @@ require_once ('topp.php');
     <div class="col-md-12">
         <div class="tilbakemelding">
             <?php if(isset($tilbakemelding)){ ?>
-
                 <div class="alert alert-success" id="success" style="display:table; margin: auto; margin-top: 5%">
                     <hr>
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <?php echo $tilbakemeldingstring;?>
-                    <hr>
                 </div>
+                <p></p>
                 <br/><br/>
             <?php } ?>
         </div>

@@ -158,6 +158,7 @@ $db->query('CREATE TABLE IF NOT EXISTS `vakt` (
   `bytte` tinyint(1),
   `autogenerert` tinyint(1) default \'1\',
   `dobbelvakt` tinyint(1) default NULL,
+  `straffevakt` tinyint(1) default NULL,
   `vaktbytte_id` INT(10) DEFAULT NULL,
   PRIMARY KEY  (`id`)
 )');

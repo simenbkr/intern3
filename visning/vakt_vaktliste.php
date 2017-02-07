@@ -102,7 +102,7 @@ $df = new IntlDateFormatter('nb_NO',
                             echo '			<td> </td>' . PHP_EOL;
                             continue;
                         }
-                        if ($vakt->erLedig()) {
+                        elseif ($vakt->erLedig()) {
                             // echo '			<td style="text-align: center;"><input type="button" class="btn btn-info" value="Ledig"></td>' . PHP_EOL;  //Knapp for ledige vakter
                             echo '			<td> </td>' . PHP_EOL;
                             continue;

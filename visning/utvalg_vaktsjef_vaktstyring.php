@@ -40,6 +40,7 @@ function lagVakt(modalId) {
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Vaktsjef &raquo; Vaktstyring</h1>
+	<hr>
 
 <?php
 

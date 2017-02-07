@@ -206,6 +206,7 @@ $har_vakt = $rolle == 1 || $rolle == 2;
         unset($_SESSION['error']);
         unset($_SESSION['msg']);
         ?>
+        <p></p>
         <div class="col-md-3 col-sm-6 col-sx-12">
             <?php
             function visDineVakter($visFerdig = true)

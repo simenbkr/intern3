@@ -91,6 +91,16 @@ require_once('topp_utvalg.php');
 
 </script>
 <div class="container">
+    <div class="tilbakemeldinger">
+        <?php if(isset($slettet) && isset($melding)){ ?>
+        <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $melding; ?>
+    </div>
+            <p></p>
+        <?php
+        } unset($slettet); ?>
+    </div>
 <div class="col-md-6 col-sm-12">
     <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         <table class="table table-bordered">
@@ -161,15 +171,15 @@ require_once('topp_utvalg.php');
             $tidgodkjent = $oppgave->getTidGodkjent();
             $godkjent = $oppgave->getGodkjent();
             $godkjentav = '';
-            if($oppgave->getGodkjent() && $oppgave->getGodkjentBrukerId() != null && $oppgave->getGodkjentBruker()->getPerson() != null){
+            if($oppgave->getGodkjent() && $oppgave->getGodkjentBruker() != null && $oppgave->getGodkjentBruker()->getPerson() != null){
                 $godkjentav = $oppgave->getGodkjentBruker()->getPerson()->getFulltNavn();
             }
             $paameldte = "";
             if(sizeof($oppgave->getPameldteBeboere()) > 0){
                 foreach($oppgave->getPameldteBeboere() as $beboer){
-                    $paameldte .= $beboer->getFulltNavn() . ',';
+                    $paameldte .= $beboer->getFulltNavn() . ', ';
                 }
-                rtrim($paameldte, ',');
+                $paameldte = rtrim($paameldte, ', ');
             }
             ?>
             <tr id="<?php echo $id;?>">

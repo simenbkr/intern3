@@ -28,9 +28,12 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
             } //data: 'slett=' + id,
             elseif (isset($post['slett']) && is_numeric($post['slett'])) {
                 $id = $post['slett'];
+                $oppgaven = Oppgave::medId($id);
                 $st = DB::getDB()->prepare('DELETE FROM oppgave WHERE id=:id');
                 $st->bindParam(':id', $id);
                 $st->execute();
+                $dok->set('slettet', 1);
+                $dok->set('melding', "Du slettet oppgaven med navn" . $oppgaven->getNavn());
             }
         }
         $oppgaveListe = OppgaveListe::alle();

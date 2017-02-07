@@ -48,11 +48,37 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 			$this->nullstillTabell();
 			$this->opprettVakter();
 			$this->tildelVakter();
+            $this->opprettOgTildelAnsattVakter();
 			/* Ved feil, ->rollback() istedet for ->commit(). */
 			DB::getDB()->commit();
 		}
 		return array($feilVarighet, $feilEnkelt, $feilPeriode);
 	}
+
+	private function opprettOgTildelAnsattVakter(){
+        $varighetDatoStart = strtotime($_POST['varighet_dato_start']);
+        $varighetDatoSlutt = strtotime($_POST['varighet_dato_slutt']);
+        $dato = $varighetDatoStart;
+        do {
+            for ($type = 1; $type <= 4; $type++) {
+                if (($type == 2 || !self::erIHelg($dato)) && self::erITidsrom(
+                        $_POST['varighet_type_start'], $varighetDatoStart,
+                        $_POST['varighet_type_slutt'], $varighetDatoSlutt,
+                        $type, $dato
+                    )) {
+                    $st = DB::getDB()->prepare('INSERT INTO vakt(bruker_id,vakttype,dato) VALUES(:bruker_id,:vakttype,:dato);');
+                    $torild = 443; //torild sin bruker_id.
+                    $st->bindParam(':vakttype', $type);
+                    $isoDato = date('Y-m-d', $dato);
+                    $st->bindParam(':dato', $isoDato);
+                    $st->bindParam(':bruker_id', $torild);
+                    $st->execute();
+                }
+            }
+            $dato = strtotime('midnight + 1 day', $dato);
+        } while($dato <= $varighetDatoSlutt);
+    }
+
 	private function godkjennVaktlisteVarighet() {
 		$feilVarighet = array();
 		do {
