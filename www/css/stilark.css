@@ -113,9 +113,12 @@ color: #009;
 font-weight: bold;
 }
 
-.celle_graa {
-background-color:#EEE;
-opacity:.8;
+.celle_blaa {
+background-color:#EBF5FB;
+}
+
+.celle_oransje {
+background-color:#FEF5E7;
 }
 
 .tekst_bursdager {

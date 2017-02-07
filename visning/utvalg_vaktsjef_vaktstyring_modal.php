@@ -15,7 +15,7 @@ function settVakt(id) {
   $.ajax({
     cache: false,
     type: 'POST',
-    url: '?a=utvalg/vaktsjef/vaktstyring_settvakt_lagre',
+    url: '?a=utvalg/vaktsjef/vaktstyring_settvakt',
     data: 'beboerId=' + id + '&vaktId_1=' + vaktId_1,
     success: function(data) {
       location.reload();
@@ -38,6 +38,30 @@ function byttVakt(id) {
       }
     });
   }
+}
+function dobbelvakt() {
+  var vaktId_1 = '<?php echo $vaktId_1; ?>';
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring_dobbelvakt',
+    data: 'vaktId_1=' + vaktId_1,
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
+function straffevakt() {
+  var vaktId_1 = '<?php echo $vaktId_1; ?>';
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring_straffevakt',
+    data: 'vaktId_1=' + vaktId_1,
+    success: function(data) {
+      location.reload();
+    }
+  });
 }
 function slettVakt() {
   var vaktId_1 = '<?php echo $vaktId_1; ?>';
@@ -64,8 +88,8 @@ function slettVakt() {
         <p> </p>
         <input type="button" class="btn btn-sm btn-primary" value="Sett vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-settvakt">
         <input type="button" class="btn btn-sm btn-primary" value="Bytt vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-byttvakt">
-        <input type="button" class="btn btn-sm btn-primary" value="Dobbelvakt" data-target="#<?php echo $modalId; ?>-dobbelvakt">
-        <input type="button" class="btn btn-sm btn-warning" value="Straffevakt" data-target="#<?php echo $modalId; ?>-straffevakt">
+        <input type="button" onclick="dobbelvakt()" class="btn btn-sm btn-primary" value="Dobbelvakt">
+        <input type="button" onclick="straffevakt()" class="btn btn-sm btn-warning" value="Straffevakt">
         <input type="button" class="btn btn-sm btn-danger" value="Slett vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-slettvakt">
       </div>
       <div class="modal-footer">

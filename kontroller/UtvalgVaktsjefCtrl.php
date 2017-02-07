@@ -81,14 +81,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->vis('utvalg_vaktsjef_vaktstyring_modal.php');
                 break;
             case 'vaktstyring_settvakt':
-                if (isset($_POST['$brukerId']) && isset($_POST['vaktId_1'])) {
-                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                  $beboerId = $post['beboerId'];
-                  $vaktId_1 = $post['vaktId_1'];
-                  $beboer = Beboer::medId($beboerId);
-                }
-                break;
-            case 'vaktstyring_settvakt_lagre':
                 if (isset($_POST['beboerId']) && isset($_POST['vaktId_1'])) {
                   $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                   $beboerId = $post['beboerId'];
@@ -101,6 +93,16 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     Vakt::settVakt($brukerId, $vaktId_1);
                   }
                 }
+                // Hvis det skal settes ny vakt som ikke eksisterer i databasen
+                // elseif (isset($_POST['beboerId'])) {
+                //   $beboer = Beboer::medId($beboerId);
+                //   if ($beboer == NULL) {
+                //     exit();
+                //   } else {
+                //     $brukerId = $beboer->getBrukerId();
+                //     Vakt::lagVakt($brukerId);
+                //   }
+                // }
                 break;
             case 'vaktstyring_byttvakt':
                 if (isset($_POST['vaktId_1']) && isset($_POST['vaktId_2'])) {
@@ -122,6 +124,20 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $dok->set('beboer', $beboer);
                         $dok->vis('utvalg_vaktsjef_vaktstyring_byttvakt.php');
                     }
+                }
+                break;
+            case 'vaktstyring_dobbelvakt':
+                if (isset($_POST['vaktId_1'])) {
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $vaktId_1 = $post['vaktId_1'];
+                    Vakt::setDobbelvakt($vaktId_1);
+                }
+                break;
+            case 'vaktstyring_straffevakt':
+                if (isset($_POST['vaktId_1'])) {
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $vaktId_1 = $post['vaktId_1'];
+                    Vakt::setStraffevakt($vaktId_1);
                 }
                 break;
             case 'vaktstyring_slettvakt':
@@ -205,14 +221,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'kryss':
                 $dok = new Visning($this->cd);
                 $dok->vis('utvalg_vaktsjef_kryss.php');
-                break;
-            case 'vaktstyring_dobbelvakt':
-                if (isset($_POST['vaktId_1']) && isset($_POST['dobbelvakt'])) {
-                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    $vaktId_1 = $post['vaktId_1'];
-                    $dobbelvakt = $post['dobbelvakt'];
-                    Vakt::setDobbelVakt($vaktId_1, $dobbelvakt);
-                }
                 break;
             case 'vaktliste_utskrift':
                 $dok = new Visning($this->cd);

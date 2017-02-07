@@ -13,6 +13,7 @@ class Vakt
     private $bekreftet;
     private $autogenerert;
     private $dobbelvakt;
+    private $straffevakt;
 
     // Latskap
     private $bruker;
@@ -52,6 +53,7 @@ class Vakt
         $instance->bekreftet = $rad['bekreftet'];
         $instance->autogenerert = $rad['autogenerert'];
         $instance->dobbelvakt = $rad['dobbelvakt'];
+        $instance->straffevakt = $rad['straffevakt'];
         $instance->vaktbytteDenneErMedI = $rad['vaktbytte_id'];
         return $instance;
     }
@@ -253,6 +255,16 @@ class Vakt
       $st->execute();
     }
 
+    public static function lagVakt($brukerId)
+    {
+      $st = DB::getDB()->prepare('INSERT INTO vakt SET bruker_id=:bruker_id, vakttype=:vakttype, dato=:dato, autogenerer=0');
+      $st->bindParam(':bruker_id', $brukerId);
+      $st->bindParam(':vakttype', $vakttype);
+      $st->bindParam(':dato', $dato);
+      $st->bindParam(':id', $vaktId);
+      $st->execute();
+    }
+
     public static function byttVakt($vaktId1, $vaktId2)
     {
       //Hent ut relevant info.
@@ -278,9 +290,26 @@ class Vakt
       $st_4->execute();
     }
 
-    public static function setDobbelVakt($vaktId)
+    public function erDobbelvakt()
     {
-      $st = DB::getDB()->prepare('UPDATE vakt SET dobbelvakt=1 WHERE id=:id');
+        return $this->dobbelvakt;
+    }
+
+    public static function setDobbelvakt($vaktId)
+    {
+      $st = DB::getDB()->prepare('UPDATE vakt SET dobbelvakt=1-dobbelvakt WHERE id=:id');
+      $st->bindParam(':id', $vaktId);
+      $st->execute();
+    }
+
+    public function erStraffevakt()
+    {
+        return $this->straffevakt;
+    }
+
+    public static function setStraffevakt($vaktId)
+    {
+      $st = DB::getDB()->prepare('UPDATE vakt SET straffevakt=1-straffevakt WHERE id=:id');
       $st->bindParam(':id', $vaktId);
       $st->execute();
     }

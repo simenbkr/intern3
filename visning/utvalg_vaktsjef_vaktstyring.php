@@ -71,14 +71,14 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 			$vakt = intern3\Vakt::medDatoVakttype($dato, $vakttype);
       $modalId = 'modal-' . $dato . '-' . $vakttype;
 
-			if ($vakt == null && $vakttype==2 && $ukedag>=0 && $ukedag<=4) {
-        echo '			<td class="celle_graa">';
-        echo '			<a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL; // TODO funker ikke!
-				echo $torild->getFulltNavn();
-        echo '</a>' . PHP_EOL;
-        // continue; // TODO må fjernes
-			}
-			else if ($vakt == null) {
+			// if ($vakt == null && $vakttype==2 && $ukedag>=0 && $ukedag<=4) {
+      //   echo '			<td class="celle_graa">';
+      //   echo '			<a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL; // TODO funker ikke!
+			// 	echo $torild->getFulltNavn();
+      //   echo '</a>' . PHP_EOL;
+      //   // continue; // TODO må fjernes
+			// }
+			if ($vakt == null) {
 				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
@@ -86,7 +86,15 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 			}
       else {
   			$bruker = $vakt->getBruker();
-  			echo '			<td>';
+        if ($vakt->erDobbelvakt()) {
+          echo '			<td class="celle_blaa">';
+        }
+        else if ($vakt->erStraffevakt()) {
+          echo '			<td class="celle_oransje">';
+        }
+        else {
+          echo '			<td>';
+        }
   			if ($bruker == null) {
   				echo ' ';
   			}
