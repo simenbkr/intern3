@@ -79,11 +79,14 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
       //   // continue; // TODO må fjernes
 			// }
 			if ($vakt == null) {
-				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
+				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Legg til vakt" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL;
 			}
 			else if ($vakt->erLedig()) {
 				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
 			}
+      else if ($vakt->getBruker() == NULL) {
+        echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-warning" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
+      }
       else {
   			$bruker = $vakt->getBruker();
         if ($vakt->erDobbelvakt()) {
