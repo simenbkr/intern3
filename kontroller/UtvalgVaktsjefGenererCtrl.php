@@ -59,6 +59,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
         $varighetDatoStart = strtotime($_POST['varighet_dato_start']);
         $varighetDatoSlutt = strtotime($_POST['varighet_dato_slutt']);
         $dato = $varighetDatoStart;
+        $id = Ansatt::getSisteAnsatt()->getBrukerId();
         do {
             for ($type = 1; $type <= 4; $type++) {
                 if (($type == 2 || !self::erIHelg($dato)) && self::erITidsrom(
@@ -67,11 +68,10 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
                         $type, $dato
                     )) {
                     $st = DB::getDB()->prepare('INSERT INTO vakt(bruker_id,vakttype,dato) VALUES(:bruker_id,:vakttype,:dato);');
-                    $torild = 443; //torild sin bruker_id.
                     $st->bindParam(':vakttype', $type);
                     $isoDato = date('Y-m-d', $dato);
                     $st->bindParam(':dato', $isoDato);
-                    $st->bindParam(':bruker_id', $torild);
+                    $st->bindParam(':bruker_id', $id);
                     $st->execute();
                 }
             }

@@ -16,17 +16,18 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $test = false;
-                    foreach($post as $key => $val){
-                        if(in_array($key, array(1,2,3,4,5)) && is_numeric($val)){
-                            $test = true;
+                    if(count($post) > 0) {
+                        foreach ($post as $key => $val) {
+                            if (in_array($key, array(1, 2, 3, 4, 5)) && is_numeric($val)) {
+                                $test = true;
+                            } else {
+                                $test = false;
+                            }
                         }
-                        else {
-                            $test = false;
-                        }
-                    }
-                    if($test/*isset($post['1'] && isset($post['2']) && isset($post['3']) && isset($post['4']) && isset($post['5'])*/){
-                        foreach(Drikke::alle() as $drikke){
-                            $drikke->oppdaterDrikkePris($post[$drikke->getId()]);
+                        if ($test/*isset($post['1'] && isset($post['2']) && isset($post['3']) && isset($post['4']) && isset($post['5'])*/) {
+                            foreach (Drikke::alle() as $drikke) {
+                                $drikke->oppdaterDrikkePris($post[$drikke->getId()]);
+                            }
                         }
                     }
                     //'endreVakt=1&hosthalv=' + host_halv + "&vaarhalv=" + vaar_halv + "&hosthel=" + host_hel + "&vaarhel=" + vaar_hel,
