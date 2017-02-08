@@ -6,6 +6,7 @@ class Bruker {
 
 	private $id;
 	private $passord;
+	private $salt;
 
 	// Latskap
 	private $person;
@@ -33,12 +34,17 @@ class Bruker {
 		$instance = new self();
 		$instance->id = $rad['id'];
 		$instance->passord = $rad['passord'];
+		$instance->salt = $rad['salt'];
 		$instance->person = null;
 		return $instance;
 	}
 
 	public function getId() {
 		return $this->id;
+	}
+
+	public function getSalt(){
+		return $this->salt;
 	}
 
 	public function passordErGyldig($passord) {
@@ -109,6 +115,22 @@ class Bruker {
 		}
 		return $sum;
 	}
+
+	public function endreSalt($salt){
+		$st = DB::getDB()->prepare('UPDATE bruker SET salt=:salt WHERE id=:id');
+		$st->bindParam(':salt', $salt);
+		$st->bindParam(':id', $this->id);
+		$st->execute();
+		$this->salt = $salt;
+	}
+
+	public function endrePassord($passord){
+		$st = DB::getDB()->prepare('UPDATE bruker SET passord=:password WHERE id=:id');
+		$st->bindParam(':password', $passord);
+		$st->bindParam(':id', $this->id);
+		$st->execute();
+	}
+
 }
 
 ?>

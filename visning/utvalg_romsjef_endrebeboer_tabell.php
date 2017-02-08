@@ -1,3 +1,8 @@
+<script>
+  $(function () {
+    $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
+  });
+</script>
 <form action="" method="post">
   <input type="hidden" name="beboerid" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getId(); ?>">
   <table class="table table-bordered table-responsive">
@@ -14,8 +19,8 @@
       <td><input type="text" name="etternavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEtternavn(); ?>"></td>
     </tr>
     <tr>
-      <td>Født (år-mnd-dag):</td>
-      <td><input type="text" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
+      <td>Født (år-mnd-dag):</td><?php /*<input type="text" name="dato" id="datepicker"/> */?>
+      <td><input type="text" id="datepicker" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
     </tr>
     <tr>
       <td>Adresse:</td>

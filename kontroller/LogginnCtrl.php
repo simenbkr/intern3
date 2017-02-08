@@ -30,9 +30,10 @@ class LogginnCtrl extends AbstraktCtrl
     {
         //setcookie('brukernavn', $_POST['brukernavn'], $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
         //setcookie('passord', self::genererHash($_POST['passord']), $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
-
-        $_SESSION['brukernavn'] = $_POST['brukernavn'];
-        $_SESSION['passord'] = self::genererHash($_POST['passord']);
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $brukeren = Bruker::medEpost($post['brukernavn']);
+        $_SESSION['brukernavn'] = $post['brukernavn'];
+        $_SESSION['passord'] = self::genererHash($post['passord'], $brukeren->getId());
         Header('Location: ' . $_SERVER['REQUEST_URI']);
         exit();
     }
@@ -55,7 +56,7 @@ class LogginnCtrl extends AbstraktCtrl
             if ($aktuellBruker != null) {
                 $bruker_id = $aktuellBruker->getId();
                 $nyttPassord = Funk::generatePassword();
-                $hash = self::genererHash($nyttPassord);
+                $hash = self::genererHash($nyttPassord, $bruker_id);
 
                 $st = DB::getDB()->prepare('UPDATE bruker SET passord=:passord WHERE id=:id');
                 $st->bindParam(':passord', $hash);
@@ -90,14 +91,24 @@ class LogginnCtrl extends AbstraktCtrl
         return $bruker;
     }
 
-    public static function genererHash($passord)
+    public static function genererHash($passord, $brukerid)
     {
+        $saltet = (Bruker::medId($brukerid) != null) ? Bruker::medId($brukerid)->getSalt() : exit(1);
         if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH) {
-            $salt = '$2y$11$' . substr(md5($passord . 'V@Q?0q%FCB5?iIB'), 0, 27);
-            return crypt('Z\'3s+uc(WDk<,7Q' . crypt($passord, $salt), '$6$rounds=5000$VM5wn6AvwUOAdUO24oLzGQ$');
+            //$salt = '$2y$11$' . substr(md5($passord . 'V@Q?0q%FCB5?iIB'), 0, 27);
+            //return crypt('Z\'3s+uc(WDk<,7Q' . crypt($passord, $salt), '$6$rounds=5000$VM5wn6AvwUOAdUO24oLzGQ$');
+            return crypt($passord, '$6$rounds=5000$' . $saltet .'$');
+        }
+        throw new \Exception('Sugefisk?');
+    }
+
+    public static function genererHashMedSalt($passord,$salt){
+        if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH) {
+            //$salt = '$2y$11$' . substr(md5($passord . 'V@Q?0q%FCB5?iIB'), 0, 27);
+            //return crypt('Z\'3s+uc(WDk<,7Q' . crypt($passord, $salt), '$6$rounds=5000$VM5wn6AvwUOAdUO24oLzGQ$');
+            return crypt($passord, '$6$rounds=5000$' . $salt .'$');
         }
         throw new \Exception('Sugefisk?');
     }
 }
-
 ?>

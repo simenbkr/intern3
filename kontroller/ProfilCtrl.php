@@ -206,7 +206,7 @@ class ProfilCtrl extends AbstraktCtrl
         if (count($feil) == 0 && isset($_POST['passord1'])) {
             $st = DB::getDB()->prepare('UPDATE bruker SET passord=:passord WHERE id=:id;');
             $id = $this->cd->getAktivBruker()->getId();
-            $passord = LogginnCtrl::genererHash($_POST['passord1']);
+            $passord = LogginnCtrl::genererHash($_POST['passord1'], $id);
             $st->bindParam(':id', $id);
             $st->bindParam(':passord', $passord);
             $st->execute();

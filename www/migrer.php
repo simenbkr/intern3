@@ -675,9 +675,20 @@ foreach (BeboerListe::aktive() as $beboer) {
 /* Migrering av beboere, slutt */
 
 // Nye passord
-$st = $db->query('INSERT INTO bruker(passord) VALUES(\'testetest\');');
+/*$st = $db->query('INSERT INTO bruker(passord) VALUES(\'testetest\');');
 $st = $db->query('INSERT INTO ansatt(bruker_id, fornavn, etternavn, epost) VALUES(' . $db->lastInsertId() . ', \'Torild\', \'Fivë\', \'torild@singsaker.no\');');
 $st = $db->query('UPDATE bruker SET passord=\'' . LogginnCtrl::genererHash('testetest') . '\';');
+
+*/
+$st_1337 = DB::getDB()->prepare('SELECT id FROM bruker');
+$st_1337->execute();
+$alles_passord = 'testetest';
+for($i = 0; $i < $st_1337->rowCount(); $i++){
+    $brukeren = Bruker::medId($st_1337->fetch()['id']);
+    $brukeren->endreSalt(Funk::generatePassword(28));
+    $brukeren->endrePassord(LogginnCtrl::genererHash($alles_passord, $brukeren->getId()));
+}
+
 
 /* Migrering av verv, start */
 

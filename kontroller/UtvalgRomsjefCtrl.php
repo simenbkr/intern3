@@ -104,12 +104,13 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $st->bindParam(':romhistorikk', $romhistorikken);
                 $st->execute();
 
-                $st = DB::getDB()->prepare('INSERT INTO bruker (id,passord) VALUES(:id,:passord)');
+                $st = DB::getDB()->prepare('INSERT INTO bruker (id,passord,salt) VALUES(:id,:passord,:salt)');
                 $st->bindParam(':id', $bruker_id);
                 $passord = Funk::generatePassword();
-
-                $hashen = LogginnCtrl::genererHash($passord);
+                $saltet = Funk::generatePassword(28);
+                $hashen = LogginnCtrl::genererHashMedSalt($passord,$saltet);
                 $st->bindParam(':passord', $hashen);
+                $st->bindParam(':salt', $saltet);
                 $st->execute();
 
                 $beskjed = "<html><body>Hei!<br/><br/>Du har fått opprettet en brukerkonto på 

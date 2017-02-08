@@ -4,6 +4,11 @@ if(!isset($beboer) || $beboer == null) {
     exit();
 }
 ?>
+<script>
+    $(function () {
+        $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
+    });
+</script>
     <div class="container">
         <h1>Utvalget » Romsjef » Gammel Beboerliste » Endre (gammel beboer) <b><?php echo $beboer->getFulltNavn(); ?></b></h1>
 
@@ -24,7 +29,7 @@ if(!isset($beboer) || $beboer == null) {
                 </tr>
                 <tr>
                     <td>Født (år-mnd-dag):</td>
-                    <td><input type="text" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
+                    <td><input type="text" id="datepicker" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
                 </tr>
                 <tr>
                     <td>Adresse:</td>

@@ -10,7 +10,7 @@ class UtflyttingCtrl extends AbstraktCtrl
         $bruker = LogginnCtrl::getAktivBruker();
         if(isset($_POST)) {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            if(isset($post['tekst']) && isset($post['passord']) && $bruker->passordErGyldig(LogginnCtrl::genererHash($post['passord']))){
+            if(isset($post['tekst']) && isset($post['passord']) && $bruker->passordErGyldig(LogginnCtrl::genererHash($post['passord'], LogginnCtrl::getAktivBruker()->getId()))){
                 $beboer = Beboer::medBrukerId(LogginnCtrl::getAktivBruker()->getId());
                 $fulltNavn = $beboer->getFulltNavn();
                 $teksten = "<html>" . $post['tekst'] . "<br/><br/>Dette er en automatisert melding. Vennligst ta kontakt med data@singsaker.no dersom denne ble sendt feil.</html>";
