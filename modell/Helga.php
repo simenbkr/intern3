@@ -58,7 +58,7 @@ class Helga
         $instance->tema = $rad['tema'];
         $instance->klar = $rad['klar'];
         $instance->max_gjester = $rad['max_gjest'];
-        $instance->epost_tekst = $rad['epost_tekst'];
+        $instance->epost_tekst = $rad['epost_text'];
         $instance->antall_gjester = HelgaGjesteListe::getGjesteCount($instance->aar);
         $instance->gjestelista = HelgaGjesteListe::getGjesteCount($instance->aar);
         return $instance;
@@ -206,7 +206,7 @@ class Helga
             $general_ider[] = $general->getId();
         }*/
         $general_ider = json_encode($this->generaler);
-        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest, epost_tekst=:epost_tekst WHERE aar=:aar');
+        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest, epost_text=:epost_tekst WHERE aar=:aar');
         $st->bindParam(':start_dato', $this->start_dato);
         $st->bindParam(':slutt_dato', $this->slutt_dato);
         $st->bindParam(':generaler', $general_ider);
