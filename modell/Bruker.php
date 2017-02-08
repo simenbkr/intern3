@@ -57,7 +57,7 @@ class Bruker {
 	}
 
 	public function antallStraffevakter() {
-		return Straffevakt::antallMedBrukerId($this->id);
+		return Vakt::antallStraffeVakter($this->id);
 	}
 
 	public function antallVakterSkalSitte() {

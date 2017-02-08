@@ -210,10 +210,26 @@ class Vakt
         return $res['antall'];
     }
 
+    public static function antallStraffeVakter($brukerId){
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE bruker_id=:bruker_id AND straffevakt=1');
+        $st->bindParam(':bruker_id', $brukerId);
+        $st->execute();
+        return $st->rowCount();
+    }
+
+    public static function antallDobbelVakter($brukerId){
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE bruker_id=:bruker_id AND dobbelvakt=1');
+        $st->bindParam(':bruker_id', $brukerId);
+        $st->execute();
+        return $st->rowCount();
+    }
+
+
     public static function antallHarIgjenMedBrukerId($brukerId, $skalSitte)
     {
         $antall = $skalSitte;
         $antall -= Vakt::antallHarSittetMedBrukerId($brukerId);
+        //$antall += self::antallStraffeVakter($brukerId);
         return $antall;
     }
 
