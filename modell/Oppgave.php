@@ -241,6 +241,22 @@ class Oppgave
         return $this->prioritet_id;*/
         return $this->prioritet_id == null || $this->prioritet_id == 0 ? 1 : $this->prioritet_id;
     }
+
+    public function fjernPerson($beboer_id){
+        $nye_paameldte = array();
+
+        foreach($this->getPameldteId() as $id){
+            if($id != $beboer_id){
+                $nye_paameldte[] = $id;
+            }
+        }
+        $nye_paameldte = count($nye_paameldte) != 0 ? json_encode($nye_paameldte) : '';
+        $st = DB::getDB()->prepare('UPDATE oppgave SET paameldte=:paameldte WHERE id=:id');
+        $st->bindParam(':paameldte', $nye_paameldte);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+    }
+
 }
 
 ?>

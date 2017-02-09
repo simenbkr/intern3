@@ -157,6 +157,23 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                   exit;
                 }
                 break;
+            case 'vaktstyring_byttemarked':
+                if( isset($_POST['vaktId'])){
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $vakten = Vakt::medId($post['vaktId']);
+                    if($vakten != null){
+                        $st = DB::getDB()->prepare('INSERT INTO vaktbytte (vakt_id,gisbort) VALUES(:vakt_id,1)');
+                        $st->bindParam(':vakt_id', $vakten->getId());
+                        $st->execute();
+                        $vaktbyttet = Vaktbytte::medVaktId($vakten->getId());
+
+                        $st_1 = DB::getDB()->prepare('UPDATE vakt SET bytte=1,vaktbytte_id=:vaktbyttet WHERE id=:id');
+                        $st_1->bindParam(':id', $vakten->getId());
+                        $st_1->bindParam(':vaktbyttet', $vaktbyttet->getId());
+                        $st_1->execute();
+                    }
+                }
+                break;
             case 'ukerapport':
                 $Uke = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
                 $Aar = $this->cd->getArg($this->cd->getAktuellArgPos() + 2);

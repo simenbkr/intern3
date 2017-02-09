@@ -48,6 +48,23 @@ require_once('topp_utvalg.php');
         });
     }
 
+    function fjernFraOppgave(id, oppgaveId) {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/oppgave/',
+            data: 'fjernFraOppgave=' + id + "&oppgaveId=" + oppgaveId,
+            method: 'POST',
+            success: function (html) {
+                $(".container").replaceWith($('.container', $(html)));
+                //$('#oppgave_' + id).html(data);
+                //location.reload();
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+    }
+
     function godkjenn(id) {
         $.ajax({
             type: 'POST',
@@ -177,9 +194,10 @@ require_once('topp_utvalg.php');
             $paameldte = "";
             if(sizeof($oppgave->getPameldteBeboere()) > 0){
                 foreach($oppgave->getPameldteBeboere() as $beboer){
-                    $paameldte .= $beboer->getFulltNavn() . ', ';
+                    $paameldte .= $beboer->getFulltNavn() . ' <button onclick="fjernFraOppgave(' . $beboer->getId() . ',' . $id . ')">&#x2718;</button>, ';
                 }
                 $paameldte = rtrim($paameldte, ', ');
+                // echo "      <button onclick=\"fjern(" . $general->getId() . ")\">&#x2718;</button>";
             }
             ?>
             <tr id="<?php echo $id;?>">

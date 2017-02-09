@@ -8,7 +8,7 @@ $df = new IntlDateFormatter('nb_NO',
     'Europe/Oslo');
 
 /* Start utsending av e-post til de som har vakt innen de neste 24t */
-/* Kjøres hver dag klokken 13:00 (cronjobb) */
+/* Kjøres hver dag klokken 14:00 (cronjobb) */
 $Beboerliste = BeboerListe::aktive();
 $harVakt = BeboerListe::harVakt();
 foreach($harVakt as $beboer){
@@ -38,10 +38,10 @@ foreach(Utleie::getUtleierFremover() as $utleiet){
         $mottakere = "";
         foreach ($Beboerliste as $beboer){
             if($beboer->vilHaBarvaktVarsel() && in_array($beboer, $utleiet->getBarvakter())){
-                $mottakere .= $beboer->getEpost() . ",";
+                $mottakere .= $beboer->getEpost() . ', ';
             }
         }
-        $mottakere = rtrim($mottakere, ',');
+        $mottakere = rtrim($mottakere, ', ');
         $mottakere = "data@singsaker.no";
         $tittel = "[SING-INTERN] Det er 24t igjen til du skal stå barvakt!";
         $tekst = "<html>(Dette er en automatisert melding)<br/><br/>Du er meldt opp som barvakt for utleiet til " . $utleiet->getNavn() .

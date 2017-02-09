@@ -35,6 +35,14 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                 $dok->set('slettet', 1);
                 $dok->set('melding', "Du slettet oppgaven med navn" . $oppgaven->getNavn());
             }
+            elseif(isset($post['fjernFraOppgave']) && is_numeric($post['fjernFraOppgave']) &&
+                ($beboeren = Beboer::medId($post['fjernFraOppgave'])) != null && isset($post['oppgaveId'])
+                && ($oppgaven = Oppgave::medId($post['oppgaveId'])) != null){
+
+                foreach($post as $key => $val){setcookie($key,$val);}
+
+                $oppgaven->fjernPerson($beboeren->getId());
+            }
         }
         $oppgaveListe = OppgaveListe::alle();
         $dok->set('oppgaveListe', $oppgaveListe);

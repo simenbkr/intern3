@@ -10,6 +10,7 @@ require_once('topp_utvalg.php');
             data: 'settfakturert=1',
             method: 'POST',
             success: function (html) {
+                $('.modal-backdrop').hide();
                 $(".container").replaceWith($('.container', $(html)));
             },
             error: function (req, stat, err) {
@@ -39,7 +40,25 @@ require_once('topp_utvalg.php');
             </th>
         </tr>
     </table>
-    <h4>Sett alle til fakturert: (dette kan ta opp til 10s)</h4> <input class="btn btn-primary" type="submit" value="Nullstill" onclick="sett_fakturert()"> (Ingen vei tilbake etter at du har trykket!)
+    <?php /* <input class="btn btn-primary" type="submit" value="Nullstill" onclick="sett_fakturert()"> */?>
+    <h4>Sett alle til fakturert: (dette kan ta opp til 10s)</h4>  (Ingen vei tilbake etter at du har trykket!)
+    <p><input type="button" class="btn btn-md btn-danger" value="Nullstill" data-toggle="modal" data-target="#modal-nullstill"></p>
+    <div class="modal fade" id="modal-nullstill" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Ønsker du å nullstille kryssetabellen? Husket å skrive ut?</h4>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-md btn-danger" onclick="sett_fakturert()">Ja!</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <br/>
     <table class="table table-bordered table-responsive">
 

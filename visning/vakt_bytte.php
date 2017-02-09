@@ -331,7 +331,7 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                         foreach ($vaktbytteListe[$vakttype] as $vaktbytte) {
                             $bruker = $vaktbytte->getVakt()->getBruker();
                             if ($bruker == null) {
-                                continue;
+                                //continue;
                             }
                             $modalId = 'modal-' . date('m-d', strtotime($vaktbytte->getVakt()->getDato())) . '-' . $vaktbytte->getVakt()->getVakttype();
                             ?>
@@ -365,12 +365,11 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                 }
                                 echo '<strong>' . ucfirst(strftime('%A %d/%m', strtotime($vaktbytte->getVakt()->getDato()))) . '</strong>' . PHP_EOL;
                                 echo '<br>' . PHP_EOL;
-                                echo $bruker->getPerson()->getFulltNavn();
+                                echo ($bruker != null && $bruker->getPerson()) != null ? $bruker->getPerson()->getFulltNavn() : 'Fritz Müller';
                                 $merknaden = $vaktbytte->getMerknad();
                                 if ($merknaden != null) {
                                     echo "<br/>" . $vaktbytte->getMerknad();
                                 }
-
                                 ?>
                                 <div class="modal fade" id="<?php echo $vaktbytte->getId() * 306; ?>" role="dialog">
                                     <?php //Dette er modalen for å se forslag til et vaktbytte. ?>

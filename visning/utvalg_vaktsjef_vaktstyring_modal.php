@@ -87,6 +87,20 @@ function torildVakt() {
     }
   });
 }
+
+function settBytteMarked(){
+  var vaktId = '<?php echo $vaktId_1; ?>';
+  $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/vaktstyring_byttemarked',
+    data: 'vaktId=' + vaktId,
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
+
 </script>
 <!-- Modal for vakter -->
 <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
@@ -104,6 +118,7 @@ function torildVakt() {
         <input type="button" onclick="straffevakt()" class="btn btn-sm btn-warning" value="Straffevakt">
         <input type="button" class="btn btn-sm btn-danger" value="Slett vakt" data-toggle="modal" data-target="#<?php echo $modalId; ?>-slettvakt">
         <input type="button" onclick="torildVakt()" class="btn btn-sm btn-info" value="Torild">
+        <input type="button" onclick="settBytteMarked()" class="btn btn-sm btn-info" value="Byttemarked">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Lukk</button>

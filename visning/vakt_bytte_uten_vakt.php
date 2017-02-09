@@ -23,7 +23,7 @@ if (isset($visBytteListe)) { ?>
                 foreach ($vaktbytteListe[$vakttype] as $vaktbytte) {
                     $bruker = $vaktbytte->getVakt()->getBruker();
                     if ($bruker == null) {
-                        continue;
+                        //continue;
                     }
                     $modalId = 'modal-' . date('m-d', strtotime($vaktbytte->getVakt()->getDato())) . '-' . $vaktbytte->getVakt()->getVakttype();
                     ?>
@@ -55,7 +55,7 @@ if (isset($visBytteListe)) { ?>
                         }
                         echo '<strong>' . ucfirst(strftime('%A %d/%m', strtotime($vaktbytte->getVakt()->getDato()))) . '</strong>' . PHP_EOL;
                         echo '<br>' . PHP_EOL;
-                        echo $bruker->getPerson()->getFulltNavn();
+                        echo ($bruker != null && $bruker->getPerson() != null) ? $bruker->getPerson()->getFulltNavn() : 'Fritz Müller';
                         $merknaden = $vaktbytte->getMerknad();
                         if ($merknaden != null) {
                             echo "<br/>" . $vaktbytte->getMerknad();
