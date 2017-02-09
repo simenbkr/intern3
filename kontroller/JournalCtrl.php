@@ -209,12 +209,12 @@ class JournalCtrl extends AbstraktCtrl
                         $vaktaId = $denne_vakta->getBeboerId();
                         if ($vaktaId == 0 || Beboer::medId($vaktaId) == null) {
                             //TODO få til noe bedre her?
-                            $vakta = Ansatt::medId(1);
+                            $vakta = Ansatt::getSisteAnsatt();
                         } else {
                             $vakta = Beboer::medId($vaktaId);
                         }
                         if ($vakta == null) {
-                            $vakta = Ansatt::medId(1);
+                            $vakta = Ansatt::getSisteAnsatt();
                         }
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
@@ -224,11 +224,8 @@ class JournalCtrl extends AbstraktCtrl
                         break;
                     case 'logout':
                     default:
-                        //setcookie('brukernavn', '', -1);
-                        //setcookie('passord', '', -1);
-                        //setcookie('du', '', -1);
                         session_destroy();
-                        Header('Location: ' . $_GET['ref']);
+                        header('Location: ' . $_GET['ref']);
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
                         $dok->set('visError', 1);
