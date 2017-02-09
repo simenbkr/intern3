@@ -1,5 +1,5 @@
 <?php
-require_once ('topp_journal.php');
+require_once('topp_journal.php');
 require_once('topp.php');
 
 if (isset($success)) {
@@ -15,13 +15,13 @@ unset($success);
 ?>
 <!-- ?a=journal/logout for å logge ut. -->
 <div class="col-sm-6 col-xs-12" style="margin: auto; margin-top: 5%">
-	<h1>Journal</h1>
+ <h1>Journal</h1>
 <h1>
     <ul>
-        <li><a href="?a=journal/krysseliste">Krysseliste</a></li>
-        <li><a href="?a=journal/signering">Signering</a></li>
-        <li><a href="?a=journal/pafyll">Påfyll</a></li>
-        <li><a href="?a=journal/vaktbytte">Vaktbytte</a></li>
+        <a href="?a=journal/krysseliste" type="button" class="btn btn-sm btn-info">Krysseliste</a>
+        <a href="?a=journal/signering" type="button" class="btn btn-sm btn-success">Signering</a>
+        <a href="?a=journal/pafyll" type="button" class="btn btn-sm btn-warning">Påfyll</a>
+        <a href="?a=journal/vaktbytte" type="button" class="btn btn-sm btn-primary">Vaktbytte</a>
     </ul></h1>
 <?php
 

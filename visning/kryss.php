@@ -45,6 +45,25 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 
     function updateDrikkeid(id){
         drikkeid = id;
+        if (drikkeid==1) {
+          color = '#4B515D';
+        }
+        else if (drikkeid==2) {
+          color = '#5bc0de';
+        }
+        else if (drikkeid==3) {
+          color = '#ffbb33';
+        }
+        else if (drikkeid==4) {
+          color = '#00C851';
+        }
+        else if (drikkeid==5) {
+          color = '#ff4444';
+        }
+        else {
+          color = 'white';
+        }
+        document.body.style.backgroundColor = color;
         changeKnapp();
     }
 
@@ -78,6 +97,7 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             }
         });
     }
+document.body.style.backgroundColor = '#5bc0de';
 </script>
 
 <style>
@@ -171,11 +191,11 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 <div class="container" style="text-align:center;">
 <h1>
         <ul class="list-inline">
-            <li><button class="btn btn-primary btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
-            <li><button class="btn btn-primary btn-lg" onclick="updateDrikkeid(3)">Cider</button></li>
-            <li><button class="btn btn-primary btn-lg" onclick="updateDrikkeid(4)">Carlsberg</button></li>
-            <li><button class="btn btn-primary btn-lg" onclick="updateDrikkeid(5)">Rikdom</button></li>
-            <li><button class="btn btn-primary btn-lg" onclick="updateDrikkeid(1)">Pant</button></li>
+            <li><button class="btn btn-info btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
+            <li><button class="btn btn-warning btn-lg" onclick="updateDrikkeid(3)">Cider</button></li>
+            <li><button class="btn btn-success btn-lg" onclick="updateDrikkeid(4)">Carlsberg</button></li>
+            <li><button class="btn btn-danger btn-lg" onclick="updateDrikkeid(5)">Rikdom</button></li>
+            <li><button class="btn btn-muted btn-lg" onclick="updateDrikkeid(1)">Pant</button></li>
         </ul>
     </h1>
     <br/>
@@ -211,7 +231,3 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 require_once('bunn.php');
 
 ?>
-
-
-
-

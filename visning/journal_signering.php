@@ -61,7 +61,7 @@ require_once('topp.php');
                     <td><?php echo $denne_vakta->getRikdom()['avlevert']; ?></td>
                 </tr>
             </table>
-            <input type="submit" value="Avslutt vakt" onclick="avslutt(<?php echo $vakta->getId(); ?>)" class="btn btn-block btn-primary">
+            <input type="submit" value="Avslutt vakt" onclick="avslutt(<?php echo $vakta->getId(); ?>)" class="btn btn-block btn-warning">
         </div>
     </div>
 <?php
