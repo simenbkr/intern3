@@ -67,7 +67,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 break;
             case 'vaktstyring':
                 $beboerListe = BeboerListe::harVakt();
-                $torild = Ansatt::medId(1);
+                $torild = Ansatt::getSisteAnsatt();
                 $dok = new Visning($this->cd);
                 $dok->set('torild', $torild);
                 $dok->set('denneUka', @date('W'));

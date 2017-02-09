@@ -20,11 +20,11 @@ class JournalCtrl extends AbstraktCtrl
                         //setcookie('passord', $passord_hash, NULL, NULL, NULL, NULL, TRUE);
                         //setcookie('du', '', -1);
                         session_destroy();
-                        session_set_cookie_params(2147483647,"/");
+                        session_set_cookie_params(2147483647, "/");
                         session_start();
                         $_SESSION['brukernavn'] = 'journal';
                         $_SESSION['passord'] = $passord_hash;
-                        Header('Location: ' . $_GET['ref']);
+                        header('Location: ' . $_GET['ref']);
                         $dok = new Visning($this->cd);
                         $dok->set('success', 1);
                         $dok->set('skjulMeny', 1);
@@ -138,14 +138,8 @@ class JournalCtrl extends AbstraktCtrl
                             }
                         }
                         $vaktaId = $denne_vakta->getBeboerId();
-                        if ($vaktaId == 0 || Beboer::medId($vaktaId) == null) {
-                            //TODO få til noe bedre her?
-                            $vakta = Ansatt::medId(1);
-                        } else {
-                            $vakta = Beboer::medId($vaktaId);
-                        }
-                        if ($vakta == null) {
-                            $vakta = Ansatt::medId(1);
+                        if (($vakta = Beboer::medId($vaktaId)) == null) {
+                            $vakta = Ansatt::getSisteAnsatt();
                         }
                         $dok->set('skjulMeny', 1);
                         $dok->set('vakta', $vakta);
@@ -165,7 +159,7 @@ class JournalCtrl extends AbstraktCtrl
                         }
                         if ($denneVakt->getBeboerId() == 0) {
                             //Torild
-                            $vakta = Ansatt::medId(1);
+                            $vakta = Ansatt::getSisteAnsatt();
                         } else {
                             $vakta = Beboer::medId($denneVakt->getBeboerId());
                         }
@@ -208,7 +202,7 @@ class JournalCtrl extends AbstraktCtrl
                         }
                         $vaktaId = $denne_vakta->getBeboerId();
                         $vakta = null;
-                        if(($vakta = Beboer::medId($vaktaId)) == null){
+                        if (($vakta = Beboer::medId($vaktaId)) == null) {
                             $vakta = Ansatt::getSisteAnsatt();
                         }
                         $dok = new Visning($this->cd);
@@ -227,6 +221,7 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->vis('logginn.php');
                 }
             }
+
         } else {
             //setcookie('brukernavn', '', -1);
             //setcookie('passord', '', -1);

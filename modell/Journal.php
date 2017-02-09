@@ -124,7 +124,7 @@ class Journal {
         $indeks = 0;
         foreach($journalen as $vakt){
             $denne_vakta = array();
-            $vakten = ($vakt['beboer_id'] > 1 ? Beboer::medId($vakt['beboer_id']) : Ansatt::medId(1));
+            $vakten = ($vakt['beboer_id'] > 1 ? Beboer::medId($vakt['beboer_id']) : Ansatt::getSisteAnsatt());
             $denne_vakta['vakthavende'] = $vakten->getFulltNavn();
             $denne_vakta['vaktnr'] = $vakt['vakt'];
             $denne_vakta['dato'] = $vakt['dato'];

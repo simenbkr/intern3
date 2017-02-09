@@ -680,10 +680,13 @@ foreach (BeboerListe::aktive() as $beboer) {
 
 // Nye passord
 /*$st = $db->query('INSERT INTO bruker(passord) VALUES(\'testetest\');');
-$st = $db->query('INSERT INTO ansatt(bruker_id, fornavn, etternavn, epost) VALUES(' . $db->lastInsertId() . ', \'Torild\', \'Fivë\', \'torild@singsaker.no\');');
+
 $st = $db->query('UPDATE bruker SET passord=\'' . LogginnCtrl::genererHash('testetest') . '\';');
 
 */
+//Legg til Torild i Ansatt!
+$st = $db->query('INSERT INTO ansatt(bruker_id, fornavn, etternavn, epost) VALUES(' . $db->lastInsertId() . ', \'Torild\', \'Fivë\', \'torild@singsaker.no\');');
+
 $st_1337 = DB::getDB()->prepare('SELECT id FROM bruker');
 $st_1337->execute();
 $alles_passord = 'testetest';
