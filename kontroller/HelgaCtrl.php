@@ -146,7 +146,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $st->bindParam(':nokkel', $nokkel);
                                 $st->execute();
 
-                                \QRCode::png("http://intern3.singsaker.no/?a=helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
+                                \QRCode::png("http://utvikling.singsaker.no/?a=helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
 
                             } else {
                                 $dok->set('epostError', 1);
@@ -165,7 +165,7 @@ class HelgaCtrl extends AbstraktCtrl
                             $gjesteid = $post['gjestid'];
                             $gjesten = HelgaGjest::byId($gjesteid);
                             if (HelgaGjest::belongsToBeboer($gjesteid, $beboer_id) && Funk::isValidEmail($gjesten->getEpost())) {
-                                $nettsiden = "http://intern3.singsaker.no/qrkoder/" . $gjesten->getNokkel() . ".png";
+                                $nettsiden = "http://utvikling.singsaker.no/qrkoder/" . $gjesten->getNokkel() . ".png";
                                 $dagen = $dag_array[$gjesten->getDag()];
                                 $datoen = date('Y-m-d', strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
                                 $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();

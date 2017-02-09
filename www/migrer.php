@@ -2,6 +2,10 @@
 
 namespace intern3;
 
+$start = time();
+echo "Migrering startet ved" . date('Y-m-d H:i:s');
+echo "\n";
+
 set_time_limit(999999999);
 
 /* Denne fila må på sikt flyttes slik at ikke hvem som helst kan leke med den! */
@@ -1146,9 +1150,7 @@ rikdom_mottatt,rikdom_pafyll,rikdom_avlevert,rikdom_utavskap) VALUES(:kryss_id,:
     $st->execute();
 
 }
-/*Migrering av kryssejournal slutt*/
-//ferdig();
-// Alt heretter går veldig sakte. TODO Endre ferdig() til senere før "ekte" migrering!
+
 $db->query('TRUNCATE TABLE krysseliste;');
 
 /* Migrering av krysseliste, start */
@@ -1176,7 +1178,13 @@ while ($kryss = pg_fetch_array($hentKryss)) {
 
 /* Migrering av krysseliste, slutt */
 
-echo "FIN";
+echo "FIN\n";
+$slutt = time();
+$tid = $slutt - $start;
+echo "Brukte tid: $tid sekunder\n";
+echo "Ferdig " . date('Y-m-d H:i:s');
+echo "\n";
+
 ferdig();
 
 function ferdig()

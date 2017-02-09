@@ -19,9 +19,7 @@ class LogginnCtrl extends AbstraktCtrl
 
     private static function loggUt()
     {
-        //setcookie('brukernavn', '', -1);
-        //setcookie('passord', '', -1);
-        Header('Location: ' . $_GET['ref']);
+        header('Location: ' . $_GET['ref']);
         session_destroy();
         exit();
     }
@@ -32,9 +30,11 @@ class LogginnCtrl extends AbstraktCtrl
         //setcookie('passord', self::genererHash($_POST['passord']), $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $brukeren = Bruker::medEpost($post['brukernavn']);
-        $_SESSION['brukernavn'] = $post['brukernavn'];
-        $_SESSION['passord'] = self::genererHash($post['passord'], $brukeren->getId());
-        Header('Location: ' . $_SERVER['REQUEST_URI']);
+        if ($brukeren != null) {
+            $_SESSION['brukernavn'] = $post['brukernavn'];
+            $_SESSION['passord'] = self::genererHash($post['passord'], $brukeren->getId());
+        }
+        header('Location: ' . $_SERVER['REQUEST_URI']);
         exit();
     }
 
@@ -63,14 +63,19 @@ class LogginnCtrl extends AbstraktCtrl
                 $st->bindParam(':id', $bruker_id);
                 $st->execute();
 
-                $beskjed = "<html><body>Hei<br/><br/>Du, eller noen som later som de er deg har forsøkt å resette ditt passord på <a href='https://intern.singsaker.no'>Internsidene</a><br/><br/>Ditt nye passord er : $nyttPassord<br/>Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lurer på noe, ta kontakt med oss på epost: <a href='mailto:data@singsaker.no'>data@singsaker.no</a> eller ta turen innom.<br/><br/>Med vennlig hilsen<br/>Robottene på Singsaker<br/><br/>(Dette var en automagisk beskjed. Feil? Ta kontakt!)</body></html>";
+                $beskjed =
+                    "<html><body>Hei<br/><br/>Du, eller noen som later som de er deg har forsøkt å resette ditt passord på 
+<a href='https://intern.singsaker.no'>Internsidene</a><br/><br/>Ditt nye passord er : $nyttPassord<br/>
+Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lurer på noe, ta kontakt med oss på epost: 
+<a href='mailto:data@singsaker.no'>data@singsaker.no</a> eller ta turen innom.<br/><br/>Med vennlig hilsen,
+<br/>Singsaker Studenterhjem<br/><br/>(Dette var en automagisk beskjed. Feil? Ta kontakt med datagutta!)</body></html>";
+
                 $tittel = "[SING-INTERN] Ditt passord har blitt resatt.";
                 $sendEpost = new Epost($beskjed);
                 $sendEpost->addBrukerId($bruker_id);
                 $sendEpost->send($tittel);
                 $dok->set('epostSendt', 1);
             }
-
         }
         $dok->set('skjulMeny', 1);
         $dok->vis('glemtpassord.php');
@@ -97,18 +102,20 @@ class LogginnCtrl extends AbstraktCtrl
         if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH) {
             //$salt = '$2y$11$' . substr(md5($passord . 'V@Q?0q%FCB5?iIB'), 0, 27);
             //return crypt('Z\'3s+uc(WDk<,7Q' . crypt($passord, $salt), '$6$rounds=5000$VM5wn6AvwUOAdUO24oLzGQ$');
-            return crypt($passord, '$6$rounds=5000$' . $saltet .'$');
+            return crypt($passord, '$6$rounds=5000$' . $saltet . '$');
         }
         throw new \Exception('Sugefisk?');
     }
 
-    public static function genererHashMedSalt($passord,$salt){
+    public static function genererHashMedSalt($passord, $salt)
+    {
         if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH) {
             //$salt = '$2y$11$' . substr(md5($passord . 'V@Q?0q%FCB5?iIB'), 0, 27);
             //return crypt('Z\'3s+uc(WDk<,7Q' . crypt($passord, $salt), '$6$rounds=5000$VM5wn6AvwUOAdUO24oLzGQ$');
-            return crypt($passord, '$6$rounds=5000$' . $salt .'$');
+            return crypt($passord, '$6$rounds=5000$' . $salt . '$');
         }
         throw new \Exception('Sugefisk?');
     }
 }
+
 ?>
