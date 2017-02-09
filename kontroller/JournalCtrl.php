@@ -207,13 +207,8 @@ class JournalCtrl extends AbstraktCtrl
                             }
                         }
                         $vaktaId = $denne_vakta->getBeboerId();
-                        if ($vaktaId == 0 || Beboer::medId($vaktaId) == null) {
-                            //TODO få til noe bedre her?
-                            $vakta = Ansatt::getSisteAnsatt();
-                        } else {
-                            $vakta = Beboer::medId($vaktaId);
-                        }
-                        if ($vakta == null) {
+                        $vakta = null;
+                        if(($vakta = Beboer::medId($vaktaId)) == null){
                             $vakta = Ansatt::getSisteAnsatt();
                         }
                         $dok = new Visning($this->cd);
@@ -237,7 +232,7 @@ class JournalCtrl extends AbstraktCtrl
             //setcookie('passord', '', -1);
             //setcookie('du', '', -1);
             session_destroy();
-            Header('Location: ' . $_GET['ref']);
+            header('Location: ' . $_GET['ref']);
             $dok = new Visning($this->cd);
             $dok->set('skjulMeny', 1);
             $dok->set('visError', 1);
