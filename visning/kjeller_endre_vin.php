@@ -59,6 +59,10 @@ require_once ('topp.php');
                     </select></td>
             </tr>
             <tr>
+                <td>Beskrivelse</td>
+                <td><textarea name="beskrivelse"><?php echo $vinen->getBeskrivelse();?></textarea></td>
+            </tr>
+            <tr>
                 <td>Bilde:</td>
                 <td><input type="file" name="image" /><img height="200px" src="vinbilder/<?php echo $vinen->getBilde();?>"</td>
             </tr>

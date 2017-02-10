@@ -61,6 +61,10 @@ require_once('topp.php');
                         </select></td>
                 </tr>
                 <tr>
+                    <td>Beskrivelse</td>
+                    <td><textarea name="beskrivelse" placeholder="Beskrivelse.."></textarea></td>
+                </tr>
+                <tr>
                     <td>Bilde:</td>
                     <td><input type="file" name="image"/></td>
                 </tr>

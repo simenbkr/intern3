@@ -54,12 +54,12 @@ require_once('topp.php');
                 } else { ?>
                 <td><?php echo $vervet->getBeskrivelse(); ?></td>
     <?php } ?>
-            </tr>
+            </tr><?php if($har_vervet){ ?>
             <tr>
                 <td>Meldinger</td>
-                <?php if($har_vervet){ ?>
+
                 <form action="" method="POST">
-                        <td><input type="text" name="melding" placeholder="Ny melding">     <input type="submit" value="Endre" class="btn btn-primary"></td>
+                        <td><textarea name="melding" placeholder="Ny melding"></textarea><br/><input type="submit" value="Legg til" class="btn btn-primary"></td>
             </form>
             <?php
                 } else { ?>

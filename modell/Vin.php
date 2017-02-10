@@ -15,6 +15,7 @@ class Vin
     private $svinn;
     private $avanse;
     private $slettet;
+    private $beskrivelse;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -30,6 +31,7 @@ class Vin
         $instance->typeId = $rad['typeId'];
         $instance->avanse = $rad['avanse'];
         $instance->slettet = $rad['slettet'];
+        $instance->beskrivelse = $rad['beskrivelse'];
         $instance->type = Vintype::medId($instance->typeId);
         $instance->svinn = 0;
         $st = DB::getDB()->prepare('SELECT * FROM vinsvinn WHERE vin_id=:id');
@@ -85,6 +87,10 @@ class Vin
 
     public function getSvinn(){
         return $this->svinn;
+    }
+
+    public function getBeskrivelse(){
+        return $this->beskrivelse;
     }
 
     public function erSlettet(){
