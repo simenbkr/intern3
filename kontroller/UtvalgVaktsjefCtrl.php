@@ -161,7 +161,18 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 if( isset($_POST['vaktId'])){
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vakten = Vakt::medId($post['vaktId']);
-                    if($vakten != null){
+                    if($vakten != null && $vakten->getBytte() && ($vaktbytte = Vaktbytte::medVaktId($post['vaktId'])) != null){
+                        //Slett denne fra byttemarkedet.
+                        $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');
+                        $st->bindParam(':id', $vaktbytte->getid());
+                        $st->execute();
+
+                        $st_1 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=0 WHERE id=:id');
+                        $st_1->bindParam(':id', $vakten->getId());
+                        $st_1->execute();
+                    }
+                    elseif($vakten != null){
+                        //Legg til i byttemarked
                         $st = DB::getDB()->prepare('INSERT INTO vaktbytte (vakt_id,gisbort) VALUES(:vakt_id,1)');
                         $st->bindParam(':vakt_id', $vakten->getId());
                         $st->execute();

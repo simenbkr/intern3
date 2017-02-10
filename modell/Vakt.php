@@ -65,7 +65,7 @@ class Vakt
 
     public function getBytte()
     {
-        return $this->bytte;
+        return $this->bytte == 1;
     }
 
     public function getBrukerId()
