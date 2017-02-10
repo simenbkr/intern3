@@ -40,7 +40,7 @@ class VaktCtrl extends AbstraktCtrl
                         $_SESSION['msg'] = "Du la til et vaktbytte for " . $vaktInstans->toString();
 
                         //Send epost til de som ønsker å bli opplyst om dette.
-                        /*if ($passordet == 0) {
+                        if ($passordet == 0) {
                             $mottakere = "";
                             foreach (BeboerListe::harVakt() as $beboer) {
                                 if($beboer->vilHaBytteGiVarsel()){
@@ -53,7 +53,7 @@ class VaktCtrl extends AbstraktCtrl
                                 " har lagt ut en vakt på byttemarkedet. Dette er en " . $vaktInstans->getVakttype() . ". vakt " . $vaktInstans->getDato() .
                                 "<br/> Logg inn på <a href='https://intern.singsaker.no'>Internsida</a> for å se mer.<br/><br/></html>";
                             Epost::sendEpost($mottakere, $tittel, $tekst);
-                        }*/
+                        }
                     }
                 }
 

@@ -25,8 +25,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 	}
 
 	private function sendEpostTilVakter(){
-		/*
-
 		$mottakere = "";
 		foreach(BeboerListe::harVakt() as $beboer){
 			$mottakere .= $beboer->getEpost() . ',';
@@ -35,7 +33,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 		$tekst = "<html>(Dette er en automatisert beskjed)<br/><br/>Vaktsjef har nå generert nye vakter. Se når du skal sitte vakt på <a href='https://intern.singsaker.no'>Internsidene</a> for mer informasjon" .
 			"<br/><br/></html>";
 		Epost::sendEpost($mottakere,$tittel,$tekst);
-		*/
 	}
 
 	private function genererVaktliste() {

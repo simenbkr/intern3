@@ -15,12 +15,13 @@ class DB extends \PDO {
 		$tullesuffiks = ($_SERVER['SERVER_NAME'] == 'intern.singsaker.no') ? '' : '_dev';
 
 		$domene     = 'mysql:host=localhost;dbname=intern3' . $tullesuffiks;
-		$brukernavn = 'intern3' . $tullesuffiks;
+		$brukernavn = 'intern3';//. $tullesuffiks;
 		$passord    = 'intern3';
 		// hvis ikke my.cnf har [client].default-character-set=utf8:
-		parent::__construct($domene, $brukernavn, $passord, array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+		parent::__construct($domene, $brukernavn, $passord, array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'utf8\''));
 		parent::setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
 	}
+
 }
 
 ?>

@@ -691,11 +691,12 @@ $st = $db->query('INSERT INTO ansatt(bruker_id, fornavn, etternavn, epost) VALUE
 
 $st_1337 = DB::getDB()->prepare('SELECT id FROM bruker');
 $st_1337->execute();
-$alles_passord = 'testetest';
+//$alles_passord = 'testetest';
 for($i = 0; $i < $st_1337->rowCount(); $i++){
+    $passordet = Funk::generatePassword(50);
     $brukeren = Bruker::medId($st_1337->fetch()['id']);
     $brukeren->endreSalt(Funk::generatePassword(28));
-    $brukeren->endrePassord(LogginnCtrl::genererHash($alles_passord, $brukeren->getId()));
+    $brukeren->endrePassord(LogginnCtrl::genererHash($passordet, $brukeren->getId()));
 }
 
 
