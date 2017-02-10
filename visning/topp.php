@@ -5,6 +5,9 @@ require_once('../ink/autolast.php');
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="utf-8">
 		<title>Intern3.0</title>
 		<link rel="stylesheet" href="css/bootstrap.min.css">
@@ -25,7 +28,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
- // print_r($_COOKIE);
+  print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
 	/* Meny start */
