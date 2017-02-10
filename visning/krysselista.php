@@ -77,7 +77,11 @@ $beboere_2 = array_slice($beboere_med_depositum, $length / 2);
             <thead>
             <tr>
                 <th data-sortable="true">Navn</th>
-                <th data-sortable="true">TBD</th>
+                <th data-sortable="true">Øl</th>
+                <th data-sortable="true">Cider</th>
+                <th data-sortable="true">Carlsberg</th>
+                <th data-sortable="true">Rikdom</th>
+                <th data-sortable="true">Pant</th>
             </tr>
             </thead>
             <tbody>
@@ -85,7 +89,11 @@ $beboere_2 = array_slice($beboere_med_depositum, $length / 2);
             foreach($beboere_med_depositum as $beboer){ ?>
                 <tr>
                     <td><a href="?a=journal/kryssing/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
-                    <td>TBD</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
                 </tr>
                 <?php
             } ?>
