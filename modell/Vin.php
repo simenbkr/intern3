@@ -14,6 +14,7 @@ class Vin
     private $type;
     private $svinn;
     private $avanse;
+    private $slettet;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -28,6 +29,7 @@ class Vin
         $instance->antall = $rad['antall'];
         $instance->typeId = $rad['typeId'];
         $instance->avanse = $rad['avanse'];
+        $instance->slettet = $rad['slettet'];
         $instance->type = Vintype::medId($instance->typeId);
         $instance->svinn = 0;
         $st = DB::getDB()->prepare('SELECT * FROM vinsvinn WHERE vin_id=:id');
@@ -83,6 +85,10 @@ class Vin
 
     public function getSvinn(){
         return $this->svinn;
+    }
+
+    public function erSlettet(){
+        return $this->slettet == 1;
     }
 
     public static function getAlle(){

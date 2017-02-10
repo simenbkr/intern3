@@ -1,9 +1,25 @@
 <?php
 require_once ('topp.php');
 ?>
+<script>
+    function unslett(id){
+        $.ajax({
+            type: 'POST',
+            url: '?a=kjeller/admin/' + id,
+            data: 'unslett=' + id,
+            method: 'POST',
+            success: function (data) {
+                location.reload();
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+    }
+</script>
 <div class="container">
     <h1>Kjellermester » Vinadministrasjon » Endre vin</h1>
-    <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
+    <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/slettet_vin">Slettet vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
@@ -50,6 +66,12 @@ require_once ('topp.php');
                 <td></td>
                 <td><input class="btn btn-primary" type="submit" value="Endre"></td>
             </tr>
+            <?php if($vinen->erSlettet()){ ?>
+            <tr>
+                <td></td>
+                <td><input class="btn btn-warning" type="button" onclick="unslett(<?php echo $vinen->getId();?>)" value="Unslett"></td>
+            </tr>
+            <?php } ?>
         </table>
     </form>
 

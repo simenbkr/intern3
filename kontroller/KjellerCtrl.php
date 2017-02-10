@@ -6,7 +6,8 @@ class KjellerCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
-        if (!LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()) {
+        if (LogginnCtrl::getAktivBruker() == null || LogginnCtrl::getAktivBruker()->getPerson() == null ||
+            !LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()) {
             header('Location: ?a=diverse');
             exit();
         }
@@ -54,6 +55,7 @@ class KjellerCtrl extends AbstraktCtrl
                     $vinen = Vin::medId($sisteArg);
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                        foreach($post as $key => $val){setcookie($key,$val);}
                         if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
                             && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
                         ) {
@@ -73,8 +75,12 @@ class KjellerCtrl extends AbstraktCtrl
                             && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
                         ) {
                             $this->updateVin(true, $vinen->getBilde(), $vinen->getId());
+                        } elseif(isset($post['unslett']) && $vinen != null){
+                            setcookie('asdasd','lole');
+                            $st = DB::getDB()->prepare('UPDATE vin SET slettet=0 WHERE id=:id');
+                            $st->bindParam(':id', $vinen->getId());
+                            $st->execute();
                         }
-
                     }
                     if ($vinen != null) {
                         $dok->set('vinen', $vinen);
@@ -86,16 +92,20 @@ class KjellerCtrl extends AbstraktCtrl
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($post['slett']) && is_numeric($post['slett']) && Vin::medId($post['slett']) != null) {
-                        $st = DB::getDB()->prepare('DELETE FROM vin WHERE id=:id');
+                        $st = DB::getDB()->prepare('UPDATE vin SET slettet=1 WHERE id=:id');
                         $st->bindParam(':id', $post['slett']);
-                        //$st->execute();
-                        // Vil egentlig ikke tillate sletting av vin-objekter da det er mye
-                        // avhengighet rundt dette.
+                        $st->execute();
                     }
                 }
                 $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
                 $dok->vis('kjeller_admin.php');
+                break;
+            case 'slettet_vin':
+                $vinene = Vin::getAlle();
+                $dok = new Visning($this->cd);
+                $dok->set('vinene', $vinene);
+                $dok->vis('kjeller_slettet_admin.php');
                 break;
             case 'regning':
                 if (isset($_POST)) {

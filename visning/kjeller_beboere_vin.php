@@ -9,8 +9,6 @@ require_once ('topp.php');
                 data: 'fakturer=1',
                 method: 'POST',
                 success: function (html) {
-                    //$(".container").replaceWith($('.container', $(html)));
-                    //$('#oppgave_' + id).html(data);
                     location.reload();
                 },
                 error: function (req, stat, err) {
@@ -21,11 +19,32 @@ require_once ('topp.php');
     </script>
 <div class="container">
 <h1>Kjellermester » Beboere og vin</h1>
-    <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
+    <p>[ <a href="<?php echo $cd->getBase(); ?>kjeller/admin">Vinadministrasjon</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/slettet_vin">Slettet vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ Fakturer ]</p>
     <hr>
-    <b>Dette er IKKE-fakturerte!</b> <button class="btn btn-danger btn-sm" onclick="fakturer()">FAKTURER PERIODE</button><br/><br/>
+    <?php /*<b>Dette er IKKE-fakturerte!</b> <button class="btn btn-danger btn-sm" onclick="fakturer()">FAKTURER PERIODE</button><br/><br/> */?>
+
+    <h4>Sett alle til fakturert: (dette kan ta opp til 10s)</h4>  (Ingen vei tilbake etter at du har trykket!)
+    <p><input type="button" class="btn btn-md btn-danger" value="Nullstill" data-toggle="modal" data-target="#modal-nullstill"></p>
+    <div class="modal fade" id="modal-nullstill" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Ønsker du å nullstille vin-tabellen? Husket å skrive ut?</h4>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-md btn-danger" onclick="fakturer()">Ja!</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <a href="?a=kjeller/lister/rapport">Husk å skrive ut denne før du markerer perioden som fakturert!</a>
     <table class="table table-responsive table-bordered">
         <tr>
@@ -59,7 +78,7 @@ require_once ('topp.php');
             ?>
             <tr>
                 <td></td>
-                <td><?php echo $vin_krysset['aktuell_vin']->getNavn();?></td>
+                <td><?php echo ($vin_krysset['aktuell_vin']) != null ? $vin_krysset['aktuell_vin']->getNavn() : '';?></td>
                 <td><?php echo $vin_krysset['antall'];?></td>
                 <td><?php echo $vin_krysset['kostnad'];?></td>
             </tr>

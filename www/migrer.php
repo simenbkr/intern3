@@ -390,11 +390,13 @@ PRIMARY KEY(`id`)
 $db->query('CREATE TABLE IF NOT EXISTS `vin` (
 `id` INT(10) unsigned NOT NULL auto_increment,
 `navn` VARCHAR(128),
+`beskrivelse` TEXT,
 `bilde` VARCHAR(512),
 `pris` DOUBLE(13,3),
 `avanse` DOUBLE(13,3),
 `antall` INT(10),
 `typeId` INT(10),
+`slettet` TINYINT(1),
 PRIMARY KEY(`id`)
 )');
 
@@ -1110,6 +1112,45 @@ dato VARCHAR(1024) NOT NULL
 $st->execute();
 
 /* Slutt */
+
+/* Start migrering av vin og vintyper */
+
+$hentTyper = pg_query('SELECT * FROM vin_type');
+while($typen = pg_fetch_array($hentTyper)){
+    $type_id = $typen['type_id'];
+    $navn = byttTegnsett($typen['navn']);
+
+    $st = $db->prepare('INSERT INTO vintype(id,navn) VALUES(:id,:navn);');
+    $st->bindParam(':id',$type_id);
+    $st->bindParam(':navn', $navn);
+    $st->execute();
+}
+
+
+
+$hentVin = pg_query('SELECT * FROM vin');
+while($vin = pg_fetch_array($hentVin)){
+    $navn = byttTegnsett($vin['navn']);
+    $pris = $vin['inn'];
+    $beskrivelse = byttTegnsett($vin['beskrivelse']);
+    $avanse = $vin['avanse'];
+    $slettet = ($vin['slettet'] == 't') ? 1 : 0;
+    $antall = $vin['antall'];
+    $typen = $vin['type'];
+
+    $st = $db->prepare('INSERT INTO vin (navn, pris, avanse, antall, beskrivelse,slettet,typeId) VALUES(:navn,:pris,:avanse,:antall,:beskrivelse,:slettet,:typen);');
+    $st->bindParam(':navn',$navn);
+    $st->bindParam(':pris', $pris);
+    $st->bindParam(':avanse',$avanse);
+    $st->bindParam(':antall',$antall);
+    $st->bindParam('beskrivelse',$beskrivelse);
+    $st->bindParam(':slettet', $slettet);
+    $st->bindParam(':typen',$typen);
+    $st->execute();
+}
+
+/* Slutt migrering av vin og vintyper */
+
 
 /* Migrering av kryssejournal start */
 $hentKrysseliste = pg_query('SELECT * FROM krysseliste ORDER BY dato');
