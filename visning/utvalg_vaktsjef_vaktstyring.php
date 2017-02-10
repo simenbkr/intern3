@@ -107,6 +107,9 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
         else if ($vakt->erStraffevakt()) {
           echo '			<td class="celle_oransje">';
         }
+        else if ($vakt->vilBytte()) {
+          echo '			<td class="celle_lyseblaa">';
+        }
         else {
           echo '			<td>';
         }
