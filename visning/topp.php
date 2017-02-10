@@ -28,7 +28,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-  print_r($_COOKIE);
+  //print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
 	/* Meny start */
