@@ -1,0 +1,167 @@
+html {
+overflow-y: scroll;
+}
+
+#topp .container-fluid, #innhold, #bunn {
+margin: auto;
+max-width: 1200px;
+}
+
+#innhold div h1, #innhold div h2 {
+margin-top: 0;
+}
+
+h1 {
+font-size: 25px;
+font-weight: normal;
+}
+
+h2 {
+font-size: 21px;
+font-weight: normal;
+}
+
+h3 {
+font-size: 17px;
+font-weight: normal;
+}
+
+p {
+margin-top: 15px;
+margin-bottom: 15px;
+}
+
+.borderless th, .borderless td {
+border: none !important;
+}
+
+.histogram {
+margin-top: 15px;
+margin-bottom: 15px;
+}
+
+.histogram td {
+padding-right: 10px;
+text-align: center;
+}
+
+.histogram div {
+//margin: auto;
+width: 20px;
+}
+
+.histogram div:nth-child(1) {
+display: table-cell;
+vertical-align: bottom;
+}
+
+.histogram div:nth-child(2) {
+color: #EEE;
+background-color: #369;
+}
+
+.kalender_merke_bursdag, .kalender_merke_dinevakter, .kalender_merke_ledigevakter {
+display: inline-block;
+float: right;
+width: 12px;
+height: 12px;
+border-radius: 6px;
+}
+
+.kalender_merke_bursdag {
+background-color: #DD0;
+}
+
+.kalender_merke_dinevakter {
+background-color: #090;
+}
+
+.kalender_merke_ledigevakter {
+background-color: #009;
+}
+
+.merke_bursdag, .merke_dinevakter, .merke_ledigevakter, .merke_viktigedatoer {
+display: inline-block;
+width: 12px;
+height: 12px;
+border-radius: 6px;
+}
+
+.merke_bursdag {
+background-color: #DD0;
+}
+
+.merke_dinevakter {
+background-color: #090;
+}
+
+.merke_ledigevakter {
+background-color: #009;
+}
+
+.merke_viktigedatoer {
+background-color: #900;
+}
+
+.tekst_dinevakter {
+color: #090;
+font-weight: bold;
+}
+
+.tekst_ledigevakter {
+color: #009;
+font-weight: bold;
+}
+
+.celle_graa {
+background-color:#EEE;
+opacity:.8;
+}
+
+.celle_blaa {
+background-color:#D6EAF8;
+}
+
+.celle_oransje {
+background-color:#FEF5E7;
+}
+
+.celle_lyseblaa {
+background-color:#EBF5FB;
+}
+
+.tekst_bursdager {
+color: #DD0;
+font-weight: bold;
+}
+
+.tekst_viktigedatoer {
+color: #900;
+font-weight: bold;
+}
+
+a.red:link, a.red:active, a.red:visited, a.red:hover {
+color: #ff0000; background: #ffffff; font-style: italic;
+}
+
+.romskjemaseksjon {
+outline: 1px solid #DDD;
+border: 1px solid #DDD;
+}
+
+.romskjemaseksjon h2 {
+background-color: #BBB;
+}
+
+.romskjemaseksjon h3 {
+background-color: #DDD;
+}
+
+.romskjemaseksjon h2, .romskjemaseksjon h3, .romskjemaseksjon p, .romskjemaseksjon ul {
+margin-top: 5px;
+margin-bottom: 5px;
+}
+
+.liten {
+font-size: .8em;
+}
