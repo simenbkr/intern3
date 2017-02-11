@@ -85,10 +85,10 @@ class RomskjemaCtrl extends AbstraktCtrl {
 		$st->execute();
 
 		//Sende epost til Romsjef angående dette:
-		//$mottaker = "regisjef@singsaker.no, romsjef@singsaker.no";
+		$mottaker = "regisjef@singsaker.no, romsjef@singsaker.no";
 		$registrant = LogginnCtrl::getAktivBruker()->getPerson();
 		$navn = $registrant->getFulltNavn();
-		$mottaker = "data@singsaker.no";
+		//$mottaker = "data@singsaker.no";
 		$tittel = "[SING-INTERN] Ny feil registrert av " . $registrant->getFornavn() . " på rom " . $registrant->getRom()->getNavn();
 		$tekst = "<html>Dette er en automatisert melding.<br/><br/>" . $registrant->getFulltNavn() . " på rom " . $registrant->getRom()->getNavn() .
 			" har opprettet en ny feil på <a href='https://intern.singsaker.no'>Internsida</a> med følgende kommentar:<br/><br/>" . $kommentar .

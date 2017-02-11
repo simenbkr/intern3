@@ -95,7 +95,10 @@ class JournalCtrl extends AbstraktCtrl
                         }
                     case 'krysseliste':
                         $beboere = BeboerListe::aktive();
+                        $dato = VaktSesjon::getLatest()->getDato();
+                        $krysseliste = Krysseliste::getAlleKryssetEtterDato($dato);
                         $dok = new Visning($this->cd);
+                        $dok->set('krysseliste', $krysseliste);
                         $dok->set('beboere', $beboere);
                         $dok->set('skjulMeny', 1);
                         $dok->vis('krysselista.php');

@@ -183,6 +183,51 @@ class Krysseliste
         return $krysseListeListe;
     }
 
+    public static function getAlleKryssetEtterDato($dato)
+    {
+        $beboerListe = BeboerListe::aktive();
+        $krysseListeListe = array();
+        foreach ($beboerListe as $beboer) {
+            $Helekrysseliste = self::medBeboerId($beboer->getId());
+            $kryss = array('Pant' => 0,
+                'Øl' => 0,
+                'Cider' => 0,
+                'Carlsberg' => 0,
+                'Rikdom' => 0
+            );
+            foreach ($Helekrysseliste as $delKryseListe) {
+                $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
+
+                foreach ($KryssDrikka as $enkelt_kryss) {
+                    if ($enkelt_kryss['tid'] > $dato) {
+                        switch ($delKryseListe->drikkeId) {
+                            case '1':
+                                $kryss['Pant'] += $enkelt_kryss['antall'];
+                                break;
+                            case '2':
+                                $kryss['Øl'] += $enkelt_kryss['antall'];
+                                break;
+                            case '3':
+                                $kryss['Cider'] += $enkelt_kryss['antall'];
+                                break;
+                            case '4':
+                                $kryss['Carlsberg'] += $enkelt_kryss['antall'];
+                                break;
+                            case '5':
+                                $kryss['Rikdom'] += $enkelt_kryss['antall'];
+                                break;
+                        }
+
+                    }
+                }
+
+            }
+            $krysseListeListe[$beboer->getId()] = $kryss;
+        }
+        return $krysseListeListe;
+    }
+
+
     public static function getAllIkkeFakturertBeboer($beboerId)
     {
         $Helekrysseliste = self::medBeboerId($beboerId);

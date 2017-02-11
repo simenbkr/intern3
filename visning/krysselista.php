@@ -89,11 +89,11 @@ $beboere_2 = array_slice($beboere_med_depositum, $length / 2);
             foreach($beboere_med_depositum as $beboer){ ?>
                 <tr>
                     <td><a href="?a=journal/kryssing/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
+                    <td><?php echo $krysseliste[$beboer->getId()]['Øl'];?></td>
+                    <td><?php echo $krysseliste[$beboer->getId()]['Cider'];?></td>
+                    <td><?php echo $krysseliste[$beboer->getId()]['Carlsberg'];?></td>
+                    <td><?php echo $krysseliste[$beboer->getId()]['Rikdom'];?></td>
+                    <td><?php echo $krysseliste[$beboer->getId()]['Pant'];?></td>
                 </tr>
                 <?php
             } ?>

@@ -148,8 +148,7 @@ require_once('topp.php');
             <tr>
                 <td><?php echo $verv_melding->getVerv()->getNavn(); ?>, <?php echo $verv_melding->getBeboer()->getFulltNavn(); ?> (<?php echo $verv_melding->getDato();?>):
                 </td>
-                <td><p><?php echo substr($verv_melding->getTekst(),0,50); ?>
-                        <?php if(strlen($verv_melding->getTekst()) > 50) { ?><span class="read-more-content"><?php echo substr($verv_melding->getTekst(),50,strlen($verv_melding->getTekst())); ?></span><?php } ?></p>
+                <td><p><?php echo substr($verv_melding->getTekst(),0,50); ?><?php if(strlen($verv_melding->getTekst()) > 50) { ?><span class="read-more-content"><?php echo substr($verv_melding->getTekst(),50,strlen($verv_melding->getTekst())); ?></span><?php } ?></p>
                 </td>
             </tr>
         <?php } ?>
