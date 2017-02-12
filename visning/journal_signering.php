@@ -21,7 +21,6 @@ require_once('topp.php');
     <div class="container">
         <h1>Journal » Signering</h1>
         <hr>
-        </br>
         <div class="col-lg-6">
             <h2><?php echo $vakta->getFulltNavn(); ?> sitter <?php echo $denne_vakta->getVaktnr(); ?>. vakt nå. (<?php echo date('Y-m-d',strtotime($denne_vakta->getDato()));?>)</h2>
             <table class="table table-bordered table-responsive">

@@ -220,12 +220,12 @@ require_once ('topp.php');
                 <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(0)">0</button></div>
             </div>
         </div>
-        <br/><hr>
-        <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss()"></button>
         <br/>
+        <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss()"></button>
+        <!-- <br/> -->
+        <hr>
         <h1><a href="javascript:history.back()">TILBAKE</a></h1>
     </div>
-    <hr>
 <?php
 
 require_once('bunn.php');

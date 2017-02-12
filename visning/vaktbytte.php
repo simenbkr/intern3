@@ -21,6 +21,9 @@ require_once('topp.php');
     </script>
 
     <div class="container" id="container">
+      <h1>Journal » Vaktbytte</h1>
+      <hr>
+      </br>
         <div class="row">
             <div class="col-lg-12 text-center">
                 <h1>Nå sitter
@@ -47,7 +50,7 @@ require_once('topp.php');
                     echo "<br/><br/>"; ?>
                     <input class="btn btn-default btn-block" type="submit" value="TORILD FIVE" onclick="bytte(0)">
 
-                    <br><br/>
+                    <hr>
                     <a href="javascript:history.back()">TILBAKE</a>
                 </h2>
 

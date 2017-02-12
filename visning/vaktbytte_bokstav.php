@@ -19,17 +19,21 @@ require_once ('topp.php');
     }
 </script>
 <div class="container">
+  <h1>Journal » Vaktbytte</h1>
+  <hr>
+  </br>
     <div class="row">
+      <div class="col-lg-12 text-center">
 <?php
 foreach($aktuelle as $beboer){ ?>
 <h2>
     <input class="btn btn-default btn-block" type="submit" value="<?php echo $beboer->getFulltNavn(); ?>" onclick="bytte(<?php echo $beboer->getId(); ?>)"><br/>
-</h2>
         <?php
 }
 ?>
+<hr>
+<a href="javascript:history.back()">TILBAKE</a>
 </div>
-    <a href="javascript:history.back()">TILBAKE</a>
 </div>
 
 

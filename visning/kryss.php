@@ -187,8 +187,9 @@ document.body.style.backgroundColor = '#5bc0de';
 
 </style>
 
-<h1 style="text-align: center; font-size:2vw;">Kryssing for <?php echo $beboer->getFulltNavn(); ?></h1><br/>
-<div class="container" style="text-align:center;">
+<h1 style="text-align: center; font-size:2vw;">Kryssing for <?php echo $beboer->getFulltNavn(); ?></h1>
+<hr>
+<div class="col-lg-12 text-centered" style="text-align:center;">
 <h1>
         <ul class="list-inline">
             <li><button class="btn btn-info btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
@@ -198,7 +199,6 @@ document.body.style.backgroundColor = '#5bc0de';
             <li><button class="btn btn-muted btn-lg" onclick="updateDrikkeid(1)">Pant</button></li>
         </ul>
     </h1>
-    <br/>
     <div id="showgrid">
         <div class="row">
             <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(1)">1</button></div>
@@ -220,12 +220,11 @@ document.body.style.backgroundColor = '#5bc0de';
             <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(0)">0</button></div>
         </div>
     </div>
-    <br/><hr>
+    <hr>
     <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss(<?php echo $beboer->getId(); ?>)"></button>
     <br/>
     <h1><a href="javascript:history.back()">TILBAKE</a></h1>
 </div>
-<hr>
 <?php
 
 require_once('bunn.php');
