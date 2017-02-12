@@ -32,6 +32,25 @@ require_once('topp.php');
         <?php }
         unset($error) ?>
 
+        <?php if (isset($_SESSION['error'])){ ?>
+        <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $_SESSION['msg']; ?>
+        </div>
+        <p></p>
+            <?php } elseif(isset($_SESSION['success'])){ ?>
+                <div class="alert alert-success fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $_SESSION['msg']; ?>
+        </div>
+        <p></p>
+        <?php
+            }
+            unset($_SESSION['msg']);
+            unset($_SESSION['error']);
+            unset($_SESSION['success']);
+            ?>
+
         <div class="col-md-12">
             <form action="" method="post" enctype="multipart/form-data">
                 <table class="table table-bordered table-responsive">

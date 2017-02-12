@@ -18,6 +18,7 @@ class KjellerCtrl extends AbstraktCtrl
         $dok = new Visning($this->cd);
         switch ($aktueltArg) {
             case 'leggtil':
+                $added = false;
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
@@ -33,19 +34,22 @@ class KjellerCtrl extends AbstraktCtrl
                             $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
                             move_uploaded_file($tmp_file, "vinbilder/" . $bildets_navn);
                             chmod("vinbilder/" . $bildets_navn, 0644);
-                            $this->insertVin(true, $bildets_navn);
+                            $added = $this->insertVin(true, $bildets_navn);
                         }
                     } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
                         && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
                     ) {
-                        $this->insertVin(false, null);
+                        $added = $this->insertVin(false, null);
                     } elseif (sizeof($post) > 0) {
                         $_SESSION['error'] = 1;
                         $_SESSION['msg'] = "Noe gikk galt.. Prøv på nytt";
                         $vintypene = Vintype::getAlle();
                     }
                 }
-
+                if($added){
+                    $_SESSION['success'] = 1;
+                    $_SESSION['msg'] = "La til vin i vårt sortiment!";
+                }
                 $dok->set('vintyper', $vintypene);
                 $dok->vis('kjeller_add.php');
                 break;
@@ -100,8 +104,18 @@ class KjellerCtrl extends AbstraktCtrl
                 $dok->vis('kjeller_admin.php');
                 break;
             case 'slettet_vin':
-                $vinene = Vin::getAlle();
                 $dok = new Visning($this->cd);
+                if(isset($_POST) && count($_POST) > 0){
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    if(isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) == 0){
+                        $st = DB::getDB()->prepare('DELETE FROM vin WHERE id=:id');
+                        $st->bindParam(':id', $post['slett']);
+                        $st->execute();
+                    } elseif(isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) != 0){
+                        $dok->set('tilbakemelding', "Kan ikke slette en vin som har blitt krysset!");
+                    }
+                }
+                $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
                 $dok->vis('kjeller_slettet_admin.php');
                 break;
@@ -115,7 +129,7 @@ class KjellerCtrl extends AbstraktCtrl
                         $beboeren = Beboer::medId($post['beboer']);
                         $vinen = Vin::medId($post['vin']);
 
-                        if ($vinen != null && $beboeren != null) {
+                        if ($vinen != null && $beboeren != null && ($vinen->getAntall() >= $post['antall'])) {
                             $prisen = $post['antall'] * $vinen->getPris() * $vinen->getAvanse();
                             $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall,tiden,fakturert,vinId,beboerId,prisen) VALUES(
                             :antall,:tiden,0,:vinId,:beboerId,:prisen)');
@@ -125,9 +139,21 @@ class KjellerCtrl extends AbstraktCtrl
                             $st->bindParam(':beboerId', $post['beboer']);
                             $st->bindParam(':prisen', $prisen);
                             $st->execute();
+
+                            $st_1 = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
+                            $st_1->bindParam(':id', $vinen->getId());
+                            $nytt_antall = $vinen->getAntall() - $post['antall'];
+                            $st_1->bindParam(':antall', $nytt_antall);
+                            $st_1->execute();
+
                             $string = "Du registrerte " . $post['antall'] . " vin med navn " . $vinen->getNavn() . " på " . $beboeren->getFulltNavn();
-                            $dok->set('tilbakemelding', 1);
-                            $dok->set('tilbakemeldingstring', $string);
+                            $_SESSION['success'] = 1;
+                            $_SESSION['msg'] = $string;
+                        }
+                        elseif($vinen->getAntall() < $post['antall']){
+                            $_SESSION['error'] = 1;
+                            $_SESSION['msg'] = "La ikke til regning! Du kan ikke krysse flere vin av denne typen enn det vi har i varebeholdningen!
+                            <br/>Det er forløpig igjen " . $vinen->getAntall() . " av vinen med navn " . $vinen->getNavn() . " og du forsøkte å krysse " . $post['antall'] . ".";
                         }
                     }
                 }
@@ -168,6 +194,10 @@ class KjellerCtrl extends AbstraktCtrl
 
                                 $st2 = DB::getDB()->prepare('INSERT INTO vin_fakturert () VALUES ()');
                                 $st2->execute();
+
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Fakturerte periode!";
+                                header('Location: ?a=kjeller/lister/beboere_vin');
                             }
 
                             $beboerlista = BeboerListe::aktive();
@@ -307,9 +337,17 @@ class KjellerCtrl extends AbstraktCtrl
                             $st->bindParam(':navn', $post['navn']);
                             $st->execute();
                         } elseif (isset($post['slett']) && is_numeric($post['slett'])) {
-                            $st = DB::getDB()->prepare('DELETE FROM vintype WHERE id=:id');
-                            $st->bindParam(':id', $post['slett']);
-                            $st->execute();
+                            if(Vintype::antallVinAvType($post['slett']) == 0){
+                                $st = DB::getDB()->prepare('DELETE FROM vintype WHERE id=:id');
+                                $st->bindParam(':id', $post['slett']);
+                                $st->execute();
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Slettet en vintype!";
+                            } else {
+                                $_SESSION['error'] = 1;
+                                $_SESSION['msg'] = "Du kan ikke slette en vintype som er assosiert med en vin!";
+                            }
+
                         }
                     }
                 }
@@ -325,7 +363,6 @@ class KjellerCtrl extends AbstraktCtrl
                         && Vin::medId($post['vin'])->getAntall() > 0 && isset($post['antall'])
                         && is_numeric($post['antall']) && Vin::medId($post['vin'])->getAntall() - $post['antall'] >= 0
                     ) {
-
                         $nytt_antall = Vin::medId($post['vin'])->getAntall() - $post['antall'];
                         $id = $post['vin'];
                         $st = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
@@ -338,6 +375,11 @@ class KjellerCtrl extends AbstraktCtrl
                         $st2->bindParam(':tid', $post['dato']);
                         $st2->bindParam(':vin_id', $post['vin']);
                         $st2->execute();
+
+                        $_SESSION['success'] = 1;
+                        $_SESSION['msg'] = "Registrerte svinn!<br/>Antall: " . $post['antall'] . "<br/> Navn: " . Vin::medId($post['vin'])->getNavn();
+                        header('Location: ?a=kjeller/svinn');
+                        exit();
                     }
                 }
                 $vinene = Vin::getAlle();
@@ -360,7 +402,11 @@ class KjellerCtrl extends AbstraktCtrl
 
                         $st->execute();
                         $st2->execute();
-                        header('Location: ?a=kjeller/admin');
+
+                        $vinen = Vin::medId($post['vin']);
+                        $_SESSION['success'] = 1;
+                        $_SESSION['msg'] = "Fylte på vinen med navn " . $vinen->getNavn() . ". Antaller vi har av disse er nå: " . $vinen->getAntall();
+                        header('Location: ?a=kjeller/pafyll');
                         exit();
                     }
                 }
@@ -389,6 +435,7 @@ class KjellerCtrl extends AbstraktCtrl
         $st->bindParam(':typeId', $post['type']);
         $st->bindParam(':beskrivelse', $post['beskrivelse']);
         $st->execute();
+        return true;
     }
 
     private function updateVin($medbilde = false, $bildenavn, $id)
@@ -405,6 +452,7 @@ class KjellerCtrl extends AbstraktCtrl
         $st->bindParam(':typeId', $post['type']);
         $st->bindParam(':beskrivelse', $post['beskrivelse']);
         $st->execute();
+        return true;
     }
 }
 

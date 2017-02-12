@@ -98,7 +98,7 @@ class Vin
     }
 
     public static function getAlle(){
-        $st = DB::getDB()->prepare('SELECT * FROM vin');
+        $st = DB::getDB()->prepare('SELECT * FROM vin ORDER BY navn ASC');
         $st->execute();
         $vinene = array();
         for($i = 0; $i < $st->rowCount(); $i++){

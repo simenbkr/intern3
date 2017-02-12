@@ -106,9 +106,9 @@ foreach ($vinkryss as $kryss){?>
 		}
 		?>
 		<tr>
-			<td>TOTALT</td>
-			<td><?php echo $antallet;?></td>
-			<td><?php echo $totalt;?>kr</td>
+			<td><b>TOTALT</b></td>
+			<td><b><?php echo $antallet;?></b></td>
+			<td><b><?php echo $totalt;?>kr</b></td>
 		</tr>
 	</table>
 </div>

@@ -45,4 +45,11 @@ class Vintype
         return $vintypene;
     }
 
+    public static function antallVinAvType($typeId){
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE typeId=:id');
+        $st->bindParam(':id', $typeId);
+        $st->execute();
+        return $st->rowCount();
+    }
+
 }
