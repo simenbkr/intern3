@@ -63,15 +63,26 @@ require_once ('topp.php');
     <hr>
     <div class="col-md-12">
         <div class="tilbakemelding">
-            <?php if(isset($tilbakemelding)){ ?>
-                <div class="alert alert-success" id="success" style="display:table; margin: auto; margin-top: 5%">
-                    <hr>
+            <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+                <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <?php echo $tilbakemeldingstring;?>
+                    <?php echo $_SESSION['msg']; ?>
                 </div>
                 <p></p>
-                <br/><br/>
-            <?php } ?>
+                <?php
+            } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+                <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            }
+            unset($_SESSION['success']);
+            unset($_SESSION['error']);
+            unset($_SESSION['msg']);
+            ?></div>
         </div>
         <form onSubmit="submitForm(); return false;" action="javascript:void(0);">
             <table class="table table-bordered table-responsive">

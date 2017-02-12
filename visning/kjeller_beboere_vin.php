@@ -23,6 +23,27 @@ require_once ('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ Fakturer ]</p>
     <hr>
+    <div class="tilbakemelding">
+        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <p></p>
+            <?php
+        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <p></p>
+            <?php
+        }
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
+        unset($_SESSION['msg']);
+        ?></div>
     <?php /*<b>Dette er IKKE-fakturerte!</b> <button class="btn btn-danger btn-sm" onclick="fakturer()">FAKTURER PERIODE</button><br/><br/> */?>
 
     <h4>Sett alle til fakturert: (dette kan ta opp til 10s)</h4>  (Ingen vei tilbake etter at du har trykket!)
@@ -51,7 +72,7 @@ require_once ('topp.php');
             <th>Beboer</th>
             <th>Vin</th>
             <th>Antall</th>
-            <th>Kostnad</th>
+            <th>Kostnad (ink mva)</th>
         </tr>
     <?php
     $antall = 0;

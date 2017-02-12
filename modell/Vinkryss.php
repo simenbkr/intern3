@@ -137,5 +137,12 @@ class Vinkryss
         return $objektene;
     }
 
+    public static function antallKryssVinId($vinId){
+        $st = DB::getDB()->prepare('SELECT * FROM vinkryss WHERE vinId=:vinid');
+        $st->bindParam(':vinid', $vinId);
+        $st->execute();
+        return $st->rowCount();
+    }
+
 
 }
