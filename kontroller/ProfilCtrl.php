@@ -153,11 +153,11 @@ class ProfilCtrl extends AbstraktCtrl
                 break;
             }
         } while (false);
-        if (!isset($_POST['adresse']) || !$_POST['adresse']) {
+        do {
+            if (!isset($_POST['adresse']) || !$_POST['adresse']) {
             $feil[] = 'Adresse mangler.';
             break;
         }
-        do {
             if (!isset($_POST['postnummer']) || !$_POST['postnummer']) {
                 $feil[] = 'Postnummer mangler.';
                 break;

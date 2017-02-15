@@ -16,14 +16,14 @@
         </tr>
         <?php
         foreach($vinene as $vin) {
-            if($vin == null || $vin->getAntall() == 0){
+            if($vin == null || round($vin->getAntall(),2) <= 0){
                 continue;
             }
             ?>
         <tr>
             <td><?php echo $vin->getNavn();?></td>
-            <td><?php echo $vin->getAntall();?></td>
-            <td><?php echo $vin->getPris();?></td>
+            <td><?php echo round($vin->getAntall(),2);?></td>
+            <td><?php echo round($vin->getPris(),2);?></td>
             <td><?php echo $vin->getType()->getNavn();?></td>
         </tr>
         <?php

@@ -45,7 +45,7 @@ require_once ('topp.php');
                 //$("#datepicker").replaceWith($('#datepicker', $(data)));
                 //$(".letsgo").replaceWith($('.letsgo', $(data)));
                 document.getElementById("antall").value = "";
-                document.getElementById("datepicker").value = "";
+                document.getElementById("datepicker").value = "<?php echo date('Y-m-d H:i:s');?>";
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -121,7 +121,7 @@ require_once ('topp.php');
                 <tr>
                     <td>Dato:</td>
                     <td>
-                        <input type="text" name="dato" id="datepicker"/>
+                        <input type="text" name="dato" id="datepicker" value="<?php echo date('Y-m-d H:i:s');?>"/>
                     </td>
                 </tr>
                 </div>

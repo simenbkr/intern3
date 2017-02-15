@@ -1,6 +1,8 @@
 <?php
 require_once ('topp.php');
 ?>
+    <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+    <script type="text/javascript" src="js/dataTables.js"></script>
     <script>
         function slett(id) {
             $.ajax({
@@ -18,6 +20,14 @@ require_once ('topp.php');
                 }
             });
         }
+
+        $(document).ready(function(){
+            $('#tabellen').DataTable({
+                "paging": false,
+                "searching": false
+            });
+
+        });
     </script>
 <div class="container">
 <h1>Kjellermester » Vinadministrasjon</h1>
@@ -25,20 +35,20 @@ require_once ('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
-    <table class="table table-bordered table-responsive">
-        <tr>
-            <th>Navn</th>
-            <th>Pris (innkjøp)</th>
-            <th>Avanse</th>
-            <th>Pris (beboere)</th>
-            <th>Antall</th>
-            <th>Svinn</th>
-            <th>Type</th>
-            <th>Beskrivelse</th>
-            <th>Bilde</th>
-            <th></th>
-        </tr>
-
+    <table id="tabellen" class="table table-bordered table-responsive" data-toggle="table">
+        <thead>
+            <th data-sortable="true">Navn</th>
+            <th data-sortable="true">Pris (innkjøp)</th>
+            <th data-sortable="true">Avanse</th>
+            <th data-sortable="true">Pris (beboere)</th>
+            <th data-sortable="true">Antall</th>
+            <th data-sortable="true">Svinn</th>
+            <th data-sortable="true">Type</th>
+            <th data-sortable="false">Beskrivelse</th>
+            <th data-sortable="false">Bilde</th>
+            <th data-sortable="false"></th>
+        </thead>
+        <tbody>
         <?php
         foreach($vinene as $vin){
             if($vin == null || !isset($vin) || $vin->erSlettet()){
@@ -50,7 +60,7 @@ require_once ('topp.php');
                 <td><?php echo round($vin->getPris(),2);?></td>
                 <td><?php echo round($vin->getAvanse(),2); ?></td>
                 <td><?php echo round($vin->getPris()*$vin->getAvanse(),2);?></td>
-                <td><?php echo $vin->getAntall();?></td>
+                <td><?php echo round($vin->getAntall(),2);?></td>
                 <td>
                     <?php echo $vin->getSvinn();?>
                 </td>
@@ -62,7 +72,8 @@ require_once ('topp.php');
             </tr>
             <?php
         } ?>
-
+        </tbody>
+        </table>
 </div>
 <?php
 require_once ('bunn.php');

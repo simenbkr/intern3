@@ -72,19 +72,37 @@ class KjellerCtrl extends AbstraktCtrl
                                 move_uploaded_file($tmp_file, "vinbilder/" . $bildets_navn);
                                 chmod("vinbilder/" . $bildets_navn, 0644);
                                 $this->updateVin(true, $bildets_navn, $vinen->getId());
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Du endra vinen med navn: " . $vinen->getNavn();
+                                header('Location: ' . $_GET['ref']);
+                                exit();
                             }
 
                         } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
                             && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
                         ) {
                             $this->updateVin(true, $vinen->getBilde(), $vinen->getId());
+                            $_SESSION['success'] = 1;
+                            $_SESSION['msg'] = "Du endra vinen med navn: " . $vinen->getNavn();
+                            header('Location: ' . $_GET['ref']);
+                            exit();
                         } elseif(isset($post['unslett']) && $vinen != null){
                             $st = DB::getDB()->prepare('UPDATE vin SET slettet=0 WHERE id=:id');
                             $st->bindParam(':id', $vinen->getId());
                             $st->execute();
+                            $_SESSION['success'] = 1;
+                            $_SESSION['msg'] = "Du unsletta vinen med navn: " . $vinen->getNavn();
+                            $vinene = Vin::getAlle();
+                            $dok->set('vinene', $vinene);
+                            $dok->vis('kjeller_slettet_admin.php');
+                            exit();
+                            //header('Location: ' . $_GET['ref']);
+                            //exit();
                         }
                     }
                     if ($vinen != null) {
+                        //Redeclare i tilfelle endringer.
+                        $vinen = Vin::medId($sisteArg);
                         $dok->set('vinen', $vinen);
                         $dok->set('vintyper', $vintypene);
                         $dok->vis('kjeller_endre_vin.php');
@@ -111,6 +129,8 @@ class KjellerCtrl extends AbstraktCtrl
                         $st = DB::getDB()->prepare('DELETE FROM vin WHERE id=:id');
                         $st->bindParam(':id', $post['slett']);
                         $st->execute();
+                        $_SESSION['success'] = 1;
+                        $_SESSION['msg'] = "Slettet vinen med navn " . $vinen->getNavn() . " permanent.";
                     } elseif(isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) != 0){
                         $dok->set('tilbakemelding', "Kan ikke slette en vin som har blitt krysset!");
                     }

@@ -1,6 +1,8 @@
 <?php
 require_once ('topp.php');
 ?>
+    <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+    <script type="text/javascript" src="js/dataTables.js"></script>
     <script>
         function unslett(id) {
             $.ajax({
@@ -9,12 +11,12 @@ require_once ('topp.php');
                 data: 'unslett=' + id,
                 method: 'POST',
                 success: function (html) {
-                    location.reload();
+                    $(".container").replaceWith($('.container', $(html)));
                     //$('#oppgave_' + id).html(data);
                     //location.reload();
                 },
                 error: function (req, stat, err) {
-                    alert(err);
+                    //alert(err);
                 }
             });
         }
@@ -37,6 +39,14 @@ require_once ('topp.php');
                 }
             });
         }
+
+        $(document).ready(function(){
+            $('#tabellen').DataTable({
+                "paging": false,
+                "searching": false
+            });
+
+        });
     </script>
     <div class="container">
         <h1>Kjellermester » Vinadministrasjon</h1>
@@ -51,8 +61,29 @@ require_once ('topp.php');
             </div>
             <p></p>
         <?php } unset($tilbakemelding) ?>
-        <table class="table table-bordered table-responsive">
-            <tr>
+        <div class="tilbakemelding">
+            <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+                <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+                <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            }
+            unset($_SESSION['success']);
+            unset($_SESSION['error']);
+            unset($_SESSION['msg']);
+            ?></div>
+        <table id="tabellen" class="table table-bordered table-responsive">
+            <thead>
                 <th>Navn</th>
                 <th>Pris (innkjøp)</th>
                 <th>Avanse</th>
@@ -63,8 +94,8 @@ require_once ('topp.php');
                 <th>Bilde</th>
                 <th></th>
                 <th></th>
-            </tr>
-
+            </thead>
+            <tbody>
             <?php
             foreach($vinene as $vin){
                 if($vin == null || !isset($vin) || !$vin->erSlettet()){
@@ -88,7 +119,8 @@ require_once ('topp.php');
                 </tr>
                 <?php
             } ?>
-
+            </tbody>
+            </table>
     </div>
 <?php
 require_once ('bunn.php');

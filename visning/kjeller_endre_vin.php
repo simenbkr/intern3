@@ -9,7 +9,7 @@ require_once ('topp.php');
             data: 'unslett=' + id,
             method: 'POST',
             success: function (data) {
-                location.reload();
+                //location.reload();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -23,6 +23,27 @@ require_once ('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
+    <div class="tilbakemelding">
+        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <p></p>
+            <?php
+        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <p></p>
+            <?php
+        }
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
+        unset($_SESSION['msg']);
+        ?></div>
     <form action="" method="post" enctype="multipart/form-data" onsubmit="setTimeout(function () { window.location.reload(); }, 10)">
         <table class="table table-bordered table-responsive">
             <tr>

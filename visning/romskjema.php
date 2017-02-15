@@ -39,7 +39,8 @@ if ($f->getBeskrivelse() <> null) {
 	if (count($rapporter) > 0) {
 		echo '		<p>Tidligere tilbakemeldinger:</p>' . PHP_EOL . '		<ul>' . PHP_EOL;
 		foreach ($rapporter as $r) {
-			echo '			<li>' . $r->getMerknad() . ' <span class="liten">(' . $r->getBruker()->getPerson()->getFulltNavn() . ', ' . $r->getTidOppretta() . ')</span></li>' . PHP_EOL;
+			$personen = ($r->getBruker() != null && $r->getBruker()->getPerson() != null) ? $r->getBruker()->getPerson()->getFulltNavn() : '';
+			echo '			<li>' . $r->getMerknad() . ' <span class="liten">(' . $personen . ', ' . $r->getTidOppretta() . ')</span></li>' . PHP_EOL;
 		}
 		echo '		</ul>' . PHP_EOL;
 	}

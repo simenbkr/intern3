@@ -91,7 +91,7 @@ require_once ('topp.php');
         </tr>
         <?php
         foreach($vin as $vin_krysset){
-            if($vin_krysset['aktuell_vin'] == null){
+            if($vin_krysset['aktuell_vin'] == null || round($vin_krysset['aktuell_vin'],2) <= 0){
                 continue;
             }
             $antall += $vin_krysset['antall'];
@@ -100,8 +100,8 @@ require_once ('topp.php');
             <tr>
                 <td></td>
                 <td><?php echo ($vin_krysset['aktuell_vin']) != null ? $vin_krysset['aktuell_vin']->getNavn() : '';?></td>
-                <td><?php echo $vin_krysset['antall'];?></td>
-                <td><?php echo $vin_krysset['kostnad'];?></td>
+                <td><?php echo round($vin_krysset['antall'],2);?></td>
+                <td><?php echo round($vin_krysset['kostnad'],2);?></td>
             </tr>
             <?php
 
@@ -113,8 +113,8 @@ require_once ('topp.php');
         <tr>
             <td><h2>TOTALT</h2></td>
             <td></td>
-            <td><?php echo $antall;?></td>
-            <td><?php echo $sum;?></td>
+            <td><?php echo round($antall,2);?></td>
+            <td><?php echo round($sum,2);?></td>
         </tr>
 </table>
 </div>
