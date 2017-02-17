@@ -130,26 +130,33 @@ class HelgaCtrl extends AbstraktCtrl
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
                             //Legg til gjest.
-                            if (Funk::isValidEmail($post['epost']) &&
-                                HelgaGjesteListe::getGjesteCountBeboer(LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar()) < $denne_helga->getMaxGjester()) {
-                                //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
-                                $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
+                            //getGjesteCountDagBeboer($dag, $beboerid,$aar){
+                            if (Funk::isValidEmail($post['epost'])) {
+                                if(HelgaGjesteListe::getGjesteCountDagBeboer($post['add'],LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar()) < $denne_helga->getMaxGjester()) {
+                                    //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
+                                    $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
                                 VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
-                                $nokkel = hash('sha512', $post['epost'] . $beboer_id . $post['add'] . time());
-                                $null = 0;
-                                $st->bindParam(':navn', $post['navn']);
-                                $st->bindParam(':aar', $aar);
-                                $st->bindParam(':epost', $post['epost']);
-                                $st->bindParam(':vert', $beboer_id);
-                                $st->bindParam(':inne', $null);
-                                $st->bindParam(':sendt_epost', $null);
-                                $st->bindParam(':dag', $post['add']);
-                                $st->bindParam(':nokkel', $nokkel);
-                                $st->execute();
+                                    $nokkel = hash('sha512', $post['epost'] . $beboer_id . $post['add'] . time());
+                                    $null = 0;
+                                    $st->bindParam(':navn', $post['navn']);
+                                    $st->bindParam(':aar', $aar);
+                                    $st->bindParam(':epost', $post['epost']);
+                                    $st->bindParam(':vert', $beboer_id);
+                                    $st->bindParam(':inne', $null);
+                                    $st->bindParam(':sendt_epost', $null);
+                                    $st->bindParam(':dag', $post['add']);
+                                    $st->bindParam(':nokkel', $nokkel);
+                                    $st->execute();
 
-                                \QRCode::png("http://intern.singsaker.no/?a=helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
+                                    \QRCode::png("http://intern.singsaker.no/?a=helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
+                                } else {
+                                    $_SESSION['error'] = 1;
+                                    $_SESSION['msg'] = "Du har nådd maks gjestekapasitet!";
+                                }
 
                             } else {
+                                $_SESSION['error'] = 1;
+                                $_SESSION['msg'] = "Ikke en gyldig epost-adresse!";
                                 $dok->set('epostError', 1);
                             }
                         }
