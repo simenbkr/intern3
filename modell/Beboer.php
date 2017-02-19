@@ -353,7 +353,7 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
-        $epost_preferanser = $st->fetchColumn();
+        $epost_preferanser = $st->fetchAll()[0];
 
         return $epost_preferanser['snart_vakt'] == 1;
     }
@@ -362,8 +362,7 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
-        $epost_preferanser = $st->fetchColumn();
-
+        $epost_preferanser = $st->fetchAll()[0];
         return $epost_preferanser['tildelt'] == 1;
     }
 
@@ -371,8 +370,7 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
-        $epost_preferanser = $st->fetchColumn();
-
+        $epost_preferanser = $st->fetchAll()[0];
         return $epost_preferanser['bytte'] == 1;
     }
 
@@ -380,8 +378,7 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
-        $epost_preferanser = $st->fetchColumn();
-
+        $epost_preferanser = $st->fetchAll()[0];
         return $epost_preferanser['utleie'] == 1;
     }
 
@@ -389,8 +386,7 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
-        $epost_preferanser = $st->fetchColumn();
-
+        $epost_preferanser = $st->fetchAll()[0];
         return $epost_preferanser['barvakt'] == 1;
     }
 
