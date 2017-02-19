@@ -26,6 +26,7 @@ foreach($harVakt as $beboer){
         }
     }
 }
+
 /* Slutt utsending av e-post til de som har vakt innen de neste 24t */
 
 /* Start utsending 24t til barvakt og barvakt er ledig! */
