@@ -138,7 +138,8 @@ class Beboer implements Person
         return $this->fodselsdato;
     }
 
-    public function getBilde(){
+    public function getBilde()
+    {
         return $this->bilde;
     }
 
@@ -167,7 +168,8 @@ class Beboer implements Person
         return $this->postnummer;
     }
 
-    public function getAnsiennitet(){
+    public function getAnsiennitet()
+    {
         return $this->ansiennitet;
     }
 
@@ -257,11 +259,12 @@ class Beboer implements Person
         return $this->romhistorikkObjekt;
     }
 
-    public function flyttUt(){
+    public function flyttUt()
+    {
         $romhistorikken = $this->romhistorikk;
         $som_array = json_decode($romhistorikken, true);
-        foreach($som_array as $key => $historikk){
-            if($historikk['utflyttet'] == null){
+        foreach ($som_array as $key => $historikk) {
+            if ($historikk['utflyttet'] == null) {
                 $som_array[$key]['utflyttet'] = date('Y-m-d');
             }
         }
@@ -284,9 +287,8 @@ class Beboer implements Person
         //Henter ut alle vakter for de neste 24 timene.
         $vakterInnenDogn = array();
         if ($this->harVakt()) {
-            $vakter = VaktListe::medBrukerId($this->getBrukerId());
-            foreach ($vakter as $vakt) {
-                if (time() <= strtotime($vakt->getDato()) + 86400) {
+            foreach (VaktListe::medBrukerId($this->brukerId) as $vakt) {
+                if (floor((strtotime($vakt->getDato()) - time()) / (60 * 60 * 24)) <= 1 && !$vakt->erFerdig()) {
                     $vakterInnenDogn[] = $vakt;
                 }
             }
@@ -302,7 +304,8 @@ class Beboer implements Person
         return $this->vervListe;
     }
 
-    public function erKjellerMester(){
+    public function erKjellerMester()
+    {
         $st = DB::getDB()->prepare('SELECT * FROM beboer_verv WHERE beboer_id=:id AND verv_id=45');
         $st->bindParam(':id', $this->id);
         $st->execute();
@@ -358,7 +361,8 @@ class Beboer implements Person
         return $epost_preferanser['snart_vakt'] == 1;
     }
 
-    public function vilHaTildeltVarsel(){
+    public function vilHaTildeltVarsel()
+    {
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
@@ -366,7 +370,8 @@ class Beboer implements Person
         return $epost_preferanser['tildelt'] == 1;
     }
 
-    public function vilHaBytteGiVarsel(){
+    public function vilHaBytteGiVarsel()
+    {
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
@@ -374,7 +379,8 @@ class Beboer implements Person
         return $epost_preferanser['bytte'] == 1;
     }
 
-    public function vilHaUtleieVarsel(){
+    public function vilHaUtleieVarsel()
+    {
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
@@ -382,7 +388,8 @@ class Beboer implements Person
         return $epost_preferanser['utleie'] == 1;
     }
 
-    public function vilHaBarvaktVarsel(){
+    public function vilHaBarvaktVarsel()
+    {
         $st = DB::getDB()->prepare('SELECT * from epost_pref WHERE beboer_id=:beboer_id');
         $st->bindParam(':beboer_id', $this->getId());
         $st->execute();
