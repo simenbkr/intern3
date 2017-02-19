@@ -137,7 +137,7 @@ class VaktCtrl extends AbstraktCtrl
                     }
                 }
                 //data: 'vaktbytte=5&fraId=' + fraId + '&tilId=' + tilId
-                //Legge til forslag for vaktbytte uten passord
+                //Legge til forslag for vaktbytte uten passord.
                 elseif (isset($post['vaktbytte']) && $post['vaktbytte'] == 5 && isset($post['fraId']) && isset($post['tilId'])) {
                     $fraVakt = Vakt::medId($post['fraId']);
                     $tilVakt = Vakt::medId($post['tilId']);
@@ -149,8 +149,10 @@ class VaktCtrl extends AbstraktCtrl
                             exit();
                         }
                         if (sizeof($forslag) == 0) {
+                            //Ingen forslag fra før av.
                             $forslag = $tilVakt->getId();
                         } else {
+                            //Har minst ett forslag fra før av.
                             $forslag[] = $tilVakt->getId();
                             $forslag = implode(',', array_filter($forslag));
                         }
@@ -161,7 +163,11 @@ class VaktCtrl extends AbstraktCtrl
 
                         $st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:vaktbytte_id WHERE id=:id');
                         $st2->bindParam(':id', $post['tilId']);
-                        $st2->bindParam(':vaktbytte_id', $vaktbyttet->getId());
+                        // $vaktbyttet_id = (($dummy = $tilVakt->getVaktbytteDenneErMedIId())[] = $vaktbyttet->getId());
+                        $vaktbyttet_id = $tilVakt->getVaktbytteDenneErMedIId();
+                        $vaktbyttet_id[] = $vaktbyttet->getId();
+                        $vaktbyttet_id = implode(',', array_filter($vaktbyttet_id));
+                        $st2->bindParam(':vaktbytte_id', $vaktbyttet_id);
                         $st2->execute();
 
                         $_SESSION['success'] = 1;
@@ -201,7 +207,11 @@ class VaktCtrl extends AbstraktCtrl
 
                         $st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:vaktbytte_id WHERE id=:id');
                         $st2->bindParam(':id', $post['tilId']);
-                        $st2->bindParam(':vaktbytte_id', $vaktbyttet->getId());
+                        //$vaktbyttet_id = (($dummy = $tilVakt->getVaktbytteDenneErMedIId())[] = $vaktbyttet->getId());
+                        $vaktbyttet_id = $tilVakt->getVaktbytteDenneErMedIId();
+                        $vaktbyttet_id[] = $vaktbyttet->getId();
+                        $vaktbyttet_id = implode(',', array_filter($vaktbyttet_id));
+                        $st2->bindParam(':vaktbytte_id', $vaktbyttet_id);
                         $st2->execute();
 
                         $_SESSION['success'] = 1;
@@ -230,14 +240,27 @@ class VaktCtrl extends AbstraktCtrl
                         $st3 = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');
                         $st3->bindParam(':id', $Vaktbyttet->getId());
 
+
+                        //Jesus mother fucking christ foreach loops fy faen fuck this shit man hvorfor har vi ikke bare
+                        //en egen mange-til-mange-tabell?! Because legacy before launch thats why bitch.
+                        foreach($Vaktbyttet->getForslagVakter() as $vakt){
+                            $vakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
+                        }
+                        foreach($fraVakt->getVaktbytteDenneErMedIId() as $id){
+                            Vaktbytte::medId($id)->slettForslag($fraVakt->getId());
+                        }
+                        foreach($tilVakt->getVaktbytteDenneErMedIId() as $id){
+                            Vaktbytte::medId($id)->slettForslag($tilVakt->getId());
+                        }
+                        $fraVakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
+                        $tilVakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
                         $st->execute();
                         $st2->execute();
                         $st3->execute();
 
+                       // $ting = "(id=" . implode(' OR id=', $Vaktbyttet->getForslagIder()) . ")";
 
-                        $ting = "(id=" . implode(' OR id=', $Vaktbyttet->getForslagIder()) . ")";
-
-                        DB::getDB()->query('UPDATE vakt SET vaktbytte_id=0 WHERE ' . $ting);
+                        //DB::getDB()->query('UPDATE vakt SET vaktbytte_id=0 WHERE ' . $ting);
 
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Du godtok en byttehandel - du ga bort " . $fraVakt->toString() . " og mottok
@@ -245,11 +268,12 @@ class VaktCtrl extends AbstraktCtrl
                     }
                 }
                 //data: 'vaktbytte=8&vaktbyttet=' + vaktbytte + '&vakt=' + vakt,
+                //Trekk et forslag fra et bytte.
                 elseif(isset($post['vaktbytte']) && $post['vaktbytte'] == 8 && isset($post['vaktbyttet']) && isset($post['vakt'])){
                     $vaktbyttet = Vaktbytte::medId($post['vaktbyttet']);
                     $vakta = Vakt::medId($post['vakt']);
 
-                    if($vakta != null && $vaktbyttet != null && $vakta->getVaktbytteDenneErMedIId() == $vaktbyttet->getId()
+                    if($vakta != null && $vaktbyttet != null && in_array($vaktbyttet->getId(), $vakta->getVaktbytteDenneErMedIId())
                     && LogginnCtrl::getAktivBruker()->getPerson()->getId() == $vakta->getBruker()->getPerson()->getId()){
                         $nye_forslag = array();
                         foreach($vaktbyttet->getForslagIder() as $id){
@@ -264,9 +288,10 @@ class VaktCtrl extends AbstraktCtrl
                         $st->bindParam(':id', $vaktbyttet->getId());
                         $st->execute();
 
-                        $st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=NULL WHERE id=:id');
-                        $st2->bindParam(':id', $vakta->getId());
-                        $st2->execute();
+                        $vakta->slettVaktbytteIdFraInstans($vaktbyttet->getId());
+                        //$st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:vakt_bytte WHERE id=:id');
+                        //$st2->bindParam(':id', $vakta->getId());
+                        //$st2->execute();
 
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Du trakk vakta di fra vaktbyttet!";
@@ -277,7 +302,11 @@ class VaktCtrl extends AbstraktCtrl
             $egne_vakter_vaktbytter = array();
             foreach(VaktListe::medBrukerId(LogginnCtrl::getAktivBruker()->getId()) as $vakt){
                 if(!$vakt->erFerdig() && $vakt->getBytte()){
-                    $egne_vakter_vaktbytter[] = Vaktbytte::medId($vakt->getVaktbytteDenneErMedIId());
+                    //$egne_vakter_vaktbytter[] = Vaktbytte::medId($vakt->getVaktbytteDenneErMedIId());
+                    //foreach($vakt->getVaktbytteDenneErMedIId() as $id){
+                      //  $egne_vakter_vaktbytter[] = Vaktbytte::medId($id);
+                    //}
+                    $egne_vakter_vaktbytter[] = Vaktbytte::medVaktId($vakt->getId());
                 }
             }
             $dok->set('egne_vakter_vaktbytter', $egne_vakter_vaktbytter);

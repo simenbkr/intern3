@@ -1,6 +1,6 @@
 <?php
 require_once('topp.php');
-
+$jeg_er_dum = array(0 => 'torsdag', 1 => 'fredag', '2' => 'lordag');
 $dag_array = array(
     0 => 'Torsdag',
     1 => 'Fredag',
@@ -25,7 +25,7 @@ switch ($dag_tall) {
         function registrer(id, verdi) {
             $.ajax({
                 type: 'POST',
-                url: '?a=helga/inngang',
+                url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                 data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
                 method: 'POST',
                 success: function (html) {
@@ -47,7 +47,7 @@ switch ($dag_tall) {
         function refresh(){
             $.ajax({
                 type: 'GET',
-                url: '?a=helga/inngang',
+                url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                 method: 'GET',
                 success: function (html) {
                     $(".container").replaceWith($('.container', $(html)));
@@ -59,12 +59,13 @@ switch ($dag_tall) {
         }
         setInterval(function(){
             refresh()
-        }, 5000);
+        }, 3000);
     </script>
     <div class="container">
 
         <h1><?php echo $side_tittel; ?></h1>
         <h3><?php echo $undertittel; ?></h3>
+        <h4>I dag er det invitert <b><?php echo $antall_inviterte;?></b>, og det er <b><?php echo $antall_inne;?></b> inne nå.</h4>
         <br/>
         <h4>Registrer folk</h4>
         <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="gjester" onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>

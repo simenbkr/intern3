@@ -136,5 +136,22 @@ class Vaktbytte
     public function erVaktMedIByttet($vaktId){
         return in_array(Vakt::medId($vaktId), $this->forslagVaktListe);
     }
+
+    public function slettForslag($vakt_id){
+        if(in_array($vakt_id, $this->forslag)){
+            $nye_forslag = array();
+            foreach($this->forslag as $id){
+                if ($id != $vakt_id){
+                    $nye_forslag[] = $id;
+                }
+            }
+            $nye_forslag = implode(',', array_filter($nye_forslag));
+            $st = DB::getDB()->prepare('UPDATE vaktbytte SET forslag=:forslag WHERE id=:id');
+            $st->bindParam(':forslag', $nye_forslag);
+            $st->bindParam(':id', $this->id);
+            $st->execute();
+        }
+    }
+
 }
 ?>

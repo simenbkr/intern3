@@ -81,12 +81,16 @@ class HelgaCtrl extends AbstraktCtrl
                                 $dag = 0;
                                 $dok->set('dag_tall', 0);
                         }
+                        $antall_inne = $denne_helga->getAntallInnePerDag()[$dagen];
+                        $antall_inviterte = $denne_helga->getAntallPerDag()[$dagen];
                         $gjesteliste_dag = HelgaGjesteListe::getGjesterUngrouped($denne_helga->getAar(), $dag);
                         $gjesteliste_dag_gruppert = HelgaGjesteListe::getGjesterGroupedbyHost($denne_helga->getAar(), $dag);
                         $beboerlista = array();
                         foreach (BeboerListe::aktive() as $beboer) {
                             $beboerlista[$beboer->getId()] = $beboer;
                         }
+                        $dok->set('antall_inne', $antall_inne);
+                        $dok->set('antall_inviterte', $antall_inviterte);
                         $dok->set('gjesteliste_dag', $gjesteliste_dag);
                         $dok->set('gjesteliste_dag_gruppert', $gjesteliste_dag_gruppert);
                         //$dok->set('gjestelista', $gjestelista);

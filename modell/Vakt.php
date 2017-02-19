@@ -54,7 +54,7 @@ class Vakt
         $instance->autogenerert = $rad['autogenerert'];
         $instance->dobbelvakt = $rad['dobbelvakt'];
         $instance->straffevakt = $rad['straffevakt'];
-        $instance->vaktbytteDenneErMedI = $rad['vaktbytte_id'];
+        $instance->vaktbytteDenneErMedI = explode(',', $rad['vaktbytte_id']);
         return $instance;
     }
 
@@ -147,6 +147,40 @@ class Vakt
                 break;
         }
         return $tid <= $_SERVER['REQUEST_TIME'];
+    }
+
+    public function getVaktbytteDenneErMedIId()
+    {
+        //Array med ider f.eks array(1,2,3,).
+        return is_array($this->vaktbytteDenneErMedI) ? $this->vaktbytteDenneErMedI : array();
+    }
+
+    public function slettVaktbytteIdFraInstans($vaktbytte_id){
+        if(in_array($vaktbytte_id, $this->getVaktbytteDenneErMedIId())){
+            $nytt_vaktbytte_med_i = array();
+            foreach($this->getVaktbytteDenneErMedIId() as $id){
+                if($id != $vaktbytte_id){
+                    $nytt_vaktbytte_med_i[] = $id;
+                }
+            }
+            if(count($nytt_vaktbytte_med_i) <= 0){
+                $nytt_vaktbytte_med_i = '';
+            } else {
+                $nytt_vaktbytte_med_i = implode(',', array_filter($nytt_vaktbytte_med_i));
+            }
+            $st = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:nytt_vaktbytte WHERE id=:id');
+            $st->bindParam(':nytt_vaktbytte', $nytt_vaktbytte_med_i);
+            $st->bindParam(':id', $this->id);
+            $st->execute();
+        }
+    }
+
+    public function toString()
+    {
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+        return $this->getVakttype() . ". vakt " . $df->format(strtotime($this->getDato()));
     }
 
     public static function antallVakter()
@@ -248,19 +282,6 @@ class Vakt
         $st->execute();
         $res = $st->fetch();
         return $res['antall'];
-    }
-
-    public function getVaktbytteDenneErMedIId()
-    {
-        return $this->vaktbytteDenneErMedI;
-    }
-
-    public function toString()
-    {
-        $df = new \IntlDateFormatter('nb_NO',
-            \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
-            'Europe/Oslo');
-        return $this->getVakttype() . ". vakt " . $df->format(strtotime($this->getDato()));
     }
 
     public static function settVakt($brukerId, $vaktId)

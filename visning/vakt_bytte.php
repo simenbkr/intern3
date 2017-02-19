@@ -429,11 +429,11 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                         <?php //visDineVakter(false);
                                                         if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
                                                             foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                                if ($vakt == null || $vakt->erFerdig() || ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())) {
+                                                                if ($vakt == null || $vakt->erFerdig() /*|| ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())*/) {
                                                                     continue;
                                                                 }
                                                                 $tid = strtotime($vakt->getDato());
-                                                                if ($vakt->getVaktbytteDenneErMedIId() == $vaktbytte->getId()) {
+                                                                if (in_array($vaktbytte->getId(), $vakt->getVaktbytteDenneErMedIId())) {
                                                                     $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
                                                                     ?>
                                                                     <tr>
@@ -444,8 +444,8 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                                         </td>
                                                                     </tr>
                                                                     <?php
-                                                                } elseif ($vakt->getVaktbytteDenneErMedIId() != 0 && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId()) {
-                                                                    continue;
+                                                                /*} elseif (false && count($vakt->getVaktbytteDenneErMedIId()) != 0 && !in_array($vaktbytte->getId(),$vakt->getVaktbytteDenneErMedIId())) {
+                                                                    //continue;*/
                                                                 } else {
                                                                     $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
                                                                     ?>
@@ -471,12 +471,12 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                         <?php
                                                         if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
                                                             foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                                if ($vakt == null || $vakt->erFerdig() || ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())) {
+                                                                if ($vakt == null || $vakt->erFerdig() /*|| ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())*/) {
                                                                     continue;
                                                                 }
                                                                 $tid = strtotime($vakt->getDato());
                                                                 $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
-                                                                if ($vakt->getVaktbytteDenneErMedIId() == $vaktbytte->getId()) { ?>
+                                                                if (in_array($vaktbytte->getId(), $vakt->getVaktbytteDenneErMedIId())) { ?>
                                                                     <tr>
                                                                         <td>
                                                                             <input class="btn btn-danger" type="button"

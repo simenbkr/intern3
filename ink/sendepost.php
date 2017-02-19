@@ -3,8 +3,8 @@
 namespace intern3;
 
 require_once("autolast.php");
-$df = new IntlDateFormatter('nb_NO',
-    IntlDateFormatter::TRADITIONAL, IntlDateFormatter::NONE,
+$df = new \IntlDateFormatter('nb_NO',
+    \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
     'Europe/Oslo');
 
 /* Start utsending av e-post til de som har vakt innen de neste 24t */
@@ -16,7 +16,7 @@ foreach($harVakt as $beboer){
         $vakterInnenDogn = $beboer->getVakterInnenDogn();
 
         foreach($vakterInnenDogn as $vakt){
-            $beskjed = "<html><body>Hei!<br/>Du har snart vakt! Du skal ha vakt " . $vakt->getDato() . "<br/>Dette er " . $vakt->getVakttype();
+            $beskjed = "<html><body>Hei!<br/>Du har snart vakt! Du skal ha " . $vakt->toString() . "<br/>";
             $beskjed .= "<br/><br/> Med vennlig hilsen <br/>Robottene ved Internsidene";
             $beskjed .= "<br/><br/>Hvis denne e-posten er sendt feil, vennligst ta kontakt med data@singsaker.no</body></html>";
             $epost = new \intern3\Epost($beskjed);
@@ -29,7 +29,7 @@ foreach($harVakt as $beboer){
 /* Slutt utsending av e-post til de som har vakt innen de neste 24t */
 
 /* Start utsending 24t til barvakt og barvakt er ledig! */
-
+/*
 foreach(Utleie::getUtleierFremover() as $utleiet){
     $utleie_dato = $utleiet->getDato();
     $dagens_dato = date('Y-m-d');
@@ -48,5 +48,5 @@ foreach(Utleie::getUtleierFremover() as $utleiet){
             ", " . $df->format($utleiet->getDato()) . " i " . $utleiet->getRom() . "<br/><br/><br/></html>";
         Epost::sendEpost($mottakere,$tittel,$tekst);
     }
-}
+}*/
 /* Slutt utsending 24t til barvakt og barvakt er ledig! */

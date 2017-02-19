@@ -121,6 +121,36 @@ class Helga
         return $antall_per_dag;
     }
 
+    public function getAntallInnePerDag(){
+        $antall_per_dag = array(
+            'torsdag' => 0,
+            'fredag' => 0,
+            'lordag' => 0
+        );
+
+        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE aar=:aar');
+        $st->bindParam(':aar', $this->aar);
+        $st->execute();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $rad = $st->fetch();
+            if($rad['inne'] == 0){
+                continue;
+            }
+            switch($rad['dag']){
+                case 0:
+                    $antall_per_dag['torsdag']++;
+                    break;
+                case 1:
+                    $antall_per_dag['fredag']++;
+                    break;
+                case 2:
+                    $antall_per_dag['lordag']++;
+            }
+        }
+        return $antall_per_dag;
+    }
+
     public function getAar()
     {
         return $this->aar;
