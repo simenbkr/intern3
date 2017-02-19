@@ -1,7 +1,7 @@
 <?php
 require_once('topp.php');
 $ledige = $max_gjeste_count - $gjeste_count;
-
+$jeg_er_dum = array(0 => 'torsdag', 1 => 'fredag', '2' => 'lordag');
 $dag_array = array(
     0 => 'Torsdag',
     1 => 'Fredag',
@@ -45,7 +45,7 @@ switch($dag_tall) {
     function fjern(id, dag) {
         $.ajax({
             type: 'POST',
-            url: '?a=helga',
+            url: '?a=helga/<?php echo $jeg_er_dum[$dag_tall];?>',
             data: 'fjern=fjern&gjestid=' + id + "&dag=" + dag,
             method: 'POST',
             success: function (html) {
@@ -61,7 +61,7 @@ switch($dag_tall) {
     function send_epost(id) {
         $.ajax({
             type: 'POST',
-            url: '?a=helga',
+            url: '?a=helga/<?php echo $jeg_er_dum[$dag_tall];?>',
             data: 'send=send&gjestid=' + id,
             method: 'POST',
             success: function (html) {
