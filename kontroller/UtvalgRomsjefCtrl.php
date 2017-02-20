@@ -121,6 +121,11 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $epost->addBrukerId($bruker_id);
                 $epost->send($tittel);
 
+                $beboer_id = Beboer::medBrukerId($bruker_id)->getId();
+                $st_1 = DB::getDB()->prepare('INSERT INTO epost_pref (beboer_id,tildelt,snart_vakt,bytte,utleie,barvakt) VALUES(:id,1,1,1,1,1)');
+                $st_1->bindParam(':id', $beboer_id);
+                $st_1->execute();
+
             }
 
             $dok->vis('utvalg_romsjef_nybeboer.php');
