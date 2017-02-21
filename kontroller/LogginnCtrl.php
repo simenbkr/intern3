@@ -71,9 +71,10 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
 <br/>Singsaker Studenterhjem<br/><br/>(Dette var en automagisk beskjed. Feil? Ta kontakt med datagutta!)</body></html>";
 
                 $tittel = "[SING-INTERN] Ditt passord har blitt resatt.";
-                $sendEpost = new Epost($beskjed);
-                $sendEpost->addBrukerId($bruker_id);
-                $sendEpost->send($tittel);
+                Epost::sendEpost($aktuellBruker->getPerson()->getEpost(), $tittel, $beskjed);
+                //$sendEpost = new Epost($beskjed);
+                //$sendEpost->addBrukerId($bruker_id);
+                //$sendEpost->send($tittel);
                 $dok->set('epostSendt', 1);
             }
         }

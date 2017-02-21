@@ -48,7 +48,8 @@ class Bruker {
 	}
 
 	public function passordErGyldig($passord) {
-		return $passord == $this->passord;
+		//MÅ bruke === og ikke == da == er en shitty operator i denne situasjonen. TODO test at funker.
+		return $passord === $this->passord;
 	}
 
 	public function getPerson() {
