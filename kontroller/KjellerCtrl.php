@@ -312,7 +312,7 @@ class KjellerCtrl extends AbstraktCtrl
                                     'vin' => '');
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
-                                    if (!in_array($vin_kryss->getVinId(), $vin_array)) {
+                                    if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
                                         $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
