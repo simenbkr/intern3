@@ -19,11 +19,11 @@
     </tr>
     <?php for($i = 0; $i < count($beboerliste) ; $i+=2){ ?>
     <tr>
-        <td class="navn"><?php echo $beboerliste[$i]->getFulltNavn();?></td>
+        <td class="navn"><?php echo ($beboerliste[$i] != null) ? $beboerliste[$i]->getFulltNavn() : '';?></td>
         <td class="antall"></td>
         <td class="sum"></td>
         <td class="tom"></td>
-        <td class="navn"><?php echo $beboerliste[$i+1]->getFulltNavn();?></td>
+        <td class="navn"><?php echo ($beboerliste[$i] != null) ? $beboerliste[$i+1]->getFulltNavn() : '';?></td>
         <td class="antall"></td>
         <td class="sum"></td>
     </tr>
