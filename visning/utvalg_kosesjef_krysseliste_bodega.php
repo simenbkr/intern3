@@ -23,7 +23,7 @@
         <td class="antall"></td>
         <td class="sum"></td>
         <td class="tom"></td>
-        <td class="navn"><?php echo ($beboerliste[$i] != null) ? $beboerliste[$i+1]->getFulltNavn() : '';?></td>
+        <td class="navn"><?php echo ($beboerliste[$i+1] != null) ? $beboerliste[$i+1]->getFulltNavn() : '';?></td>
         <td class="antall"></td>
         <td class="sum"></td>
     </tr>
