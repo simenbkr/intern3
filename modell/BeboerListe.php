@@ -32,6 +32,16 @@ class BeboerListe
         return $ikke_aktive;
     }
 
+    public static function aktiveMedAlko(){
+        $lista = array();
+        foreach(self::aktive() as $beboer){
+            if ($beboer->harAlkoholdepositum()){
+                $lista[] = $beboer;
+            }
+        }
+        return $lista;
+    }
+
     public static function medBursdag($dato)
     {
         $ikkeUtflyttet = '%"utflyttet":NULL%';

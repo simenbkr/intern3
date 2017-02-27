@@ -76,7 +76,14 @@ class UtvalgKosesjefCtrl extends AbstraktCtrl
             $utleier = Utleie::getUtleierFremover();
             $dok->set('utleier', $utleier);
             $dok->vis('utvalg_kosesjef_utleie.php');
-        } else {
+        }
+        elseif( $aktueltArg == 'krysseliste' ){
+            $beboerliste = BeboerListe::aktiveMedAlko();
+            $dok = new Visning($this->cd);
+            $dok->set('beboerliste', $beboerliste);
+            $dok->vis('utvalg_kosesjef_krysseliste_bodega.php');
+        }
+        else {
             $dok = new Visning($this->cd);
             $dok->vis('utvalg_kosesjef.php');
         }
