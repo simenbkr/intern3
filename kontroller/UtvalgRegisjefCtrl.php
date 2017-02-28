@@ -49,7 +49,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         // foreach($post as $key => $val){setcookie($key,$val);}
                         if (isset($_POST['registrer'])) {
-                            $feil = $this->registrerArbeid();
+                            $feil = $this->registrerArbeid($beboeren->getBrukerId());
                             if (count($feil) == 0) {
                                 header('Location: ' . $_SERVER['REQUEST_URI']);
                                 exit();
@@ -88,7 +88,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
     }
 
 
-    private function registrerArbeid()
+    private function registrerArbeid($bruker_id)
     {
         $feil = $this->godkjennArbeid();
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -102,7 +102,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                 'kommentar' => ':kommentar'
             );
             $parametre = array(
-                ':bruker_id' => $this->cd->getAktivBruker()->getId(),
+                ':bruker_id' => $bruker_id,
                 ':polymorfkategori_id' => $post['polymorfkategori_id'][$post['polymorfkategori_velger']],
                 ':polymorfkategori_velger' => $this->getPolymorfkategoriVelger(),
                 ':sekunder_brukt' => $this->getSekunderBrukt(),
