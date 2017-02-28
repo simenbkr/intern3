@@ -42,6 +42,16 @@ class BeboerListe
         return $lista;
     }
 
+    public static function aktiveMedRegi(){
+        $lista = array();
+        foreach(self::aktive() as $beboer){
+            if($beboer->getRolle()->getRegitimer() > 0){
+                $lista[] = $beboer;
+            }
+        }
+        return $lista;
+    }
+
     public static function medBursdag($dato)
     {
         $ikkeUtflyttet = '%"utflyttet":NULL%';

@@ -277,6 +277,12 @@ class Beboer implements Person
         $st->execute();
     }
 
+    public function getVakterOgVakterSittet(){
+        $antall_vakter = 0;
+        $antall_sittet = 0;
+
+    }
+
     public function harVakt()
     {
         return $this->getRolle()->getRegitimer() < 48;

@@ -28,7 +28,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-  print_r($_COOKIE);
+  //print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
 	/* Meny start */
@@ -167,6 +167,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/arbeid">Arbeid</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/oppgave">Oppgave</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/registatus">Registatus</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/leggtilarbeid">Legg til arbeid</a></li>
                 </ul>
               </li>
             </ul>

@@ -33,6 +33,7 @@ $df = new IntlDateFormatter('nb_NO',
             ?></span>, <span class="tekst_ledigevakter">Ønsker å bytte</span>
     <?php if(count($egne_vakter) > 0){ ?>
     <div class="col-md-6">
+        <b>Du har sittet <?php echo $cd->getAktivBruker()->antallVakterHarSittet();?> vakter og skal sitte totalt <?php echo $cd->getAktivBruker()->antallVakterSkalSitte();?> vakter.</b>
         <h3>Dine vakter:</h3>
         <table class="table table-responsive table-bordered">
             <?php

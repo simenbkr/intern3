@@ -1,28 +1,7 @@
 <?php
-
-require_once('topp.php');
-
+require_once ('topp_utvalg.php');
 ?>
-
-<div class="col-md-12">
-    <h1>Regi &raquo; Min regi</h1>
-</div>
-
 <script>
-    function slett(id) {
-        $.ajax({
-            type: 'POST',
-            url: '?a=regi/minregi',
-            data: 'slett=1' + '&arbeid=' + id,
-            method: 'POST',
-            success: function (html) {
-                $(".container").replaceWith($('.container', $(html)));
-            },
-            error: function (req, stat, err) {
-                alert(err);
-            }
-        });
-    }
 
     function byttPolymorfkategori(id) {
         $('#polymorfkategori_ymse').hide();
@@ -47,22 +26,13 @@ require_once('topp.php');
     $(document).ready(function () {
         byttPolymorfkategori('<?php echo isset($_POST['polymorfkategori_velger']) ? $_POST['polymorfkategori_velger'] : 'ymse'; ?>');
     });
-
 </script>
-
-<div class="col-md-6 col-sm-12">
-    <?php
-
-    if (count($feil) > 0) {
-        echo '	<ul style="color: #900;">' . PHP_EOL;
-        foreach ($feil as $pkt) {
-            echo '		<li>' . $pkt . '</li>' . PHP_EOL;
-        }
-        echo '	</ul>' . PHP_EOL;
-    }
-
-    ?>
+<div class="container">
+    <h1>Utvalget » Regisjef » Legg til regi for <b><?php echo $beboeren->getFulltNavn();?></b></h1>
+    <hr>
+    <p>Legg til strafferegi ved å velge strafferegi fra kategori og legge inn en (positiv) verdi i tid brukt enten på form time:sekund eller time som desimaltall.</p>
     <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+        <div class="col-md-8 table-responsive">
         <table class="table table-bordered">
             <tr>
                 <th>Tilhørighet</th>
@@ -186,24 +156,22 @@ require_once('topp.php');
         </table>
     </form>
 </div>
-
-<div class="col-md-6 col-sm-12">
-    <table class="table table-bordered">
-        <tr>
-            <th>Godkjente regitimer</th>
-            <td><?php echo intern3\Funk::timerTilTidForm($regitimer[1]); ?></td>
-        </tr>
-        <tr>
-            <th>Avventer godkjenning</th>
-            <td><?php echo intern3\Funk::timerTilTidForm($regitimer[0]); ?></td>
-        </tr>
-        <tr>
-            <th>Antall regitimer du skal gjøre:</th>
-            <td><?php echo \intern3\LogginnCtrl::getAktivBruker()->getPerson()->getRolle()->getRegitimer();?></td>
-        </tr>
-    </table>
-</div>
-<div class="container">
+    <div class="col-md-3">
+        <table class="table table-bordered">
+            <tr>
+                <th>Godkjente regitimer</th>
+                <td><?php echo intern3\Funk::timerTilTidForm($regitimer[1]); ?></td>
+            </tr>
+            <tr>
+                <th>Avventer godkjenning</th>
+                <td><?php echo intern3\Funk::timerTilTidForm($regitimer[0]); ?></td>
+            </tr>
+            <tr>
+                <th>Antall regitimer beboeren skal gjøre:</th>
+                <td><?php echo $beboeren->getRolle()->getRegitimer();?></td>
+            </tr>
+        </table>
+    </div>
     <div class="col-md-12 table-responsive">
         <table class="table table-striped table-hover">
             <thead>
@@ -236,8 +204,7 @@ require_once('topp.php');
         </table>
     </div>
 </div>
+</div>
 <?php
-
-require_once('bunn.php');
-
+require_once ('bunn.php');
 ?>
