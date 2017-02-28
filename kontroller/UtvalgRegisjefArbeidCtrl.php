@@ -59,7 +59,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
         }
         $godkjent = $underkjenn == '' || $underkjenn == '0' ? 1 : 0;
         $godkjentBrukerId = $this->cd->getAktivBruker()->getId();
-        $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=:godkjent,godkjent_bruker_id=:godkjent_bruker_id,tid_godkjent=CURRENT_TIME WHERE id=:id;');
+        $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=:godkjent,godkjent_bruker_id=:godkjent_bruker_id,tid_godkjent=CURRENT_TIMESTAMP WHERE id=:id;');
         $st->bindParam(':godkjent', $godkjent);
         $st->bindParam(':godkjent_bruker_id', $godkjentBrukerId);
         $st->bindParam(':id', $id);
