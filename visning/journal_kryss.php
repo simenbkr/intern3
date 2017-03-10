@@ -1,7 +1,13 @@
 <?php
-require_once ('topp_journal.php');
-require_once ('topp.php');
+require_once('topp_journal.php');
+require_once('topp.php');
+
+
+if ($beboer == null || !$beboer->harAlkoholdepositum()) {
+    header('Location: ?a=journal/krysseliste');
+}
 ?>
+
 <script>
     window.onload = function () {
         changeKnapp();
@@ -16,7 +22,6 @@ require_once ('topp.php');
 
     var teller = 0;
     var forrige = -1;
-
     function updateCount(num) {
         if (teller == 0) {
             count = num;
@@ -25,7 +30,7 @@ require_once ('topp.php');
             temp = count.toString() + num.toString();
             count = parseInt(temp);
 
-            if (count > 100 || count < -100) {
+            if (count > 48 || count < -48) {
                 count = 0;
                 teller = 0;
             }
@@ -78,23 +83,22 @@ require_once ('topp.php');
             klassen.style.display = "none";
         }
         else if (count < 0) {
-            klassen.innerHTML = "Ta ut " + -count + " " + drikker[drikkeid] + " (jeg krysset feil)";
+            klassen.innerHTML = "Fjern " + -count + " " + drikker[drikkeid];
         }
         else {
-            klassen.innerHTML = "Fyll på " + count + " " + drikker[drikkeid];
+            klassen.innerHTML = "Kryss " + count + " " + drikker[drikkeid];
             klassen.style.display = "block"
         }
     }
 
-
-    function kryss() {
+    function kryss(beboerId) {
         $.ajax({
             type: 'POST',
-            url: '?a=journal/pafyll/',
-            data: "pafyll=1&antall=" + count + "&type=" + drikkeid,
+            url: '?a=journal/kryssing/',
+            data: 'beboerId=' + beboerId + "&antall=" + count + "&type=" + drikkeid,
             method: 'POST',
-            success: function (html) {
-                $('body').html(html);
+            success: function (data) {
+                history.back();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -191,79 +195,86 @@ require_once ('topp.php');
 
 
 </style>
-    <h1 style="text-align: center; font-size:2vw;">Påfyll for <?php echo $vaktSesj->getVaktnr();?>. vakt: <?php echo $vakta->getFulltNavn() . " "; echo date('Y-m-d', strtotime($vaktSesj->getDato()));?></h1><br/>
-    <div class="container" id="container" style="text-align:center;">
-        <?php
-        if (isset($pafylt)){
-            ?>
-            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Du fylte på! Wooohoo!
-            </div><br/>
+
+<h1 style="text-align: center; font-size:2vw;">Kryssing for <?php echo $beboer->getFulltNavn(); ?></h1>
+<hr>
+<div class="col-lg-12 text-centered" style="text-align:center;">
+    <h1>
+        <ul class="list-inline">
             <?php
-            unset($pafylt);
-        }?>
-        <h1>
-            <ul class="list-inline">
+            $knapp_klasser = array('btn-muted', 'btn-info', 'btn-warning', 'btn-success', 'btn-danger');
+            $neste_klasse = 0;
+            foreach ($drikker as $drikke) {
+                if(!$drikke->getAktiv()){
+                    continue;
+                }
+                /*<li><button class="btn btn-info btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
+                <li><button class="btn btn-warning btn-lg" onclick="updateDrikkeid(3)">Cider</button></li>
+                <li><button class="btn btn-success btn-lg" onclick="updateDrikkeid(4)">Carlsberg</button></li>
+                <li><button class="btn btn-danger btn-lg" onclick="updateDrikkeid(5)">Rikdom</button></li>
+                <li><button class="btn btn-muted btn-lg" onclick="updateDrikkeid(1)">Pant</button></li>*/
+                ?>
+                <li>
+                    <button class="btn btn-lg <?php echo $knapp_klasser[$neste_klasse]; ?>"
+                            onclick="updateDrikkeid(<?php echo $drikke->getId(); ?>)"><?php echo $drikke->getNavn(); ?></button>
+                </li>
                 <?php
-                $knapp_klasser = array('btn-muted', 'btn-info', 'btn-warning', 'btn-success', 'btn-danger');
-                $neste_klasse = 0;
-                foreach ($drikker as $drikke) {
-                    if($drikke->getId() == 1) {continue;}
-                    /*<li><button class="btn btn-info btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
-                    <li><button class="btn btn-warning btn-lg" onclick="updateDrikkeid(3)">Cider</button></li>
-                    <li><button class="btn btn-success btn-lg" onclick="updateDrikkeid(4)">Carlsberg</button></li>
-                    <li><button class="btn btn-danger btn-lg" onclick="updateDrikkeid(5)">Rikdom</button></li>
-                    <li><button class="btn btn-muted btn-lg" onclick="updateDrikkeid(1)">Pant</button></li>*/
-                    ?>
-                    <li>
-                        <button class="btn btn-lg <?php echo $knapp_klasser[$neste_klasse]; ?>"
-                                onclick="updateDrikkeid(<?php echo $drikke->getId(); ?>)"><?php echo $drikke->getNavn(); ?></button>
-                    </li>
-                    <?php
-                    $neste_klasse++;
-                    $neste_klasse %= count($knapp_klasser);
-                } ?>
-            </ul>
-        </h1>
-        <br/>
-        <div id="showgrid">
-            <div class="row">
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(1)">1</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(2)">2</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(3)">3</button></div>
+                $neste_klasse++;
+                $neste_klasse %= count($knapp_klasser);
+            } ?>
+        </ul>
+    </h1>
+    <div id="showgrid">
+        <div class="row">
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(1)">1</button>
             </div>
-            <div class="row">
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(4)">4</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(5)">5</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(6)">6</button></div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(2)">2</button>
             </div>
-            <div class="row">
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(7)">7</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(8)">8</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(9)">9</button></div>
-            </div>
-            <div class="row">
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="setNegativeCount()">-</button></div>
-                <div class="column"><button class="btn btn-primary btn-huge" onclick="updateCount(0)">0</button></div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(3)">3</button>
             </div>
         </div>
-        <br/>
-        <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss()"></button>
-        <!-- <br/> -->
-        <hr>
-        <h1><a href="javascript:history.back()">TILBAKE</a></h1>
+        <div class="row">
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(4)">4</button>
+            </div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(5)">5</button>
+            </div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(6)">6</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(7)">7</button>
+            </div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(8)">8</button>
+            </div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(9)">9</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="setNegativeCount()">-</button>
+            </div>
+            <div class="column">
+                <button class="btn btn-primary btn-huge" onclick="updateCount(0)">0</button>
+            </div>
+        </div>
     </div>
+    <hr>
+    <button class="btn btn-lg btn-primary btn-block" id="krysseknapp"
+            onclick="kryss(<?php echo $beboer->getId(); ?>)"></button>
+    <br/>
+    <h1><a href="javascript:history.back()">TILBAKE</a></h1>
+</div>
 <?php
 
 require_once('bunn.php');
 
-?>
-
-
-
-
-
-<?php
-require_once ('bunn.php');
 ?>

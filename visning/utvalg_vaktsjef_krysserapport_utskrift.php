@@ -11,6 +11,32 @@
     </table>
 
     <table id="krysseliste">
+            <tr><th class="navn">Navn</th>
+                <?php
+                foreach($drikke as $drikken) { ?>
+                    <th class="sum"><?php echo $drikken->getNavn();?></th>
+                <?php }
+                ?>
+            </tr>
+            <?php foreach($krysseListeMonthListe as $beboerID => $krysseliste){
+                $beboeren = $beboerListe[$beboerID]; ?>
+                <tr>
+                    <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
+                    <?php foreach($drikke as $drikken){ ?>
+                        <td class="<?php echo $drikken->getNavn();?>"><?php echo $krysseliste[$drikken->getNavn()];?></td>
+                    <?php } ?>
+                </tr>
+
+                <?php
+            }
+
+            ?>
+</table>
+        </div>
+
+    <?php /*
+
+    <table id="krysseliste">
 
         <tr>
             <th class="navn">Navn</th>
@@ -38,4 +64,4 @@
     </table>
 
 
-</div>
+</div> */ ?>

@@ -59,29 +59,6 @@ require_once('topp_utvalg.php');
     </table>
 </div>
 
-<div class="col-md-3">
-    <form action="" method="POST">
-    <table class="table table-bordered table-responsive small">
-        <tr>
-            <th>Drikke</th>
-            <th>Pris</th>
-        </tr>
-        <?php foreach($drikke as $drikken){ ?>
-            <tr>
-                <td><?php echo $drikken->getNavn();?></td>
-                <td><input type="text" name="<?php echo $drikken->getId();?>" value="<?php echo $drikken->getPris();?>" size="1"></td>
-            </tr>
-            <?php
-        }
-        ?>
-        <tr>
-            <td></td>
-            <td><button class="btn btn-primary btn-sm" type="submit">Endre</button></td>
-        </tr>
-    </table>
-    </form>
-</div>
-
 <div class="col-md-12">
 
     <table class="table table-bordered">

@@ -99,7 +99,49 @@ class Journal {
         return Beboer::medBrukerId($vaktrad['bruker_id']);
     }
 
+
     public function getKrysseInfo(){
+        $info_arr = array();
+        $perioden = self::getPeriode();
+        $start = date('Y-m-d',strtotime('-1 week',strtotime($perioden['fra'])));
+        $slutt = date('Y-m-d',strtotime('-1 week',strtotime($perioden['til'])));
+
+        //Henter ut siste kryssing/vaktbytte/overføring fra forrige periode.
+        $st0 = DB::getDB()->prepare('SELECT * FROM alt_journal WHERE dato>=:start AND dato <=:slutt ORDER BY dato DESC');
+        $st0->bindParam(':start', $start);
+        $st0->bindParam(':slutt', $slutt);
+        $st0->execute();
+        //$forrige = $st->fetchAll()[0];
+
+        //Henter ut hele journalen for nåværende uke.
+        $st = DB::getDB()->prepare('SELECT * FROM alt_journal WHERE dato>=:start AND dato<=:slutt ORDER BY dato ASC');
+        $st->bindParam(':start',$perioden['fra']);
+        $st->bindParam(':slutt',$perioden['til']);
+        $st->execute();
+
+        $journalen = $st->fetchAll();
+
+        $endelig_array = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $aktuell_vaktsesjon = AltJournal::init($st);
+            $denne_vakta = array(
+                'vakthavende' => $aktuell_vaktsesjon->getBruker(),
+                'vaktnr' => $aktuell_vaktsesjon->getVaktnr(),
+                'dato' => $aktuell_vaktsesjon->getDato()
+            );
+
+            foreach($aktuell_vaktsesjon->getStatusAsArray() as $drikke_objekt){
+                $denne_vakta[Drikke::medId($drikke_objekt['drikkeId'])->getNavn()] = $drikke_objekt;
+                $denne_vakta[Drikke::medId($drikke_objekt['drikkeId'])->getNavn()]['svinn'] =
+                    $drikke_objekt['pafyll'] - $drikke_objekt['utavskap']  - $drikke_objekt['avlevert'];
+            }
+            $endelig_array[] = $denne_vakta;
+        }
+        return $endelig_array;
+    }
+
+    /*public function getKrysseInfo(){
         $info_arr = array();
         $perioden = self::getPeriode();
         $start = date('Y-m-d',strtotime('-1 week',strtotime($perioden['fra'])));
@@ -156,6 +198,6 @@ class Journal {
             $endelig_array[] = $denne_vakta;
         }
         return $endelig_array;
-    }
+    }*/
 }
 ?>

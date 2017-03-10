@@ -30,7 +30,7 @@ class Krysseliste
     private $id;
     private $beboerId;
     private $drikkeId;
-    private $krysseliste;
+    public $krysseliste;
 
     // Latskap
     private $kryssListe = null;
@@ -142,41 +142,28 @@ class Krysseliste
     public static function getAllIkkeFakturert()
     {
         $beboerListe = BeboerListe::aktive();
+        $drikke = Drikke::alle();
         $krysseListeListe = array();
         foreach ($beboerListe as $beboer) {
             $Helekrysseliste = self::medBeboerId($beboer->getId());
-            $kryss = array('Pant' => 0,
+            /*$kryss = array('Pant' => 0,
                 'Øl' => 0,
                 'Cider' => 0,
                 'Carlsberg' => 0,
                 'Rikdom' => 0
-            );
+            );*/
+            $kryss = array();
+            foreach($drikke as $drikken){
+                $kryss[$drikken->getNavn()] = 0;
+            }
             foreach ($Helekrysseliste as $delKryseListe) {
                 $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
 
                 foreach ($KryssDrikka as $enkelt_kryss) {
                     if ($enkelt_kryss['fakturert'] == 0) {
-                        switch ($delKryseListe->drikkeId) {
-                            case '1':
-                                $kryss['Pant'] += $enkelt_kryss['antall'];
-                                break;
-                            case '2':
-                                $kryss['Øl'] += $enkelt_kryss['antall'];
-                                break;
-                            case '3':
-                                $kryss['Cider'] += $enkelt_kryss['antall'];
-                                break;
-                            case '4':
-                                $kryss['Carlsberg'] += $enkelt_kryss['antall'];
-                                break;
-                            case '5':
-                                $kryss['Rikdom'] += $enkelt_kryss['antall'];
-                                break;
-                        }
-
+                        $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                     }
                 }
-
             }
             $krysseListeListe[$beboer->getId()] = $kryss;
         }
@@ -187,37 +174,19 @@ class Krysseliste
     {
         $beboerListe = BeboerListe::aktive();
         $krysseListeListe = array();
+        $drikke = Drikke::alle();
         foreach ($beboerListe as $beboer) {
             $Helekrysseliste = self::medBeboerId($beboer->getId());
-            $kryss = array('Pant' => 0,
-                'Øl' => 0,
-                'Cider' => 0,
-                'Carlsberg' => 0,
-                'Rikdom' => 0
-            );
+            $kryss = array();
+            foreach($drikke as $drikken){
+                $kryss[$drikken->getNavn()] = 0;
+            }
             foreach ($Helekrysseliste as $delKryseListe) {
                 $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
 
                 foreach ($KryssDrikka as $enkelt_kryss) {
                     if ($enkelt_kryss['tid'] > $dato) {
-                        switch ($delKryseListe->drikkeId) {
-                            case '1':
-                                $kryss['Pant'] += $enkelt_kryss['antall'];
-                                break;
-                            case '2':
-                                $kryss['Øl'] += $enkelt_kryss['antall'];
-                                break;
-                            case '3':
-                                $kryss['Cider'] += $enkelt_kryss['antall'];
-                                break;
-                            case '4':
-                                $kryss['Carlsberg'] += $enkelt_kryss['antall'];
-                                break;
-                            case '5':
-                                $kryss['Rikdom'] += $enkelt_kryss['antall'];
-                                break;
-                        }
-
+                        $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                     }
                 }
 
@@ -231,35 +200,17 @@ class Krysseliste
     public static function getAllIkkeFakturertBeboer($beboerId)
     {
         $Helekrysseliste = self::medBeboerId($beboerId);
-        $kryss = array('Pant' => 0,
-            'Øl' => 0,
-            'Cider' => 0,
-            'Carlsberg' => 0,
-            'Rikdom' => 0
-        );
+        $drikke = Drikke::alle();
+        $kryss = array();
+        foreach($drikke as $drikken){
+            $kryss[$drikken->getNavn()] = 0;
+        }
         foreach ($Helekrysseliste as $delKryseListe) {
             $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
 
             foreach ($KryssDrikka as $enkelt_kryss) {
                 if ($enkelt_kryss['fakturert'] == 0) {
-                    switch ($delKryseListe->drikkeId) {
-                        case '1':
-                            $kryss['Pant'] += $enkelt_kryss['antall'];
-                            break;
-                        case '2':
-                            $kryss['Øl'] += $enkelt_kryss['antall'];
-                            break;
-                        case '3':
-                            $kryss['Cider'] += $enkelt_kryss['antall'];
-                            break;
-                        case '4':
-                            $kryss['Carlsberg'] += $enkelt_kryss['antall'];
-                            break;
-                        case '5':
-                            $kryss['Rikdom'] += $enkelt_kryss['antall'];
-                            break;
-                    }
-
+                    $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                 }
             }
 
@@ -272,37 +223,19 @@ class Krysseliste
     {
         $beboerListe = BeboerListe::aktive();
         $krysseListeListe = array();
+        $drikke = Drikke::alle();
         foreach ($beboerListe as $beboer) {
             $Helekrysseliste = self::medBeboerId($beboer->getId());
-            $kryss = array('Pant' => 0,
-                'Øl' => 0,
-                'Cider' => 0,
-                'Carlsberg' => 0,
-                'Rikdom' => 0
-            );
+            $kryss = array();
+            foreach($drikke as $drikken){
+                $kryss[$drikken->getNavn()] = 0;
+            }
             foreach ($Helekrysseliste as $delKryseListe) {
                 $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
 
                 foreach ($KryssDrikka as $enkelt_kryss) {
                     if ($enkelt_kryss['fakturert'] != 0) {
-                        switch ($delKryseListe->drikkeId) {
-                            case '1':
-                                $kryss['Pant'] += $enkelt_kryss['antall'];
-                                break;
-                            case '2':
-                                $kryss['Øl'] += $enkelt_kryss['antall'];
-                                break;
-                            case '3':
-                                $kryss['Cider'] += $enkelt_kryss['antall'];
-                                break;
-                            case '4':
-                                $kryss['Carlsberg'] += $enkelt_kryss['antall'];
-                                break;
-                            case '5':
-                                $kryss['Rikdom'] += $enkelt_kryss['antall'];
-                                break;
-                        }
-
+                        $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                     }
                 }
 
@@ -314,6 +247,7 @@ class Krysseliste
 
     public static function getKryssByMonth($beboer_id, $dato = null)
     {
+        $drikke = Drikke::alle();
         $id = $beboer_id;
         $st = DB::getDB()->prepare('SELECT * from krysseliste WHERE beboer_id=:id');
         $st->bindParam(':id', $id);
@@ -325,12 +259,10 @@ class Krysseliste
         $first = date('Y-m-01', strtotime($datoen));
         $last = date('Y-m-t', strtotime($datoen));
 
-        $kryss = array('Pant' => 0,
-            'Øl' => 0,
-            'Cider' => 0,
-            'Carlsberg' => 0,
-            'Rikdom' => 0
-        );
+        $kryss = array();
+        foreach($drikke as $drikken){
+            $kryss[$drikken->getNavn()] = 0;
+        }
 
         foreach ($krysserader as $krysseliste) {
             $krysseliste2 = json_decode($krysseliste['krysseliste'], true);
@@ -338,25 +270,7 @@ class Krysseliste
             foreach ($krysseliste2 as $enkelt_kryss) {
                 $tiden = date($enkelt_kryss['tid']);
                 if ($tiden >= $first && $tiden <= $last) {
-                    //$kryss[] = $enkelt_kryss;
-
-                    switch ($krysseliste['drikke_id']) {
-                        case '1':
-                            $kryss['Pant'] += $enkelt_kryss['antall'];
-                            break;
-                        case '2':
-                            $kryss['Øl'] += $enkelt_kryss['antall'];
-                            break;
-                        case '3':
-                            $kryss['Cider'] += $enkelt_kryss['antall'];
-                            break;
-                        case '4':
-                            $kryss['Carlsberg'] += $enkelt_kryss['antall'];
-                            break;
-                        case '5':
-                            $kryss['Rikdom'] += $enkelt_kryss['antall'];
-                            break;
-                    }
+                    $kryss[Drikke::medId($krysseliste2->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                 }
             }
         }
@@ -365,6 +279,7 @@ class Krysseliste
 
     public static function getKryssbyDay($beboer_id, $dato = null)
     {
+        $drikke = Drikke::alle();
         $datoen = isset($dato) ? date('Y-m-d', strtotime($dato)) : date('Y-m-d', strtotime('now'));
         $id = $beboer_id;
         $st = DB::getDB()->prepare('SELECT * from krysseliste WHERE beboer_id=:id');
@@ -374,35 +289,17 @@ class Krysseliste
 
         $krysserader = $st->fetchAll();
 
-        $kryss = array('Pant' => 0,
-            'Øl' => 0,
-            'Cider' => 0,
-            'Carlsberg' => 0,
-            'Rikdom' => 0
-        );
+        $kryss = array();
+        foreach($drikke as $drikken){
+            $kryss[$drikken->getNavn()] = 0;
+        }
 
         foreach ($krysserader as $krysseliste) {
             $krysseliste2 = json_decode($krysseliste['krysseliste'], true);
             foreach ($krysseliste2 as $enkelt_kryss) {
                 $tiden = date('Y-m-d', strtotime($enkelt_kryss['tid']));
                 if ($tiden == $datoen) {
-                    switch ($krysseliste['drikke_id']) {
-                        case '1':
-                            $kryss['Pant'] += $enkelt_kryss['antall'];
-                            break;
-                        case '2':
-                            $kryss['Øl'] += $enkelt_kryss['antall'];
-                            break;
-                        case '3':
-                            $kryss['Cider'] += $enkelt_kryss['antall'];
-                            break;
-                        case '4':
-                            $kryss['Carlsberg'] += $enkelt_kryss['antall'];
-                            break;
-                        case '5':
-                            $kryss['Rikdom'] += $enkelt_kryss['antall'];
-                            break;
-                    }
+                    $kryss[Drikke::medId($krysseliste2->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                 }
             }
         }

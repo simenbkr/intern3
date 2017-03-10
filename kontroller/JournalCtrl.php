@@ -47,7 +47,8 @@ class JournalCtrl extends AbstraktCtrl
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                             if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
                                 $beboerId = $post['beboerId'];
-                                if (Beboer::medId($beboerId) != null && Beboer::medId($beboerId)->harAlkoholdepositum()) {
+                                if (Beboer::medId($beboerId) != null && Beboer::medId($beboerId)->harAlkoholdepositum()
+                                && Drikke::medId($post['type']) != null && Drikke::medId($post['type'])->getAktiv()) {
                                     //Alt OK, lets kryss:
                                     $antall = $post['antall'];
                                     $drikkeid = $post['type'];
@@ -55,30 +56,24 @@ class JournalCtrl extends AbstraktCtrl
                                     $krysselista->addKryss($antall);
                                     $krysselista->oppdater();
 
-                                    //Loggfører til journal.utavskap.
-                                    $denne_vakta = VaktSesjon::getLatest();
-                                    switch ($drikkeid) {
-                                        //var drikker = ['','Pant','Øl','Cider','Carlsberg','Rikdom'];
-                                        case 2:
-                                            $nyOl = $denne_vakta->getOl();
-                                            $nyOl['utavskap'] += $post['antall'];
-                                            $denne_vakta->setOl($nyOl);
-                                            break;
-                                        case 3:
-                                            $nyCider = $denne_vakta->getCider();
-                                            $nyCider['utavskap'] += $post['antall'];
-                                            $denne_vakta->setCider($nyCider);
-                                            break;
-                                        case 4:
-                                            $nyCarls = $denne_vakta->getCarlsberg();
-                                            $nyCarls['utavskap'] += $post['antall'];
-                                            $denne_vakta->setCarlsberg($nyCarls);
-                                            break;
-                                        case 5:
-                                            $nyRikdom = $denne_vakta->getRikdom();
-                                            $nyRikdom['utavskap'] += $post['antall'];
-                                            $denne_vakta->setRikdom($nyRikdom);
-                                            break;
+                                    $denne_vakta = AltJournal::getLatest();
+
+                                    $aktuelt_krysseobjekt = $denne_vakta->getStatusByDrikkeId($drikkeid);
+
+                                    if($aktuelt_krysseobjekt == null){
+                                        $obj = array(
+                                            'drikkeId' => $drikkeid,
+                                            'mottatt' => 0,
+                                            'avlevert' => 0,
+                                            'pafyll' => 0,
+                                            'utavskap' => 1
+                                        );
+                                        $denne_vakta->updateObject($obj);
+                                        $denne_vakta->calcAvlevert();
+                                    } else {
+                                        $aktuelt_krysseobjekt['utavskap'] += $antall;
+                                        $denne_vakta->updateObject($aktuelt_krysseobjekt);
+                                        $denne_vakta->calcAvlevert();
                                     }
                                     break;
                                 }
@@ -87,17 +82,33 @@ class JournalCtrl extends AbstraktCtrl
                         $beboerId = $this->cd->getSisteArg();
                         $beboer = Beboer::medId($beboerId);
                         if ($beboer != null && $beboer->harAlkoholdepositum()) {
+                            $drikker = Drikke::alle();
+                            $drikke_navn = array();
+                            $drikke_farger = array();
+                            $forste = $drikker[0]->getId();
+                            foreach ($drikker as $drikke) {
+                                $drikke_navn[$drikke->getId()] = $drikke->getNavn();
+                                $drikke_farger[$drikke->getId()] = $drikke->getFarge();
+                            }
                             $dok = new Visning($this->cd);
+                            $dok->set('drikker', $drikker);
+                            $dok->set('forste', $forste);
+                            $dok->set('drikke_navn', $drikke_navn);
+                            $dok->set('drikke_farger', $drikke_farger);
                             $dok->set('skjulMeny', 1);
                             $dok->set('beboer', $beboer);
-                            $dok->vis('kryss.php');
+                            $dok->vis('journal_kryss.php');
                             break;
                         }
                     case 'krysseliste':
                         $beboere = BeboerListe::aktive();
-                        $dato = VaktSesjon::getLatest()->getDato();
+                        $dato = AltJournal::getLatest()->getDato();
                         $krysseliste = Krysseliste::getAlleKryssetEtterDato($dato);
+                        $drikke = Drikke::alle();
+                        $denne_vakta = AltJournal::getLatest();
                         $dok = new Visning($this->cd);
+                        $dok->set('denne_vakta', $denne_vakta);
+                        $dok->set('drikke', $drikke);
                         $dok->set('krysseliste', $krysseliste);
                         $dok->set('beboere', $beboere);
                         $dok->set('skjulMeny', 1);
@@ -105,73 +116,74 @@ class JournalCtrl extends AbstraktCtrl
                         break;
                     case 'pafyll':
                         $dok = new Visning($this->cd);
-                        $denne_vakta = VaktSesjon::getLatest();
+                        $denne_vakta = AltJournal::getLatest();
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                             if (isset($post['pafyll']) && $post['pafyll'] == 1 && isset($post['antall'])
                                 && is_numeric($post['antall']) && isset($post['type']) && is_numeric($post['type'])
                             ) {
-                                switch ($post['type']) {
-                                    //var drikker = ['','Pant','Øl','Cider','Carlsberg','Rikdom'];
-                                    case 2:
-                                        $nyOl = $denne_vakta->getOl();
-                                        $nyOl['pafyll'] += $post['antall'];
-                                        $denne_vakta->setOl($nyOl);
-                                        $dok->set('pafylt', 1);
-                                        break;
-                                    case 3:
-                                        $nyCider = $denne_vakta->getCider();
-                                        $nyCider['pafyll'] += $post['antall'];
-                                        $denne_vakta->setCider($nyCider);
-                                        $dok->set('pafylt', 1);
-                                        break;
-                                    case 4:
-                                        $nyCarls = $denne_vakta->getCarlsberg();
-                                        $nyCarls['pafyll'] += $post['antall'];
-                                        $denne_vakta->setCarlsberg($nyCarls);
-                                        $dok->set('pafylt', 1);
-                                        break;
-                                    case 5:
-                                        $nyRikdom = $denne_vakta->getRikdom();
-                                        $nyRikdom['pafyll'] += $post['antall'];
-                                        $denne_vakta->setRikdom($nyRikdom);
-                                        $dok->set('pafylt', 1);
-                                        break;
+
+                                $aktuelt_krysseobjekt = $denne_vakta->getStatusByDrikkeId($post['type']);
+                                setcookie('dafuq','isup');
+                                if($aktuelt_krysseobjekt == null){
+                                    $obj = array(
+                                        'drikkeId' => $post['type'],
+                                        'mottatt' => 0,
+                                        'avlevert' => 0,
+                                        'pafyll' => $post['antall'],
+                                        'utavskap' => 0
+                                    );
+                                    $denne_vakta->updateObject($obj);
+                                    $denne_vakta->calcAvlevert();
+                                } else {
+                                    $aktuelt_krysseobjekt['pafyll'] += $post['antall'];
+                                    $denne_vakta->updateObject($aktuelt_krysseobjekt);
+                                    $denne_vakta->calcAvlevert();
                                 }
                             }
                         }
-                        $vaktaId = $denne_vakta->getBeboerId();
-                        if (($vakta = Beboer::medId($vaktaId)) == null) {
-                            $vakta = Ansatt::getSisteAnsatt();
+                        $vakta = Bruker::medId($denne_vakta->getBrukerId())->getPerson();
+
+                        $drikker = Drikke::aktive();
+                        $drikke_navn = array(); //Dummy for å ikke være nullindeksert (woo, spaghetti!)
+                        $drikke_farger = array();
+                        $forste = $drikker[1]->getId();
+                        foreach ($drikker as $drikke) {
+                            $drikke_navn[$drikke->getId()] = $drikke->getNavn();
+                            $drikke_farger[$drikke->getId()] = $drikke->getFarge();
                         }
+                        $dok->set('drikker', $drikker);
+                        $dok->set('forste', $forste);
+                        $dok->set('drikke_navn', $drikke_navn);
+                        $dok->set('drikke_farger', $drikke_farger);
                         $dok->set('skjulMeny', 1);
                         $dok->set('vakta', $vakta);
                         $dok->set('vaktSesj', $denne_vakta);
                         $dok->vis('journal_pafyll.php');
                         break;
                     case 'vaktbytte':
-                        $denneVakt = VaktSesjon::getLatest();
-                        if (isset($_POST) && isset($_POST['beboerId']) && is_numeric($_POST['beboerId'])) {
+                        $denneVakt = AltJournal::getLatest();
+                        if (isset($_POST) && isset($_POST['brukerId']) && is_numeric($_POST['brukerId'])) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if ($post['beboerId'] >= 0 && Beboer::medId($post['beboerId']) != null) {
-                                $denneVakt->setBeboerId($post['beboerId']);
+                            if ($post['brukerId'] >= 0 && Bruker::medId($post['brukerId']) != null) {
+                                $denneVakt->setBrukerId($post['brukerId']);
                             } //Torild
-                            elseif ($post['beboerId'] == 0) {
-                                $denneVakt->setBeboerId($post['beboerId']);
+                            elseif ($post['brukerId'] == 0) {
+                                $denneVakt->setBrukerId($post['brukerId']);
                             }
                         }
-                        if ($denneVakt->getBeboerId() == 0) {
+                        if ($denneVakt->getBrukerId() == 0) {
                             //Torild
                             $vakta = Ansatt::getSisteAnsatt();
                         } else {
-                            $vakta = Beboer::medId($denneVakt->getBeboerId());
+                            $vakta = Bruker::medId($denneVakt->getBrukerId())->getPerson();
                         }
                         $dok = new Visning($this->cd);
                         $dok->set('denneVakt', $denneVakt);
                         $dok->set('vakt', $vakta);
                         $sistearg = $this->cd->getSisteArg();
                         if ($sistearg == 'vaktbytte') {
-                            $denne_vakta = VaktSesjon::getLatest();
+                            $denne_vakta = AltJournal::getLatest();
                             $beboere = BeboerListe::aktive();
                             $dok->set('beboere', $beboere);
                             $dok->set('denne_vakta', $denne_vakta);
@@ -196,22 +208,32 @@ class JournalCtrl extends AbstraktCtrl
                             }
                         }
                     case 'signering':
-                        $denne_vakta = VaktSesjon::getLatest();
+                        $denne_vakta = AltJournal::getLatest();
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if (isset($post['beboerId']) && is_numeric($post['beboerId'])) {
-                                $denne_vakta = VaktSesjon::avsluttVakt($denne_vakta);
+                            if (isset($post['brukerId']) && is_numeric($post['brukerId'])) {
+                                $denne_vakta = AltJournal::avsluttVakt($denne_vakta);
                             }
                         }
-                        $vaktaId = $denne_vakta->getBeboerId();
-                        $vakta = null;
-                        if (($vakta = Beboer::medId($vaktaId)) == null) {
+                        $denne_vakta = AltJournal::getLatest();
+
+                        $vaktaId = $denne_vakta->getBrukerId();
+                        $vakta = Bruker::medId($vaktaId)->getPerson();
+                        /*if (($vakta = Beboer::medId($vaktaId)) == null) {
                             $vakta = Ansatt::getSisteAnsatt();
+                        }*/
+                        $drikke = Drikke::alle();
+                        $drikke_med_ting = array();
+
+                        foreach($drikke as $drikken){
+                            $drikke_med_ting[$drikken->getId()] = $drikken;
                         }
+
                         $dok = new Visning($this->cd);
                         $dok->set('skjulMeny', 1);
                         $dok->set('denne_vakta', $denne_vakta);
                         $dok->set('vakta', $vakta);
+                        $dok->set('drikke_med_id', $drikke_med_ting);
                         $dok->vis('journal_signering.php');
                         break;
                     case 'logout':

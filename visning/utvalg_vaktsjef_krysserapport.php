@@ -29,6 +29,7 @@ require_once('topp_utvalg.php');
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             Perioden ble nullstilt!
         </div>
+        <p></p>
     <?php unset($periodeFakturert); } ?>
 
     <table class="table table-bordered table-responsive">
@@ -62,7 +63,29 @@ require_once('topp_utvalg.php');
     <br/>
     <table class="table table-bordered table-responsive">
 
+        <tr><th class="">Navn</th>
+        <?php
+        foreach($drikke as $drikken) { ?>
+            <th class=""><?php echo $drikken->getNavn();?></th>
+            <?php }
+            ?>
+            </tr>
+        <?php foreach($krysseListeMonthListe as $beboerID => $krysseliste){
+            $beboeren = $beboerListe[$beboerID]; ?>
+
         <tr>
+            <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
+            <?php foreach($drikke as $drikken){ ?>
+                <td class="<?php echo $drikken->getNavn();?>"><?php echo $krysseliste[$drikken->getNavn()];?></td>
+            <?php } ?>
+        </tr>
+
+<?php
+        }
+
+?>
+<?php
+        /*<tr>
             <th class="">Navn</th>
             <th class="">Øl</th>
             <th class="">Cider</th>
@@ -87,7 +110,7 @@ require_once('topp_utvalg.php');
             <?php
         }
         ?>
-    </table>
+    </table> */?>
 
 
 </div>

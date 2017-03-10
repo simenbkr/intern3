@@ -15,21 +15,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'vaktoversikt':
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    $test = false;
-                    if(count($post) > 0) {
-                        foreach ($post as $key => $val) {
-                            if (in_array($key, array(1, 2, 3, 4, 5)) && is_numeric($val)) {
-                                $test = true;
-                            } else {
-                                $test = false;
-                            }
-                        }
-                        if ($test/*isset($post['1'] && isset($post['2']) && isset($post['3']) && isset($post['4']) && isset($post['5'])*/) {
-                            foreach (Drikke::alle() as $drikke) {
-                                $drikke->oppdaterDrikkePris($post[$drikke->getId()]);
-                            }
-                        }
-                    }
                     //'endreVakt=1&hosthalv=' + host_halv + "&vaarhalv=" + vaar_halv + "&hosthel=" + host_hel + "&vaarhel=" + vaar_hel,
                     // [endreVakt] => 1 [hosthalv] => 5 [vaarhalv] => 6 [hosthel] => 1 [vaarhel] => 9
                     if (isset($post['endreVakt']) && $post['endreVakt'] == 1 && isset($post['hosthalv']) && is_numeric($post['hosthalv'])
@@ -83,36 +68,35 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 break;
             case 'vaktstyring_settvakt':
                 if (isset($_POST['beboerId']) && isset($_POST['vaktId_1'])) {
-                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                  $beboerId = $post['beboerId'];
-                  $vaktId_1 = $post['vaktId_1'];
-                  $beboer = Beboer::medId($beboerId);
-                  if ($beboer == NULL) {
-                    exit();
-                  } else {
-                    $brukerId = $beboer->getBrukerId();
-                    Vakt::settVakt($brukerId, $vaktId_1);
-                  }
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $beboerId = $post['beboerId'];
+                    $vaktId_1 = $post['vaktId_1'];
+                    $beboer = Beboer::medId($beboerId);
+                    if ($beboer == NULL) {
+                        exit();
+                    } else {
+                        $brukerId = $beboer->getBrukerId();
+                        Vakt::settVakt($brukerId, $vaktId_1);
+                    }
                 }
                 break;
             case 'vaktstyring_lagvakt':
                 if (isset($_POST['modalId'])) {
-                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                  $modalId = $post['modalId'];
-                  $vakttype = substr($modalId,-1);
-                  $dato = substr($modalId,6,-2);
-                  Vakt::lagVakt($vakttype, $dato);
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $modalId = $post['modalId'];
+                    $vakttype = substr($modalId, -1);
+                    $dato = substr($modalId, 6, -2);
+                    Vakt::lagVakt($vakttype, $dato);
                 }
                 break;
             case 'vaktstyring_byttvakt':
                 if (isset($_POST['vaktId_1']) && isset($_POST['vaktId_2'])) {
-                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                  $vaktId_1 = $post['vaktId_1'];
-                  $vaktId_2 = $post['vaktId_2'];
-                  Vakt::byttVakt($vaktId_1, $vaktId_2);
-                  exit;
-                }
-                elseif (isset($_POST['beboerId'])) {
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $vaktId_1 = $post['vaktId_1'];
+                    $vaktId_2 = $post['vaktId_2'];
+                    Vakt::byttVakt($vaktId_1, $vaktId_2);
+                    exit;
+                } elseif (isset($_POST['beboerId'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $beboerId = $post['beboerId'];
                     $beboer = Beboer::medId($beboerId);
@@ -134,7 +118,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 }
                 break;
             case 'vaktstyring_straffevakt':
-                setcookie('asdasd','asdasd');
+                setcookie('asdasd', 'asdasd');
                 if (isset($_POST['vaktId_1'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vaktId_1 = $post['vaktId_1'];
@@ -143,25 +127,25 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 break;
             case 'vaktstyring_slettvakt':
                 if (isset($_POST['vaktId_1'])) {
-                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                  $vaktId_1 = $post['vaktId_1'];
-                  Vakt::slettVakt($vaktId_1);
-                  exit;
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $vaktId_1 = $post['vaktId_1'];
+                    Vakt::slettVakt($vaktId_1);
+                    exit;
                 }
                 break;
             case 'vaktstyring_torildvakt':
                 if (isset($_POST['vaktId_1'])) {
-                  $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                  $vaktId_1 = $post['vaktId_1'];
-                  Vakt::settVakt(443, $vaktId_1); // 443 Torild
-                  exit;
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $vaktId_1 = $post['vaktId_1'];
+                    Vakt::settVakt(443, $vaktId_1); // 443 Torild
+                    exit;
                 }
                 break;
             case 'vaktstyring_byttemarked':
-                if( isset($_POST['vaktId'])){
+                if (isset($_POST['vaktId'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vakten = Vakt::medId($post['vaktId']);
-                    if($vakten != null && $vakten->getBytte() && ($vaktbytte = Vaktbytte::medVaktId($post['vaktId'])) != null){
+                    if ($vakten != null && $vakten->getBytte() && ($vaktbytte = Vaktbytte::medVaktId($post['vaktId'])) != null) {
                         //Slett denne fra byttemarkedet.
                         $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');
                         $st->bindParam(':id', $vaktbytte->getid());
@@ -170,8 +154,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $st_1 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=0 WHERE id=:id');
                         $st_1->bindParam(':id', $vakten->getId());
                         $st_1->execute();
-                    }
-                    elseif($vakten != null){
+                    } elseif ($vakten != null) {
                         //Legg til i byttemarked
                         $st = DB::getDB()->prepare('INSERT INTO vaktbytte (vakt_id,gisbort) VALUES(:vakt_id,1)');
                         $st->bindParam(':vakt_id', $vakten->getId());
@@ -233,14 +216,17 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 foreach ($beboerListe as $beboer) {
                     $beboerListe2_0[$beboer->getId()] = $beboer;
                 }
+                $drikke = Drikke::alle();
                 $krysseListeMonthListe = Krysseliste::getAllIkkeFakturert();
                 $sistFakturert = Krysseliste::getSistFakturert();
                 $dok->set('sistFakturert', $sistFakturert);
+                $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
                 $dok->vis('utvalg_vaktsjef_krysserapport.php');
                 break;
             case 'krysserapportutskrift':
+                $drikke = Drikke::alle();
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();
                 foreach ($beboerListe as $beboer) {
@@ -251,6 +237,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $sistFakturert = Krysseliste::getSistFakturert();
 
                 $dok->set('sistFakturert', $sistFakturert);
+                $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
                 $dok->vis('utvalg_vaktsjef_krysserapport_utskrift.php');
@@ -258,6 +245,55 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'kryss':
                 $dok = new Visning($this->cd);
                 $dok->vis('utvalg_vaktsjef_kryss.php');
+                break;
+            case 'endre_drikke':
+                if (($drikken = Drikke::medId($this->cd->getSisteArg())) != null) {
+
+                    if(isset($_POST) && count($_POST) > 0){
+                        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                        if(isset($post['pris']) && isset($post['farge'])){
+                            //Har bestemt at man ikke kan endre navn på drikker. Det er bedre å sette de som inaktive
+                            //fordi da skaper man mindre forvirring for brukere (trolig).
+                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv WHERE id=:id');
+                            $st->bindParam(':pris', $post['pris']);
+                            $st->bindParam(':farge', $post['farge']);
+                            $aktiv = isset($post['aktiv']) && $post['aktiv'] == 'on' ? 1 : 0;
+                            $st->bindParam(':aktiv', $aktiv);
+                            $st->bindParam(':id', $this->cd->getSisteArg());
+                            $st->execute();
+                            $_SESSION['success'] = 1;
+                            $_SESSION['msg'] = "Du oppdaterte en drikke!";
+                        }
+                        header('Location: ?a=utvalg/vaktsjef/endre_drikke');
+                        exit();
+                    }
+                    $dok = new Visning($this->cd);
+                    $dok->set('drikka', $drikken);
+                    $dok->vis('utvalg_vaktsjef_endre_drikke.php');
+                    break;
+                }
+            case 'drikke':
+                $drikke = Drikke::alle();
+                //Post:
+// [1] => 9 [1:dummy] => off [1:aktiv] => on [2] => 56 [2:dummy] => off [2:aktiv] => on [3] => 12 [3:dummy] => off
+// [4] => 123 [4:dummy] => off [5] => 34 [5:dummy] => off [5:aktiv] => on
+                if (isset($_POST)) {
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge'])
+                    ) {
+                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge) VALUES(:navn,:pris,1,:farge)');
+                        $st->bindParam(':navn', $post['navn']);
+                        $st->bindParam(':pris', $post['pris']);
+                        $st->bindParam(':farge', $post['farge']);
+                        $st->execute();
+                        $_SESSION['success'] = 1;
+                        $_SESSION['msg'] = "Du la til en ny drikke!";
+                    }
+                }
+                $drikke = Drikke::alle();
+                $dok = new Visning($this->cd);
+                $dok->set('drikke', $drikke);
+                $dok->vis('utvalg_vaktsjef_drikke.php');
                 break;
             case 'vaktliste_utskrift':
                 $dok = new Visning($this->cd);

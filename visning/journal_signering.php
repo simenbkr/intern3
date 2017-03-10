@@ -7,7 +7,7 @@ require_once('topp.php');
             $.ajax({
                 type: 'POST',
                 url: '?a=journal/signering/',
-                data: "avslutt=1&beboerId=" + id,
+                data: "avslutt=1&brukerId=" + id,
                 method: 'POST',
                 success: function (html) {
                     $('body').html(html);
@@ -26,41 +26,54 @@ require_once('topp.php');
             <table class="table table-bordered table-responsive">
                 <tr>
                     <th>Status</th>
-                    <th>Øl</th>
-                    <th>Cider</th>
-                    <th>Carlsberg</th>
-                    <th>Rikdom</th>
+                <?php
+                $hoved_objektet = $denne_vakta->getStatusAsArray();
+
+                foreach($hoved_objektet as $obj){
+                    if($obj['drikkeId'] == 1 || (!$denne_vakta->drukketDenneVakta($obj['drikkeId']) && !\intern3\Drikke::medId($obj['drikkeId'])->getAktiv())){ continue; }
+                    ?>
+                    <th><?php echo $drikke_med_id[$obj['drikkeId']]->getNavn();?></th>
+               <?php } ?>
                 </tr>
+
                 <tr>
                     <td>Mottatt</td>
-                    <td><?php echo $denne_vakta->getOl()['mottatt']; ?></td>
-                    <td><?php echo $denne_vakta->getCider()['mottatt']; ?></td>
-                    <td><?php echo $denne_vakta->getCarlsberg()['mottatt']; ?></td>
-                    <td><?php echo $denne_vakta->getRikdom()['mottatt']; ?></td>
+                <?php foreach($hoved_objektet as $obj){
+                    if($obj['drikkeId'] == 1 || (!$denne_vakta->drukketDenneVakta($obj['drikkeId']) && !\intern3\Drikke::medId($obj['drikkeId'])->getAktiv())){ continue; }
+                    ?>
+                    <td><?php echo $obj['mottatt']; ?></td>
+                        <?php }?>
                 </tr>
+
                 <tr>
                     <td>Påfyll</td>
-                    <td><?php echo $denne_vakta->getOl()['pafyll']; ?></td>
-                    <td><?php echo $denne_vakta->getCider()['pafyll']; ?></td>
-                    <td><?php echo $denne_vakta->getCarlsberg()['pafyll']; ?></td>
-                    <td><?php echo $denne_vakta->getRikdom()['pafyll']; ?></td>
+                    <?php foreach($hoved_objektet as $obj){
+                        if($obj['drikkeId'] == 1 || (!$denne_vakta->drukketDenneVakta($obj['drikkeId']) && !\intern3\Drikke::medId($obj['drikkeId'])->getAktiv())){ continue; }
+                        ?>
+                        <td><?php echo $obj['pafyll']; ?></td>
+                    <?php }?>
                 </tr>
+
                 <tr>
                     <td>Krysset</td>
-                    <td><?php echo $denne_vakta->getOl()['utavskap']; ?></td>
-                    <td><?php echo $denne_vakta->getCider()['utavskap']; ?></td>
-                    <td><?php echo $denne_vakta->getCarlsberg()['utavskap']; ?></td>
-                    <td><?php echo $denne_vakta->getRikdom()['utavskap']; ?></td>
+                    <?php foreach($hoved_objektet as $obj){
+                        if($obj['drikkeId'] == 1 || (!$denne_vakta->drukketDenneVakta($obj['drikkeId']) && !\intern3\Drikke::medId($obj['drikkeId'])->getAktiv())){ continue; }
+                        ?>
+                        <td><?php echo $obj['utavskap']; ?></td>
+                    <?php }?>
                 </tr>
+
                 <tr>
                     <td>Avlevert</td>
-                    <td><?php echo $denne_vakta->getOl()['avlevert']; ?></td>
-                    <td><?php echo $denne_vakta->getCider()['avlevert']; ?></td>
-                    <td><?php echo $denne_vakta->getCarlsberg()['avlevert']; ?></td>
-                    <td><?php echo $denne_vakta->getRikdom()['avlevert']; ?></td>
+                    <?php foreach($hoved_objektet as $obj){
+                        if($obj['drikkeId'] == 1 || (!$denne_vakta->drukketDenneVakta($obj['drikkeId']) && !\intern3\Drikke::medId($obj['drikkeId'])->getAktiv())){ continue; }
+                        ?>
+                        <td><?php echo $obj['avlevert']; ?></td>
+                    <?php }?>
                 </tr>
+
             </table>
-            <input type="submit" value="Avslutt vakt" onclick="avslutt(<?php echo $vakta->getId(); ?>)" class="btn btn-block btn-warning">
+            <input type="submit" value="Avslutt vakt" onclick="avslutt(<?php echo $vakta->getBrukerId(); ?>)" class="btn btn-block btn-warning">
         </div>
     </div>
 <?php

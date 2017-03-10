@@ -1,13 +1,13 @@
 <?php
 require_once('topp_journal.php');
-require_once ('topp.php');
+require_once('topp.php');
 ?>
 <script>
-    function bytte(beboerId) {
+    function bytte(brukerId) {
         $.ajax({
             type: 'POST',
             url: '?a=journal/vaktbytte',
-            data: 'beboerId=' + beboerId,
+            data: 'brukerId=' + brukerId,
             method: 'POST',
             success: function (data) {
                 history.back();
@@ -19,25 +19,25 @@ require_once ('topp.php');
     }
 </script>
 <div class="container">
-  <h1>Journal » Vaktbytte</h1>
-  <hr>
-  </br>
+    <h1>Journal » Vaktbytte</h1>
+    <hr>
+    </br>
     <div class="row">
-      <div class="col-lg-12 text-center">
-<?php
-foreach($aktuelle as $beboer){ ?>
-<h2>
-    <input class="btn btn-default btn-block" type="submit" value="<?php echo $beboer->getFulltNavn(); ?>" onclick="bytte(<?php echo $beboer->getId(); ?>)"><br/>
-        <?php
-}
-?>
-<hr>
-<a href="javascript:history.back()">TILBAKE</a>
-</div>
-</div>
+        <div class="col-lg-12 text-center">
+            <?php
+            foreach ($aktuelle as $beboer){ ?>
+            <h2>
+                <input class="btn btn-default btn-block" type="submit" value="<?php echo $beboer->getFulltNavn(); ?>"
+                       onclick="bytte(<?php echo $beboer->getBrukerId(); ?>)"><br/>
+                <?php
+                }
+                ?>
+                <hr>
+                <a href="javascript:history.back()">TILBAKE</a>
+        </div>
+    </div>
 
 
-
-<?php
-require_once('bunn.php');
-?>
+    <?php
+    require_once('bunn.php');
+    ?>

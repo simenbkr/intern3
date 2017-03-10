@@ -3,11 +3,11 @@ require_once ('topp_journal.php');
 require_once('topp.php');
 ?>
     <script>
-        function bytte(beboerId) {
+        function bytte(brukerId) {
             $.ajax({
                 type: 'POST',
                 url: '?a=journal/vaktbytte',
-                data: 'beboerId=' + beboerId,
+                data: 'brukerId=' + brukerId,
                 method: 'POST',
                 success: function (data) {
                     //$(".container").replaceWith($('.container', $(data)));
