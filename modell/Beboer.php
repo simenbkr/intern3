@@ -415,6 +415,10 @@ class Beboer implements Person
     {
         return (Helga::getLatestHelga()) != null ? Helga::getLatestHelga()->erHelgaGeneral($this->id) : false;
     }
+
+    public function toString(){
+        return $this->getFulltNavn();
+    }
 }
 
 ?>

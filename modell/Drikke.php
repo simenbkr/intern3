@@ -108,7 +108,7 @@ class Drikke {
         $st->execute();
     }
 
-    public function harBlittDrukketSiden($dato, $drikke_id){
+    public function harBlittDrukketSiden($dato){
         $st = DB::getDB()->prepare('SELECT * FROM alt_journal WHERE dato>:dato');
         $st->bindParam(':dato', $dato);
         $st->execute();
@@ -120,7 +120,7 @@ class Drikke {
         }
 
         foreach($alt_journaler as $journal){
-            if($journal->drukketDenneVakta($drikke_id)){
+            if($journal->drukketDenneVakta($this->id)){
                 return true;
             }
         }

@@ -190,6 +190,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $krysseinstans = new Journal();
                 }
                 $dok = new Visning($this->cd);
+                $periode_start = $krysseinstans->getPeriode()['fra'];
+                $drikke = Drikke::alle();
+                $dok->set('drikke', $drikke);
+                $dok->set('periode_start', $periode_start);
                 $dok->set('krysseting', $krysseinstans->getUkeKryss());
                 $dok->set('journal', $krysseinstans->getKrysseInfo());
                 $dok->vis('utvalg_vaktsjef_ukesrapport_tabell.php');
@@ -274,9 +278,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 }
             case 'drikke':
                 $drikke = Drikke::alle();
-                //Post:
-// [1] => 9 [1:dummy] => off [1:aktiv] => on [2] => 56 [2:dummy] => off [2:aktiv] => on [3] => 12 [3:dummy] => off
-// [4] => 123 [4:dummy] => off [5] => 34 [5:dummy] => off [5:aktiv] => on
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge'])

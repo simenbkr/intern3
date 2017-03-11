@@ -193,16 +193,27 @@ require_once ('topp.php');
 </style>
     <h1 style="text-align: center; font-size:2vw;">Påfyll for <?php echo $vaktSesj->getVaktnr();?>. vakt: <?php echo $vakta->getFulltNavn() . " "; echo date('Y-m-d', strtotime($vaktSesj->getDato()));?></h1><br/>
     <div class="container" id="container" style="text-align:center;">
-        <?php
-        if (isset($pafylt)){
-            ?>
-            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Du fylte på! Wooohoo!
-            </div><br/>
-            <?php
-            unset($pafylt);
-        }?>
+        <div class="tilbakemelding">
+            <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+                <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+                <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            }
+            unset($_SESSION['success']);
+            unset($_SESSION['error']);
+            unset($_SESSION['msg']);
+            ?></div>
         <h1>
             <ul class="list-inline">
                 <?php

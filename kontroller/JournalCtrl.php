@@ -16,9 +16,6 @@ class JournalCtrl extends AbstraktCtrl
                     case '':
                     case 'hoved':
                     default:
-                        //setcookie('brukernavn', 'journal', NULL, NULL, NULL, NULL, TRUE);
-                        //setcookie('passord', $passord_hash, NULL, NULL, NULL, NULL, TRUE);
-                        //setcookie('du', '', -1);
                         session_destroy();
                         session_set_cookie_params(2147483647, "/");
                         session_start();
@@ -48,7 +45,8 @@ class JournalCtrl extends AbstraktCtrl
                             if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
                                 $beboerId = $post['beboerId'];
                                 if (Beboer::medId($beboerId) != null && Beboer::medId($beboerId)->harAlkoholdepositum()
-                                && Drikke::medId($post['type']) != null && Drikke::medId($post['type'])->getAktiv()) {
+                                    && Drikke::medId($post['type']) != null && Drikke::medId($post['type'])->getAktiv()
+                                ) {
                                     //Alt OK, lets kryss:
                                     $antall = $post['antall'];
                                     $drikkeid = $post['type'];
@@ -60,13 +58,13 @@ class JournalCtrl extends AbstraktCtrl
 
                                     $aktuelt_krysseobjekt = $denne_vakta->getStatusByDrikkeId($drikkeid);
 
-                                    if($aktuelt_krysseobjekt == null){
+                                    if ($aktuelt_krysseobjekt == null) {
                                         $obj = array(
                                             'drikkeId' => $drikkeid,
                                             'mottatt' => 0,
                                             'avlevert' => 0,
                                             'pafyll' => 0,
-                                            'utavskap' => 1
+                                            'utavskap' => $antall
                                         );
                                         $denne_vakta->updateObject($obj);
                                         $denne_vakta->calcAvlevert();
@@ -75,6 +73,11 @@ class JournalCtrl extends AbstraktCtrl
                                         $denne_vakta->updateObject($aktuelt_krysseobjekt);
                                         $denne_vakta->calcAvlevert();
                                     }
+                                    $_SESSION['success'] = 1;
+                                    $_SESSION['msg'] = "Du krysset " . $post['antall'] . " " .
+                                        Drikke::medId($drikkeid)->getNavn() . " på " .
+                                        Beboer::medId($beboerId)->getFulltNavn();
+
                                     break;
                                 }
                             }
@@ -85,7 +88,7 @@ class JournalCtrl extends AbstraktCtrl
                             $drikker = Drikke::alle();
                             $drikke_navn = array();
                             $drikke_farger = array();
-                            $forste = $drikker[0]->getId();
+                            $forste = $drikker[1]->getId();
                             foreach ($drikker as $drikke) {
                                 $drikke_navn[$drikke->getId()] = $drikke->getNavn();
                                 $drikke_farger[$drikke->getId()] = $drikke->getFarge();
@@ -120,12 +123,12 @@ class JournalCtrl extends AbstraktCtrl
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                             if (isset($post['pafyll']) && $post['pafyll'] == 1 && isset($post['antall'])
-                                && is_numeric($post['antall']) && isset($post['type']) && is_numeric($post['type'])
+                                && is_numeric($post['antall']) && isset($post['type']) && is_numeric($post['type']
+                                /*&& ($drikken = Drikke::medId($post['type'])) != null*/)
                             ) {
 
                                 $aktuelt_krysseobjekt = $denne_vakta->getStatusByDrikkeId($post['type']);
-                                setcookie('dafuq','isup');
-                                if($aktuelt_krysseobjekt == null){
+                                if ($aktuelt_krysseobjekt == null) {
                                     $obj = array(
                                         'drikkeId' => $post['type'],
                                         'mottatt' => 0,
@@ -140,6 +143,8 @@ class JournalCtrl extends AbstraktCtrl
                                     $denne_vakta->updateObject($aktuelt_krysseobjekt);
                                     $denne_vakta->calcAvlevert();
                                 }
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Du fylte på " . $post['antall'] . " " . Drikke::medId($post['type'])->getNavn();
                             }
                         }
                         $vakta = Bruker::medId($denne_vakta->getBrukerId())->getPerson();
@@ -212,7 +217,15 @@ class JournalCtrl extends AbstraktCtrl
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                             if (isset($post['brukerId']) && is_numeric($post['brukerId'])) {
-                                $denne_vakta = AltJournal::avsluttVakt($denne_vakta);
+                                $denne_vakta = AltJournal::getLatest();
+                                if (time() - strtotime($denne_vakta->getDato()) < 120) {
+                                    $_SESSION['error'] = 1;
+                                    $_SESSION['msg'] = "Vent litt før du avslutter enda en vakt!";
+                                } else {
+                                    $denne_vakta = AltJournal::avsluttVakt($denne_vakta);
+                                    $_SESSION['success'] = 1;
+                                    $_SESSION['msg'] = "Du avsluttet vakta!";
+                                }
                             }
                         }
                         $denne_vakta = AltJournal::getLatest();
@@ -225,7 +238,7 @@ class JournalCtrl extends AbstraktCtrl
                         $drikke = Drikke::alle();
                         $drikke_med_ting = array();
 
-                        foreach($drikke as $drikken){
+                        foreach ($drikke as $drikken) {
                             $drikke_med_ting[$drikken->getId()] = $drikken;
                         }
 
@@ -248,9 +261,6 @@ class JournalCtrl extends AbstraktCtrl
             }
 
         } else {
-            //setcookie('brukernavn', '', -1);
-            //setcookie('passord', '', -1);
-            //setcookie('du', '', -1);
             session_destroy();
             header('Location: ' . $_GET['ref']);
             $dok = new Visning($this->cd);

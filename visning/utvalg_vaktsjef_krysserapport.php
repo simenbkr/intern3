@@ -65,7 +65,11 @@ require_once('topp_utvalg.php');
 
         <tr><th class="">Navn</th>
         <?php
-        foreach($drikke as $drikken) { ?>
+        foreach($drikke as $drikken) {
+            if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant'){
+                continue;
+            }
+            ?>
             <th class=""><?php echo $drikken->getNavn();?></th>
             <?php }
             ?>
@@ -75,7 +79,11 @@ require_once('topp_utvalg.php');
 
         <tr>
             <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
-            <?php foreach($drikke as $drikken){ ?>
+            <?php foreach($drikke as $drikken){
+                if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' || $drikken->harBlittDrukketSiden($sistFakturert)){
+                    continue;
+                }
+                ?>
                 <td class="<?php echo $drikken->getNavn();?>"><?php echo $krysseliste[$drikken->getNavn()];?></td>
             <?php } ?>
         </tr>

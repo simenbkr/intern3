@@ -23,6 +23,29 @@ require_once('topp.php');
         <hr>
         <div class="col-lg-6">
             <h2><?php echo $vakta->getFulltNavn(); ?> sitter <?php echo $denne_vakta->getVaktnr(); ?>. vakt nå. (<?php echo date('Y-m-d',strtotime($denne_vakta->getDato()));?>)</h2>
+
+            <div class="tilbakemelding">
+                <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+                    <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <?php echo $_SESSION['msg']; ?>
+                    </div>
+                    <p></p>
+                    <?php
+                } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+                    <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <?php echo $_SESSION['msg']; ?>
+                    </div>
+                    <p></p>
+                    <?php
+                }
+                unset($_SESSION['success']);
+                unset($_SESSION['error']);
+                unset($_SESSION['msg']);
+                ?></div>
+
             <table class="table table-bordered table-responsive">
                 <tr>
                     <th>Status</th>

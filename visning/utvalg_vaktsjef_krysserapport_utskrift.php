@@ -13,7 +13,11 @@
     <table id="krysseliste">
             <tr><th class="navn">Navn</th>
                 <?php
-                foreach($drikke as $drikken) { ?>
+                foreach($drikke as $drikken) {
+                    if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' || $drikken->harBlittDrukketSiden($sistFakturert)){
+                        continue;
+                    }
+                    ?>
                     <th class="sum"><?php echo $drikken->getNavn();?></th>
                 <?php }
                 ?>
@@ -22,7 +26,11 @@
                 $beboeren = $beboerListe[$beboerID]; ?>
                 <tr>
                     <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
-                    <?php foreach($drikke as $drikken){ ?>
+                    <?php foreach($drikke as $drikken){
+                        if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' || $drikken->harBlittDrukketSiden($sistFakturert)){
+                            continue;
+                        }
+                        ?>
                         <td class="<?php echo $drikken->getNavn();?>"><?php echo $krysseliste[$drikken->getNavn()];?></td>
                     <?php } ?>
                 </tr>
