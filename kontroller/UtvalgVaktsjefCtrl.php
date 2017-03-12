@@ -289,6 +289,22 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $st->execute();
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Du la til en ny drikke!";
+
+                        $drikkeId = DB::getDB()->lastInsertId();
+                        $denne_vakta = AltJournal::getLatest();
+                        $aktuelt_krysseobjekt = $denne_vakta->getStatusByDrikkeId($post['type']);
+                        if ($aktuelt_krysseobjekt == null) {
+                            $obj = array(
+                                'drikkeId' => $drikkeId,
+                                'mottatt' => 0,
+                                'avlevert' => 0,
+                                'pafyll' => 0,
+                                'utavskap' => 0
+                            );
+                            $denne_vakta->updateObject($obj);
+                            $denne_vakta->calcAvlevert();
+
+                        }
                     }
                 }
                 $drikke = Drikke::alle();
