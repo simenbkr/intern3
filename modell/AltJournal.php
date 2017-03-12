@@ -182,7 +182,7 @@ class AltJournal {
 
     public function drukketDenneVakta($drikke_id){
         foreach($this->getStatusAsArray() as $obj){
-            if($obj['drikkeId'] == $drikke_id && $obj['utavskap'] > 0 && $obj['mottatt'] > 0){
+            if($obj['drikkeId'] == $drikke_id && $obj['mottatt'] != $obj['avlevert']/*&& $obj['utavskap'] > 0 && $obj['mottatt'] > 0*/){
                 return true;
             }
         }
