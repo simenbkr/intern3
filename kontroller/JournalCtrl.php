@@ -147,7 +147,13 @@ class JournalCtrl extends AbstraktCtrl
                                 $_SESSION['msg'] = "Du fylte på " . $post['antall'] . " " . Drikke::medId($post['type'])->getNavn();
                             }
                         }
-                        $vakta = Bruker::medId($denne_vakta->getBrukerId())->getPerson();
+                        $vakta = Bruker::medId($denne_vakta->getBrukerId());
+
+                        if($vakta == null){
+                            $vakta = Ansatt::getSisteAnsatt();
+                        } else {
+                            $vakta = $vakta->getPerson();
+                        }
 
                         $drikker = Drikke::aktive();
                         $drikke_navn = array(); //Dummy for å ikke være nullindeksert (woo, spaghetti!)
@@ -181,8 +187,14 @@ class JournalCtrl extends AbstraktCtrl
                             //Torild
                             $vakta = Ansatt::getSisteAnsatt();
                         } else {
-                            $vakta = Bruker::medId($denneVakt->getBrukerId())->getPerson();
+                            $vakta = Bruker::medId($denneVakt->getBrukerId());
                         }
+                        if($vakta == null){
+                            $vakta = Ansatt::getSisteAnsatt();
+                        } else {
+                            $vakta = $vakta->getPerson();
+                        }
+
                         $dok = new Visning($this->cd);
                         $dok->set('denneVakt', $denneVakt);
                         $dok->set('vakt', $vakta);
@@ -231,7 +243,14 @@ class JournalCtrl extends AbstraktCtrl
                         $denne_vakta = AltJournal::getLatest();
 
                         $vaktaId = $denne_vakta->getBrukerId();
-                        $vakta = Bruker::medId($vaktaId)->getPerson();
+                        $vakta = Bruker::medId($vaktaId);
+
+                        if($vakta == null){
+                            $vakta = Ansatt::getSisteAnsatt();
+                        } else {
+                            $vakta = $vakta->getPerson();
+                        }
+
                         /*if (($vakta = Beboer::medId($vaktaId)) == null) {
                             $vakta = Ansatt::getSisteAnsatt();
                         }*/
