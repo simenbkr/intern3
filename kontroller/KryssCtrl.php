@@ -77,8 +77,13 @@ class KryssCtrl extends AbstraktCtrl
             }
         }
 
+        $drikke = array();
+        foreach(Drikke::alle() as $drikken){
+            $drikke[$drikken->getNavn()] = $drikken->getPris();
+        }
 
         $dok = new Visning($this->cd);
+        $dok->set('drikke', $drikke);
         $dok->set('mndkryss', $mndkryss);
         $dok->set('vinkryss', $vinkryss);
         $dok->set('vin_array', $vin_array);
