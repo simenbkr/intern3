@@ -2,8 +2,23 @@
 require_once('topp_utvalg.php');
 
 ?>
+<style> #loader {
+        position: fixed;
+        background-color: #FFF;
+        opacity: 1;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 10;
+    }
+</style>
+<div id="loader" style="display:none">
+    Your Content For Load Screen
+</div>
 <script>
     function sett_fakturert() {
+        $("#loader").show();
         $.ajax({
             type: 'POST',
             url: '?a=utvalg/vaktsjef/krysserapport',
@@ -66,7 +81,12 @@ require_once('topp_utvalg.php');
         <tr><th class="">Navn</th>
         <?php
         foreach($drikke as $drikken) {
+            /*
             if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant'){
+                continue;
+            } */
+            if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
+                (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv == 0))){
                 continue;
             }
             ?>
@@ -80,7 +100,12 @@ require_once('topp_utvalg.php');
         <tr>
             <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
             <?php foreach($drikke as $drikken){
+                /*
                 if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' || $drikken->harBlittDrukketSiden($sistFakturert)){
+                    continue;
+                } */
+                if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
+                    (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv == 0))){
                     continue;
                 }
                 ?>
@@ -126,3 +151,35 @@ require_once('topp_utvalg.php');
 <?php
 require_once('bunn.php');
 ?>
+<style>
+    .loader {
+        -webkit-animation: load-out 1s;
+        animation: load-out 1s;
+        -webkit-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+    }
+
+    @-webkit-keyframes load-out {
+        from {
+            top: 0;
+            opacity: 1;
+        }
+
+        to {
+            top: 100%;
+            opacity: 0;
+        }
+    }
+
+    @keyframes load-out {
+        from {
+            top: 0;
+            opacity: 1;
+        }
+
+        to {
+            top: 100%;
+            opacity: 0;
+        }
+    }
+</style>
