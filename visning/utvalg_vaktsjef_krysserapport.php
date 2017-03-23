@@ -14,7 +14,7 @@ require_once('topp_utvalg.php');
     }
 </style>
 <div id="loader" style="display:none">
-    Your Content For Load Screen
+    NULLSTILLER PERIODE. VENNLIGST VENT.
 </div>
 <script>
     function sett_fakturert() {
@@ -27,6 +27,7 @@ require_once('topp_utvalg.php');
             success: function (html) {
                 $('.modal-backdrop').hide();
                 $(".container").replaceWith($('.container', $(html)));
+                $("#loader").hide();
             },
             error: function (req, stat, err) {
                 alert(err);
