@@ -28,9 +28,13 @@ class RegiMinregiCtrl extends AbstraktCtrl
             }
         }
         $arbeidListe = ArbeidListe::medBrukerIdSemester($this->cd->getAktivBruker()->getId());
-        $regitimer = array(0, 0);
+        $regitimer = array(
+            '0' => 0,
+            '1' => 0,
+            '-1' => 0
+        );
         foreach ($arbeidListe as $arbeid) {
-            $regitimer[$arbeid->getGodkjent() ? 1 : 0] += $arbeid->getSekunderBrukt() / 3600;
+            $regitimer[$arbeid->getIntStatus()] += $arbeid->getSekunderBrukt() / 3600;
         }
         $dok = new Visning($this->cd);
         $dok->set('feil', $feil);

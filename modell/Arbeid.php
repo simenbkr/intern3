@@ -19,237 +19,283 @@ namespace intern3;
  * arbeid.bruker_id ⋃ arbeid.oppgave_id er ikke unik.
  */
 
-class Arbeid {
-	private $id;
-	private $bruker_id;
-	private $polymorfkategori_id;
-	private $polymorfkategori_velger;
-	private $tid_registrert;
-	private $sekunder_brukt;
-	private $tid_utfort;
-	private $kommentar;
-	private $godkjent;
-	private $tid_godkjent;
-	private $godkjent_bruker_id;
+class Arbeid
+{
+    private $id;
+    private $bruker_id;
+    private $polymorfkategori_id;
+    private $polymorfkategori_velger;
+    private $tid_registrert;
+    private $sekunder_brukt;
+    private $tid_utfort;
+    private $kommentar;
+    private $godkjent;
+    private $tid_godkjent;
+    private $godkjent_bruker_id;
+    private $tilbakemelding;
 
-	private $db;
+    private $db;
 
-	//latskapsinstansiering
-	private $bruker;
-	private $polymorfKategori;
+    //latskapsinstansiering
+    private $bruker;
+    private $polymorfKategori;
 
-	public function __construct () {
-		$this->db = DB::getDB();
-	}
-	private function init($st)
-	{
-		$st->execute();
-		if($st->rowCount() > 0)
-		{
-			$rad = $st->fetch();
+    public function __construct()
+    {
+        $this->db = DB::getDB();
+    }
 
-			$this->id                 = $rad['id'];
-			$this->bruker_id          = $rad['bruker_id'];
-			$this->polymorfkategori_id      = $rad['polymorfkategori_id'];
-			$this->polymorfkategori_velger  = $rad['polymorfkategori_velger'];
-			$this->tid_registrert     = $rad['tid_registrert'];
-			$this->sekunder_brukt     = $rad['sekunder_brukt'];
-			$this->tid_utfort         = $rad['tid_utfort'];
-			$this->kommentar          = $rad['kommentar'];
-			$this->godkjent           = $rad['godkjent'];
-			$this->tid_godkjent       = $rad['tid_godkjent'];
-			$this->godkjent_bruker_id = $rad['godkjent_bruker_id'];
+    private function init($st)
+    {
+        $st->execute();
+        if ($st->rowCount() > 0) {
+            $rad = $st->fetch();
 
-			$this->bruker = null;
-		}
-	}
-	public static function medId($id)
-	{
-		$instans = new self();
-		$st = $instans->db->prepare('SELECT * FROM arbeid WHERE id=:id');
-		$st->bindParam(':id' , $id);
+            $this->id = $rad['id'];
+            $this->bruker_id = $rad['bruker_id'];
+            $this->polymorfkategori_id = $rad['polymorfkategori_id'];
+            $this->polymorfkategori_velger = $rad['polymorfkategori_velger'];
+            $this->tid_registrert = $rad['tid_registrert'];
+            $this->sekunder_brukt = $rad['sekunder_brukt'];
+            $this->tid_utfort = $rad['tid_utfort'];
+            $this->kommentar = $rad['kommentar'];
+            $this->godkjent = $rad['godkjent'];
+            $this->tid_godkjent = $rad['tid_godkjent'];
+            $this->godkjent_bruker_id = $rad['godkjent_bruker_id'];
+            $this->tilbakemelding = $rad['tilbakemelding'];
 
-		$instans->init($st);
-		return $instans;
-	}
-	public static function medBrukerIdOppgIdVelg($brkId, $oppgId, $velg)
-	{
-		$instans = new self();
-		$st = $instans->db->prepare('SELECT * FROM arbeid WHERE bruker_id=:brk AND polymorfkategori_id=:oppg AND polymorfkategori_velger=:vlg');
-		$st->bindParam(':brk'  , $brkId);
-		$st->bindParam(':oppg' , $oppgId);
-		$st->bindParam(':vlg'  , $velg);
+            $this->bruker = null;
+        }
+    }
 
-		$instans->init($st);
-		return $instans;
-	}
+    public static function medId($id)
+    {
+        $instans = new self();
+        $st = $instans->db->prepare('SELECT * FROM arbeid WHERE id=:id');
+        $st->bindParam(':id', $id);
 
-	public function getId () {
-		return $this->id;
-	}
+        $instans->init($st);
+        return $instans;
+    }
 
-	public function getBrukerId () {
-		return $this->bruker_id;
-	}
+    public static function medBrukerIdOppgIdVelg($brkId, $oppgId, $velg)
+    {
+        $instans = new self();
+        $st = $instans->db->prepare('SELECT * FROM arbeid WHERE bruker_id=:brk AND polymorfkategori_id=:oppg AND polymorfkategori_velger=:vlg');
+        $st->bindParam(':brk', $brkId);
+        $st->bindParam(':oppg', $oppgId);
+        $st->bindParam(':vlg', $velg);
 
-	public function getOppgaveId () {
-		if($this->polymorfkategori_velger != ArbeidPolymorfkategori::OPPG){
-			return NULL;
-		}
-		return $this->polymorfkategori_id;
-	}
+        $instans->init($st);
+        return $instans;
+    }
 
-	public function getFeilId () {
-		if($this->polymorfkategori_velger != ArbeidPolymorfkategori::FEIL){
-			return NULL;
-		}
-		return $this->polymorfkategori_id;
-	}
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	public function getArbeidskategoriId () {
-		if($this->polymorfkategori_velger != ArbeidPolymorfkategori::YMSE){
-			return NULL;
-		}
-		return $this->polymorfkategori_id;
-	}
+    public function getBrukerId()
+    {
+        return $this->bruker_id;
+    }
 
-	public function getTidRegistrert () {
-		return $this->tid_registrert;
-	}
+    public function getOppgaveId()
+    {
+        if ($this->polymorfkategori_velger != ArbeidPolymorfkategori::OPPG) {
+            return NULL;
+        }
+        return $this->polymorfkategori_id;
+    }
 
-	public function getSekunderBrukt () {
-		return $this->sekunder_brukt;
-	}
+    public function getFeilId()
+    {
+        if ($this->polymorfkategori_velger != ArbeidPolymorfkategori::FEIL) {
+            return NULL;
+        }
+        return $this->polymorfkategori_id;
+    }
 
-	public function getTidUtfort () {
-		return $this->tid_utfort;
-	}
+    public function getArbeidskategoriId()
+    {
+        if ($this->polymorfkategori_velger != ArbeidPolymorfkategori::YMSE) {
+            return NULL;
+        }
+        return $this->polymorfkategori_id;
+    }
 
-	public function getKommentar () {
-		return $this->kommentar;
-	}
+    public function getTidRegistrert()
+    {
+        return $this->tid_registrert;
+    }
 
-	public function getGodkjent () {
-		return $this->godkjent;
-	}
+    public function getSekunderBrukt()
+    {
+        return $this->sekunder_brukt;
+    }
 
-	public function getTidGodkjent () {
-		return $this->tid_godkjent;
-	}
+    public function getTidUtfort()
+    {
+        return $this->tid_utfort;
+    }
 
-	public function getGodkjentBrukerId () {
-		return $this->godkjent_bruker_id;
-	}
+    public function getKommentar()
+    {
+        return $this->kommentar;
+    }
 
-	public static function mkArbeid(
-		$bruker_id,
-		$polymorfkategori_id,
-		$polymorfkategori_velger,
-		$sek,
-		$tid,
-		$kommentar
-	){
-		if($kommentar == '') $kommentar = NULL;
+    public function getGodkjent()
+    {
+        return $this->godkjent == 1;
+    }
 
-		$sql = 'INSERT INTO arbeid(bruker_id,polymorfkategori_id,polymorfkategori_velger,sekunder_brukt,tid_utfort,kommentar) VALUES(:brk,:id,:vlg,:sek,:tid,:kom)';
-		$instans = new self();
-		$st = $instans->db->prepare($sql);
-		$st->bindParam(':brk' , $bruker_id);
-		$st->bindParam(':id'  , $polymorfkategori_id);
-		$st->bindParam(':vlg' , $polymorfkategori_velger);
-		$st->bindParam(':sek' , $sek);
-		$st->bindParam(':tid' , $tid);
-		$st->bindParam(':kom' , htmlspecialchars($kommentar));
+    public function getTidGodkjent()
+    {
+        return $this->tid_godkjent;
+    }
 
-		$st->execute();
-	}
+    public function getGodkjentBrukerId()
+    {
+        return $this->godkjent_bruker_id;
+    }
 
-	public function getTidBrukt () {
-	$min = round($this->sekunder_brukt / 60);
-	$tim = floor($min / 60);
-	$min %= 60;
-		if ($min > 0) {
-		$min = str_repeat('0' , 2 - strlen($min)) . $min;
-		return $tim . ':' . $min;
-		}
-		else {
-		return $tim;
-		}
-	}
+    public function getTilbakemelding()
+    {
+        return $this->tilbakemelding;
+    }
 
-	/*
-	 * Funksjonene nedenfor instansierer variabler ved behov.
-	 */
-	public function getBruker () {
-		if(!$this->bruker){
-			// lazyinit
-			$this->bruker = Bruker::medId($this->bruker_id);
-		}
-		return $this->bruker;
-	}
+    public function getStatus()
+    {
+        if ($this->godkjent == 0) {
+            return 'Ubehandla';
+        } elseif ($this->godkjent == 1) {
+            return 'Godkjent';
+        }
+        return 'Underkjent';
+    }
 
-	public function getPolymorfKategori () {
-		if(!$this->polymorfKategori){
-			// lazyinit
-			switch($this->polymorfkategori_velger){
-			case ArbeidPolymorfkategori::YMSE:
-				$this->polymorfKategori = Arbeidskategori::medId($this->polymorfkategori_id);
-				break;
-			case ArbeidPolymorfkategori::FEIL:
-				$this->polymorfKategori = Feil::medId($this->polymorfkategori_id);
-				break;
-			case ArbeidPolymorfkategori::RAPP:
-				$this->polymorfKategori = Rapport::medId($this->polymorfkategori_id);
-				break;
-			case ArbeidPolymorfkategori::OPPG:
-				$this->polymorfKategori = Oppgave::medId($this->polymorfkategori_id);
-				break;
-			}
-		}
-		return $this->polymorfKategori;
-	}
+    public function getIntStatus(){
+        return $this->godkjent;
+    }
 
-	public static function finsPolymorfKategoriId($polymorfKategori, $id)
-	{
-		$instans = new self();
-		$st = $instans->db->prepare('SELECT COUNT(*) FROM arbeid WHERE polymorfkategori_velger = :type AND polymorfkategori_id = :id');
-		$st->bindParam(":type", $polymorfKategori);
-		$st->bindParam(":id", $id);
-		$st->execute();
+    public function getGodkjentBruker(){
+        return Bruker::medId($this->godkjent_bruker_id);
+    }
 
-		return $st->fetchColumn() > 0;
-	}
+    public static function mkArbeid(
+        $bruker_id,
+        $polymorfkategori_id,
+        $polymorfkategori_velger,
+        $sek,
+        $tid,
+        $kommentar
+    )
+    {
+        if ($kommentar == '') $kommentar = NULL;
 
-	public static function getTimerBruktPerSemester($dato=null){
-		$dato = isset($dato) ? $dato : date('Y-m-d');
-		$year = date('Y', strtotime($dato));
-		if(strtotime($dato) > strtotime("01-01-$year") && strtotime($dato) < strtotime("01-07-$year")){
-			//Vår-semesteret
-			$start = "$year-01-01";
-			$slutt = "$year-07-01";
-		} else {
-			$start = "$year-07-01";
-			$slutt = "$year-12-31";
-		}
-		$st = DB::getDB()->prepare('SELECT sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt AND godkjent=1)');
-		$st->bindParam(':start', $start);
-		$st->bindParam(':slutt', $slutt);
-		$st->execute();
-		$radene = $st->fetchAll();
-		$totalt_sek_utfort = 0;
-		foreach($radene as $rad){
-			$totalt_sek_utfort += $rad['sekunder_brukt'];
-		}
-		$timer = Funk::tidTilTimer($totalt_sek_utfort);
-		$maks_timer = 0;
+        $sql = 'INSERT INTO arbeid(bruker_id,polymorfkategori_id,polymorfkategori_velger,sekunder_brukt,tid_utfort,kommentar) VALUES(:brk,:id,:vlg,:sek,:tid,:kom)';
+        $instans = new self();
+        $st = $instans->db->prepare($sql);
+        $st->bindParam(':brk', $bruker_id);
+        $st->bindParam(':id', $polymorfkategori_id);
+        $st->bindParam(':vlg', $polymorfkategori_velger);
+        $st->bindParam(':sek', $sek);
+        $st->bindParam(':tid', $tid);
+        $st->bindParam(':kom', htmlspecialchars($kommentar));
 
-		foreach(BeboerListe::aktive() as $beboer){
-			$rollen = $beboer->getRolle();
-			if($rollen != null){
-				$maks_timer += $rollen->getRegiTimer();
-			}
-		}
-		return array($timer, $maks_timer);
-	}
+        $st->execute();
+    }
+
+    public function getTidBrukt()
+    {
+        $min = round($this->sekunder_brukt / 60);
+        $tim = floor($min / 60);
+        $min %= 60;
+        if ($min > 0) {
+            $min = str_repeat('0', 2 - strlen($min)) . $min;
+            return $tim . ':' . $min;
+        } else {
+            return $tim;
+        }
+    }
+
+    /*
+     * Funksjonene nedenfor instansierer variabler ved behov.
+     */
+    public function getBruker()
+    {
+        if (!$this->bruker) {
+            // lazyinit
+            $this->bruker = Bruker::medId($this->bruker_id);
+        }
+        return $this->bruker;
+    }
+
+    public function getPolymorfKategori()
+    {
+        if (!$this->polymorfKategori) {
+            // lazyinit
+            switch ($this->polymorfkategori_velger) {
+                case ArbeidPolymorfkategori::YMSE:
+                    $this->polymorfKategori = Arbeidskategori::medId($this->polymorfkategori_id);
+                    break;
+                case ArbeidPolymorfkategori::FEIL:
+                    $this->polymorfKategori = Feil::medId($this->polymorfkategori_id);
+                    break;
+                case ArbeidPolymorfkategori::RAPP:
+                    $this->polymorfKategori = Rapport::medId($this->polymorfkategori_id);
+                    break;
+                case ArbeidPolymorfkategori::OPPG:
+                    $this->polymorfKategori = Oppgave::medId($this->polymorfkategori_id);
+                    break;
+            }
+        }
+        return $this->polymorfKategori;
+    }
+
+    public static function finsPolymorfKategoriId($polymorfKategori, $id)
+    {
+        $instans = new self();
+        $st = $instans->db->prepare('SELECT COUNT(*) FROM arbeid WHERE polymorfkategori_velger = :type AND polymorfkategori_id = :id');
+        $st->bindParam(":type", $polymorfKategori);
+        $st->bindParam(":id", $id);
+        $st->execute();
+
+        return $st->fetchColumn() > 0;
+    }
+
+    public static function getTimerBruktPerSemester($dato = null)
+    {
+        $dato = isset($dato) ? $dato : date('Y-m-d');
+        $year = date('Y', strtotime($dato));
+        if (strtotime($dato) > strtotime("01-01-$year") && strtotime($dato) < strtotime("01-07-$year")) {
+            //Vår-semesteret
+            $start = "$year-01-01";
+            $slutt = "$year-07-01";
+        } else {
+            $start = "$year-07-01";
+            $slutt = "$year-12-31";
+        }
+        $st = DB::getDB()->prepare('SELECT sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt AND godkjent=1)');
+        $st->bindParam(':start', $start);
+        $st->bindParam(':slutt', $slutt);
+        $st->execute();
+        $radene = $st->fetchAll();
+        $totalt_sek_utfort = 0;
+        foreach ($radene as $rad) {
+            $totalt_sek_utfort += $rad['sekunder_brukt'];
+        }
+        $timer = Funk::tidTilTimer($totalt_sek_utfort);
+        $maks_timer = 0;
+
+        foreach (BeboerListe::aktive() as $beboer) {
+            $rollen = $beboer->getRolle();
+            if ($rollen != null) {
+                $maks_timer += $rollen->getRegiTimer();
+            }
+        }
+        return array($timer, $maks_timer);
+    }
 }
+
 ?>

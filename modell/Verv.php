@@ -40,7 +40,7 @@ class Verv
         $instance = new self();
         $instance->id = $rad['id'];
         $instance->navn = $rad['navn'];
-        $instance->utvalg = isset($rad['utvalg']) ? $rad['utvalg'] : 0;
+        $instance->utvalg = $rad['utvalg'] == 1 ? 1 : 0;
         $instance->epost = $rad['epost'];
         $instance->regitimer = $rad['regitimer'];
         $instance->beskrivelse = $rad['beskrivelse'];
@@ -76,7 +76,9 @@ class Verv
 
     public function erUtvalg()
     {
-        return isset($this->utvalg) ? $this->utvalg : 0;
+        //return true;
+        //return isset($this->utvalg) ? $this->utvalg : 0;
+        return $this->utvalg == 1;
     }
 
     public function getEpost()

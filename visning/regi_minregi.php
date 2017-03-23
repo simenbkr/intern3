@@ -194,8 +194,12 @@ require_once('topp.php');
             <td><?php echo intern3\Funk::timerTilTidForm($regitimer[1]); ?></td>
         </tr>
         <tr>
-            <th>Avventer godkjenning</th>
+            <th>Til behandling</th>
             <td><?php echo intern3\Funk::timerTilTidForm($regitimer[0]); ?></td>
+        </tr>
+        <tr>
+            <th>Underkjente regitimer</th>
+            <td><?php echo intern3\Funk::timerTilTidForm($regitimer[-1]); ?></td>
         </tr>
         <tr>
             <th>Antall regitimer du skal gjøre:</th>
@@ -212,6 +216,7 @@ require_once('topp.php');
                 <th>Kategori</th>
                 <th>Tid brukt</th>
                 <th>Kommentar</th>
+                <th>Tilbakemelding</th>
                 <th>Status</th>
                 <th></th>
             </tr>
@@ -226,8 +231,14 @@ require_once('topp.php');
                     <td><?php echo $arbeid->getPolymorfKategori()->getNavn(); ?></td>
                     <td><?php echo intern3\Funk::timerTilTidForm($arbeid->getSekunderBrukt() / 3600); ?></td>
                     <td><?php echo htmlspecialchars($arbeid->getKommentar()); ?></td>
-                    <td><?php echo $arbeid->getGodkjent() ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
-                    <td><?php echo $arbeid->getGodkjent() ? ' ' : '<button class="btn btn-danger" onclick="slett(' . $arbeid->getId() . ')">Slett</button>'; ?></td>
+                    <td>
+                        <?php if(strlen($arbeid->getTilbakemelding()) > 0){
+                            echo $arbeid->getTilbakemelding();
+                    }?>
+                    </td>
+                    <?php /*<td><?php echo $arbeid->getGodkjent() ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>*/
+                    ?><td><?php echo $arbeid->getStatus();?></td>
+                    <td><?php echo $arbeid->getStatus() == 'Godkjent' || $arbeid->getStatus() == 'Underkjent' ? ' ' : '<button class="btn btn-danger" onclick="slett(' . $arbeid->getId() . ')">Slett</button>'; ?></td>
                 </tr>
                 <?php
             }

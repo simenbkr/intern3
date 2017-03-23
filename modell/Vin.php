@@ -111,5 +111,15 @@ class Vin
         return $this->avanse;
     }
 
+    public static function getAktive(){
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE slettet=0');
+        $st->execute();
+        $vinene = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vinene = self::init($st);
+        }
+        return $vinene;
+    }
+
 }
 ?>

@@ -21,6 +21,20 @@ function godkjennArbeid(id, underkjenn) {
 	});
 }
 
+function underkjenn(id){
+    $.ajax({
+        type: 'POST',
+        url: '?a=utvalg/regisjef/arbeid/tilbakemelding/' + id,
+        data: 'underkjenn=1',
+        success: function(data) {
+            location.reload();
+        },
+        error: function(req, stat, err) {
+            alert(err);
+        }
+    });
+}
+
 </script>
 
 <div class="col-md-12">

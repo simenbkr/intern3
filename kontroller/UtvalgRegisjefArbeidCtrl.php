@@ -10,8 +10,46 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
             $this->godkjennArbeid($_POST['id'], @$_POST['underkjenn']);
         }
         $aktueltArg = $this->cd->getAktueltArg();
+        $sisteArg = $this->cd->getSisteArg();
+
+        /*if($sisteArg != $aktueltArg && ($arbeidet = Arbeid::medId($sisteArg)) != null){
+            setcookie('faen','lol');
+            //$this->underkjennArbeid($arbeidet, LogginnCtrl::getAktivBruker()->getId());
+            $bid = LogginnCtrl::getAktivBruker()->getId();
+            $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=-1,tid_godkjent=CURRENT_TIMESTAMP,godkjent_bruker_id=:bid WHERE id=:id');
+            $st->bindParam(':id', $sisteArg);
+            $st->bindParam(':bid', $bid);
+            $st->execute();
+            setcookie('hva','fæn');
+        }*/
+
         $dok = new Visning($this->cd);
         switch ($aktueltArg) {
+            case 'tilbakemelding':
+                if(($arbeidet = Arbeid::medId($this->cd->getSisteArg())) != null){
+                    if(isset($_POST) && count($_POST) > 0){
+                        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                        if(isset($post['tilbakemelding'])){
+                            $st = DB::getDB()->prepare('UPDATE arbeid SET tilbakemelding=:tb WHERE id=:id');
+                            $st->bindParam(':tb', $post['tilbakemelding']);
+                            $st->bindParam(':id', $arbeidet->getId());
+                            $st->execute();
+
+                            $_SESSION['success'] = 1;
+                            $_SESSION['msg'] = "Du la til en tilbakemelding!";
+                        } elseif(isset($post['underkjenn'])){
+                            $bid = LogginnCtrl::getAktivBruker()->getId();
+                            $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=-1,tid_godkjent=CURRENT_TIMESTAMP,godkjent_bruker_id=:bid WHERE id=:id');
+                            $st->bindParam(':id', $sisteArg);
+                            $st->bindParam(':bid', $bid);
+                            $st->execute();
+                            exit();
+                        }
+                    }
+                    $dok->set('arbeidet', $arbeidet);
+                    $dok->vis('utvalg_regisjef_arbeid_tilbakemelding.php');
+                    break;
+                }
             case 'endre':
                 do {
                     if (!is_numeric($this->cd->getSisteArg())) {
@@ -96,6 +134,14 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
             return $param * 3600;
         }
         return 0;
+    }
+
+    private function underkjennArbeid(Arbeid $arbeid, $bruker_id){
+        $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=-1,tid_godkjent=CURRENT_TIMESTAMP,godkjent_bruker_id=:bid WHERE id=:id');
+        $st->bindParam(':id', $arbeid->getId());
+        $st->bindParam(':bid', $bruker_id);
+        $st->execute();
+        setcookie('kuk','satan12213123');
     }
 
 }

@@ -7,7 +7,7 @@ class ArbeidListe extends Liste
 
     public static function alle($Sideinndeling = null)
     {
-        return self::listeFraSql('Arbeid::medId', 'SELECT id FROM arbeid ORDER BY godkjent ASC,tid_registrert DESC', array(), $Sideinndeling);
+        return self::listeFraSql('Arbeid::medId', 'SELECT id FROM arbeid ORDER BY FIELD(godkjent,0,-1,1) ASC,tid_registrert DESC', array(), $Sideinndeling);
     }
 
     public static function alleSammen($Start = false, $Lengde = false)
@@ -65,7 +65,7 @@ class ArbeidListe extends Liste
             $start = strtotime('first day of January', $unix);
             $slutt = strtotime('first day of July', $unix);
         }
-        $sql = 'SELECT arbeid.id FROM arbeid WHERE bruker_id=:brk and :dato_start <= tid_registrert and tid_registrert < :dato_slutt;';
+        $sql = 'SELECT arbeid.id FROM arbeid WHERE bruker_id=:brk and :dato_start <= tid_registrert and tid_registrert < :dato_slutt ORDER BY FIELD(godkjent,0,-1,1), tid_registrert DESC;';
         $param = array(':brk' => $bruker_id,
             ':dato_start' => date('Y-m-d', $start),
             ':dato_slutt' => date('Y-m-d', $slutt));

@@ -26,6 +26,22 @@ require_once ('topp_utvalg.php');
     $(document).ready(function () {
         byttPolymorfkategori('<?php echo isset($_POST['polymorfkategori_velger']) ? $_POST['polymorfkategori_velger'] : 'ymse'; ?>');
     });
+
+    function slett(id){
+        $.ajax({
+            type: 'POST',
+            url: '<?php echo $_SERVER['REQUEST_URI']; ?>',
+            data: 'slett=1&id=' + id,
+            success: function(data) {
+                location.reload();
+            },
+            error: function(req, stat, err) {
+                alert(err);
+            }
+        });
+
+    }
+
 </script>
 <div class="container">
     <h1>Utvalget » Regisjef » Legg til regi for <b><?php echo $beboeren->getFulltNavn();?></b></h1>
@@ -169,6 +185,10 @@ require_once ('topp_utvalg.php');
             <tr>
                 <th>Antall regitimer beboeren skal gjøre:</th>
                 <td><?php echo $beboeren->getRolle()->getRegitimer();?></td>
+            </tr>
+            <tr>
+                <th>Underkjente regitimer</th>
+                <td><?php echo intern3\Funk::timerTilTidForm($regitimer[-1]); ?></td>
             </tr>
         </table>
     </div>

@@ -55,11 +55,21 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                                 exit();
                             }
                         }
+                        if(isset($_POST['slett']) && isset($_POST['id']) && is_numeric($_POST['id'])
+                        && ($arbeidet = Arbeid::medId($_POST['id'])) != null){
+                            $st = DB::getDB()->prepare('DELETE FROM arbeid WHERE id=:id');
+                            $st->bindParam(':id', $arbeidet->getId());
+                            $st->execute();
+                        }
                     }
                     $arbeidListe = ArbeidListe::medBrukerIdSemester($beboeren->getBrukerId());
-                    $regitimer = array(0, 0);
+                    $regitimer = array(
+                        0 => 0,
+                        1 => 0,
+                        -1 => 0
+                    );
                     foreach ($arbeidListe as $arbeid) {
-                        $regitimer[$arbeid->getGodkjent() ? 1 : 0] += $arbeid->getSekunderBrukt() / 3600;
+                        $regitimer[$arbeid->getIntStatus()] += $arbeid->getSekunderBrukt() / 3600;
                     }
                     $dok->set('regitimer', $regitimer);
                     $dok->set('arbeidListe', $arbeidListe);
