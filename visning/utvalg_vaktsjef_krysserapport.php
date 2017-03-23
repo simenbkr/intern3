@@ -2,7 +2,8 @@
 require_once('topp_utvalg.php');
 
 ?>
-<style> #loader {
+
+<?php /*<style> #loader {
         position: fixed;
         background-color: #FFF;
         opacity: 1;
@@ -13,12 +14,12 @@ require_once('topp_utvalg.php');
         z-index: 10;
     }
 </style>
-<div id="loader" style="display:none">
+<div class="container" id="loader" style="display:none">
     NULLSTILLER PERIODE. VENNLIGST VENT.
-</div>
+</div> */ ?>
 <script>
     function sett_fakturert() {
-        $("#loader").show();
+        $("#kult").show();
         $.ajax({
             type: 'POST',
             url: '?a=utvalg/vaktsjef/krysserapport',
@@ -27,7 +28,7 @@ require_once('topp_utvalg.php');
             success: function (html) {
                 $('.modal-backdrop').hide();
                 $(".container").replaceWith($('.container', $(html)));
-                $("#loader").hide();
+                $("#kult").hide();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -69,6 +70,9 @@ require_once('topp_utvalg.php');
                 </div>
                 <div class="modal-body">
                     <button type="button" class="btn btn-md btn-danger" onclick="sett_fakturert()">Ja!</button>
+                    <div id="kult" style="display:none">
+                        <p>Fakturer nå altså, vent litt!</p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
@@ -87,7 +91,7 @@ require_once('topp_utvalg.php');
                 continue;
             } */
             if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv == 0))){
+                (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0))){
                 continue;
             }
             ?>
@@ -106,7 +110,7 @@ require_once('topp_utvalg.php');
                     continue;
                 } */
                 if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                    (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv == 0))){
+                    (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0))){
                     continue;
                 }
                 ?>
@@ -152,35 +156,3 @@ require_once('topp_utvalg.php');
 <?php
 require_once('bunn.php');
 ?>
-<style>
-    .loader {
-        -webkit-animation: load-out 1s;
-        animation: load-out 1s;
-        -webkit-animation-fill-mode: forwards;
-        animation-fill-mode: forwards;
-    }
-
-    @-webkit-keyframes load-out {
-        from {
-            top: 0;
-            opacity: 1;
-        }
-
-        to {
-            top: 100%;
-            opacity: 0;
-        }
-    }
-
-    @keyframes load-out {
-        from {
-            top: 0;
-            opacity: 1;
-        }
-
-        to {
-            top: 100%;
-            opacity: 0;
-        }
-    }
-</style>
