@@ -360,6 +360,18 @@ class Vakt
         $st->bindParam(':id', $vaktId);
         $st->execute();
     }
+
+    public static function getVakterByDato($dato){
+        $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE dato=:dato');
+        $st->bindParam(':dato', $dato);
+        $st->execute();
+        $vakter = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vakter[] = self::init($st);
+        }
+        return $vakter;
+    }
+
 }
 
 ?>
