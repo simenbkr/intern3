@@ -78,7 +78,7 @@ require_once('topp_utvalg.php');
         <form action="" method="post">
             <table class="form table table-responsive table-bordered">
                 <tr>
-                    <td><textarea class="form-control" rows="10" name="tilbakemelding"></textarea></td>
+                    <td><textarea class="form-control" rows="10" name="tilbakemelding"><?php echo $arbeidet->getTilbakemelding();?></textarea></td>
                 </tr>
                 <tr>
                     <td><input type="submit" class="btn btn-primary" value="Send tilbakemelding"></td>

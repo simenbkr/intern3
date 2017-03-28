@@ -39,8 +39,6 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                 ($beboeren = Beboer::medId($post['fjernFraOppgave'])) != null && isset($post['oppgaveId'])
                 && ($oppgaven = Oppgave::medId($post['oppgaveId'])) != null){
 
-                foreach($post as $key => $val){setcookie($key,$val);}
-
                 $oppgaven->fjernPerson($beboeren->getId());
             }
         }
