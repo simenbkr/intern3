@@ -6,6 +6,13 @@ class HovedCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
+        $aktueltArg = $this->cd->getAktueltArg();
+        if($aktueltArg == 'api'){
+            $valgtCtrl = new RestCtrl($this->cd->skiftArg());
+            $valgtCtrl->bestemHandling();
+            return;
+        }
+
         $aktivBruker = LogginnCtrl::getAktivBruker();
         if ($aktivBruker == null) {
             if (isset($_SESSION['brukernavn'])) {
@@ -83,6 +90,12 @@ class HovedCtrl extends AbstraktCtrl
             case 'kjeller':
                 $valgtCtrl = new KjellerCtrl($this->cd->skiftArg());
                 break;
+            case 'vinkjeller':
+                $valgtCtrl = new VinkjellerCtrl($this->cd->skiftArg());
+                break;
+            /*case 'api':
+                $valgtCtrl = new RestCtrl($this->cd->skiftArg());
+                break; */
             case 'diverse':
             default:
                 $valgtCtrl = new DiverseCtrl($this->cd->skiftArg());

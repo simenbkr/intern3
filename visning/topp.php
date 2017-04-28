@@ -94,6 +94,7 @@ print_r($_COOKIE);
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/regning">Registrer regning</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Registrer svinn</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>vinkjeller/">Vinkjelleren</a></li>
                                 </ul>
                             </li>
                                 <?php
@@ -230,6 +231,15 @@ if (isset($visUtvalgMeny)) {
                 </ul>
               </li>
             </ul>
+
+              <ul class="nav navbar-nav">
+                  <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Vinkjelleren <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                          <li><a href="<?php echo $cd->getBase(); ?>vinkjeller/">Vinkjelleren</a></li>
+                      </ul>
+                  </li>
+              </ul>
 
           </div>
         </div>

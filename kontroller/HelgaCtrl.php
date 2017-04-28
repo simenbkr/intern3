@@ -17,7 +17,7 @@ class HelgaCtrl extends AbstraktCtrl
             1 => 'Fredag',
             2 => 'Lørdag'
         );
-        if (LogginnCtrl::getAktivBruker() != null && $beboer != null) {
+        if (LogginnCtrl::getAktivBruker() != null && $beboer != null && in_array($beboer, BeboerListe::aktive())) {
             switch ($aktueltArg) {
                 case 'general':
                     //Hvis bruker ikke er general går man til default. Ganske smart.

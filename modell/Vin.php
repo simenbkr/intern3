@@ -116,9 +116,23 @@ class Vin
         $st->execute();
         $vinene = array();
         for($i = 0; $i < $st->rowCount(); $i++){
-            $vinene = self::init($st);
+            $vinene[] = self::init($st);
         }
         return $vinene;
+    }
+
+    public static function getAktiveAvType($type){
+        $typeId = $type->getId();
+
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE (slettet=0 AND typeId=:typeId)');
+        $st->bindParam(':typeId', $typeId);
+        $st->execute();
+        $vinene = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vinene[] = self::init($st);
+        }
+        return $vinene;
+
     }
 
 }

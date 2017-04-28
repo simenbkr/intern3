@@ -20,6 +20,9 @@ class CtrlData {
 	public function getArg($pos) {
 		return isset($this->arg[$pos]) ? $this->arg[$pos] : null;
 	}
+	public function getAllArgs(){
+	    return isset($this->arg) ? $this->arg : null;
+    }
 	public function getAktuellArgPos() {
 		$len = count($this->arg);
 		return $len > $this->pos ? $this->pos : -1;
