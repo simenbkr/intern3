@@ -4,7 +4,8 @@ require_once('topp.php');
 ?>
 
 <div class="container">
-
+    <h1>Vinkjeller » Velg vintype</h1>
+    <hr>
     <table class="table table-responsive">
         <?php
 

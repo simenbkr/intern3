@@ -49,7 +49,7 @@ class VinkjellerCtrl extends AbstraktCtrl {
 
         switch($lastArg){
             case 'navn':
-                $vinListe = Vin::getAktive();
+                $vinListe = Vin::getAktiveOrderedByNavn();
                 $dok->set('vinListe', $vinListe);
                 $dok->vis('vinkjeller_kryssing_navn.php');
                 return;
