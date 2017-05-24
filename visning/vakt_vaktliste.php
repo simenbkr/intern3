@@ -116,7 +116,7 @@ $df = new IntlDateFormatter('nb_NO',
                             echo ' class="tekst_dinevakter"';
                         }
                         echo '>';
-                        if ($bruker == null) {
+                        if ($bruker == null || $bruker->getPerson() == null) {
                             echo ' ';
                         } else {
                             echo $bruker->getPerson()->getFulltNavn();

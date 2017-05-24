@@ -113,7 +113,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
         else {
           echo '			<td>';
         }
-  			if ($bruker == null) {
+  			if ($bruker == null || $bruker->getPerson() == null) {
   				echo ' ';
   			}
   			else {

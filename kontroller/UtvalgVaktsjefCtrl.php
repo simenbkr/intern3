@@ -137,7 +137,8 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 if (isset($_POST['vaktId_1'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vaktId_1 = $post['vaktId_1'];
-                    Vakt::settVakt(443, $vaktId_1); // 443 Torild
+                    //Vakt::settVakt(443, $vaktId_1); // 443 Torild
+                    Vakt::settVakt(Ansatt::getSisteAnsatt()->getBrukerId(), $vaktId_1);
                     exit;
                 }
                 break;

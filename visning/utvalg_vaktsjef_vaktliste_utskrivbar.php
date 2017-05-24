@@ -139,7 +139,7 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
                 } else {
                     $class = 'days';
                 }
-                if($vakta != null) {
+                if($vakta != null && $vakta->getBruker() != null && $vakta->getBruker()->getPerson() != null) {
                     ?>
                     <td class="<?php echo $class;?>"><?php echo ($vakta->getBruker()) != null ? $vakta->getBruker()->getPerson()->getFulltNavn() : 'uhh'; ?></td>
                     <?php

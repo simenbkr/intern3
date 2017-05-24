@@ -29,8 +29,8 @@ $(formaterDatovelger);
 <?php
 if (!isset($skjulMeny)) {
 echo "Dette er en utviklingsside. Den er koblet til følgende database: ";
-print_r(DB::getDB()->query('SELECT database()')->fetchColumn());
-print_r($_COOKIE);
+//print_r(DB::getDB()->query('SELECT database()')->fetchColumn());
+//print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
 	/* Meny start */
