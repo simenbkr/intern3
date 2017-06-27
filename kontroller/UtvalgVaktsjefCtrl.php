@@ -8,6 +8,12 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
     {
         $aktueltArg = $this->cd->getAktueltArg();
         switch ($aktueltArg) {
+            case 'setvar':
+                $_SESSION['semester'] = "var";
+                break;
+            case 'sethost';
+                $_SESSION['semester'] = "host";
+                break;
             case 'generer':
                 $valgtCtrl = new UtvalgVaktsjefGenererCtrl($this->cd->skiftArg());
                 $valgtCtrl->bestemHandling();
@@ -257,9 +263,9 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'endre_drikke':
                 if (($drikken = Drikke::medId($this->cd->getSisteArg())) != null) {
 
-                    if(isset($_POST) && count($_POST) > 0){
+                    if (isset($_POST) && count($_POST) > 0) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                        if(isset($post['pris']) && isset($post['farge'])){
+                        if (isset($post['pris']) && isset($post['farge'])) {
                             //Har bestemt at man ikke kan endre navn på drikker. Det er bedre å sette de som inaktive
                             //fordi da skaper man mindre forvirring for brukere (trolig).
                             $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv WHERE id=:id');

@@ -28,7 +28,7 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-echo "Dette er en utviklingsside. Den er koblet til følgende database: ";
+//echo "Dette er en utviklingsside. Den er koblet til følgende database: ";
 //print_r(DB::getDB()->query('SELECT database()')->fetchColumn());
 //print_r($_COOKIE);
 //echo "<br/><br/>";
@@ -83,7 +83,7 @@ echo "Dette er en utviklingsside. Den er koblet til følgende database: ";
                             ?>
                             <li><a href="<?php echo $cd->getBase(); ?>helga">Helga</a></li>
                             <?php } ?>
-                            <?php if($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->erKjellerMester()) { ?>
+                            <?php if($cd->getAktivBruker() != null && ($cd->getAktivBruker()->getPerson()->erKjellerMester() || $cd->getAktivBruker()->getPerson()->harDataVerv())) { ?>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kjellermester <span class="caret"></span></a>
                                 <ul class="dropdown-menu">

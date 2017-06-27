@@ -13,13 +13,18 @@ foreach ($beboere as $beboer) {
 //var_dump($denne_vakta);
 ?>
 <script>
+<?php /*    //var rad = <?php echo $_SESSION['scroll']; ?>; */?>
+
     $(document).ready(function () {
-        $('#tabellen').DataTable({
+        var table = $('#tabellen').DataTable({
             "paging": false,
             "searching": false
         });
 
+        var $row = $(table.row(30).node());
+        $('html, body').animate({ scrollTop: $row.offset().top }, 2000);
     });
+
 </script>
 <style>
     table.tableSection {
