@@ -98,7 +98,7 @@ if ($_SESSION['semester'] == "var"){
 		$ukeStart = strtotime('next week', $ukeStart);
 	}
 } else {
-    $ukeStart = strtotime('1 September');
+    $ukeStart = strtotime('20 August');
 	$ukeSlutt = strtotime('1 January + 1 year');
 }
 $ukeStart = strtotime('last week', $ukeStart);
