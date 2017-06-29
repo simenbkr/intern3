@@ -137,7 +137,7 @@ $df = new IntlDateFormatter('nb_NO',
         ?>
         <table class="table-bordered table">
             <tr>
-                <th style="width:5.5%;"><span class="hidden-sm hidden-xs">Uke&nbsp;</span><?php echo $uke; ?></th>
+                <th style="width:5.5%;"><span class="hidden-sm hidden-xs">Uke&nbsp;</span><?php echo intval(date('W', $ukeStart)); ?></th>
                 <th style="width:13.5%;">M<span class="hidden-xs">an<span
                                 class="hidden-sm">dag</span></span>&nbsp;<?php echo date('d/m', $ukeStart); ?></th>
                 <th style="width:13.5%;">T<span class="hidden-xs">ir<span
