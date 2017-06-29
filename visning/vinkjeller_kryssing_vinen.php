@@ -1,36 +1,40 @@
 <?php
-require_once ('topp_vinkjeller.php');
+require_once('topp_vinkjeller.php');
 require_once('topp.php');
 ?>
 <div class="container">
 
-    <h1>Vinkjeller » Kryss <?php echo $vinen->getNavn();?></h1>
+    <h1>Vinkjeller » Kryss <?php echo $vinen->getNavn(); ?></h1>
     <hr>
-<table class="table table-bordered table-responsive">
+    <table class="table table-responsive affix">
 
-    <tr>
-        <td><?php echo $vinen->getNavn(); ?></td>
-        <td><?php echo $vinen->getPris(); ?></td>
-        <td><?php echo '' ?></td>
-    </tr>
+        <tr>
+            <td><?php echo $vinen->getNavn(); ?></td>
+            <td><?php echo $vinen->getPris(); ?></td>
+            <td>
+                <button class="btn btn-primary" onclick="videre()">Velg</button>
+            </td>
+        </tr>
 
-</table>
+    </table>
 
+    <hr>
+    <br/>
     <table class="table table-bordered table-responsive">
         <tr>
-        <td>Navn</td>
-        <td>Er med</td>
+            <td>Navn</td>
         </tr>
 
         <?php
 
-        foreach($beboerListe as $beboer){ ?>
+        foreach ($beboerListe as $beboer) {
+            /* @var intern3\Beboer $beboer */
+            ?>
 
-        <tr>
-            <td><?php echo $beboer->getFulltNavn(); ?></td>
-            <td>ting</td>
-        </tr>
-        <?php
+            <tr id="<?php echo $beboer->getId(); ?>" onclick="select(<?php echo $beboer->getId(); ?>)">
+                <td><?php echo $beboer->getFulltNavn(); ?></td>
+            </tr>
+            <?php
         }
         ?>
 
@@ -38,6 +42,42 @@ require_once('topp.php');
 
 
 </div>
+
+<script>
+
+    var ids = [];
+    function select(id) {
+
+        var x = document.getElementById(id);
+        if (ids.indexOf(id) == -1) {
+            x.style.backgroundColor = "green";
+            ids.push(id);
+        }
+        else {
+            var indeks = ids.indexOf(id);
+            ids.splice(indeks, 1);
+            x.style.backgroundColor = "white";
+        }
+    }
+
+    function videre() {
+        var idString = ids.join('/');
+        $.ajax({
+            type: 'POST',
+            url: '?a=vinkjeller/kryssing/<?php echo $vinen->getId();?>/' + idString,
+            method: 'GET',
+            success: function (html) {
+                window.location.href = '?a=vinkjeller/kryssing/<?php echo $vinen->getId();?>/' + idString;
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+    }
+
+
+</script>
+
 <?php
 require_once('bunn.php');
 ?>

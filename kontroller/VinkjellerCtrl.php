@@ -77,16 +77,36 @@ class VinkjellerCtrl extends AbstraktCtrl {
         }
 
 
-        if(!($this->cd->getAktuellArgPos() < count($alleArgs)) || !is_numeric($lastArg) || ($aktuell_vin = Vin::medId($lastArg)) == null){
+        /*if(!($this->cd->getAktuellArgPos() < count($alleArgs)) || !is_numeric($lastArg) || ($aktuell_vin = Vin::medId($lastArg)) == null){
+            setcookie('ugh','niggawut');
             $dok->vis('vinkjeller_hoved.php');
-        }
+        }*/
 
-        /* Forventet URL: vinkjeller/kryssing/<id> */
-        $beboerListe = BeboerListe::aktiveMedAlko();
-        $dok->set('beboerListe', $beboerListe);
-        $dok->set('vinen', $aktuell_vin);
-        $dok->vis('vinkjeller_kryssing_vinen.php');
-        return;
+        if (count($this->cd->getAllArgs()) < 4) {
+            $aktuell_vin = Vin::medId($lastArg);
+            /* Forventet URL: vinkjeller/kryssing/<id> */
+            $beboerListe = BeboerListe::aktiveMedAlko();
+            $dok->set('beboerListe', $beboerListe);
+            $dok->set('vinen', $aktuell_vin);
+            $dok->vis('vinkjeller_kryssing_vinen.php');
+            return;
+        }
+        else {
+            /* ?a=vinkjeller/kryssing/<vinID>/<beboerID-varargs> */
+            $args = $this->cd->getAllArgs();
+
+            $beboerene = [];
+            for($i = 3; $i < count($args); $i++) {
+                $beboerene[] = Beboer::medId($args[$i]);
+            }
+
+
+            $aktuell_vin = Vin::medId($args[2]);
+            $dok->set('beboerene', $beboerene);
+            $dok->set('vinen', $aktuell_vin);
+            $dok->vis('vinkjeller_kryss.php');
+            exit();
+        }
 
     }
 
