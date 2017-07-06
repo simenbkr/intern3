@@ -20,6 +20,9 @@ class VinkjellerCtrl extends AbstraktCtrl {
                 $dok->vis('vinkjeller_kryssing.php');
                 break;
 
+            case 'kryss_vin':
+                $this->handleKryss($dok);
+                break;
             case 'regler':
                 $dok->vis('vinkjeller_regler.php');
                 break;
@@ -117,6 +120,77 @@ class VinkjellerCtrl extends AbstraktCtrl {
             return;
         }
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $antall = $post['antall'];
+
+        $beboerIDs = explode(',' , $post['beboerId']);
+        $vinId = $post['vinid'];
+        $fordeling = array();
+
+        foreach(explode(',' , $post['fordeling']) as $key => $val) {
+            //Pls kill me now.
+            if($key && $val){
+                $fordeling[$key] = $val;
+            }
+        }
+
+        if ( ($vinen = Vin::medId($vinId)) == null){
+            exit();
+        }
+        $beboerene = array();
+        foreach($beboerIDs as $id){
+            if(($beboer = Beboer::medId($id)) == null){
+                exit();
+            }
+            /* @var Beboer $beboer */
+            $beboerene[] = $beboer;
+        }
+
+        if($antall < 1 || $antall > $vinen->getAntall() || !is_int($antall)) {
+            exit();
+        }
+
+        //Ait, we gucci.
+
+        /*
+         * $prisen = $post['antall'] * $vinen->getPris() * $vinen->getAvanse();
+                            $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall,tiden,fakturert,vinId,beboerId,prisen) VALUES(
+                            :antall,:tiden,0,:vinId,:beboerId,:prisen)');
+                            $st->bindParam(':antall', $post['antall']);
+                            $st->bindParam(':tiden', $post['dato']);
+                            $st->bindParam(':vinId', $post['vin']);
+                            $st->bindParam(':beboerId', $post['beboer']);
+                            $st->bindParam(':prisen', $prisen);
+                            $st->execute();
+
+                            $st_1 = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
+                            $st_1->bindParam(':id', $vinen->getId());
+                            $nytt_antall = $vinen->getAntall() - $post['antall'];
+                            $st_1->bindParam(':antall', $nytt_antall);
+                            $st_1->execute();
+         */
+
+        foreach($beboerene as $beboer){
+
+            $antall = round($fordeling[$beboer->getId()],3);
+            $pris = $antall * $vinen->getPris() * $vinen->getAvanse();
+
+            $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall, tiden, fakturert, vinId, beboerId, prisen)
+                                       VALUES(
+                                       :antall, NOW(), 0, :vinId, :beboerId, :prisen
+                                       )');
+            $st->bindParam(':antall', $antall);
+            $st->bindParam(':pris', $pris);
+            $st->bindParam(':vinId', $vinen->getId());
+            $st->bindParam(':beboerId', $beboer->getId());
+            $st->execute();
+
+        }
+
+        $st = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
+        $st->bindParam(':antall', $antall);
+        $st->bindParam(':id', $vinen->getId());
+        $st->execute();
 
     }
 }

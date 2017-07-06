@@ -1,6 +1,20 @@
 <?php
 require_once ('topp_vinkjeller.php');
 require_once('topp.php');
+
+var_dump($_SESSION);
+
+//var_dump($_SESSION['test']['fordeling'][617]);
+
+//var_dump(explode(',',$_SESSION['test']['fordeling']));
+
+foreach(explode(',',$_SESSION['test']['fordeling']) as $key => $elem){
+    if($key && $elem){
+        echo "$key => $elem<br/>";
+    }
+}
+
+
 ?>
 <style>
     #sliders {
@@ -37,7 +51,7 @@ require_once('topp.php');
 
             <li>
                 <div class="navn"><?php echo $beboer->getFulltNavn(); ?></div>
-                <div class="slider"><?php echo round(1/count($beboerene),2) * 100; ?></div>
+                <div class="slider" id="<?php echo $beboer->getId(); ?>"><?php echo round(1/count($beboerene),2) * 100; ?></div>
                 <span class="value">0</span>%, (ca)
                 <span class="pris"><?php echo round(1 * 1/count($beboerene) * $vinen->getPris(),2); ?></span>kr
             </li>
@@ -52,7 +66,7 @@ require_once('topp.php');
 
 
 
-    <button class="btn btn-block btn-primary">KRYSS</button>
+    <button class="btn btn-block btn-primary" onclick="kryss()">KRYSS</button>
 
 
 </div>
@@ -63,19 +77,43 @@ foreach($beboerene as $beboer){
 }
 ?>
 <script>
+    var vinID = <?php echo $vinen->getId(); ?>;
+
+
+
+    function kryss() {
+        $.ajax({
+            type: 'POST',
+            url: '?a=vinkjeller/kryss_vin/',
+            data: JSON.stringify('beboerId=' + ids + '&vinid=' + vinID + "&fordeling=" + prosent + "&antall=" + antall) ,
+            method: 'POST',
+            success: function (data) {
+                //history.back();
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+
+    }
+
+</script>
+
+
+
+<script>
     var pris = <?php echo $vinen->getPris(); ?>;
     var antall = 1;
     var ids = <?php echo json_encode($ider, true); ?>;
-
-    function showValue(newValue, id)
-    {
-            document.getElementById(id).innerHTML = newValue;
-            antall = newValue;
+    var prosent = [];
+    for(var i = 0; i < ids.length; i++){
+        prosent[ids[i]] = 1/ids.length;
     }
+
+
 
     var sliders = $("#sliders .slider");
     var availableTotal = 100;
-
     sliders.each(function() {
         var init_value = parseInt($(this).text());
 
@@ -94,6 +132,11 @@ foreach($beboerene as $beboer){
                 $(this).siblings('.value').text(ui.value);
                 $(this).siblings('.pris').text(Math.round(ui.value/100 * antall * pris * 100)/100);
 
+
+                //console.log($(this).context.id);
+                var id = $(this).context.id;
+                prosent[id] = ui.value;
+
                 // Get current total
                 var total = 0;
 
@@ -109,6 +152,9 @@ foreach($beboerene as $beboer){
 
                 // Update each slider
                 sliders.not(this).each(function() {
+
+                    //console.log($(this).context.id);
+
                     var t = $(this),
                         value = t.slider("option", "value");
 
@@ -122,12 +168,36 @@ foreach($beboerene as $beboer){
                     t.siblings('.value').text(new_value);
                     t.slider('value', new_value);
 
+                    id = $(this).context.id;
+                    prosent[id] = new_value;
+
                     t.siblings('.pris').text(Math.round(antall * new_value/100 * pris * 100)/100);
+                    //console.log(prosent);
 
                 });
             }
         });
     });
+
+
+    function showValue(newValue, id)
+    {
+        document.getElementById(id).innerHTML = newValue;
+        antall = newValue;
+
+        sliders.each(function(){
+
+            var t = $(this),
+                value = t.slider("option", "value");
+
+            new_value = t.slider("option", "value");
+            new_pris = Math.round(antall * new_value/100 * pris * 100) / 100;
+            t.siblings('.value').text(new_value);
+            t.siblings('.pris').text(new_pris);
+        })
+
+    }
+
 </script>
 <?php
 require_once('bunn.php');

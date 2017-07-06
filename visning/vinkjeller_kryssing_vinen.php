@@ -6,7 +6,8 @@ require_once('topp.php');
 
     <h1>Vinkjeller » Kryss <?php echo $vinen->getNavn(); ?></h1>
     <hr>
-    <table class="table table-responsive affix">
+    <div class="col-lg-6">
+    <table class="table table-responsive">
 
         <tr>
             <td><?php echo $vinen->getNavn(); ?></td>
@@ -17,7 +18,7 @@ require_once('topp.php');
         </tr>
 
     </table>
-
+</div>
     <hr>
     <br/>
     <table class="table table-bordered table-responsive">
