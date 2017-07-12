@@ -113,9 +113,17 @@ class VinkjellerCtrl extends AbstraktCtrl {
 
     }
 
+    private function isInt($num){
+
+        return $num - floor($num) == 0;
+
+    }
+
+
     private function handleKryss($dok){
 
         if(isset($_POST) && count($_POST) < 1){
+            //AKA fuck off
             $dok->vis('vinkjeller_hoved.php');
             return;
         }
@@ -125,8 +133,9 @@ class VinkjellerCtrl extends AbstraktCtrl {
 
         $beboerIDs = explode(',' , $post['beboerId']);
         $vinId = $post['vinid'];
-        $fordeling = array();
 
+        //Dette gjøres fordi JavaScript er å anse som svart magi. Det fungerer kun basert på empiri.
+        $fordeling = array();
         foreach(explode(',' , $post['fordeling']) as $key => $val) {
             //Pls kill me now.
             if($key && $val){
@@ -134,63 +143,77 @@ class VinkjellerCtrl extends AbstraktCtrl {
             }
         }
 
-        if ( ($vinen = Vin::medId($vinId)) == null){
-            exit();
-        }
         $beboerene = array();
         foreach($beboerIDs as $id){
             if(($beboer = Beboer::medId($id)) == null){
                 exit();
             }
+            //Gotta do them docs yo.
             /* @var Beboer $beboer */
             $beboerene[] = $beboer;
         }
 
-        if($antall < 1 || $antall > $vinen->getAntall() || !is_int($antall)) {
+        /*if($antall < 1 || $antall > $vinen->getAntall() || !is_int($antall)) {
+            setcookie('woopi',"doopi");
+            exit();
+        }*/
+
+        if ( ($vinen = Vin::medId($vinId)) == null){
+            setcookie('shit',"face");
+            exit();
+        }
+        if($antall < 1){
+            setcookie('woopi', "schmoopi");
+            exit();
+        }
+        if($antall > $vinen->getAntall()){
+            setcookie("qaahaha","nei");
+            exit();
+        }
+        if(!$this->isInt($antall)){
+            setcookie("stupid", "shit");
+            exit();
+        }
+
+        if(round(array_sum($fordeling), 2) < 99.99 || round(array_sum($fordeling), 2) > 100.99){
+            setcookie("udon","fook");
             exit();
         }
 
         //Ait, we gucci.
-
-        /*
-         * $prisen = $post['antall'] * $vinen->getPris() * $vinen->getAvanse();
-                            $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall,tiden,fakturert,vinId,beboerId,prisen) VALUES(
-                            :antall,:tiden,0,:vinId,:beboerId,:prisen)');
-                            $st->bindParam(':antall', $post['antall']);
-                            $st->bindParam(':tiden', $post['dato']);
-                            $st->bindParam(':vinId', $post['vin']);
-                            $st->bindParam(':beboerId', $post['beboer']);
-                            $st->bindParam(':prisen', $prisen);
-                            $st->execute();
-
-                            $st_1 = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
-                            $st_1->bindParam(':id', $vinen->getId());
-                            $nytt_antall = $vinen->getAntall() - $post['antall'];
-                            $st_1->bindParam(':antall', $nytt_antall);
-                            $st_1->execute();
-         */
-
+        $msg = "Du krysset " . $antall . "stk " . $vinen->getNavn() . " til " . $vinen->getPris() * $vinen->getAvanse()
+            . "kr per stk på ";
         foreach($beboerene as $beboer){
 
-            $antall = round($fordeling[$beboer->getId()],3);
-            $pris = $antall * $vinen->getPris() * $vinen->getAvanse();
+            if(count($beboerene) == 1){
+                $antallet = $antall;
+            } else {
+                $antallet = round($fordeling[$beboer->getId()]/100 * $antall, 3);
+            }
+            $pris = $antallet * $vinen->getPris() * $vinen->getAvanse();
 
             $st = DB::getDB()->prepare('INSERT INTO vinkryss (antall, tiden, fakturert, vinId, beboerId, prisen)
-                                       VALUES(
-                                       :antall, NOW(), 0, :vinId, :beboerId, :prisen
-                                       )');
-            $st->bindParam(':antall', $antall);
-            $st->bindParam(':pris', $pris);
+                                       VALUES(               :antall, NOW(), 0, :vinId, :beboerId, :prisen)');
+
+            $st->bindParam(':antall', $antallet);
+            $st->bindParam(':prisen', $pris);
             $st->bindParam(':vinId', $vinen->getId());
             $st->bindParam(':beboerId', $beboer->getId());
+
             $st->execute();
 
+            $msg .= $beboer->getFulltNavn() . ', ';
         }
 
         $st = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
-        $st->bindParam(':antall', $antall);
+        $nytt_antall = $vinen->getAntall() - $antall;
+        $st->bindParam(':antall', $nytt_antall);
         $st->bindParam(':id', $vinen->getId());
         $st->execute();
+
+        $_SESSION['success'] = 1;
+        $_SESSION['msg'] = rtrim($msg, ', ') . '. Drikk (u)ansvarlig!';
+
 
     }
 }

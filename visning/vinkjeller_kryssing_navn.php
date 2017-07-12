@@ -28,28 +28,17 @@ require_once('topp.php');
             <tr>
                 <td><a href="?a=vinkjeller/kryssing/<?php echo $vinen->getId();?>"><?php echo $vinen->getNavn();?></a></td>
                 <td><?php echo $vinen->getType()->getNavn(); ?></td>
-                <td><?php echo round($vinen->getPris(),2); ?></td>
+                <td><?php echo round($vinen->getPris() * $vinen->getAvanse(),2); ?></td>
                 <td><?php echo round($vinen->getAntall(),0); ?></td>
             </tr>
 
 
         <?php
         }
-
-
-
-
-
-
         ?>
 
-
     </table>
-
-
 </div>
-
-
 
 <?php
 require_once('bunn.php');

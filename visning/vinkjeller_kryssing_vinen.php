@@ -11,7 +11,7 @@ require_once('topp.php');
 
         <tr>
             <td><?php echo $vinen->getNavn(); ?></td>
-            <td><?php echo $vinen->getPris(); ?></td>
+            <td><?php echo $vinen->getPris() * $vinen->getAvanse(); ?></td>
             <td>
                 <button class="btn btn-primary" onclick="videre()">Velg</button>
             </td>
