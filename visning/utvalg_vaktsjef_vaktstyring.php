@@ -36,14 +36,47 @@ function lagVakt(modalId) {
     }
   });
 }
+
+function setVar(){
+    $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/setvar',
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
+
+function setHost(){
+    $.ajax({
+    cache: false,
+    type: 'POST',
+    url: '?a=utvalg/vaktsjef/sethost',
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
+
 </script>
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Vaktsjef &raquo; Vaktstyring</h1>
 	<hr>
+<div class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="#" onclick="setVar()">Vår</a></li>
+    <li><a href="#" onclick="setHost()">Høst</a></li>
+  </ul>
+</div>
+	<hr>
 
 <?php
-
+/*
+ * Vet ikke hvem som gjorde detta statisk, men sett deg på en svær dildo. Takk.
 if (date('m') > 6) {
 	$ukeStart = strtotime('1 September');
 	$ukeSlutt = strtotime('1 January + 1 year');
@@ -56,6 +89,20 @@ else {
 	}
 }
 $ukeStart = strtotime('last week', $ukeStart);
+*/
+
+if ($_SESSION['semester'] == "var"){
+    $ukeStart = strtotime('1 January');
+	$ukeSlutt = strtotime('1 July');
+	if (date('W', $ukeStart) == 53) {
+		$ukeStart = strtotime('next week', $ukeStart);
+	}
+} else {
+    $ukeStart = strtotime('20 August');
+	$ukeSlutt = strtotime('1 January + 1 year');
+}
+$ukeStart = strtotime('last week', $ukeStart);
+
 
 foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 	$ukeStart = strtotime('+1 week', $ukeStart);
@@ -113,7 +160,7 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
         else {
           echo '			<td>';
         }
-  			if ($bruker == null) {
+  			if ($bruker == null || $bruker->getPerson() == null) {
   				echo ' ';
   			}
   			else {

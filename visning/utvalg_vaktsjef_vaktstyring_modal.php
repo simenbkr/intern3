@@ -101,6 +101,23 @@ function settBytteMarked(){
   });
 }
 
+function test() {
+    var shownVal = document.getElementById("tekstinput").value;
+    var beboerId = document.querySelector("#beboere option[value='"+shownVal+"']").dataset.value;
+    //registrer(gjestid, 1);
+    settVakt(beboerId);
+    document.getElementById("tekstinput").value = "";
+}
+
+function test2() {
+    var shownVal = document.getElementById("tekstinput2").value;
+    var beboerId = document.querySelector("#beboere option[value='"+shownVal+"']").dataset.value;
+    //registrer(gjestid, 1);
+    byttVakt(beboerId);
+    //document.getElementById("tekstinput2").value = "";
+}
+
+
 </script>
 <!-- Modal for vakter -->
 <div class="modal fade" id="<?php echo $modalId; ?>" role="dialog">
@@ -140,7 +157,19 @@ function settBytteMarked(){
         Lagret!
         </div>
         <p>Velg hvem som skal ha vakten</p>
-        <select name="beboer" onchange="settVakt(this.value)">
+
+          <datalist id="beboere">
+              <?php
+              foreach ($beboerListe as $beboer) {
+                  ?>
+                  <option data-value="<?php echo $beboer->getId(); ?>" value="<?php echo $beboer->getFulltNavn(); ?>"></option>
+                  <?php
+              }
+              ?>
+          </datalist>
+          <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="beboere" onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
+
+        <select name="beboere" onchange="settVakt(this.value)">
           <option value="0" default="true">- velg -</option>
 
           <?php
@@ -175,6 +204,19 @@ function settBytteMarked(){
       </div>
       <div class="modal-body" align="center">
         <p>Velg hvem som skal ha vakten</p>
+
+          <datalist id="beboere">
+              <?php
+              foreach ($beboerListe as $beboer) {
+                  ?>
+                  <option data-value="<?php echo $beboer->getId(); ?>" value="<?php echo $beboer->getFulltNavn(); ?>"></option>
+                  <?php
+              }
+              ?>
+          </datalist>
+          <input placeholder="Ola Nordmann" id="tekstinput2" class="form-control" type="text" list="beboere" onkeydown="if (event.keyCode == 13) { test2()}"><br/><br/>
+
+
         <select onchange="byttVakt(this.value)">
           <option value="0" default="true">- velg -</option>
 

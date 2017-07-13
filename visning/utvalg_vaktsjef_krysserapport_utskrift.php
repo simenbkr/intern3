@@ -14,8 +14,8 @@
             <tr><th class="navn">Navn</th>
                 <?php
                 foreach($drikke as $drikken) {
-                    if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                        (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0))){
+                    if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
+                        (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
                         continue;
                     }
                     ?>
@@ -28,8 +28,8 @@
                 <tr>
                     <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
                     <?php foreach($drikke as $drikken){
-                        if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                            (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0))){
+                        if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
+                            (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
                             continue;
                         }
                         ?>

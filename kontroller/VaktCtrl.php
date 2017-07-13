@@ -8,7 +8,18 @@ class VaktCtrl extends AbstraktCtrl
     {
         $aktueltArg = $this->cd->getAktueltArg();
         $vaktbytteListe = VaktbytteListe::etterVakttype();
-        if ($aktueltArg == 'bytte') {
+        $sisteArg = $this->cd->getSisteArg();
+
+        if($sisteArg == 'setvar'){
+            $_SESSION['semester'] = "var";
+        }
+        elseif($sisteArg == 'sethost'){
+            $_SESSION['semester'] = "host";
+        }
+        elseif($sisteArg == 'setna'){
+            $_SESSION['semester'] = "frana";
+        }
+        elseif ($aktueltArg == 'bytte') {
             $dok = new Visning($this->cd);
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);

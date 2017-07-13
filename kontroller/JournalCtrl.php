@@ -78,6 +78,9 @@ class JournalCtrl extends AbstraktCtrl
                                         Drikke::medId($drikkeid)->getNavn() . " på " .
                                         Beboer::medId($beboerId)->getFulltNavn();
 
+                                    $bebliste = BeboerListe::aktiveMedAlko();
+                                    $sted = array_search(Beboer::medId($beboerId), $bebliste);
+                                    $_SESSION['scroll'] = $sted;
                                     break;
                                 }
                             }

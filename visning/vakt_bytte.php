@@ -333,6 +333,11 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                             if ($bruker == null) {
                                 //continue;
                             }
+                            /* @var \intern3\Vaktbytte $vaktbytte */
+                            if(strtotime($vaktbytte->getVakt()->getDato()) < strtotime(date('Y-m-d'))){
+                                continue;
+                            }
+
                             $modalId = 'modal-' . date('m-d', strtotime($vaktbytte->getVakt()->getDato())) . '-' . $vaktbytte->getVakt()->getVakttype();
                             ?>
                             <tr>

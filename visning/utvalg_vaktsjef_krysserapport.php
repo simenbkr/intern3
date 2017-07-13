@@ -90,8 +90,8 @@ require_once('topp_utvalg.php');
             if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant'){
                 continue;
             } */
-            if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0))){
+            if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
+                (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
                 continue;
             }
             ?>
@@ -109,8 +109,8 @@ require_once('topp_utvalg.php');
                 if($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' || $drikken->harBlittDrukketSiden($sistFakturert)){
                     continue;
                 } */
-                if (($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                    (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0))){
+                if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
+                    (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
                     continue;
                 }
                 ?>

@@ -261,6 +261,12 @@ class Beboer implements Person
 
     public function flyttUt()
     {
+        /*
+         * Flytter ut beboer. Setter siste romhistorikk til (ikke null).
+         * Fjerner fra evt åpmandsverv.
+         * Fjerner fra evt vakter.
+         */
+
         $romhistorikken = $this->romhistorikk;
         $som_array = json_decode($romhistorikken, true);
         foreach ($som_array as $key => $historikk) {
@@ -275,6 +281,18 @@ class Beboer implements Person
         $st->bindParam(':historikk', $som_json_igjen);
         $st->bindParam(':id', $id);
         $st->execute();
+
+        //Slett beboer fra alle verv den har.
+        $st = DB::getDB()->prepare('DELETE FROM beboer_verv WHERE beboer_id=:id');
+        $st->bindParam(':id', $this->getId());
+        $st->execute();
+
+        //Slette vakter tilhørende beboer (setter de som "torildvakt").
+        $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bid WHERE bruker_id=:id');
+        $st->bindParam(':bid', Ansatt::getSisteAnsatt()->getBrukerId());
+        $st->bindParam(':id', $this->getBrukerId());
+        $st->execute();
+
     }
 
     public function getVakterOgVakterSittet(){
@@ -332,7 +350,6 @@ class Beboer implements Person
     public function harUtvalgVerv()
     {
         return count($this->getUtvalgVervListe()) > 0 || $this->harDataVerv();
-        //return true;
     }
 
     public function getUtvalgVervListe()
