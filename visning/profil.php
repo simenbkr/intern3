@@ -157,6 +157,37 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
 	</form>
 </div>
+
+<div class="col-md-4 col-sm-6">
+    <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+        <?php /* @var \intern3\Prefs $prefs */ ?>
+        <h2>Preferanser<input type="hidden" name="endre" value="prefs"></h2>
+        <table class="table table-bordered">
+            <tr>
+                <td>Jeg ønsker å stå på krysselista i resepsjonen</td>
+                <td><input type="checkbox" name="resepp" value="1" <?php if($prefs->getResepp()) { ?> checked="checked"><?php } ?></td>
+            </tr>
+
+            <tr>
+                <td>Jeg ønsker å stå på krysselista i vinkjelleren</td>
+                <td><input type="checkbox" name="vinkjeller" value="1" <?php if($prefs->getVinkjeller()) { ?> checked="checked"><?php } ?></td>
+            </tr>
+
+            <tr>
+                <td>Jeg vil ha en pinkode på krysselista</td>
+                <td><input type="checkbox" name="pinboo" value="1" <?php if($prefs->harPinkode()) { ?> checked="checked"><?php } ?></td>
+            </tr>
+
+            <tr>
+                <td>Min pinkode er:</td>
+                <td><input type="text" name="pinkode" style="width:75%" value="<?php echo $prefs->getPinkode();?>"</td>
+            </tr>
+
+        </table>
+        <p><input type="submit" class="btn btn-primary" value="Lagre"></p>
+    </form>
+</div>
+
 <?php
 
 require_once('bunn.php');

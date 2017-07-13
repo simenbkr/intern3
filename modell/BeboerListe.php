@@ -42,6 +42,25 @@ class BeboerListe
         return $lista;
     }
 
+    public static function reseppListe(){
+        $ikkeUtflyttet = '%"utflyttet":NULL%';
+        $st = DB::getDB()->prepare("select id from beboer where (alkoholdepositum=1 and romhistorikk LIKE :ikkeUtflyttet) 
+and id in 
+(select beboerId from prefs where resepp=1)");
+        $st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);
+        return self::medPdoSt($st);
+    }
+
+    public static function vinkjellerListe(){
+        //SQL-ninja shit yo
+        $ikkeUtflyttet = '%"utflyttet":NULL%';
+        $st = DB::getDB()->prepare("select id from beboer where (alkoholdepositum=1 and romhistorikk LIKE :ikkeUtflyttet) 
+and id in 
+(select beboerId from prefs where vinkjeller=1)");
+        $st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);
+        return self::medPdoSt($st);
+    }
+
     public static function aktiveMedRegi(){
         $lista = array();
         foreach(self::aktive() as $beboer){

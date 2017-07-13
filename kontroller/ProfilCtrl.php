@@ -21,6 +21,8 @@ class ProfilCtrl extends AbstraktCtrl
                 case 'varsler':
                     $feil = array_merge($feil, $this->endreVarsler());
                     break;
+                case 'prefs':
+                    $feil = array_merge($feil, $this->endrePrefs());
             }
             if (count($feil) == 0) {
                 header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -28,10 +30,38 @@ class ProfilCtrl extends AbstraktCtrl
             }
         }
         $epostInst = LogginnCtrl::getAktivBruker()->getPerson()->getEpostPref();
+        $prefs = LogginnCtrl::getAktivBruker()->getPerson()->getPrefs();
         $dok = new Visning($this->cd);
+        $dok->set('prefs', $prefs);
         $dok->set('epostInst', $epostInst);
         $dok->set('feil', $feil);
         $dok->vis('profil.php');
+    }
+
+    private function endrePrefs(){
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        if ( $post['pinkode'] == null || $post['pinkode'] == ""){
+            $st = DB::getDB()->prepare('UPDATE prefs SET resepp=:resepp, vinkjeller=:vinkjeller, pinboo=:pinboo WHERE beboerId=:id');
+        } else {
+            $st = DB::getDB()->prepare('UPDATE prefs SET resepp=:resepp, vinkjeller=:vinkjeller, pinboo=:pinboo, pinkode=:pinkode WHERE beboerId=:id');
+            $st->bindParam(':pinkode', $post['pinkode']);
+        }
+
+        $options = array("resepp", "vinkjeller", "pinboo");
+        $en = 1;
+        $null = 0;
+        foreach($options as $option){
+            $var = ':' . $option;
+            if( isset($post[$option]) && $post[$option] == 1 ){
+                $st->bindParam($var, $en);
+            } else {
+                $st->bindParam($var, $null);
+            }
+        }
+        $st->bindParam(':id', LogginnCtrl::getAktivBruker()->getPerson()->getId());
+        $st->execute();
+        return array();
     }
 
     private function endreBilde(){
@@ -47,7 +77,7 @@ class ProfilCtrl extends AbstraktCtrl
             if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
                 $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
                 move_uploaded_file($tmp_file, "profilbilder/" . $bildets_navn);
-                chmod("vinbilder/" . $bildets_navn, 0644);
+                chmod("profilbilder/" . $bildets_navn, 0644);
                 $id = LogginnCtrl::getAktivBruker()->getPerson()->getId();
                 $st = DB::getDB()->prepare('UPDATE beboer SET bilde=:bilde WHERE id=:id');
                 $st->bindParam(':bilde', $bildets_navn);

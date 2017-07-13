@@ -39,7 +39,49 @@ class JournalCtrl extends AbstraktCtrl
                         $dok->set('skjulMeny', 1);
                         $dok->vis('journal.php');
                         break;
+
+                    case 'pinkode':
+                        $lastArg = $this->cd->getSisteArg();
+                        if (!is_numeric($lastArg) || ($beboer = Beboer::medId($lastArg)) == null) {
+                            exit();
+                        }
+
+                        if (!$beboer->getPrefs()->harPinkode()) {
+                            header('Location: ?a=journal/kryssing/' . $lastArg);
+                            exit();
+                        }
+
+                        if($_SESSION[md5($beboer->getFulltNavn())] > 0){
+                            header('Location: ?a=journal/kryssing/' . $lastArg);
+                        }
+
+                        if (count($_POST) > 0) {
+                            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                            if ($post['pinkode'] == $beboer->getPrefs()->getPinkode()) {
+                                $_SESSION[md5($beboer->getFulltNavn())] = 2;
+                            }
+                        }
+
+                        $dok = new Visning($this->cd);
+                        $dok->set('beboer', $beboer);
+                        $dok->vis("pinkode.php");
+                        break;
                     case 'kryssing':
+
+                        $lastArg = $this->cd->getSisteArg();
+
+                        if (is_numeric($lastArg) && ($beboer = Beboer::medId($lastArg)) != null
+                            && $beboer->getPrefs()->harPinkode())
+                        {
+                            if (!isset($_SESSION[md5($beboer->getFulltNavn())])) {
+                                setcookie("harikke","kake");
+                                header('Location: ?a=journal/pinkode/' . $lastArg);
+                            } else {
+                                $_SESSION[md5($beboer->getFulltNavn())] = $_SESSION[md5($beboer->getFulltNavn())] - 1;
+                            }
+                        }
+
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                             if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
@@ -78,7 +120,7 @@ class JournalCtrl extends AbstraktCtrl
                                         Drikke::medId($drikkeid)->getNavn() . " på " .
                                         Beboer::medId($beboerId)->getFulltNavn();
 
-                                    $bebliste = BeboerListe::aktiveMedAlko();
+                                    $bebliste = BeboerListe::reseppListe();
                                     $sted = array_search(Beboer::medId($beboerId), $bebliste);
                                     $_SESSION['scroll'] = $sted;
                                     break;
@@ -87,6 +129,7 @@ class JournalCtrl extends AbstraktCtrl
                         }
                         $beboerId = $this->cd->getSisteArg();
                         $beboer = Beboer::medId($beboerId);
+
                         if ($beboer != null && $beboer->harAlkoholdepositum()) {
                             $drikker = Drikke::alle();
                             $drikke_navn = array();
@@ -104,10 +147,16 @@ class JournalCtrl extends AbstraktCtrl
                             $dok->set('skjulMeny', 1);
                             $dok->set('beboer', $beboer);
                             $dok->vis('journal_kryss.php');
+
+                            if ($_SESSION[md5($beboer->getFulltNavn())] < 1) {
+                                setcookie('unsat','hehe');
+                                unset($_SESSION[md5($beboer->getFulltNavn())]);
+                            }
+
                             break;
                         }
                     case 'krysseliste':
-                        $beboere = BeboerListe::aktive();
+                        $beboere = BeboerListe::reseppListe();
                         $dato = AltJournal::getLatest()->getDato();
                         $krysseliste = Krysseliste::getAlleKryssetEtterDato($dato);
                         $drikke = Drikke::alle();
@@ -152,7 +201,7 @@ class JournalCtrl extends AbstraktCtrl
                         }
                         $vakta = Bruker::medId($denne_vakta->getBrukerId());
 
-                        if($vakta == null){
+                        if ($vakta == null) {
                             $vakta = Ansatt::getSisteAnsatt();
                         } else {
                             $vakta = $vakta->getPerson();
@@ -192,7 +241,7 @@ class JournalCtrl extends AbstraktCtrl
                         } else {
                             $vakta = Bruker::medId($denneVakt->getBrukerId());
                         }
-                        if($vakta == null){
+                        if ($vakta == null) {
                             $vakta = Ansatt::getSisteAnsatt();
                         } else {
                             $vakta = $vakta->getPerson();
@@ -248,7 +297,7 @@ class JournalCtrl extends AbstraktCtrl
                         $vaktaId = $denne_vakta->getBrukerId();
                         $vakta = Bruker::medId($vaktaId);
 
-                        if($vakta == null){
+                        if ($vakta == null) {
                             $vakta = Ansatt::getSisteAnsatt();
                         } else {
                             $vakta = $vakta->getPerson();

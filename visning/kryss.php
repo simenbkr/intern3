@@ -90,12 +90,13 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             data: 'beboerId=' + beboerId + "&antall=" + count + "&type=" + drikkeid,//'fjern=' + beboerId +'&verv='+ vervId,
             method: 'POST',
             success: function (data) {
-                history.back();
+                //window.location.replace("?a=journal/krysseliste");
             },
             error: function (req, stat, err) {
                 alert(err);
             }
         });
+        window.location.href = "?a=journal/krysseliste";
     }
 document.body.style.backgroundColor = '#5bc0de';
 </script>
@@ -223,7 +224,7 @@ document.body.style.backgroundColor = '#5bc0de';
     <hr>
     <button class="btn btn-lg btn-primary btn-block" id="krysseknapp" onclick="kryss(<?php echo $beboer->getId(); ?>)"></button>
     <br/>
-    <h1><a href="javascript:history.back()">TILBAKE</a></h1>
+    <h1><a href="javascript:window.location.href = "?a=journal/krysseliste">TILBAKE</a></h1>
 </div>
 <?php
 

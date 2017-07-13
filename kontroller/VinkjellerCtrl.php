@@ -86,7 +86,7 @@ class VinkjellerCtrl extends AbstraktCtrl {
         if (count($this->cd->getAllArgs()) < 4) {
             $aktuell_vin = Vin::medId($lastArg);
             /* Forventet URL: vinkjeller/kryssing/<id> */
-            $beboerListe = BeboerListe::aktiveMedAlko();
+            $beboerListe = BeboerListe::vinkjellerListe();
             $dok->set('beboerListe', $beboerListe);
             $dok->set('vinen', $aktuell_vin);
             $dok->vis('vinkjeller_kryssing_vinen.php');

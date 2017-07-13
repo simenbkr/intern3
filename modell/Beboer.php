@@ -320,6 +320,10 @@ class Beboer implements Person
         return $vakterInnenDogn;
     }
 
+    public function getPrefs(){
+        return Prefs::fraBeboerId($this->getId());
+    }
+
     public function getVervListe()
     {
         if ($this->vervListe == null) {
@@ -333,7 +337,7 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('SELECT * FROM beboer_verv WHERE beboer_id=:id AND verv_id=45');
         $st->bindParam(':id', $this->id);
         $st->execute();
-        return $st->rowCount() > 0;
+        return ($st->rowCount() > 0 || $this->harDataVerv());
     }
 
     public function harDataVerv()
