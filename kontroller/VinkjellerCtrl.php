@@ -64,6 +64,9 @@ class VinkjellerCtrl extends AbstraktCtrl {
             case 'kryss':
                 $this->handleKryss($dok);
                 return;
+            case '':
+                header('Location:' . rtrim($_SERVER['REQUEST_URI'], '/'));
+                exit();
         }
 
         if(in_array('type', $alleArgs) && 'type') {
@@ -79,11 +82,6 @@ class VinkjellerCtrl extends AbstraktCtrl {
             }
         }
 
-
-        /*if(!($this->cd->getAktuellArgPos() < count($alleArgs)) || !is_numeric($lastArg) || ($aktuell_vin = Vin::medId($lastArg)) == null){
-            setcookie('ugh','niggawut');
-            $dok->vis('vinkjeller_hoved.php');
-        }*/
 
         if (count($this->cd->getAllArgs()) < 4) {
             $aktuell_vin = Vin::medId($lastArg);

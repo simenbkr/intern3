@@ -7,6 +7,8 @@ require_once('topp.php');
 
     <h1>Vinkjeller » Velg vin</h1>
     <hr>
+    <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
+    <br/>
     <table class="table table-responsive table-bordered">
 
         <tr>
@@ -38,6 +40,8 @@ require_once('topp.php');
         ?>
 
     </table>
+    <br/>
+    <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
 </div>
 
 <?php

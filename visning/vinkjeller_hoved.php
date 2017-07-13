@@ -92,6 +92,8 @@ require_once('topp.php');
     <div class="container">
         <h1>Vinkjeller » Hovedside</h1>
 
+        <hr>
+
         <div class="tilbakemelding">
             <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
 
@@ -118,29 +120,18 @@ require_once('topp.php');
             <div id="showgrid">
                 <div class="row">
                     <div class="column">
-                        <a href="?a=vinkjeller/kryssing"><button class="btn btn-primary btn-huge">Kryssing</button></a>
+                        <a href="?a=vinkjeller/kryssing/navn"><button class="btn btn-primary btn-huge">Sorter på vinnavn</button></a>
                     </div>
+
+                    <div class="column">
+                        <a href="?a=vinkjeller/kryssing/type"><button class="btn btn-primary btn-huge">Sorter på vintype</button></a>
+                    </div>
+
                     <div class="column">
                         <a href="?a=vinkjeller/regler"><button class="btn btn-primary btn-huge">Regler</button></a>
                     </div>
-                    <?php /*
-                    <div class="column">
-                        <button class="btn btn-primary btn-huge" onclick="updateCount(3)">3</button>
-                    </div>
- */ ?>
                 </div>
-      <?php /*          <div class="row">
-                    <div class="column">
-                        <button class="btn btn-primary btn-huge" onclick="updateCount(4)">4</button>
-                    </div>
-                    <div class="column">
-                        <button class="btn btn-primary btn-huge" onclick="updateCount(5)">5</button>
-                    </div>
-                    <div class="column">
-                        <button class="btn btn-primary btn-huge" onclick="updateCount(6)">6</button>
-                    </div>
-                </div>
- */?>
+
             </div>
         </div>
     </div>

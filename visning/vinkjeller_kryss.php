@@ -1,21 +1,6 @@
 <?php
 require_once('topp_vinkjeller.php');
 require_once('topp.php');
-
-var_dump($_SESSION);
-var_dump($_COOKIE);
-
-//var_dump($_SESSION['test']['fordeling'][617]);
-
-//var_dump(explode(',',$_SESSION['test']['fordeling']));
-
-/*foreach (explode(',', $_SESSION['test']['fordeling']) as $key => $elem) {
-    if ($key && $elem) {
-        echo "$key => $elem<br/>";
-    }
-}*/
-
-
 ?>
 <style>
     #sliders {
