@@ -98,7 +98,8 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             data: 'beboerId=' + beboerId + "&antall=" + count + "&type=" + drikkeid,
             method: 'POST',
             success: function (data) {
-                history.back();
+                //history.back();
+                window.location.replace("?a=journal/krysseliste");
             },
             error: function (req, stat, err) {
                 alert(err);

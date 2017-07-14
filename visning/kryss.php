@@ -90,13 +90,15 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             data: 'beboerId=' + beboerId + "&antall=" + count + "&type=" + drikkeid,//'fjern=' + beboerId +'&verv='+ vervId,
             method: 'POST',
             success: function (data) {
-                //window.location.replace("?a=journal/krysseliste");
+                console.log("success");
+                window.location.replace("?a=journal/krysseliste");
             },
             error: function (req, stat, err) {
                 alert(err);
             }
         });
-        window.location.href = "?a=journal/krysseliste";
+        //window.location.href = "?a=journal/krysseliste";
+        window.location.replace("?a=journal/krysseliste");
     }
 document.body.style.backgroundColor = '#5bc0de';
 </script>

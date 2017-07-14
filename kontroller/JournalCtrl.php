@@ -59,7 +59,7 @@ class JournalCtrl extends AbstraktCtrl
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
                             if ($post['pinkode'] == $beboer->getPrefs()->getPinkode()) {
-                                $_SESSION[md5($beboer->getFulltNavn())] = 2;
+                                $_SESSION[md5($beboer->getFulltNavn())] = 1;
                             }
                         }
 
