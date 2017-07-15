@@ -104,10 +104,12 @@ class VervMelding
         $st->execute();
         $verv_meldingene = array();
         for($i = 0; $i < $st->rowCount(); $i++){
-            $verv_meldingene[] = self::init($st);
+            $melding = self::init($st);
+            //Eh, fuck eldre meldinger, right?
+            if(strtotime($melding->getDato()) > strtotime('-30 days')){
+                $verv_meldingene[] = $melding;
+            }
         }
         return $verv_meldingene;
     }
-
-
 }

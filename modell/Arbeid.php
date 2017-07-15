@@ -283,7 +283,11 @@ class Arbeid
         $radene = $st->fetchAll();
         $totalt_sek_utfort = 0;
         foreach ($radene as $rad) {
-            $totalt_sek_utfort += $rad['sekunder_brukt'];
+            //172800s = 48 timer.
+            if( ($tid_brukt = $rad['sekunder_brukt']) > 172800){
+                $tid_brukt = 48;
+            }
+            $totalt_sek_utfort += $tid_brukt;
         }
         $timer = Funk::tidTilTimer($totalt_sek_utfort);
         $maks_timer = 0;
