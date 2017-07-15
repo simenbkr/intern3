@@ -122,7 +122,8 @@ class JournalCtrl extends AbstraktCtrl
 
                                     $bebliste = BeboerListe::reseppListe();
                                     $sted = array_search(Beboer::medId($beboerId), $bebliste);
-                                    $_SESSION['scroll'] = $sted;
+                                    //$_SESSION['scroll'] = $sted;
+                                    $_SESSION['scroll'] = $beboerId;
                                     break;
                                 }
                             }

@@ -13,50 +13,64 @@ foreach ($beboere as $beboer) {
 //var_dump($denne_vakta);
 ?>
 <script>
-<?php /*    //var rad = <?php echo $_SESSION['scroll']; ?>; */?>
+
+    var rad = 0;
+<?php
+if(isset($_SESSION['scroll']) && is_numeric($_SESSION['scroll'])){ ?>
+rad = <?php echo $_SESSION['scroll']; ?>;
+<?php
+}
+?>
 
     $(document).ready(function () {
         var table = $('#tabellen').DataTable({
             "paging": false,
-            "searching": false
+            "searching": false,
+            "scrollY": "500px"
         });
+        if(rad != undefined && rad != 0) {
+            var $scrollBody = $(table.table().node()).parent();
 
-        var $row = $(table.row(30).node());
-        $('html, body').animate({ scrollTop: $row.offset().top }, 2000);
+            $scrollBody.scrollTop($("#" + rad).offset().top - $scrollBody.height());
+
+        }
+
     });
 
 </script>
-<style>
-    table.tableSection {
-        display: table;
-        width: 100%;
-    }
 
-    table.tableSection thead,
-    table.tableSection tbody {
-        width: 100%;
-    }
+<!--<style>-->
+<!--    table.tableSection {-->
+<!--        display: table;-->
+<!--        width: 100%;-->
+<!--    }-->
+<!---->
+<!--    table.tableSection thead,-->
+<!--    table.tableSection tbody {-->
+<!--        width: 100%;-->
+<!--    }-->
+<!---->
+<!--    table.tableSection thead {-->
+<!--        overflow-y: scroll;-->
+<!--        display: table;-->
+<!--        table-layout: fixed;-->
+<!--        width: calc(100% - 17px); /* assuming scrollbar width as 16px */-->
+<!--    }-->
+<!---->
+<!--    table.tableSection tbody {-->
+<!--        overflow: auto;-->
+<!--        height: 600px;-->
+<!--        display: block;-->
+<!--    }-->
+<!---->
+<!--    table.tableSection tr {-->
+<!--        width: 100%;-->
+<!--        text-align: left;-->
+<!--        display: table;-->
+<!--        table-layout: fixed;-->
+<!--    }-->
+<!--</style>-->
 
-    table.tableSection thead {
-        overflow-y: scroll;
-        display: table;
-        table-layout: fixed;
-        width: calc(100% - 17px); /* assuming scrollbar width as 16px */
-    }
-
-    table.tableSection tbody {
-        overflow: auto;
-        height: 600px;
-        display: block;
-    }
-
-    table.tableSection tr {
-        width: 100%;
-        text-align: left;
-        display: table;
-        table-layout: fixed;
-    }
-</style>
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <script type="text/javascript" src="js/dataTables.js"></script>
 <div class="container">
@@ -112,7 +126,7 @@ foreach ($beboere as $beboer) {
             <tbody>
             <?php
             foreach ($beboere_med_depositum as $beboer) { ?>
-                <tr>
+                <tr id="<?php echo $beboer->getId();?>">
                     <td style="width: 25%;"><a
                             href="?a=journal/kryssing/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a>
                     </td>
