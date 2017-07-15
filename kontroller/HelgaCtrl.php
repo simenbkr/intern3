@@ -7,7 +7,7 @@ class HelgaCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
         $aktueltArg = $this->cd->getAktueltArg();
-        $beboer = $this->cd->getAktivBruker()->getPerson();
+        $beboer = LogginnCtrl::getAktivBruker()->getPerson();
         $beboer_id = LogginnCtrl::getAktivBruker()->getPerson()->getId();
         $denne_helga = Helga::getLatestHelga();
         $gjestelista = $denne_helga->getGjesteliste();
@@ -17,7 +17,7 @@ class HelgaCtrl extends AbstraktCtrl
             1 => 'Fredag',
             2 => 'Lørdag'
         );
-        if (LogginnCtrl::getAktivBruker() != null && $beboer != null && in_array($beboer, BeboerListe::aktive())) {
+        if ($beboer != null && in_array($beboer, BeboerListe::aktive())) {
             switch ($aktueltArg) {
                 case 'general':
                     //Hvis bruker ikke er general går man til default. Ganske smart.
@@ -30,7 +30,6 @@ class HelgaCtrl extends AbstraktCtrl
                                 $denne_helga->setEpostTekst($post['epost_tekst']);
                                 $dok->set('oppdatert', 1);
                             } elseif (isset($post['dato']) && isset($post['aar'])) {
-                                setcookie('sadasd','satan');
                                 $klar = $post['klar'] == 'on' ? 1 : 0;
                                 $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
                                 $st->bindParam(':start', $post['dato']);
@@ -186,8 +185,8 @@ class HelgaCtrl extends AbstraktCtrl
                                     "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
                                     Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
                                     Med vennlig hilsen<br/>Helga-" . $denne_helga->getAar() . "<br/><br/>
-                                    <br/><br/>Dette er en automatisert melding. Feil? Vennligst ta kontakt
-                                     med data@singsaker.no.</body></html>";
+                                    <br/><br/><p>Dette er en automatisert melding. Feil? Vennligst ta kontakt
+                                     med data@singsaker.no.</p></body></html>";
 
 
                                 //$beskjed = $denne_helga->getEpostTekst() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Med vennlig hilsen<br/>" . $denne_helga->getTema() . "-Helga 2017";
