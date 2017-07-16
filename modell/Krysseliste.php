@@ -424,6 +424,46 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         $this->id = DB::getDB()->lastInsertId();
     }
 
-}
 
+    public static function getKryssByPeriode($start, $slutt){
+        //Må iterere over samtlige objekter pga elendig datastruktur. Takk'a.
+        //Terminerer på sånn 1sek lokalt, tipper det er tigangen på tjenern. Hvorfor er det json i dette igjen?
+        //Fuck databasenormalisering eller hva? :( :(
+        $beboerListe = BeboerListe::alle();
+        $drikke = Drikke::alle();
+
+        $beboerKrysselisteListe = array();
+        foreach($beboerListe as $beboer){
+            /* @var Beboer $beboer */
+
+            $beboers_kryssesum = array();
+
+            foreach($drikke as $drikken){
+                $beboers_kryssesum[$drikken->getNavn()] = 0;
+            }
+            foreach(self::medBeboerId($beboer->getId()) as $krysseListe){
+                /* @var Krysseliste $krysseListe */
+                $kryssDrikka = json_decode($krysseListe->krysseliste, true);
+
+                foreach($kryssDrikka as $kryss){
+                    //Jeg vet, tre loops?! Ahahaha fuck this shit man
+
+                    if(true || strtotime($kryss['tid']) > strtotime($start) && strtotime($kryss['tid']) < $slutt){
+                        //Satser på at ingen krysser når faktureringen pågår. AKA yolo.
+                        $beboers_kryssesum[$krysseListe->getDrikke()->getNavn()] += $kryss['antall'];
+
+                    }
+                }
+            }
+            $beboerKrysselisteListe[$beboer->getId()] = $beboers_kryssesum;
+        }
+
+        $siste_lista = array();
+        foreach($beboerKrysselisteListe as $lista){
+            if(array_sum($lista) > 0)
+                $siste_lista[] = $lista;
+        }
+        return $siste_lista;
+    }
+}
 ?>
