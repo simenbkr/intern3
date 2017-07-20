@@ -11,6 +11,8 @@ class Prefs
     private $vinkjeller;
     private $pinboo;
     private $pinkode;
+    private $vinpinboo;
+    private $vinpin;
 
     private static function init(\PDOStatement $st){
         $instance = new self();
@@ -25,6 +27,8 @@ class Prefs
         $instance->vinkjeller = $rad['vinkjeller'];
         $instance->pinboo = $rad['pinboo'];
         $instance->pinkode = $rad['pinkode'];
+        $instance->vinpinboo = $rad['vinpinboo'];
+        $instance->vinpin = $rad['vinpin'];
 
         return $instance;
     }
@@ -55,6 +59,14 @@ class Prefs
 
     public function getPinkode(){
         return $this->pinkode;
+    }
+
+    public function harVinPin(){
+        return $this->vinpinboo == 1;
+    }
+
+    public function getVinPinkode(){
+        return ($this->vinpin == null ? null : $this->vinpin);
     }
 
 

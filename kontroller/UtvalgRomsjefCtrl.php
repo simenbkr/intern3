@@ -126,8 +126,8 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $st_1->bindParam(':id', $beboer_id);
                 $st_1->execute();
 
-                $st_2 = DB::getDB()->prepare('INSERT INTO prefs (beboerId, resepp, vinkjeller, pinboo, pinkode)
-    VALUES(:id, 1, 1, 0, NULL)');
+                $st_2 = DB::getDB()->prepare('INSERT INTO prefs (beboerId, resepp, vinkjeller, pinboo, pinkode, vinpinboo, vinpin)
+    VALUES(:id, 1, 1, 0, NULL, 0, NULL)');
                 $st_2->bindParam(':id', $beboer_id);
                 $st_2->execute();
 
