@@ -22,7 +22,7 @@ class KjellerCtrl extends AbstraktCtrl
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
-                        && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
+                        && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'] && isset($post['land']))
                     ) {
 
                         $file_name = $_FILES['image']['name'];
@@ -59,8 +59,9 @@ class KjellerCtrl extends AbstraktCtrl
                     $vinen = Vin::medId($sisteArg);
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
                         if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
-                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
+                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'] && isset($post['land']))
                         ) {
                             $file_name = $_FILES['image']['name'];
                             $file_size = $_FILES['image']['size'];
@@ -444,8 +445,8 @@ class KjellerCtrl extends AbstraktCtrl
     {
         $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $st = DB::getDB()->prepare('INSERT INTO vin (navn,bilde,pris,avanse,antall,typeId,beskrivelse) VALUES(
-:navn,:bilde,:pris,:avanse,:antall,:typeId,:beskrivelse)');
+        $st = DB::getDB()->prepare('INSERT INTO vin (navn,bilde,pris,avanse,antall,typeId,beskrivelse, land) VALUES(
+:navn,:bilde,:pris,:avanse,:antall,:typeId,:beskrivelse, :land)');
 
         $st->bindParam(':navn', $post['navn']);
         $st->bindParam(':bilde', $bildet);
@@ -454,15 +455,18 @@ class KjellerCtrl extends AbstraktCtrl
         $st->bindParam(':antall', $post['antall']);
         $st->bindParam(':typeId', $post['type']);
         $st->bindParam(':beskrivelse', $post['beskrivelse']);
+        $st->bindParam(':land', $post['land']);
         $st->execute();
         return true;
     }
 
     private function updateVin($medbilde = false, $bildenavn, $id)
     {
+        setcookie('asdasd','sata');
         $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,bilde=:bilde,pris=:pris,avanse=:avanse,typeId=:typeId,beskrivelse=:beskrivelse WHERE id=:id');
+        $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,bilde=:bilde,pris=:pris,avanse=:avanse,
+        typeId=:typeId,beskrivelse=:beskrivelse,land=:land WHERE id=:id');
 
         $st->bindParam(':id', $id);
         $st->bindParam(':navn', $post['navn']);
@@ -471,6 +475,7 @@ class KjellerCtrl extends AbstraktCtrl
         $st->bindParam(':avanse', $post['avanse']);
         $st->bindParam(':typeId', $post['type']);
         $st->bindParam(':beskrivelse', $post['beskrivelse']);
+        $st->bindParam(':land', $post['land']);
         $st->execute();
         return true;
     }

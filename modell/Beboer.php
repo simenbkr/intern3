@@ -295,6 +295,23 @@ class Beboer implements Person
 
     }
 
+    public function flyttInn(){
+
+        $romhistorikken = json_decode($this->romhistorikk, true);
+
+        $siste_rom = end($romhistorikken);
+        $siste_rom['innflyttet'] = date('Y-m-d');
+        $siste_rom['utflyttet'] = null;
+
+        $romhistorikken[] = $siste_rom;
+        $romhistorikken = json_encode($romhistorikken);
+
+        $st = DB::getDB()->prepare('UPDATE beboer SET romhistorikk=:historikk WHERE id=:id');
+        $st->bindParam(':historikk', $romhistorikken);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+    }
+
     public function getVakterOgVakterSittet(){
         $antall_vakter = 0;
         $antall_sittet = 0;

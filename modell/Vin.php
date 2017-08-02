@@ -16,6 +16,7 @@ class Vin
     private $avanse;
     private $slettet;
     private $beskrivelse;
+    private $land;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -32,6 +33,7 @@ class Vin
         $instance->avanse = $rad['avanse'];
         $instance->slettet = $rad['slettet'];
         $instance->beskrivelse = $rad['beskrivelse'];
+        $instance->land = $rad['land'];
         $instance->type = Vintype::medId($instance->typeId);
         $instance->svinn = 0;
         $st = DB::getDB()->prepare('SELECT * FROM vinsvinn WHERE vin_id=:id');
@@ -97,6 +99,10 @@ class Vin
         return $this->slettet == 1;
     }
 
+    public function getLand(){
+        return $this->land;
+    }
+
     public static function getAlle(){
         $st = DB::getDB()->prepare('SELECT * FROM vin ORDER BY navn ASC');
         $st->execute();
@@ -142,7 +148,38 @@ class Vin
             $vinene[] = self::init($st);
         }
         return $vinene;
+    }
 
+    public static function getByLand($land){
+
+        $land = "%" . $land . "%";
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE land LIKE :land');
+        $st->bindParam(':land', $land);
+        $st->execute();
+
+        $vin = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vin[] = self::init($st);
+        }
+        return $vin;
+    }
+
+    public static function getAlleLand(){
+
+        $sql = "SELECT DISTINCT land FROM vin WHERE slettet=0";
+        $st = DB::getDB()->query($sql);
+
+        $land = array();
+
+        foreach($st->fetchAll() as $row){
+            if($row['land'] != null) {
+                $land[] = $row['land'];
+            } else {
+                $land[] = "udefinert";
+            }
+        }
+        return array_unique($land);
     }
 
 }

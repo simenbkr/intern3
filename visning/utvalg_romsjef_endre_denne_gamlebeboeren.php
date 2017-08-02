@@ -1,52 +1,93 @@
 <?php
-require_once ('topp_utvalg.php');
-if(!isset($beboer) || $beboer == null) {
+require_once('topp_utvalg.php');
+if (!isset($beboer) || $beboer == null) {
     exit();
 }
 ?>
-<script>
-    $(function () {
-        $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
-    });
-</script>
+    <script>
+        $(function () {
+            $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
+        });
+    </script>
     <div class="container">
-        <h1>Utvalget » Romsjef » Gammel Beboerliste » Endre (gammel beboer) <b><?php echo $beboer->getFulltNavn(); ?></b></h1>
+        <h1>Utvalget » Romsjef » Gammel Beboerliste » Endre (gammel beboer)
+            <b><?php echo $beboer->getFulltNavn(); ?></b></h1>
+
+        <div class="tilbakemelding">
+            <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+                <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+                <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <?php echo $_SESSION['msg']; ?>
+                </div>
+                <p></p>
+                <?php
+            }
+            unset($_SESSION['success']);
+            unset($_SESSION['error']);
+            unset($_SESSION['msg']);
+            ?></div>
+
 
         <form action="" method="post">
-            <input type="hidden" name="beboerid" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getId(); ?>">
+            <input type="hidden" name="beboerid"
+                   value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getId(); ?>">
             <table class="table table-bordered table-responsive">
                 <tr>
                     <td>Fornavn:</td>
-                    <td><input type="text" name="fornavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFornavn(); ?>"></td>
+                    <td><input type="text" name="fornavn"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFornavn(); ?>">
+                    </td>
                 </tr>
                 <tr>
                     <td>Mellomnavn:</td>
-                    <td><input type="text" name="mellomnavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getMellomnavn(); ?>"></td>
+                    <td><input type="text" name="mellomnavn"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getMellomnavn(); ?>">
+                    </td>
                 </tr>
                 <tr>
                     <td>Etternavn:</td>
-                    <td><input type="text" name="etternavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEtternavn(); ?>"></td>
+                    <td><input type="text" name="etternavn"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEtternavn(); ?>">
+                    </td>
                 </tr>
                 <tr>
                     <td>Født (år-mnd-dag):</td>
-                    <td><input type="text" id="datepicker" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
+                    <td><input type="text" id="datepicker" name="fodselsdato"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>">
+                    </td>
                 </tr>
                 <tr>
                     <td>Adresse:</td>
-                    <td><input type="text" name="adresse" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getAdresse(); ?>"></td>
+                    <td><input type="text" name="adresse"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getAdresse(); ?>">
+                    </td>
                 </tr>
                 <tr>
                     <td>Postnummer:</td>
-                    <td><input type="text" name="postnummer" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getPostnummer(); ?>"></td>
+                    <td><input type="text" name="postnummer"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getPostnummer(); ?>">
+                    </td>
                 </tr>
                 <tr>
                     <td>Telefon:</td>
-                    <td><input type="text" name="mobil" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getTelefon(); ?>"></td>
+                    <td><input type="text" name="mobil"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getTelefon(); ?>">
+                    </td>
                 </tr>
 
                 <tr>
                     <td>E-post:</td>
-                    <td><input type="text" name="epost" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEpost(); ?>"></td>
+                    <td><input type="text" name="epost"
+                               value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEpost(); ?>">
+                    </td>
                 </tr>
 
                 <tr>
@@ -55,7 +96,10 @@ if(!isset($beboer) || $beboer == null) {
                         <select name="skole_id">
                             <?php
                             foreach ($skoleListe as $skole) {
-                                ?>          <option <?php if (isset($beboer) && $beboer != null && $skole->getId() == $beboer->getSkoleId()) {echo 'selected="selected"';} ?> value="<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></option>
+                                ?>
+                                <option <?php if (isset($beboer) && $beboer != null && $skole->getId() == $beboer->getSkoleId()) {
+                                    echo 'selected="selected"';
+                                } ?> value="<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
@@ -69,7 +113,9 @@ if(!isset($beboer) || $beboer == null) {
                             <?php
                             foreach ($studieListe as $studie) {
                                 ?>
-                                <option <?php if (isset($beboer) && $beboer != null && $studie->getId() == $beboer->getStudieId()) {echo 'selected="selected"';} ?> value="<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></option>
+                                <option <?php if (isset($beboer) && $beboer != null && $studie->getId() == $beboer->getStudieId()) {
+                                    echo 'selected="selected"';
+                                } ?> value="<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
@@ -80,17 +126,35 @@ if(!isset($beboer) || $beboer == null) {
                     <td>Klasse:</td>
                     <td>
                         <select name="klasse">
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '1') {echo 'selected="selected"';} ?> value="1">1</option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '2') {echo 'selected="selected"';} ?> value="2">2</option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '3') {echo 'selected="selected"';} ?> value="3">3</option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '4') {echo 'selected="selected"';} ?> value="4">4</option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '5') {echo 'selected="selected"';} ?> value="5">5</option>
+                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '1') {
+                                echo 'selected="selected"';
+                            } ?> value="1">1
+                            </option>
+                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '2') {
+                                echo 'selected="selected"';
+                            } ?> value="2">2
+                            </option>
+                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '3') {
+                                echo 'selected="selected"';
+                            } ?> value="3">3
+                            </option>
+                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '4') {
+                                echo 'selected="selected"';
+                            } ?> value="4">4
+                            </option>
+                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '5') {
+                                echo 'selected="selected"';
+                            } ?> value="5">5
+                            </option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td>Betalt alkodepositum:</td>
-                    <td><input type="checkbox" name="alkodepositum"<?php if (isset($beboer) && $beboer != null && $beboer->harAlkoholdepositum()) {echo ' checked="checked"';} ?>></td>
+                    <td><input type="checkbox"
+                               name="alkodepositum"<?php if (isset($beboer) && $beboer != null && $beboer->harAlkoholdepositum()) {
+                            echo ' checked="checked"';
+                        } ?>></td>
                 </tr>
                 <tr>
                     <td>Rolle:</td>
@@ -99,7 +163,9 @@ if(!isset($beboer) || $beboer == null) {
                             <?php
                             foreach ($rolleListe as $rolle) {
                                 ?>
-                                <option <?php if (isset($beboer) && $beboer != null && $rolle->getId() == $beboer->getRolleId()) {echo 'selected="selected"';} ?> value="<?php echo $rolle->getId(); ?>"><?php echo $rolle->getNavn(); ?></option>
+                                <option <?php if (isset($beboer) && $beboer != null && $rolle->getId() == $beboer->getRolleId()) {
+                                    echo 'selected="selected"';
+                                } ?> value="<?php echo $rolle->getId(); ?>"><?php echo $rolle->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
@@ -127,19 +193,43 @@ if(!isset($beboer) || $beboer == null) {
                             <?php
                             foreach ($romListe as $rom) {
                                 ?>
-                                <option <?php if (isset($beboer) && $beboer != null && $rom->getId() == $beboer->getRomId()) {echo 'selected="selected"';} ?> value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></option>
+                                <option <?php if (isset($beboer) && $beboer != null && $rom->getId() == $beboer->getRomId()) {
+                                    echo 'selected="selected"';
+                                } ?> value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
                         </select>
+                        <button class="btn btn-danger" onclick="flyttinn()">Flytt inn</button>
+
                     </td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input class="btn btn-primary" type="submit" value="<?php echo !isset($beboer) || $beboer == null ? 'Legg til' : 'Endre'; ?>"></td>
+                    <td><input class="btn btn-primary" type="submit"
+                               value="<?php echo !isset($beboer) || $beboer == null ? 'Legg til' : 'Endre'; ?>"></td>
                 </tr>
             </table>
         </form>
     </div>
+
+    <script>
+        function flyttinn() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/flyttinn',
+                data: 'id=' + '<?php echo $beboer->getId(); ?>',
+                method: 'POST',
+                success: function (data) {
+                    //location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+
+        }
+    </script>
+
 <?php
-require_once ('bunn.php');
+require_once('bunn.php');

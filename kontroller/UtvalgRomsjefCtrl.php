@@ -77,7 +77,20 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
             $beboerListe = BeboerListe::aktive();
             $dok->set('beboerListe', $beboerListe);
             $dok->vis('utvalg_romsjef_beboerliste.php');
-        } else if ($aktueltArg == 'nybeboer') {
+        }
+        else if($aktueltArg == 'flyttinn'){
+            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            if(($beboer = Beboer::medId($post['id'])) != null && !in_array($beboer, BeboerListe::aktive())){
+                $beboer->flyttInn();
+
+                $_SESSION['success'] = 1;
+                $_SESSION['msg'] = "Du flyttet inn beboeren " . $beboer->getFulltNavn() . ' igjen!';
+            } else {
+                $_SESSION['error'] = 1;
+                $_SESSION['msg'] = "Hmm.. Noe galt skjedde - kan det hende beboeren er alt innflyttet?";
+             }
+        }
+        else if ($aktueltArg == 'nybeboer') {
             if (isset($_POST) && isset($_POST['fornavn'])) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $bruker_id = Funk::getLastBrukerId() + 1;

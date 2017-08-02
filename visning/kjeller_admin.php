@@ -44,6 +44,7 @@ require_once ('topp.php');
             <th data-sortable="true">Antall</th>
             <th data-sortable="true">Svinn</th>
             <th data-sortable="true">Type</th>
+            <th data-sortable="true">Land</th>
             <th data-sortable="false">Beskrivelse</th>
             <th data-sortable="false">Bilde</th>
             <th data-sortable="false"></th>
@@ -66,6 +67,7 @@ require_once ('topp.php');
                 </td>
 
                 <td><a href="?a=kjeller/add_type/<?php echo $vin->getType()->getId();?>"><?php echo $vin->getType()->getNavn();?></a></td>
+                <td><?php echo $vin->getLand(); ?></td>
                 <td><?php echo $vin->getBeskrivelse(); ?></td>
                 <td><?php if(strlen($vin->getBilde()) > 0) {?><img height="25px" src="vinbilder/<?php echo $vin->getBilde();?>"><?php } ?></td>
                 <td><button class="btn btn-danger btn-sm" onclick="slett(<?php echo $vin->getId();?>)">Slett</button></td>

@@ -92,7 +92,7 @@ require_once('topp.php');
 </style>
 
 <div class="container">
-    <h1>Vinkjeller » Velg vintype</h1>
+    <h1>Vinkjeller » Velg land</h1>
     <hr>
 
     <div class="col-lg-12" style="display:table; margin: auto; margin-top:20%">
@@ -100,33 +100,33 @@ require_once('topp.php');
 
             <div class="row">
 
-            <?php for ($i = 0; $i < count($typeListe); $i++) {
+                <?php for ($i = 0; $i < count($land); $i++) {
 
-            if ($i != 0 && $i % 3 == 0){ ?>
-        </div>
-
-        <div class="row">
-            <div class="column">
-                <a href="?a=vinkjeller/kryssing/type/<?php echo $typeListe[$i]->getId(); ?>">
-                    <button class="btn btn-primary btn-huge"><?php echo $typeListe[$i]->getNavn(); ?></button>
-                </a>
+                if ($i != 0 && $i % 3 == 0){ ?>
             </div>
 
-            <?php } else { ?>
+            <div class="row">
+                <div class="column">
+                    <a href="?a=vinkjeller/kryssing/land/<?php echo $land[$i]; ?>">
+                        <button class="btn btn-primary btn-huge"><?php echo $land[$i]; ?></button>
+                    </a>
+                </div>
 
-            <div class="column">
-                <a href="?a=vinkjeller/kryssing/type/<?php echo $typeListe[$i]->getId(); ?>">
-                    <button class="btn btn-primary btn-huge"><?php echo $typeListe[$i]->getNavn(); ?></button>
-                </a>
-            </div>
+                <?php } else { ?>
+
+                    <div class="column">
+                        <a href="?a=vinkjeller/kryssing/land/<?php echo $land[$i]; ?>">
+                            <button class="btn btn-primary btn-huge"><?php echo $land[$i]; ?></button>
+                        </a>
+                    </div>
                 <?php } ?>
 
-            <?php } ?>
+                <?php } ?>
+            </div>
         </div>
+
+
     </div>
-
-
-</div>
-<?php
-require_once('bunn.php');
-?>
+    <?php
+    require_once('bunn.php');
+    ?>

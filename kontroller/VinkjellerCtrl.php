@@ -3,17 +3,19 @@
 namespace intern3;
 
 
-class VinkjellerCtrl extends AbstraktCtrl {
+class VinkjellerCtrl extends AbstraktCtrl
+{
 
-    public function bestemHandling(){
+    public function bestemHandling()
+    {
         $aktuelarg = $this->cd->getAktueltArg();
 
         $dok = new Visning($this->cd);
         $dok->set('skjulMeny', 1);
-        switch($aktuelarg) {
+        switch ($aktuelarg) {
 
             case 'kryssing':
-                if(($sisteArg = $this->cd->getSisteArg()) != $aktuelarg){
+                if (($sisteArg = $this->cd->getSisteArg()) != $aktuelarg) {
                     $this->handleKryssing($dok);
                     break;
                 }
@@ -34,7 +36,8 @@ class VinkjellerCtrl extends AbstraktCtrl {
 
     }
 
-    private function handleKryssing($dok){
+    private function handleKryssing($dok)
+    {
         /*
          * Hva om..
          * URL-bygges slik: vinkjeller/kryssing/[navn|type]/<vin_id>
@@ -44,13 +47,13 @@ class VinkjellerCtrl extends AbstraktCtrl {
         $alleArgs = $this->cd->getAllArgs();
         $lastArg = end($alleArgs);
 
-        if(count($alleArgs) < 1){
+        if (count($alleArgs) < 1) {
             /* @var $dok \intern3\Visning */
             $dok->vis('vinkjeller_kryssing.php');
             return;
         }
 
-        switch($lastArg){
+        switch ($lastArg) {
             case 'navn':
                 $vinListe = Vin::getAktiveOrderedByNavn();
                 $dok->set('vinListe', $vinListe);
@@ -61,6 +64,11 @@ class VinkjellerCtrl extends AbstraktCtrl {
                 $dok->set('typeListe', $typeListe);
                 $dok->vis('vinkjeller_kryssing_type.php');
                 return;
+            case 'land':
+                $land = Vin::getAlleLand();
+                $dok->set('land', $land);
+                $dok->vis('vinkjeller_kryssing_land.php');
+                return;
             case 'kryss':
                 $this->handleKryss($dok);
                 return;
@@ -69,9 +77,9 @@ class VinkjellerCtrl extends AbstraktCtrl {
                 exit();
         }
 
-        if(in_array('type', $alleArgs) && 'type') {
+        if (in_array('type', $alleArgs)) {
             /* Type er i argumentene, men er IKKE siste argument. */
-            if( ($typen = Vintype::medId($lastArg)) != null){
+            if (($typen = Vintype::medId($lastArg)) != null) {
                 $vinListe = Vin::getAktiveAvType($typen);
                 $dok->set('vinListe', $vinListe);
                 $dok->vis('vinkjeller_kryssing_navn.php');
@@ -80,6 +88,11 @@ class VinkjellerCtrl extends AbstraktCtrl {
                 $dok->vis('vinkjeller_hoved.php');
                 return;
             }
+        } elseif (in_array('land', $alleArgs) && in_array($lastArg, Vin::getAlleLand())) {
+            $vinListe = Vin::getByLand($lastArg);
+            $dok->set('vinListe', $vinListe);
+            $dok->vis('vinkjeller_kryssing_navn.php');
+            return;
         }
 
 
@@ -91,13 +104,12 @@ class VinkjellerCtrl extends AbstraktCtrl {
             $dok->set('vinen', $aktuell_vin);
             $dok->vis('vinkjeller_kryssing_vinen.php');
             return;
-        }
-        else {
+        } else {
             /* ?a=vinkjeller/kryssing/<vinID>/<beboerID-varargs> */
             $args = $this->cd->getAllArgs();
 
             $beboerene = [];
-            for($i = 3; $i < count($args); $i++) {
+            for ($i = 3; $i < count($args); $i++) {
                 $beboerene[] = Beboer::medId($args[$i]);
             }
 
@@ -111,16 +123,18 @@ class VinkjellerCtrl extends AbstraktCtrl {
 
     }
 
-    private function isInt($num){
+    private function isInt($num)
+    {
 
         return $num - floor($num) == 0;
 
     }
 
 
-    private function handleKryss($dok){
+    private function handleKryss($dok)
+    {
 
-        if(isset($_POST) && count($_POST) < 1){
+        if (isset($_POST) && count($_POST) < 1) {
             //AKA fuck off
             $dok->vis('vinkjeller_hoved.php');
             return;
@@ -129,21 +143,21 @@ class VinkjellerCtrl extends AbstraktCtrl {
 
         $antall = $post['antall'];
 
-        $beboerIDs = explode(',' , $post['beboerId']);
+        $beboerIDs = explode(',', $post['beboerId']);
         $vinId = $post['vinid'];
 
         //Dette gjøres fordi JavaScript er å anse som svart magi. Det fungerer kun basert på empiri.
         $fordeling = array();
-        foreach(explode(',' , $post['fordeling']) as $key => $val) {
+        foreach (explode(',', $post['fordeling']) as $key => $val) {
             //Pls kill me now.
-            if($key && $val){
+            if ($key && $val) {
                 $fordeling[$key] = $val;
             }
         }
 
         $beboerene = array();
-        foreach($beboerIDs as $id){
-            if(($beboer = Beboer::medId($id)) == null){
+        foreach ($beboerIDs as $id) {
+            if (($beboer = Beboer::medId($id)) == null) {
                 exit();
             }
             //Gotta do them docs yo.
@@ -156,37 +170,37 @@ class VinkjellerCtrl extends AbstraktCtrl {
             exit();
         }*/
 
-        if ( ($vinen = Vin::medId($vinId)) == null){
-            setcookie('shit',"face");
+        if (($vinen = Vin::medId($vinId)) == null) {
+            setcookie('shit', "face");
             exit();
         }
-        if($antall < 1){
+        if ($antall < 1) {
             setcookie('woopi', "schmoopi");
             exit();
         }
-        if($antall > $vinen->getAntall()){
-            setcookie("qaahaha","nei");
+        if ($antall > $vinen->getAntall()) {
+            setcookie("qaahaha", "nei");
             exit();
         }
-        if(!$this->isInt($antall)){
+        if (!$this->isInt($antall)) {
             setcookie("stupid", "shit");
             exit();
         }
 
-        if(round(array_sum($fordeling), 2) < 99.99 || round(array_sum($fordeling), 2) > 100.99){
-            setcookie("udon","fook");
+        if (round(array_sum($fordeling), 2) < 99.99 || round(array_sum($fordeling), 2) > 100.99) {
+            setcookie("udon", "fook");
             exit();
         }
 
         //Ait, we gucci.
         $msg = "Du krysset " . $antall . "stk " . $vinen->getNavn() . " til " . $vinen->getPris() * $vinen->getAvanse()
             . "kr per stk på ";
-        foreach($beboerene as $beboer){
+        foreach ($beboerene as $beboer) {
 
-            if(count($beboerene) == 1){
+            if (count($beboerene) == 1) {
                 $antallet = $antall;
             } else {
-                $antallet = round($fordeling[$beboer->getId()]/100 * $antall, 3);
+                $antallet = round($fordeling[$beboer->getId()] / 100 * $antall, 3);
             }
             $pris = $antallet * $vinen->getPris() * $vinen->getAvanse();
 

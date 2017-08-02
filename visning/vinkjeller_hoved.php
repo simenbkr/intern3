@@ -120,7 +120,7 @@ require_once('topp.php');
             <div id="showgrid">
                 <div class="row">
                     <div class="column">
-                        <a href="?a=vinkjeller/kryssing/navn"><button class="btn btn-primary btn-huge">Sorter på vinnavn</button></a>
+                        <a href="?a=vinkjeller/kryssing/navn"><button class="btn btn-primary btn-huge">Alle (alfabetisk)</button></a>
                     </div>
 
                     <div class="column">
@@ -128,8 +128,15 @@ require_once('topp.php');
                     </div>
 
                     <div class="column">
+                        <a href="?a=vinkjeller/kryssing/land"><button class="btn btn-primary btn-huge">Sorter på land</button></a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
                         <a href="?a=vinkjeller/regler"><button class="btn btn-primary btn-huge">Regler</button></a>
                     </div>
+
+
                 </div>
 
             </div>
