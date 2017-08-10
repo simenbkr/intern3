@@ -95,6 +95,8 @@ require_once('topp.php');
     <h1>Vinkjeller » Velg land</h1>
     <hr>
 
+
+    <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
     <div class="col-lg-12" style="display:table; margin: auto; margin-top:20%">
         <div id="showgrid">
 

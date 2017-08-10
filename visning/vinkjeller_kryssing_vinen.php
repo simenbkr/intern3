@@ -61,6 +61,11 @@ require_once('topp.php');
 </div>
     <hr>
     <br/>
+
+    <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
+    <br/>
+
+
     <table id="tabellen" data-togle="table" class="table table-bordered table-responsive tableSection">
         <thead>
         <tr>
