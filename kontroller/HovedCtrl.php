@@ -6,12 +6,14 @@ class HovedCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
+        /*
         $aktueltArg = $this->cd->getAktueltArg();
         if($aktueltArg == 'api'){
             $valgtCtrl = new RestCtrl($this->cd->skiftArg());
             $valgtCtrl->bestemHandling();
             return;
         }
+        */
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
         if ($aktivBruker == null) {
