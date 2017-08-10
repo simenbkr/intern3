@@ -8,6 +8,29 @@ class VinkjellerCtrl extends AbstraktCtrl
 
     public function bestemHandling()
     {
+
+        $aktivBruker = LogginnCtrl::getAktivBruker();
+
+        if($aktivBruker != null && ($aktivBruker->getPerson()->erKjellerMester() || $aktivBruker->getPerson()->harUtvalgVerv())){
+            //Time to set token yo
+            session_destroy();
+            session_start();
+            $token = Token::createToken('vinkjeller', 15768000);
+            $_SESSION['token'] = $token->getToken();
+            $_SESSION['success'] = 1;
+            $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på vinkjelleren.";
+        }
+        elseif(
+            !(
+            isset($_SESSION['token']) &&
+            Token::byToken($_SESSION['token'])->isValidToken('vinkjeller')
+            )
+        ) {
+            header('Location: ?a=diverse');
+            exit();
+        }
+
+
         $aktuelarg = $this->cd->getAktueltArg();
 
         $dok = new Visning($this->cd);

@@ -15,6 +15,13 @@ class HovedCtrl extends AbstraktCtrl
         }
         */
 
+        $aktueltArg = $this->cd->getAktueltArg();
+        IF($aktueltArg == 'vinkjeller'){
+            $valgtCtrl = new VinkjellerCtrl($this->cd->skiftArg());
+            $valgtCtrl->bestemHandling();
+            return;
+        }
+
         $aktivBruker = LogginnCtrl::getAktivBruker();
         if ($aktivBruker == null) {
             if (isset($_SESSION['brukernavn'])) {
