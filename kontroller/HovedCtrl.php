@@ -16,21 +16,27 @@ class HovedCtrl extends AbstraktCtrl
         */
 
         $aktueltArg = $this->cd->getAktueltArg();
-        IF($aktueltArg == 'vinkjeller'){
+        if($aktueltArg == 'vinkjeller'){
             $valgtCtrl = new VinkjellerCtrl($this->cd->skiftArg());
+            $valgtCtrl->bestemHandling();
+            return;
+        }
+
+        if($aktueltArg == 'journal'){
+            $valgtCtrl = new JournalCtrl($this->cd->skiftArg());
             $valgtCtrl->bestemHandling();
             return;
         }
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
         if ($aktivBruker == null) {
-            if (isset($_SESSION['brukernavn'])) {
+            /*if (isset($_SESSION['brukernavn'])) {
                 if ($_SESSION['brukernavn'] == 'journal') {
                     $valgtCtrl = new JournalCtrl($this->cd->skiftArg());
                     $valgtCtrl->bestemHandling();
                     return;
                 }
-            }
+            } */
             $valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
             $valgtCtrl->bestemHandling();
             return;

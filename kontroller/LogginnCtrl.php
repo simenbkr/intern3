@@ -28,6 +28,8 @@ class LogginnCtrl extends AbstraktCtrl
     {
         //setcookie('brukernavn', $_POST['brukernavn'], $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
         //setcookie('passord', self::genererHash($_POST['passord']), $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
+        session_destroy();
+        session_start();
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $brukeren = Bruker::medEpost($post['brukernavn']);
         if ($brukeren != null) {
