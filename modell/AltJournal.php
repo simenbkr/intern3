@@ -89,10 +89,11 @@ class AltJournal {
     }
 
     public function oppdaterAlt(){
-        $st = DB::getDB()->prepare('UPDATE alt_journal SET bruker_id=:bruker_id,vakt=:vakt,status=:status');
+        $st = DB::getDB()->prepare('UPDATE alt_journal SET bruker_id=:bruker_id,vakt=:vakt,status=:status WHERE id=:id');
         $st->bindParam(':bruker_id', $this->bruker_id);
         $st->bindParam(':vakt', $this->vakt_nr);
         $st->bindParam(':status', $this->status);
+        $st->bindParam(':id', $this->id);
         $st->execute();
     }
 
