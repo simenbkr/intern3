@@ -22,8 +22,9 @@ class VinkjellerCtrl extends AbstraktCtrl
         }
         elseif(
             !(
-            isset($_SESSION['token']) &&
-            Token::byToken($_SESSION['token'])->isValidToken('vinkjeller')
+            isset($_SESSION['token']) ||
+            ($token = Token::byToken($_SESSION['token'])) != null
+                || $token->isValidToken('vinkjeller')
             )
         ) {
             header('Location: ?a=diverse');
