@@ -448,7 +448,7 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
                 foreach($kryssDrikka as $kryss){
                     //Jeg vet, tre loops?! Ahahaha fuck this shit man
 
-                    if(true || strtotime($kryss['tid']) > strtotime($start) && strtotime($kryss['tid']) < $slutt){
+                    if(strtotime($kryss['tid']) > strtotime($start) && strtotime($kryss['tid']) < strtotime($slutt)){
                         //Satser på at ingen krysser når faktureringen pågår. AKA yolo.
                         $beboers_kryssesum[$krysseListe->getDrikke()->getNavn()] += $kryss['antall'];
 
@@ -459,9 +459,9 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         }
 
         $siste_lista = array();
-        foreach($beboerKrysselisteListe as $lista){
+        foreach($beboerKrysselisteListe as $key => $lista){
             if(array_sum($lista) > 0)
-                $siste_lista[] = $lista;
+                $siste_lista[$key] = $lista;
         }
         return $siste_lista;
     }

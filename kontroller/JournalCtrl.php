@@ -72,8 +72,9 @@ class JournalCtrl extends AbstraktCtrl
                     && $beboer->getPrefs()->harPinkode()
                 ) {
                     if (!isset($_SESSION[md5($beboer->getFulltNavn())])) {
-                        setcookie("harikke", "kake");
+                        //Har ikke kake. Ayyy, get out you shit.
                         header('Location: ?a=journal/pinkode/' . $lastArg);
+                        exit();
                     } else {
                         $_SESSION[md5($beboer->getFulltNavn())] = $_SESSION[md5($beboer->getFulltNavn())] - 1;
                     }

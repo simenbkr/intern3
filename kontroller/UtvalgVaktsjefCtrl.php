@@ -2,6 +2,8 @@
 
 namespace intern3;
 
+use intern3\Krysseliste\Kryss;
+
 class UtvalgVaktsjefCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
@@ -325,6 +327,50 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'vaktliste_utskrift':
                 $dok = new Visning($this->cd);
                 $dok->vis('utvalg_vaktsjef_vaktliste_utskrivbar.php');
+                break;
+            case 'krysserapport_historie':
+                $dok = new Visning($this->cd);
+
+                $st = DB::getDB()->query('SELECT dato FROM fakturert');
+                $rows = $st->fetchAll();
+                $datoer = array();
+
+                foreach($rows as $row){
+                    $datoer[] = $row['dato'];
+                }
+
+                $dok->set('datoer', $datoer);
+                $dok->vis('utvalg_vaktsjef_krysserapport_historie.php');
+                break;
+            case 'krysserapport_historie_tabell':
+                $lastArg = $this->cd->getSisteArg();
+                $pos = $this->cd->getAktuellArgPos();
+                $alleArgs = $this->cd->getAllArgs();
+                if($lastArg != $aktueltArg && count($alleArgs) != $pos){
+                    $fra = $alleArgs[$pos + 1];
+                    $til = $alleArgs[$pos + 2];
+                } else {
+                    return;
+                }
+
+                $dok = new Visning($this->cd);
+
+                $drikke = Drikke::alle();
+                $beboerListe = BeboerListe::alle();
+                $beboerListe2_0 = array();
+                foreach ($beboerListe as $beboer) {
+                    $beboerListe2_0[$beboer->getId()] = $beboer;
+                }
+
+                //$krysseListe = Krysseliste::getKryssByPeriode('2017-01-01', '2018-01-01');
+                $krysseListe = Krysseliste::getKryssByPeriode($fra, $til);
+                $sistFakturert = Krysseliste::getSistFakturert();
+
+                $dok->set('sistFakturert', $sistFakturert);
+                $dok->set('drikke', $drikke);
+                $dok->set('beboerListe', $beboerListe2_0);
+                $dok->set('krysseListeMonthListe', $krysseListe);
+                $dok->vis('utvalg_vaktsjef_krysserapport_historie_tabell.php');
                 break;
             default:
                 $dok = new Visning($this->cd);
