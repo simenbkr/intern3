@@ -86,6 +86,11 @@ $rom = array();
 
 $fontfile = "fonts/DejaVuSansCondensed.ttf";
 foreach($beboerlista as $beboer){
+    /* @var $beboer \intern3\Beboer */
+    if($beboer->getRom()->getNavn() == '060'){
+        continue;
+    }
+
     $navn = $beboer->getFornavn() . ' ' . $beboer->getEtternavn();
     $navn = strlen($navn) > 21 ? substr($navn,0,21) . '...' : $navn;
 
@@ -132,7 +137,7 @@ foreach($rom as $nr => $d)
 
         if($nr == 242)
         {
-            $pos[$nr][1] += 96;
+            $pos[$nr][1] += 110;
         }
         else
         {
