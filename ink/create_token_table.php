@@ -14,7 +14,7 @@ echo "\n";
 
 
 $sql = "CREATE TABLE IF NOT EXISTS `token`(
-token VARCHAR(255) NOT NULL UNIQUE,
+token VARCHAR(190) NOT NULL UNIQUE,
 type VARCHAR(100) NOT NULL,
 duration VARCHAR(30) NOT NULL,
 time_issued VARCHAR(70)

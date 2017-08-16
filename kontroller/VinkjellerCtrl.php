@@ -20,11 +20,9 @@ class VinkjellerCtrl extends AbstraktCtrl
             $_SESSION['success'] = 1;
             $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på vinkjelleren.";
         } elseif (
-        !(
-            isset($_SESSION['token']) ||
-            ($token = Token::byToken($_SESSION['token'])) != null
-            || $token->isValidToken('vinkjeller')
-        )
+            !isset($_SESSION['token'])
+            || ($token = Token::byToken($_SESSION['token'])) == null
+            || !$token->isValidToken('vinkjeller')
         ) {
             header('Location: ?a=diverse');
             exit();
