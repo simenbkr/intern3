@@ -13,6 +13,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="?a=vinkjeller/kryssing/navn">Navn</a></li>
                 <li><a href="?a=vinkjeller/kryssing/type">Type</a></li>
+                <li><a href="?a=vinkjeller/kryssing/land">Land</a></li>
                 <li><a href="?a=vinkjeller/regler">Regler</a></li>
             </ul>
         </div>
