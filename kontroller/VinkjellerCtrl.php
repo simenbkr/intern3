@@ -11,7 +11,7 @@ class VinkjellerCtrl extends AbstraktCtrl
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
 
-        if($aktivBruker != null && ($aktivBruker->getPerson()->erKjellerMester() || $aktivBruker->getPerson()->harUtvalgVerv())){
+        if ($aktivBruker != null && ($aktivBruker->getPerson()->erKjellerMester() || $aktivBruker->getPerson()->harUtvalgVerv())) {
             //Time to set token yo
             session_destroy();
             session_start();
@@ -19,13 +19,12 @@ class VinkjellerCtrl extends AbstraktCtrl
             $_SESSION['token'] = $token->getToken();
             $_SESSION['success'] = 1;
             $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på vinkjelleren.";
-        }
-        elseif(
-            !(
+        } elseif (
+        !(
             isset($_SESSION['token']) ||
             ($token = Token::byToken($_SESSION['token'])) != null
-                || $token->isValidToken('vinkjeller')
-            )
+            || $token->isValidToken('vinkjeller')
+        )
         ) {
             header('Location: ?a=diverse');
             exit();
