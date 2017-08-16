@@ -93,7 +93,8 @@ class JournalCtrl extends AbstraktCtrl
                 if (isset($_POST)) {
                     if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
                         $beboerId = $post['beboerId'];
-                        if (Beboer::medId($beboerId) != null && Beboer::medId($beboerId)->harAlkoholdepositum()
+                        $beboer = Beboer::medId($beboerId);
+                        if ($beboer != null && $beboer->harAlkoholdepositum()
                             && Drikke::medId($post['type']) != null && Drikke::medId($post['type'])->getAktiv()
                         ) {
                             //Alt OK, lets kryss:
@@ -127,9 +128,10 @@ class JournalCtrl extends AbstraktCtrl
                                 Drikke::medId($drikkeid)->getNavn() . " på " .
                                 Beboer::medId($beboerId)->getFulltNavn();
 
-                            $bebliste = BeboerListe::reseppListe();
-                            $sted = array_search(Beboer::medId($beboerId), $bebliste);
-                            //$_SESSION['scroll'] = $sted;
+                            if($beboer->getPrefs()->harPinkode()){
+                                unset($_SESSION[md5($beboer->getFulltNavn())]);
+                            }
+
                             $_SESSION['scroll'] = $beboerId;
                             break;
                         }
