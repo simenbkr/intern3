@@ -1,8 +1,7 @@
 <?php
 require_once ('topp.php');
 ?>
-    <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
-    <script type="text/javascript" src="js/dataTables.js"></script>
+<div class="container">
     <script>
         function slett(id) {
             $.ajax({
@@ -29,7 +28,6 @@ require_once ('topp.php');
 
         });
     </script>
-<div class="container">
 <h1>Kjellermester » Vinadministrasjon</h1>
     <p>[ Vinadministrasjon ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/slettet_vin">Slettet vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
@@ -45,8 +43,8 @@ require_once ('topp.php');
             <th data-sortable="true">Svinn</th>
             <th data-sortable="true">Type</th>
             <th data-sortable="true">Land</th>
-            <th data-sortable="false">Beskrivelse</th>
-            <th data-sortable="false">Bilde</th>
+            <th data-sortable="true">Beskrivelse</th>
+            <th data-sortable="true">Bilde</th>
             <th data-sortable="false"></th>
         </thead>
         <tbody>
@@ -76,6 +74,8 @@ require_once ('topp.php');
         } ?>
         </tbody>
         </table>
+    <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+    <script type="text/javascript" src="js/dataTables.js"></script>
 </div>
 <?php
 require_once ('bunn.php');
