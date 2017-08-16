@@ -29,7 +29,7 @@ require_once('topp_utvalg.php');
     <div id="feedback"></div>
 
     Fra:
-    <select onchange="setFra(this.value)">
+    <select onchange="setFra(this.value)" id="fra">
         <?php foreach ($datoer as $dato) { ?>
 
             <option value="<?php echo $dato; ?>"><?php echo $dato; ?></option>
@@ -38,7 +38,7 @@ require_once('topp_utvalg.php');
     <br/>
     <br/>
     Til:
-    <select onchange="setTil(this.value)">
+    <select onchange="setTil(this.value)" id="til">
         <?php foreach ($datoer as $dato) { ?>
 
             <option value="<?php echo $dato; ?>"><?php echo $dato; ?></option>
@@ -50,6 +50,12 @@ require_once('topp_utvalg.php');
 
 </div>
 <script>
+
+    window.onload = function(){
+        $('#til option').eq(0).prop('selected', true).trigger('change');
+        $('#til option').eq(1).prop('selected', true).trigger('change');
+    };
+
     var fra = "<?php echo $datoer[0]; ?>";
     var til = "<?php echo end($datoer); ?>";
 
