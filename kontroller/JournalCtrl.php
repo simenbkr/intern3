@@ -56,7 +56,8 @@ class JournalCtrl extends AbstraktCtrl
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
                     if ($post['pinkode'] == $beboer->getPrefs()->getPinkode()) {
-                        $_SESSION[md5($beboer->getFulltNavn())] = 1;
+                        /* 2 fordi man skal få én visning av aktuell krysseside, samt ett POST for å krysse én gang. */
+                        $_SESSION[md5($beboer->getFulltNavn())] = 2;
                     }
                 }
 
@@ -65,11 +66,20 @@ class JournalCtrl extends AbstraktCtrl
                 $dok->vis("pinkode.php");
                 break;
             case 'kryssing':
-
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $lastArg = $this->cd->getSisteArg();
 
-                if (is_numeric($lastArg) && ($beboer = Beboer::medId($lastArg)) != null
-                    && $beboer->getPrefs()->harPinkode()
+
+                /*
+                 * Det finnes to måter å få en visning, eller krysse. Når man får en visning (GET) er siste argumentet
+                 * beboerIDen. Når man POSTer, dvs krysser på en spesifikk person, er beboerID del av POST-arrayen.
+                 * Derfor må vi sjekke begge slik at man ikke kan krysse på de med pinkode, uten deres pinkode.
+                 */
+
+                if ( (is_numeric($lastArg) && ($beboer = Beboer::medId($lastArg)) != null
+                    && $beboer->getPrefs()->harPinkode())
+                    || (isset($post['beboerId']) && ($beboer = Beboer::medId($post['beboerId'])) != null
+                    && $beboer->getPrefs()->harPinkode())
                 ) {
                     if (!isset($_SESSION[md5($beboer->getFulltNavn())])) {
                         //Har ikke kake. Ayyy, get out you shit.
@@ -81,7 +91,6 @@ class JournalCtrl extends AbstraktCtrl
                 }
 
                 if (isset($_POST)) {
-                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
                         $beboerId = $post['beboerId'];
                         if (Beboer::medId($beboerId) != null && Beboer::medId($beboerId)->harAlkoholdepositum()
