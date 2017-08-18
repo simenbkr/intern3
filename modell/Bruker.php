@@ -7,6 +7,8 @@ class Bruker {
 	private $id;
 	private $passord;
 	private $salt;
+	private $resett_tid;
+	private $glemt_token;
 
 	// Latskap
 	private $person;
@@ -35,6 +37,8 @@ class Bruker {
 		$instance->id = $rad['id'];
 		$instance->passord = $rad['passord'];
 		$instance->salt = $rad['salt'];
+		$instance->resett_tid = $rad['dato'];
+		$instance->glemt_token = $rad['glemt_token'];
 		$instance->person = null;
 		return $instance;
 	}
@@ -43,9 +47,10 @@ class Bruker {
 		return $this->id;
 	}
 
-	public function getSalt(){
-		return $this->salt;
-	}
+	public function getSalt()
+    {
+        return $this->salt;
+    }
 
 	public function passordErGyldig($passord) {
 		//MÅ bruke === og ikke == da == er en shitty operator i denne situasjonen. TODO test at funker.
@@ -130,6 +135,21 @@ class Bruker {
 		$st->bindParam(':password', $passord);
 		$st->bindParam(':id', $this->id);
 		$st->execute();
+	}
+
+	public static function byGlemtToken($token){
+		$st = DB::getDB()->prepare('SELECT * FROM bruker WHERE glemt_token=:token');
+		$st->bindParam(':token', $token);
+		$st->execute();
+		return self::init($st);
+	}
+
+	public function getResettTid(){
+		return $this->resett_tid;
+	}
+
+	public function getGlemtToken(){
+		return $this->glemt_token;
 	}
 
 }
