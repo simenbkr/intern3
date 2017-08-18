@@ -125,6 +125,11 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                     $_SESSION['success'] = 1;
                     $_SESSION['msg'] = "Ditt passord ble endret!";
 
+                    //Fjerne gyldighet av link.
+                    $st = DB::getDB()->prepare('UPDATE bruker SET dato=0 WHERE id=:id');
+                    $st->bindParam(':id', $bruker->getId());
+                    $st->execute();
+
                     header('Location: ?a=diverse');
 
                 } else {
