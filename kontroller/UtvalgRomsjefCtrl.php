@@ -117,6 +117,7 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $st->bindParam(':romhistorikk', $romhistorikken);
                 $st->execute();
 
+
                 $st = DB::getDB()->prepare('INSERT INTO bruker (id,passord,salt) VALUES(:id,:passord,:salt)');
                 $st->bindParam(':id', $bruker_id);
                 $passord = Funk::generatePassword();
@@ -127,8 +128,8 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $st->execute();
 
                 $beskjed = "<html><body>Hei!<br/><br/>Du har fått opprettet en brukerkonto på 
-<a href='https://intern.singsaker.no'>Singsaker sine internsider!</a> Velkommen skal du være.<br/>Brukernavn: $post[epost]<br/>Passord: $passord<br/><br/>Vi anbefaler deg å bytte passord. snarest
-<br/><br/>Med vennlig hilsen<br/>Singsaker Internsider og Datagutta på Sing. <br/><br/>Denne melding var datagenerert. Noe galt? Vennligst si ifra til <a href='mailto:data@singsaker.no'>data@singsaker.no</a></body></html>";
+<a href='https://intern.singsaker.no'>Singsaker Studenterhjem sine internsider!</a> Velkommen skal du være.<br/>Brukernavn: $post[epost]<br/>Passord kan du sette selv, ved å benytte 'glemt-passord'-funksjonaliteten.<br/><br/>
+<br/><br/>Med vennlig hilsen<br/>Internsida.<br/><br/></body></html>";
                 $tittel = "[SING-INTERN] Opprettelse av brukerkonto";
                 $epost = new Epost($beskjed);
                 $epost->addBrukerId($bruker_id);

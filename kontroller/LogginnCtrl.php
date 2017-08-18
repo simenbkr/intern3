@@ -131,7 +131,6 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                 }
             }
 
-
             $dok->set('skjulMeny', 1);
             $dok->vis('glemt_passord_resett.php');
             exit();
@@ -169,9 +168,6 @@ vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne
                 $tittel = "[SING-INTERN] Forespørsel om resatt passord.";
 
                 Epost::sendEpost($epost, $tittel, $beskjed);
-
-                setcookie('asd', $beskjed);
-
             }
 
             $_SESSION['success'] = 1;
