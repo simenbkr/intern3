@@ -125,6 +125,8 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                     $_SESSION['success'] = 1;
                     $_SESSION['msg'] = "Ditt passord ble endret!";
 
+                    header('Location: ?a=diverse');
+
                 } else {
                     $_SESSION['error'] = 1;
                     $_SESSION['msg'] = "Passordene matchet ikke. Prøv på nytt!";
@@ -162,7 +164,7 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                 $st->bindParam(':dato', $dato);
                 $st->execute();
 
-                $link = 'http://' . $_SERVER['SERVER_NAME'] . '/?a=logginn/passord/' . $token;
+                $link = '<a href=\"http://' . $_SERVER['SERVER_NAME'] . '/?a=logginn/passord/' . $token . '\">denne siden</a>';
                 $beskjed = "<html><body>Hei,<br/><br/>Ditt passord har blitt forespurt resatt. Hvis du ønsker å resette det
 vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne e-posten. Lenken er gyldig i 24t.<br/><br/>Med vennlig hilsen<br/>Internsida</body></html>";
                 $tittel = "[SING-INTERN] Forespørsel om resatt passord.";

@@ -145,6 +145,9 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $st_2->bindParam(':id', $beboer_id);
                 $st_2->execute();
 
+                $_SESSION['success'] = 1;
+                $_SESSION['msg'] = "Du la til en ny beboer!";
+
             }
 
             $dok->vis('utvalg_romsjef_nybeboer.php');
