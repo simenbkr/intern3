@@ -94,8 +94,16 @@ class ProfilCtrl extends AbstraktCtrl
 
     private function endreVarsler()
     {
+        if(($bruker = LogginnCtrl::getAktivBruker()) != null && ($beboer = $bruker->getPerson()) != null){
+            $bebId = $beboer->getId();
+        } else {
+            $_SESSION['error'] = 1;
+            $_SESSION['msg'] = "Noe gikk galt. Sikker på at du er innlogget?";
+            exit();
+        }
+
         $options = array('tildeltvakt', 'vakt', 'vaktbytte', 'utleie', 'barvakt');
-        $st = DB::getDB()->prepare('UPDATE epost_pref SET tildelt=:tildeltvakt, snart_vakt=:vakt, bytte=:vaktbytte, utleie=:utleie, barvakt=:barvakt');
+        $st = DB::getDB()->prepare('UPDATE epost_pref SET tildelt=:tildeltvakt, snart_vakt=:vakt, bytte=:vaktbytte, utleie=:utleie, barvakt=:barvakt WHERE beboer_id=:id');
         foreach ($options as $option) {
             $var = ':' . $option;
             if (isset($_POST[$option]) && $_POST[$option] == 1) {
@@ -106,6 +114,8 @@ class ProfilCtrl extends AbstraktCtrl
                 $st->bindParam($var, $null);
             }
         }
+
+        $st->bindParam(':id', $bebId);
         $st->execute();
         return null;
     }
