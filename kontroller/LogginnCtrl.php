@@ -169,7 +169,7 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                 $st->bindParam(':dato', $dato);
                 $st->execute();
 
-                $link = '<a href=\"http://' . $_SERVER['SERVER_NAME'] . '/?a=logginn/passord/' . $token . '\">denne siden</a>';
+                $link = '<a href="http://' . $_SERVER['SERVER_NAME'] . '/?a=logginn/passord/' . $token . '">denne siden</a>';
                 $beskjed = "<html><body>Hei,<br/><br/>Ditt passord har blitt forespurt resatt. Hvis du ønsker å resette det
 vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne e-posten. Lenken er gyldig i 24t.<br/><br/>Med vennlig hilsen<br/>Internsida</body></html>";
                 $tittel = "[SING-INTERN] Forespørsel om resatt passord.";

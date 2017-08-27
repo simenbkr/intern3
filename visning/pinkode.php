@@ -11,7 +11,13 @@ require_once('topp.php');
     var pinkoden = [];
 
     function oppdater(){
-        document.getElementById("pinkoden").innerHTML = pinkoden.join(' ')
+
+        var tekst = '';
+        for(var i=0; i < pinkoden.length; i++){
+            tekst += ' *';
+        }
+
+        document.getElementById("pinkoden").innerHTML = "<h3>" + tekst +"</h3>";
     }
 
     function klikk(tall){
