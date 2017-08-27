@@ -157,7 +157,6 @@ class JournalCtrl extends AbstraktCtrl
                     $dok->vis('journal_kryss.php');
 
                     if ($_SESSION[md5($beboer->getFulltNavn())] < 1) {
-                        setcookie('unsat', 'hehe');
                         unset($_SESSION[md5($beboer->getFulltNavn())]);
                     }
 
@@ -330,9 +329,7 @@ class JournalCtrl extends AbstraktCtrl
                 break;
             case 'logout':
             default:
-                setcookie('DESTROY', 'ALLSESSIONS0');
                 session_destroy();
-                setcookie('DESTROY', 'ALLSESSIONS0');
                 header('Location: ' . $_GET['ref']);
                 $dok = new Visning($this->cd);
                 $dok->set('skjulMeny', 1);

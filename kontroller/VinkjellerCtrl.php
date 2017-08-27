@@ -192,24 +192,19 @@ class VinkjellerCtrl extends AbstraktCtrl
         }*/
 
         if (($vinen = Vin::medId($vinId)) == null) {
-            setcookie('shit', "face");
             exit();
         }
         if ($antall < 1) {
-            setcookie('woopi', "schmoopi");
             exit();
         }
         if ($antall > $vinen->getAntall()) {
-            setcookie("qaahaha", "nei");
             exit();
         }
         if (!$this->isInt($antall)) {
-            setcookie("stupid", "shit");
             exit();
         }
 
         if (round(array_sum($fordeling), 2) < 99.99 || round(array_sum($fordeling), 2) > 100.99) {
-            setcookie("udon", "fook");
             exit();
         }
 

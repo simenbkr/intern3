@@ -462,7 +462,6 @@ class KjellerCtrl extends AbstraktCtrl
 
     private function updateVin($medbilde = false, $bildenavn, $id)
     {
-        setcookie('asdasd','sata');
         $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,bilde=:bilde,pris=:pris,avanse=:avanse,

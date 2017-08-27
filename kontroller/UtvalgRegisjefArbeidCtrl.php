@@ -141,7 +141,6 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
         $st->bindParam(':id', $arbeid->getId());
         $st->bindParam(':bid', $bruker_id);
         $st->execute();
-        setcookie('kuk','satan12213123');
     }
 
 }

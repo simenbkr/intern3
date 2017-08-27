@@ -121,7 +121,6 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
             );
             $aktiv_bruker = LogginnCtrl::getAktivBruker()->getId();
             $sql = 'INSERT INTO arbeid(' . implode(',', array_keys($endringer)) . ', godkjent,godkjent_bruker_id,tid_godkjent) VALUES(' . implode(',', $endringer) . ',1,' . $aktiv_bruker . ',CURRENT_TIMESTAMP);';
-            setcookie('test', $sql);
             $st = DB::getDB()->prepare($sql);
             foreach ($parametre as $navn => $verdi) {
                 $st->bindValue($navn, $verdi);

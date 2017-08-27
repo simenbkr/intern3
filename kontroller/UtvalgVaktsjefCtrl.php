@@ -126,7 +126,6 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 }
                 break;
             case 'vaktstyring_straffevakt':
-                setcookie('asdasd', 'asdasd');
                 if (isset($_POST['vaktId_1'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vaktId_1 = $post['vaktId_1'];
