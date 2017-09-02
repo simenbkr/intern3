@@ -2,7 +2,7 @@
 
 namespace intern3;
 
-require_once("autolast.php");
+require_once("/var/www/intern.singsaker.no/ink/autolast_absolute.php");
 $df = new \IntlDateFormatter('nb_NO',
     \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
     'Europe/Oslo');
