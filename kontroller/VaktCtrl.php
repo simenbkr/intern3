@@ -10,16 +10,13 @@ class VaktCtrl extends AbstraktCtrl
         $vaktbytteListe = VaktbytteListe::etterVakttype();
         $sisteArg = $this->cd->getSisteArg();
 
-        if($sisteArg == 'setvar'){
+        if ($sisteArg == 'setvar') {
             $_SESSION['semester'] = "var";
-        }
-        elseif($sisteArg == 'sethost'){
+        } elseif ($sisteArg == 'sethost') {
             $_SESSION['semester'] = "host";
-        }
-        elseif($sisteArg == 'setna'){
+        } elseif ($sisteArg == 'setna') {
             $_SESSION['semester'] = "frana";
-        }
-        elseif ($aktueltArg == 'bytte') {
+        } elseif ($aktueltArg == 'bytte') {
             $dok = new Visning($this->cd);
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -44,7 +41,7 @@ class VaktCtrl extends AbstraktCtrl
                         $vaktbyttetId = Vaktbytte::medVaktId($id)->getId();
                         $st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:vaktbytte_id WHERE id=:id');
                         $st2->bindParam(':id', $id);
-                        $st2->bindParam(':vaktbytte_id',$vaktbyttetId);
+                        $st2->bindParam(':vaktbytte_id', $vaktbyttetId);
                         $st2->execute();
 
                         $_SESSION['success'] = 1;
@@ -54,7 +51,7 @@ class VaktCtrl extends AbstraktCtrl
                         if ($passordet == 0) {
                             $mottakere = "";
                             foreach (BeboerListe::harVakt() as $beboer) {
-                                if($beboer->vilHaBytteGiVarsel()){
+                                if ($beboer->vilHaBytteGiVarsel()) {
                                     $mottakere .= $beboer->getEpost() . ",";
                                 }
                             }
@@ -85,8 +82,13 @@ class VaktCtrl extends AbstraktCtrl
                         $st2->bindParam(':id', $vaktId);
                         $st2->execute();
 
-                        $ting = "(id=" . implode(' OR id=', $vaktbyttet->getForslagIder()) . ")";
-                        DB::getDB()->query('UPDATE vakt SET vaktbytte_id=0 WHERE ' . $ting);
+                        //$ting = "(id=" . implode(' OR id=', $vaktbyttet->getForslagIder()) . ")";
+                        //DB::getDB()->query('UPDATE vakt SET vaktbytte_id=NULL WHERE ' . $ting);
+
+                        foreach($vaktbyttet->getForslagVakter() as $forslag){
+                            /* @var $forslag \intern3\Vakt */
+                            $forslag->slettVaktbytteIdFraInstans($vaktbyttet->getId());
+                        }
 
                         $_SESSION['error'] = 1;
                         $_SESSION['msg'] = "Du slettet ditt eget vaktbytte for " . $vaktInstans->toString();
@@ -254,14 +256,21 @@ class VaktCtrl extends AbstraktCtrl
 
                         //Jesus mother fucking christ foreach loops fy faen fuck this shit man hvorfor har vi ikke bare
                         //en egen mange-til-mange-tabell?! Because legacy before launch thats why bitch.
-                        foreach($Vaktbyttet->getForslagVakter() as $vakt){
-                            $vakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
+                        //Fy faen.
+                        foreach ($Vaktbyttet->getForslagVakter() as $vakt) {
+                            if($vakt != null && $Vaktbyttet != null) {
+                                $vakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
+                            }
                         }
-                        foreach($fraVakt->getVaktbytteDenneErMedIId() as $id){
-                            Vaktbytte::medId($id)->slettForslag($fraVakt->getId());
+                        foreach ($fraVakt->getVaktbytteDenneErMedIId() as $id) {
+                            if (($tmp = Vaktbytte::medId($id)) != null) {
+                                Vaktbytte::medId($id)->slettForslag($fraVakt->getId());
+                            }
                         }
-                        foreach($tilVakt->getVaktbytteDenneErMedIId() as $id){
-                            Vaktbytte::medId($id)->slettForslag($tilVakt->getId());
+                        foreach ($tilVakt->getVaktbytteDenneErMedIId() as $id) {
+                            if (($tmp = Vaktbytte::medId($id)) != null) {
+                                $tmp->slettForslag($tilVakt->getId());
+                            }
                         }
                         $fraVakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
                         $tilVakt->slettVaktbytteIdFraInstans($Vaktbyttet->getId());
@@ -269,7 +278,7 @@ class VaktCtrl extends AbstraktCtrl
                         $st2->execute();
                         $st3->execute();
 
-                       // $ting = "(id=" . implode(' OR id=', $Vaktbyttet->getForslagIder()) . ")";
+                        // $ting = "(id=" . implode(' OR id=', $Vaktbyttet->getForslagIder()) . ")";
 
                         //DB::getDB()->query('UPDATE vakt SET vaktbytte_id=0 WHERE ' . $ting);
 
@@ -280,15 +289,16 @@ class VaktCtrl extends AbstraktCtrl
                 }
                 //data: 'vaktbytte=8&vaktbyttet=' + vaktbytte + '&vakt=' + vakt,
                 //Trekk et forslag fra et bytte.
-                elseif(isset($post['vaktbytte']) && $post['vaktbytte'] == 8 && isset($post['vaktbyttet']) && isset($post['vakt'])){
+                elseif (isset($post['vaktbytte']) && $post['vaktbytte'] == 8 && isset($post['vaktbyttet']) && isset($post['vakt'])) {
                     $vaktbyttet = Vaktbytte::medId($post['vaktbyttet']);
                     $vakta = Vakt::medId($post['vakt']);
 
-                    if($vakta != null && $vaktbyttet != null && in_array($vaktbyttet->getId(), $vakta->getVaktbytteDenneErMedIId())
-                    && LogginnCtrl::getAktivBruker()->getPerson()->getId() == $vakta->getBruker()->getPerson()->getId()){
+                    if ($vakta != null && $vaktbyttet != null && in_array($vaktbyttet->getId(), $vakta->getVaktbytteDenneErMedIId())
+                        && LogginnCtrl::getAktivBruker()->getPerson()->getId() == $vakta->getBruker()->getPerson()->getId()
+                    ) {
                         $nye_forslag = array();
-                        foreach($vaktbyttet->getForslagIder() as $id){
-                            if($id == $vakta->getId()){
+                        foreach ($vaktbyttet->getForslagIder() as $id) {
+                            if ($id == $vakta->getId()) {
                                 continue;
                             }
                             $nye_forslag[] = $id;
@@ -311,11 +321,11 @@ class VaktCtrl extends AbstraktCtrl
                 }
             }
             $egne_vakter_vaktbytter = array();
-            foreach(VaktListe::medBrukerId(LogginnCtrl::getAktivBruker()->getId()) as $vakt){
-                if(!$vakt->erFerdig() && $vakt->getBytte()){
+            foreach (VaktListe::medBrukerId(LogginnCtrl::getAktivBruker()->getId()) as $vakt) {
+                if (!$vakt->erFerdig() && $vakt->getBytte()) {
                     //$egne_vakter_vaktbytter[] = Vaktbytte::medId($vakt->getVaktbytteDenneErMedIId());
                     //foreach($vakt->getVaktbytteDenneErMedIId() as $id){
-                      //  $egne_vakter_vaktbytter[] = Vaktbytte::medId($id);
+                    //  $egne_vakter_vaktbytter[] = Vaktbytte::medId($id);
                     //}
                     $egne_vakter_vaktbytter[] = Vaktbytte::medVaktId($vakt->getId());
                 }
@@ -323,13 +333,12 @@ class VaktCtrl extends AbstraktCtrl
             $dok->set('egne_vakter_vaktbytter', $egne_vakter_vaktbytter);
             $vaktbytteListe = VaktbytteListe::etterVakttype();
             $dok->set('vaktbytteListe', $vaktbytteListe);
-            if(LogginnCtrl::getAktivBruker()->getPerson()->harVakt()) {
+            if (LogginnCtrl::getAktivBruker()->getPerson()->harVakt()) {
                 $dok->vis('vakt_bytte_liste.php');
             } else {
                 $dok->vis('vakt_bytte_uten_vakt.php');
             }
-        }
-        else {
+        } else {
             $dok = new Visning($this->cd);
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
