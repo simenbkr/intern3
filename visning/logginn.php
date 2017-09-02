@@ -2,8 +2,6 @@
 
 require_once('topp.php');
 
-var_dump($_SESSION);
-
 if (isset($visError)) {
 ?>
 <div style="margin-top: 15%">
