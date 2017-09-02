@@ -179,8 +179,7 @@ vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne
                 $tittel = "[SING-INTERN] Forespørsel om resatt passord.";
 
                 Epost::sendEpost($epost, $tittel, $beskjed);
-
-                setcookie("hmm",$token);
+                
             }
 
             $_SESSION['success'] = 1;
