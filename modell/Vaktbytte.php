@@ -153,5 +153,23 @@ class Vaktbytte
         }
     }
 
+    public static function getAlleUtgatte(){
+
+        $date = date('Y-m-d');
+
+        $sql = "SELECT vaktbytte.id FROM vaktbytte WHERE vaktbytte.vakt_id IN (SELECT vakt.id FROM vakt WHERE vakt.dato<:datoen)";
+        $st = DB::getDB()->prepare($sql);
+        $st->bindParam(':datoen', $date);
+        $st->execute();
+
+        $vaktbytter = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vaktbytter[] = Vaktbytte::medId($st->fetch()['id']);
+        }
+
+        return $vaktbytter;
+    }
+
 }
 ?>
