@@ -242,12 +242,22 @@ class JournalCtrl extends AbstraktCtrl
                         $denneVakt->setBrukerId($post['brukerId']);
                     }
                 }
+                /*
                 if ($denneVakt->getBrukerId() == 0) {
                     //Torild
                     $vakta = Ansatt::getSisteAnsatt();
                 } else {
                     $vakta = Bruker::medId($denneVakt->getBrukerId());
                 }
+                if ($vakta == null) {
+                    $vakta = Ansatt::getSisteAnsatt();
+                } else {
+                    $vakta = $vakta->getPerson();
+                } */
+
+                $vaktaId = $denneVakt->getBrukerId();
+                $vakta = Bruker::medId($vaktaId);
+
                 if ($vakta == null) {
                     $vakta = Ansatt::getSisteAnsatt();
                 } else {

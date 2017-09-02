@@ -130,7 +130,11 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                     $st->bindParam(':id', $bruker->getId());
                     $st->execute();
 
+                    $_SESSION['success'] = 1;
+                    $_SESSION['msg'] = "Ditt passord ble endret!";
+
                     header('Location: ?a=diverse');
+                    exit();
 
                 } else {
                     $_SESSION['error'] = 1;
@@ -175,6 +179,8 @@ vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne
                 $tittel = "[SING-INTERN] Forespørsel om resatt passord.";
 
                 Epost::sendEpost($epost, $tittel, $beskjed);
+
+                setcookie("hmm",$token);
             }
 
             $_SESSION['success'] = 1;
