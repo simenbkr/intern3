@@ -6,7 +6,8 @@ require_once("/var/www/intern.singsaker.no/ink/autolast_absolute.php");
 //require_once ('autolast.php');
 
 $vaktbytter = Vaktbytte::getAlleUtgatte();
-$log = "";
+$log = "---STARTLOG---\n";
+$log .= "Startet ved " . date('r') . "\n";
 foreach($vaktbytter as $vaktbytte){
 
     /* @var $vaktbytte \intern3\Vaktbytte */
@@ -28,6 +29,19 @@ foreach($vaktbytter as $vaktbytte){
     $log .= "Slettet forslag";
 }
 
+foreach(Vakt::alleVakterEtterDatoMedVaktbytte(date('Y-m-d')) as $vakt){
+    /* @var $vakt \intern3\Vakt */
+    $log .= "Fjerner ugyldige vaktbytter fra vaktid: " . $vakt->getId() . "\n";
+    foreach($vakt->getVaktbytteDenneErMedI() as $id){
+        if(Vaktbytte::medId($id) == null){
+            $log .= "Sletter vaktbytteid $id\n";
+            $vakt->slettVaktbytteIdFraInstans($id);
+        }
+    }
+}
+$log .= "Ferdig ved " . date('r') . "\n";
+$log .= "---SLUTTLOG--\n";
+echo $log;
 Epost::sendEpost("data@singsaker.no", "[SING-VAKT] Slettet vaktbytter!", $log);
 
 ?>

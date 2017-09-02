@@ -114,6 +114,10 @@ class Vakt
         return $this->getVaktbytte() <> null;
     }
 
+    public function getVaktbytteDenneErMedI(){
+        return $this->vaktbytteDenneErMedI;
+    }
+
     public function erForeslatt()
     {
         $st = DB::getDB()->prepare('SELECT id FROM vaktbytte');
@@ -164,14 +168,22 @@ class Vakt
                 }
             }
             if(count($nytt_vaktbytte_med_i) <= 0){
-                $nytt_vaktbytte_med_i = '';
+                $nytt_vaktbytte_med_i = null;
             } else {
                 $nytt_vaktbytte_med_i = implode(',', array_filter($nytt_vaktbytte_med_i));
             }
-            $st = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:nytt_vaktbytte WHERE id=:id');
-            $st->bindParam(':nytt_vaktbytte', $nytt_vaktbytte_med_i);
-            $st->bindParam(':id', $this->id);
-            $st->execute();
+
+            if($nytt_vaktbytte_med_i) {
+                $st = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:nytt_vaktbytte WHERE id=:id');
+                $st->bindParam(':nytt_vaktbytte', $nytt_vaktbytte_med_i);
+                $st->bindParam(':id', $this->id);
+                $st->execute();
+            } else {
+                $st = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:nytt_vaktbytte,bytte=NULL WHERE id=:id');
+                $st->bindParam(':nytt_vaktbytte', $nytt_vaktbytte_med_i);
+                $st->bindParam(':id', $this->id);
+                $st->execute();
+            }
         }
     }
 
@@ -366,6 +378,31 @@ class Vakt
         $st->bindParam(':dato', $dato);
         $st->execute();
         $vakter = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vakter[] = self::init($st);
+        }
+        return $vakter;
+    }
+
+    public static function alleVakterEtterDato($dato){
+
+        $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE dato>:dato');
+        $st->bindParam(':dato', $dato);
+        $st->execute();
+        $vakter = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vakter[] = self::init($st);
+        }
+        return $vakter;
+    }
+
+    public static function alleVakterEtterDatoMedVaktbytte($dato){
+        $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE (dato>:dato AND vaktbytte_id IS NOT NULL AND bytte IS NOT NULL)');
+        $st->bindParam(':dato', $dato);
+        $st->execute();
+        $vakter = array();
+
         for($i = 0; $i < $st->rowCount(); $i++){
             $vakter[] = self::init($st);
         }
