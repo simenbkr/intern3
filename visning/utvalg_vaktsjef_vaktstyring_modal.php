@@ -117,6 +117,12 @@ function test2() {
     //document.getElementById("tekstinput2").value = "";
 }
 
+function hmm(e, val){
+    if(e.keyCode == 13){
+        settVakt(val);
+    }
+}
+
 
 </script>
 <!-- Modal for vakter -->
@@ -169,7 +175,7 @@ function test2() {
           </datalist>
           <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="beboere" onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
 
-        <select name="beboere" onchange="settVakt(this.value)">
+        <select name="beboere" onkeypress="hmm(event, this.value)" autofocus>
           <option value="0" default="true">- velg -</option>
 
           <?php
