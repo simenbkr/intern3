@@ -93,7 +93,7 @@ class RomskjemaCtrl extends AbstraktCtrl {
 		$tekst = "<html>Dette er en automatisert melding.<br/><br/>" . $registrant->getFulltNavn() . " på rom " . $registrant->getRom()->getNavn() .
 			" har opprettet en ny feil på <a href='https://intern.singsaker.no'>Internsida</a> med følgende kommentar:<br/><br/>" . $kommentar .
 			"<br/><br/>Feil? Ta kontakt med <a href=\"mailto:data@singsaker.no\">Datagutta</a></html>";
-		Epost::sendEpost($mottaker,$tittel,$tekst);
+		//Epost::sendEpost($mottaker,$tittel,$tekst);
 	}
 }
 
