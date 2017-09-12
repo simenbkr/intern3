@@ -56,6 +56,7 @@ class VaktCtrl extends AbstraktCtrl
                                 }
                             }
                             $mottakere = rtrim($mottakere, ',');
+                            $mottakere .= ",data@singsaker.no";
                             $tittel = "[SING-INTERN] Det er en ledig vakt på byttemarkedet!";
                             $tekst = "<html>(Dette er en automatisert beskjed)<br/><br/>" . $vaktInstans->getBruker()->getPerson()->getFulltNavn() .
                                 " har lagt ut en vakt på byttemarkedet. Dette er en " . $vaktInstans->getVakttype() . ". vakt " . $vaktInstans->getDato() .
@@ -147,7 +148,6 @@ SET bytte=NULL,autogenerert=NULL,dobbelvakt=NULL,straffevakt=NULL,vaktbytte_id=N
                         $_SESSION['msg'] = "Du tok en passordbeskyttet " . $vaktInstans->toString();
                     }
                     if ($vaktByttet->harPassord() && !$vaktByttet->stemmerPassord($passordet)) {
-                        $dok->set('feilPassord', 1);
                         $_SESSION['error'] = 1;
                         $_SESSION['msg'] = "Feil passord!";
                     }
