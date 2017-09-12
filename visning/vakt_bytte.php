@@ -434,7 +434,7 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                         <?php //visDineVakter(false);
                                                         if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
                                                             foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                                if ($vakt == null || $vakt->erFerdig() /*|| ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())*/) {
+                                                                if ($vakt == null || $vakt->erFerdig() || \intern3\Vaktbytte::medVaktId($vakt->getId()) != null/*|| ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())*/) {
                                                                     continue;
                                                                 }
                                                                 $tid = strtotime($vakt->getDato());
@@ -476,7 +476,7 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                         <?php
                                                         if (count(intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId())) > 0) {
                                                             foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
-                                                                if ($vakt == null || $vakt->erFerdig() /*|| ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())*/) {
+                                                                if ($vakt == null || $vakt->erFerdig() || \intern3\Vaktbytte::medVaktId($vakt->getId()) != null/*|| ($vakt->erForeslatt() && $vakt->getVaktbytteDenneErMedIId() != $vaktbytte->getId())*/) {
                                                                     continue;
                                                                 }
                                                                 $tid = strtotime($vakt->getDato());

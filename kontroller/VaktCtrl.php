@@ -74,13 +74,12 @@ class VaktCtrl extends AbstraktCtrl
                     $vaktbyttet = Vaktbytte::medId($post['id']);
                     if ($vaktInstans != null && $vaktInstans->getBruker() == LogginnCtrl::getAktivBruker()) {
                         Vaktbytte::slettEgetVaktBytte($id, $vaktId);
-                        $st = DB::getDB()->prepare('UPDATE vakt SET bytte=0 WHERE id=:id');
+                        $st = DB::getDB()->prepare('UPDATE vakt SET bytte=NULL WHERE id=:id');
                         $st->bindParam(':id', $vaktId);
-                        $st->execute();
+
 
                         $st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=NULL WHERE id=:id');
                         $st2->bindParam(':id', $vaktId);
-                        $st2->execute();
 
                         //$ting = "(id=" . implode(' OR id=', $vaktbyttet->getForslagIder()) . ")";
                         //DB::getDB()->query('UPDATE vakt SET vaktbytte_id=NULL WHERE ' . $ting);
@@ -89,6 +88,9 @@ class VaktCtrl extends AbstraktCtrl
                             /* @var $forslag \intern3\Vakt */
                             $forslag->slettVaktbytteIdFraInstans($vaktbyttet->getId());
                         }
+
+                        $st->execute();
+                        $st2->execute();
 
                         $_SESSION['error'] = 1;
                         $_SESSION['msg'] = "Du slettet ditt eget vaktbytte for " . $vaktInstans->toString();
@@ -159,8 +161,19 @@ class VaktCtrl extends AbstraktCtrl
                         //Ok, all good, lets go!
                         $forslag = $vaktbyttet->getForslagIder();
                         if (in_array($tilVakt->getId(), $forslag)) {
+                            $_SESSION['error'] = 1;
+                            $_SESSION['msg'] = "Du har allerede foreslått dette vaktbyttet!";
+                            header('Location: ?a=vakt/bytte');
                             exit();
                         }
+
+                        if(Vaktbytte::medVaktId($tilVakt->getId()) != null){
+                            $_SESSION['error'] = 1;
+                            $_SESSION['msg'] = "Du kan ikke foreslå en vakt som er på byttemarkedet!";
+                            header('Location: ?a=vakt/bytte');
+                            exit();
+                        }
+
                         if (sizeof($forslag) == 0) {
                             //Ingen forslag fra før av.
                             $forslag = $tilVakt->getId();
@@ -194,6 +207,14 @@ class VaktCtrl extends AbstraktCtrl
                     $fraVakt = Vakt::medId($post['fraId']);
                     $tilVakt = Vakt::medId($post['tilId']);
                     $vaktbyttet = Vaktbytte::medVaktId($fraVakt->getId());
+
+                    if(Vaktbytte::medVaktId($tilVakt->getId()) != null){
+                        $_SESSION['error'] = 1;
+                        $_SESSION['msg'] = "Du kan ikke foreslå en vakt som er på byttemarkedet!";
+                        header('Location: ?a=vakt/bytte');
+                        exit();
+                    }
+
                     if (!$vaktbyttet->stemmerPassord($post['passordet'])) {
                         $dok->set('feilPassord', 1);
                         $_SESSION['error'] = 1;
