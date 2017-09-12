@@ -195,6 +195,14 @@ class Vakt
         return $this->getVakttype() . ". vakt " . $df->format(strtotime($this->getDato()));
     }
 
+    public function shortToString(){
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::FULL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+
+        return ucfirst($df->format(strtotime($this->getDato())));
+    }
+
     public static function antallVakter()
     {
         $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt');
@@ -213,7 +221,7 @@ class Vakt
 
     public static function antallUbekreftet()
     {
-        $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bekreftet = 0 AND bruker_id != 0;');
+        $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE (bekreftet = 0 AND bruker_id != 0)');
         $st->execute();
         $res = $st->fetch();
         return $res['antall'];

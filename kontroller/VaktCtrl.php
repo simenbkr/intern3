@@ -110,7 +110,8 @@ class VaktCtrl extends AbstraktCtrl
                         $st->bindParam(':id', $id);
                         $st->execute();
 
-                        $st2 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=NULL WHERE id=:id');
+                        $st2 = DB::getDB()->prepare('UPDATE vakt 
+SET bytte=NULL,autogenerert=NULL,dobbelvakt=NULL,straffevakt=NULL,vaktbytte_id=NULL,bekreftet=1 WHERE id=:id');
                         $st2->bindParam(':id', $vaktId);
                         $st2->execute();
 
@@ -341,16 +342,14 @@ class VaktCtrl extends AbstraktCtrl
                     }
                 }
             }
+
             $egne_vakter_vaktbytter = array();
             foreach (VaktListe::medBrukerId(LogginnCtrl::getAktivBruker()->getId()) as $vakt) {
                 if (!$vakt->erFerdig() && $vakt->getBytte()) {
-                    //$egne_vakter_vaktbytter[] = Vaktbytte::medId($vakt->getVaktbytteDenneErMedIId());
-                    //foreach($vakt->getVaktbytteDenneErMedIId() as $id){
-                    //  $egne_vakter_vaktbytter[] = Vaktbytte::medId($id);
-                    //}
                     $egne_vakter_vaktbytter[] = Vaktbytte::medVaktId($vakt->getId());
                 }
             }
+
             $dok->set('egne_vakter_vaktbytter', $egne_vakter_vaktbytter);
             $vaktbytteListe = VaktbytteListe::etterVakttype();
             $dok->set('vaktbytteListe', $vaktbytteListe);

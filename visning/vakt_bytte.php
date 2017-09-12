@@ -220,7 +220,8 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                     <?php
                     foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
                         $tid = strtotime($vakt->getDato());
-                        $tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
+                        //$tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
+                        $tekst = $vakt->toString();
                         ?>
                         <tr>
                             <?php
@@ -369,6 +370,7 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                     }
                                 }
                                 echo '<strong>' . ucfirst(strftime('%A %d/%m', strtotime($vaktbytte->getVakt()->getDato()))) . '</strong>' . PHP_EOL;
+                                //echo '<strong>' . $vaktbytte->getVakt()->toString() . '</strong>' . PHP_EOL;
                                 echo '<br>' . PHP_EOL;
                                 echo ($bruker != null && $bruker->getPerson()) != null ? $bruker->getPerson()->getFulltNavn() : 'Fritz Müller';
                                 $merknaden = $vaktbytte->getMerknad();
