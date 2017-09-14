@@ -26,6 +26,29 @@ require_once('topp_utvalg.php');
 <div class="col-md-6">
     <h1>Utvalget &raquo; Vaktsjef &raquo; Vaktoversikt</h1>
 
+    <div class="tilbakemelding">
+        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
+
+            <div class="alert alert-success fade in" id="success"
+                 style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <p></p>
+            <?php
+        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
+            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $_SESSION['msg']; ?>
+            </div>
+            <p></p>
+            <?php
+        }
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
+        unset($_SESSION['msg']);
+        ?></div>
+
     <p>
     <h2>Antall vakter: <?php echo $antallVakter; ?></h2></p>
     <p>
@@ -76,10 +99,11 @@ require_once('topp_utvalg.php');
 
         <?php
         foreach ($beboerListe as $beboer) {
+            /* @var $beboer \intern3\Beboer */
             $bruker = $beboer->getBruker();
             ?>
             <tr>
-                <td><a href="?a=beboer/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
+                <td><a href="?a=utvalg/vaktsjef/vaktoversikt/endre/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
                 <td><?php echo $bruker->antallStraffevakter(); ?></td>
                 <td><?php echo $bruker->antallVakterSkalSitte(); ?></td>
                 <td><?php echo $bruker->antallVakterHarSittet(); ?></td>

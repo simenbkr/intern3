@@ -229,6 +229,14 @@ class Vakt
 
     public static function antallSkalSitteMedBrukerId($brukerId)
     {
+
+        $semester = Funk::generateSemesterString(date('Y-m-d'));
+
+        if(($vaktantall = VaktAntall::medIdSemester($brukerId, $semester)) != null){
+            return $vaktantall->getAntall();
+        }
+
+
         $beboer = Beboer::medBrukerId($brukerId);
         if ($beboer == null || !$beboer->erBeboer()) {
             return 0;

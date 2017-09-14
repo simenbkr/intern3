@@ -69,6 +69,18 @@ class Funk {
         }
     }
 
+    public static function genNextSemsterStrings(){
+
+        $semestere = array();
+        $dato = date('Y-m-d');
+        for($i = 1; $i < 5; $i++){
+            $semestere[] = self::generateSemesterString($dato);
+            $dato = date('Y-m-d', strtotime("+6 months" . $dato));
+        }
+
+        return $semestere;
+    }
+
 }
 
 ?>

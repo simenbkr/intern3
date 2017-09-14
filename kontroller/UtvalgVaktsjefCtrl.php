@@ -6,6 +6,49 @@ use intern3\Krysseliste\Kryss;
 
 class UtvalgVaktsjefCtrl extends AbstraktCtrl
 {
+
+    private function endreVaktAntall()
+    {
+
+        $visning = new Visning($this->cd);
+        $sisteArg = $this->cd->getSisteArg();
+        $options = Funk::genNextSemsterStrings();
+
+        if (($beboer = Beboer::medId($sisteArg)) == null) {
+            return;
+        }
+
+        if ($_POST && count($_POST) > 0) {
+            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            $antall = $post['antall'];
+            $semester = $post['semester'];
+
+            if (!in_array($semester, $options)) {
+                $_SESSION['error'] = 1;
+                $_SESSION['msg'] = "Det ser ut til at du har valgt et ugyldig semester!";
+                return;
+            }
+
+            if (($vaktantall = VaktAntall::medIdSemester($beboer->getBrukerId(), $semester)) != null) {
+                $vaktantall->endreAntall($antall);
+            } else {
+                VaktAntall::add($beboer->getBrukerId(), $semester, $antall);
+            }
+
+            $_SESSION['success'] = 1;
+            $_SESSION['msg'] = "Du endret antall vakter for " . $beboer->getFulltNavn() . " til " . $antall;
+            header('Location: ?a=utvalg/vaktsjef/vaktoversikt');
+            exit();
+        }
+
+
+        $visning->set('options', $options);
+        $visning->set('beboer', $beboer);
+        $visning->vis('utvalg_vaktsjef_vaktoversikt_endre.php');
+        exit();
+    }
+
     public function bestemHandling()
     {
         $aktueltArg = $this->cd->getAktueltArg();
@@ -21,6 +64,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $valgtCtrl->bestemHandling();
                 break;
             case 'vaktoversikt':
+
+                if ($aktueltArg != $this->cd->getSisteArg()) {
+                    $this->endreVaktAntall();
+                }
+
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     //'endreVakt=1&hosthalv=' + host_halv + "&vaarhalv=" + vaar_halv + "&hosthel=" + host_hel + "&vaarhel=" + vaar_hel,
@@ -334,7 +382,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $rows = $st->fetchAll();
                 $datoer = array();
 
-                foreach($rows as $row){
+                foreach ($rows as $row) {
                     $datoer[] = $row['dato'];
                 }
 
@@ -345,7 +393,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $lastArg = $this->cd->getSisteArg();
                 $pos = $this->cd->getAktuellArgPos();
                 $alleArgs = $this->cd->getAllArgs();
-                if($lastArg != $aktueltArg && count($alleArgs) != $pos){
+                if ($lastArg != $aktueltArg && count($alleArgs) != $pos) {
                     $fra = $alleArgs[$pos + 1];
                     $til = $alleArgs[$pos + 2];
                 } else {
