@@ -55,6 +55,20 @@ class Funk {
             return false;
         }
     }
+
+    public static function generateSemesterString($dato){
+        //$dato -> date-objekt.
+
+        $year = date('Y', strtotime($dato));
+        $dato_time = strtotime($dato);
+
+        if ($dato_time > strtotime("$year-07-01")){
+            return "host-$year";
+        } else {
+            return "var-$year";
+        }
+    }
+
 }
 
 ?>
