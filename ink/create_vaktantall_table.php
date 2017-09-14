@@ -12,7 +12,7 @@ $start = time();
 echo "Opprettelse av vaktantall-tabell ved " . date('Y-m-d H:i:s');
 echo "\n";
 
-$sql = "CREATE TABLE `intern3`.`vaktantall` 
+$sql = "CREATE TABLE `vaktantall` 
 ( `bruker_id` INT(8) NOT NULL , `semester` VARCHAR(128) NOT NULL , `antall` INT(32) NOT NULL,
 PRIMARY KEY(bruker_id, semester)
 )";
