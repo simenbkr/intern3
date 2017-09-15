@@ -45,7 +45,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl {
 			$this->nullstillTabell();
 			$this->opprettVakter();
 			$this->tildelVakter();
-            $this->opprettOgTildelAnsattVakter();
+            //$this->opprettOgTildelAnsattVakter();
 			/* Ved feil, ->rollback() istedet for ->commit(). */
 			DB::getDB()->commit();
 		}

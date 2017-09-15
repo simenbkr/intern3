@@ -23,17 +23,15 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                         Verv::updateVerv($beboerId, $vervId);
                         $page = '?a=utvalg/sekretar/apmandsverv';
                         header('Location: ' . $page, true, 303);
-                        exit;
+                        exit();
                     }
                 }
             }
             $beboerListe = BeboerListe::aktive();
             $vervListe = VervListe::alle();
-            $utvalg = Verv::erUtvalg();
             $dok = new Visning($this->cd);
             $dok->set('beboerListe', $beboerListe);
             $dok->set('vervListe', $vervListe);
-            $dok->set('utvalg', $utvalg);
             $dok->vis('utvalg_sekretar_apmandsverv.php');
         } else if ($aktueltArg == 'apmandsverv_modal') {
             $beboerListe = BeboerListe::aktive();
