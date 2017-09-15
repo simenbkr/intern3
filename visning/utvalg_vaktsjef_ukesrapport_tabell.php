@@ -47,7 +47,7 @@
     <tr>
         <td><?php echo $datoen;?></td>
         <td><?php echo $vakt['vaktnr'];?></td>
-        <td><?php echo $vakt['vakthavende']->getFulltNavn();?></td>
+        <td><?php echo $vakt['vakthavende'] == null ? '' : $vakt['vakthavende']->getFulltNavn();?></td>
 
         <?php
             foreach($vakt['obj'] as $drikke_info){

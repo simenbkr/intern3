@@ -32,8 +32,11 @@ $(formaterDatovelger);
 
 <?php
 if (!isset($skjulMeny)) {
-//echo "Dette er en utviklingsside. Den er koblet til følgende database: ";
-//print_r(DB::getDB()->query('SELECT database()')->fetchColumn());
+
+    if($_SERVER['SERVER_NAME'] != 'intern.singsaker.no') {
+        echo "Dette er en utviklingsside. Den er koblet til følgende database: ";
+        print_r(DB::getDB()->query('SELECT database()')->fetchColumn());
+    }
 //print_r($_COOKIE);
 //echo "<br/><br/>";
 //print_r($_SESSION);
@@ -200,7 +203,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktstyring">Vaktstyring</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/vaktoversikt">Vaktoversikt</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/generer">Generer vaktliste</a></li>
-					<?php /*<li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/ukerapport">Ukerapport</a></li> */ ?>
+					<li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/ukerapport">Ukerapport</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapport">Krysserapport</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/drikke">Drikke</a></li>
                     <li><a href="<?php echo $cd->getBase();?>utvalg/vaktsjef/vaktliste_utskrift">Vaktliste Utskriftsvennlig</a></li>

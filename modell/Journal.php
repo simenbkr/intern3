@@ -135,11 +135,19 @@ class Journal
 
             $aktuell_vaktsesjon = AltJournal::init($st);
             if ($aktuell_vaktsesjon != null) {
-                $denne_vakta = array(
-                    'vakthavende' => $aktuell_vaktsesjon->getBruker()->getPerson(),
-                    'vaktnr' => $aktuell_vaktsesjon->getVaktnr(),
-                    'dato' => $aktuell_vaktsesjon->getDato()
-                );
+                if($aktuell_vaktsesjon->getBruker() != null) {
+                    $denne_vakta = array(
+                        'vakthavende' => $aktuell_vaktsesjon->getBruker()->getPerson(),
+                        'vaktnr' => $aktuell_vaktsesjon->getVaktnr(),
+                        'dato' => $aktuell_vaktsesjon->getDato()
+                    );
+                } else {
+                    $denne_vakta = array(
+                        'vakthavende' => null,
+                        'vaktnr' => $aktuell_vaktsesjon->getVaktnr(),
+                        'dato' => $aktuell_vaktsesjon->getDato()
+                    );
+                }
 
                 foreach ($aktuell_vaktsesjon->getStatusAsArray() as $drikke_objekt) {
                     $denne_vakta['obj'][Drikke::medId($drikke_objekt['drikkeId'])->getNavn()] = $drikke_objekt;

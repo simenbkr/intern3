@@ -2,27 +2,43 @@
 require_once('topp_utvalg.php');
 ?>
     <script>
-        var ukenr = null;
+        var ukenr = 1;
         var aaret = 2007;
         function velgUke(nr) {
-            $.get('?a=utvalg/vaktsjef/ukerapport_tabell/' + nr + '/' + aaret, function (data) {
-                $('#kryss').html(data);
-                ukenr = nr;
+
+            $.ajax({
+                url: "?a=utvalg/vaktsjef/ukerapport_tabell/" + nr + '/' + aaret,
+                type: 'GET',
+                success: function(html){
+                    $('#kryss').html(html);
+                },
+                error: function(req,stat,err){
+                    alert(err);
+                }
             });
+            ukenr = nr;
         }
 
         function velgAar(nr) {
-            $.get('?a=utvalg/vaktsjef/ukerapport_tabell/'+ ukenr +'/' + nr, function (data) {
-                $('#kryss').html(data);
-                aaret = nr;
+
+            $.ajax({
+                url: "?a=utvalg/vaktsjef/ukerapport_tabell/" + ukenr + '/' + nr,
+                type: 'GET',
+                success: function(html){
+                    $('#kryss').html(html);
+                },
+                error: function(req,stat,err){
+                    alert(err);
+                }
             });
+            aaret = nr;
         }
 
     </script>
     <div class="container">
         <h1>Utvalget &raquo; Vaktsjef &raquo; Ukesrapport</h1>
         <p>Velg Uke: <select onchange="velgUke(this.value)">
-                <option value="0">- Velg Uke -</option>
+                <option value="1">1</option>
                 <?php
                 $uker = 52;
 
