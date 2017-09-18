@@ -18,6 +18,11 @@ foreach($vakter_i_morgen as $vakt){
     if($vakt->getBruker() == null || ($beboeren = $vakt->getBruker()->getPerson()) == null){
         continue;
     }
+
+    if(!$beboeren instanceof Beboer){
+        continue;
+    }
+
     if($beboeren->vilHaVaktVarsler()){
         $beskjed = "<html><body>Hei!<br/>Du har snart vakt! Du skal ha " . $vakt->toString() . "<br/>";
         $beskjed .= "<br/><br/> Med vennlig hilsen <br/>Robottene ved Internsidene";
