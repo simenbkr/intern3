@@ -287,7 +287,7 @@ class JournalCtrl extends AbstraktCtrl
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($post['brukerId']) && is_numeric($post['brukerId'])) {
                         $denne_vakta = AltJournal::getLatest();
-                        if (time() - strtotime($denne_vakta->getDato()) < 120 && false) {
+                        if (time() - strtotime($denne_vakta->getDato()) < 120) {
                             $_SESSION['error'] = 1;
                             $_SESSION['msg'] = "Vent litt før du avslutter enda en vakt!";
                         } else {
