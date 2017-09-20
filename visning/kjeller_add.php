@@ -37,15 +37,15 @@ require_once('topp.php');
                 </tr>
                 <tr>
                     <td>Pris:</td>
-                    <td><input type="text" name="pris" value=""></td>
+                    <td><input type="number" name="pris" value="" ></td>
                 </tr>
                 <tr>
                     <td>Avanse:</td>
-                    <td><input type="text" name="avanse" value=""</td>
+                    <td><input type="number" name="avanse" value=""</td>
                 </tr>
                 <tr>
                     <td>Antall innkjøpt:</td>
-                    <td><input type="text" name="antall"></td>
+                    <td><input type="number" name="antall"></td>
                 </tr>
                 <tr>
                     <td>Type:</td>
