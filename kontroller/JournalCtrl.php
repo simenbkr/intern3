@@ -242,18 +242,6 @@ class JournalCtrl extends AbstraktCtrl
                         $denneVakt->setBrukerId($post['brukerId']);
                     }
                 }
-                /*
-                if ($denneVakt->getBrukerId() == 0) {
-                    //Torild
-                    $vakta = Ansatt::getSisteAnsatt();
-                } else {
-                    $vakta = Bruker::medId($denneVakt->getBrukerId());
-                }
-                if ($vakta == null) {
-                    $vakta = Ansatt::getSisteAnsatt();
-                } else {
-                    $vakta = $vakta->getPerson();
-                } */
 
                 $vaktaId = $denneVakt->getBrukerId();
                 $vakta = Bruker::medId($vaktaId);
@@ -299,7 +287,7 @@ class JournalCtrl extends AbstraktCtrl
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($post['brukerId']) && is_numeric($post['brukerId'])) {
                         $denne_vakta = AltJournal::getLatest();
-                        if (time() - strtotime($denne_vakta->getDato()) < 120) {
+                        if (time() - strtotime($denne_vakta->getDato()) < 120 && false) {
                             $_SESSION['error'] = 1;
                             $_SESSION['msg'] = "Vent litt før du avslutter enda en vakt!";
                         } else {

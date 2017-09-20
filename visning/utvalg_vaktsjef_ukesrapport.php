@@ -3,7 +3,7 @@ require_once('topp_utvalg.php');
 ?>
     <script>
         var ukenr = 1;
-        var aaret = 2007;
+        var aaret = 2017;
         function velgUke(nr) {
 
             $.ajax({
@@ -37,6 +37,22 @@ require_once('topp_utvalg.php');
     </script>
     <div class="container">
         <h1>Utvalget &raquo; Vaktsjef &raquo; Ukesrapport</h1>
+
+        <p>Velg År: <select onchange="velgAar(this.value)">
+                <option value="<?php echo date('Y');?>"><?php echo date('Y');?></option>
+
+                <?php
+                $start = 2007;
+                $årene = date('Y')-$start-1;
+                //kryssing starta i 2007.
+                for($i=date('Y')-1; $i>2006;$i--){
+
+                    ?><option value="<?php echo $i;?>"><?php echo $i;?></option><?php
+
+                }
+                ?>
+            </select></p>
+
         <p>Velg Uke: <select onchange="velgUke(this.value)">
                 <option value="1">1</option>
                 <?php
@@ -49,26 +65,6 @@ require_once('topp_utvalg.php');
                 }
                 ?>
             </select></p>
-
-
-        <p>Velg År: <select onchange="velgAar(this.value)">
-                <option value="2007">2007</option>
-
-                <?php
-                $start = 2008;
-                $årene = date('Y')-$start;
-                $uker = 52;
-
-                for($i=$start; $i<=date('Y');$i++){
-
-                    ?><option value="<?php echo $i;?>"><?php echo $i;?></option><?php
-
-                }
-                ?>
-            </select></p>
-
-
-
 
 
 <div id="kryss">

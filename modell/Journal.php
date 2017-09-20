@@ -10,7 +10,7 @@ class Journal
     private $til;
     private $år;
 
-    private $alle_kryss;
+//private $alle_kryss;
     private $ukeskryss;
 
     public function __construct($ukenr = Null, $år = Null)
@@ -20,7 +20,7 @@ class Journal
             $this->ukenr = date('w');
             $this->fra = date('Y-m-d', strtotime('-' . (self::getUkenr() - 1) . ' days'));
             $this->til = date('Y-m-d', strtotime('+' . (6 - self::getUkenr()) . ' days'));
-            $this->alle_kryss = self::getAlleKryss();
+            //$this->alle_kryss = self::getAlleKryss();
         } else {
             $this->år = (isset($år) ? $år : date('Y'));
             $this->ukenr = $ukenr;
@@ -37,7 +37,7 @@ class Journal
         $return = array();
         $now = strtotime("1 January $år", time());
         $dag = date('w', $now);
-        $now += ((7 * $uke) + 1 - $dag) * 24 * 3600;
+        $now += ((7 * ($uke-1)) + 1 - $dag) * 24 * 3600;
         $return[0] = date('Y-m-d', $now);
         $now += 6 * 24 * 3600;
         $return[1] = date('Y-m-d', $now);
@@ -79,8 +79,11 @@ class Journal
             'fra' => date('2015-08-17'),
             'til' => date('2015-08-24')
         );*/
-        if (count($this->alle_kryss) > 0) {
-            foreach ($this->alle_kryss as $krysseliste) {
+
+        $alle_kryss = self::getAlleKryss();
+
+        if (count($alle_kryss) > 0) {
+            foreach ($alle_kryss as $krysseliste) {
                 $krysseliste = json_decode($krysseliste, true);
 
                 foreach ($krysseliste as $enkelt_kryssing) {
@@ -102,8 +105,8 @@ class Journal
         $st->bindParam(':dato', $dato);
         $st->execute();
         $vaktrad = $st->fetchColumn();
-
-        return Beboer::medBrukerId($vaktrad['bruker_id']);
+        $beboer = Beboer::medBrukerId($vaktrad['bruker_id']);
+        return $beboer != null ? $beboer : Ansatt::medBrukerId($vaktrad['bruker_id']);
     }
 
 

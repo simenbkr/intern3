@@ -61,10 +61,10 @@ class AltJournal {
     }
 
     public function getBruker(){
-        if(Bruker::medId($this->bruker_id) != null){
-            return Bruker::medId($this->bruker_id);
+        if(($bruker = Bruker::medId($this->bruker_id)) != null){
+            return $bruker;
         }
-        return null;
+        return Bruker::medId(Ansatt::getSisteAnsatt()->getBrukerId());
     }
 
     public function getVaktnr(){
@@ -183,11 +183,20 @@ class AltJournal {
 
     public function drukketDenneVakta($drikke_id){
         foreach($this->getStatusAsArray() as $obj){
-            if($obj['drikkeId'] == $drikke_id && $obj['mottatt'] != $obj['avlevert']/*&& $obj['utavskap'] > 0 && $obj['mottatt'] > 0*/){
+            if($obj['drikkeId'] == $drikke_id && $obj['utavskap'] > 0){
                 return true;
             }
         }
         return false;
     }
+
+    //public function drukketDenneVakta($drikke_id){
+     //   foreach($this->getStatusAsArray() as $obj){
+     //       if($obj['drikkeId'] == $drikke_id && $obj['mottatt'] != $obj['avlevert']/*&& $obj['utavskap'] > 0 && $obj['mottatt'] > 0*/){
+     //           return true;
+      //      }
+    //    }
+   //     return false;
+   // }
 }
 ?>
