@@ -44,7 +44,7 @@ require_once ('topp.php');
         unset($_SESSION['error']);
         unset($_SESSION['msg']);
         ?></div>
-    <form action="" method="post" enctype="multipart/form-data" onsubmit="setTimeout(function () { window.location.reload(); }, 10)">
+    <form action="" method="post" enctype="multipart/form-data" onsubmit="">
         <table class="table table-bordered table-responsive">
             <tr>
                 <td>Navn:</td>
@@ -89,11 +89,11 @@ require_once ('topp.php');
             </tr>
             <tr>
                 <td>Bilde:</td>
-                <td><input type="file" name="image" /><img height="200px" src="vinbilder/<?php echo $vinen->getBilde();?>"</td>
+                <td><input type="file" name="image" /><img height="200px" <?php if($vinen->getBilde()) { ?> src="vinbilder/<?php echo $vinen->getBilde();?><?php } ?>"</td>
             </tr>
             <tr>
                 <td></td>
-                <td><input class="btn btn-primary" type="submit" value="Endre"></td>
+                <td><input class="btn btn-primary" type="submit" value="Endre" name="endre"></td>
             </tr>
             <?php if($vinen->erSlettet()){ ?>
             <tr>

@@ -168,7 +168,7 @@ class Journal
         }
         return $endelig_array;
     }
-    
+
 }
 
 ?>

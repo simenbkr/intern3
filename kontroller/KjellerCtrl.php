@@ -4,52 +4,95 @@ namespace intern3;
 
 class KjellerCtrl extends AbstraktCtrl
 {
+
+    private function leggTilVinMedBilde($path)
+    {
+
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $st = DB::getDB()->prepare('INSERT INTO vin (navn,bilde,pris,avanse,antall,typeId,beskrivelse, land) VALUES(
+:navn,:bilde,:pris,:avanse,:antall,:typeId,:beskrivelse, :land)');
+
+        $st->bindParam(':navn', $post['navn']);
+        $st->bindParam(':bilde', $path);
+        $st->bindParam(':pris', $post['pris']);
+        $st->bindParam(':avanse', $post['avanse']);
+        $st->bindParam(':antall', $post['antall']);
+        $st->bindParam(':typeId', $post['type']);
+        $st->bindParam(':beskrivelse', $post['beskrivelse']);
+        $st->bindParam(':land', $post['land']);
+        $st->execute();
+
+        return Vin::medId(Funk::getLastVinId());
+    }
+
+    private function leggTilVinUtenBilde()
+    {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $st = DB::getDB()->prepare('INSERT INTO vin (navn,pris,avanse,antall,typeId,beskrivelse, land) VALUES(
+:navn,:pris,:avanse,:antall,:typeId,:beskrivelse,:land)');
+
+        $st->bindParam(':navn', $post['navn']);
+        $st->bindParam(':pris', $post['pris']);
+        $st->bindParam(':avanse', $post['avanse']);
+        $st->bindParam(':avanse', $post['avanse']);
+        $st->bindParam(':antall', $post['antall']);
+        $st->bindParam(':typeId', $post['type']);
+        $st->bindParam(':beskrivelse', $post['beskrivelse']);
+        $st->bindParam(':land', $post['land']);
+        $st->execute();
+
+        return Vin::medId(Funk::getLastVinId());
+    }
+
     public function bestemHandling()
     {
         if (LogginnCtrl::getAktivBruker() == null || LogginnCtrl::getAktivBruker()->getPerson() == null ||
-            !LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()) {
+            !LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()
+        ) {
             header('Location: ?a=diverse');
             exit();
         }
         $aktueltArg = $this->cd->getAktueltArg();
         $vintypene = Vintype::getAlle();
         $vinene = Vin::getAlle();
-        $tillatte_filtyper = array('jpg', 'jpeg', 'png', 'gif');
         $dok = new Visning($this->cd);
         switch ($aktueltArg) {
             case 'leggtil':
-                $added = false;
-                if (isset($_POST)) {
+
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
-                        && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'] && isset($post['land']))
-                    ) {
 
-                        $file_name = $_FILES['image']['name'];
-                        $file_size = $_FILES['image']['size'];
-                        $tmp_file = $_FILES['image']['tmp_name'];
+                    if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+                        $tillatte_filtyper = array('jpg', 'jpeg', 'png', 'gif');
+                        $bildet = $_FILES['image']['tmp_name'];
                         $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+                        $bildets_navn = md5(Funk::generatePassword(15) . time()) . '.' . $file_ext;
 
-                        if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
-                            $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
-                            move_uploaded_file($tmp_file, "vinbilder/" . $bildets_navn);
-                            chmod("vinbilder/" . $bildets_navn, 0644);
-                            $added = $this->insertVin(true, $bildets_navn);
+                        if (in_array($file_ext, $tillatte_filtyper)) {
+                            $vinbilder_path = dirname(__DIR__) . '/www/vinbilder/';
+                            if (!move_uploaded_file($_FILES['image']['tmp_name'], $vinbilder_path . $bildets_navn)) {
+                                Throw new \RuntimeException("dafuq");
+                            }
+                            chmod($vinbilder_path . $bildets_navn, 0644);
+
+                            $vinen = $this->leggTilVinMedBilde($bildets_navn);
+
+                            $_SESSION['success'] = 1;
+                            $_SESSION['msg'] = "Du la til en vin med navn " . $vinen->getNavn();
+
+                            header('location: ?a=kjeller/admin/' . $vinen->getId());
+                            exit();
                         }
-                    } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['antall'])
-                        && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['antall'])
-                    ) {
-                        $added = $this->insertVin(false, null);
-                    } elseif (sizeof($post) > 0) {
-                        $_SESSION['error'] = 1;
-                        $_SESSION['msg'] = "Noe gikk galt.. Prøv på nytt";
-                        $vintypene = Vintype::getAlle();
                     }
-                }
-                if($added){
+                    $vinen = $this->leggTilVinUtenBilde();
                     $_SESSION['success'] = 1;
-                    $_SESSION['msg'] = "La til vin i vårt sortiment!";
+                    $_SESSION['msg'] = "Du la til en vin med navn " . $vinen->getNavn();
+
+                    header('location: ?a=kjeller/admin/' . $vinen->getId());
+                    exit();
                 }
+
+
                 $dok->set('vintyper', $vintypene);
                 $dok->vis('kjeller_add.php');
                 break;
@@ -60,62 +103,68 @@ class KjellerCtrl extends AbstraktCtrl
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-                        if (isset($_FILES['image']) && $_FILES['image']['size'] > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
-                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'] && isset($post['land']))
-                        ) {
-                            $file_name = $_FILES['image']['name'];
-                            $file_size = $_FILES['image']['size'];
-                            $tmp_file = $_FILES['image']['tmp_name'];
-                            $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+                        $keys = array('navn' => $vinen->getNavn(),
+                            'pris' => $vinen->getPris(),
+                            'avanse' => $vinen->getAvanse(),
+                            'type' => $vinen->getTypeId(),
+                            'land' => $vinen->getLand(),
+                            'beskrivelse' => $vinen->getBeskrivelse()
+                        );
 
-                            if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
-                                $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
-                                move_uploaded_file($tmp_file, "vinbilder/" . $bildets_navn);
-                                chmod("vinbilder/" . $bildets_navn, 0644);
-                                $this->updateVin(true, $bildets_navn, $vinen->getId());
+                        if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+                            $tillatte_filtyper = array('jpg', 'jpeg', 'png', 'gif');
+                            $bildet = $_FILES['image']['tmp_name'];
+                            $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+                            $bildets_navn = md5(Funk::generatePassword(15) . time()) . '.' . $file_ext;
+
+                            if (in_array($file_ext, $tillatte_filtyper)) {
+                                $vinbilder_path = dirname(__DIR__) . '/www/vinbilder/';
+                                if (!move_uploaded_file($_FILES['image']['tmp_name'], $vinbilder_path . $bildets_navn)) {
+                                    Throw new \RuntimeException("dafuq");
+                                }
+                                chmod($vinbilder_path . $bildets_navn, 0644);
+
+                                $this->updateVinMedBilde($vinen->getId(), $bildets_navn);
+
                                 $_SESSION['success'] = 1;
-                                $_SESSION['msg'] = "Du endra vinen med navn: " . $vinen->getNavn();
-                                header('Location: ' . $_GET['ref']);
+                                $_SESSION['msg'] = "Du endret vinen med navn " . $vinen->getNavn();
+
+                                header('location: ' . $_SERVER['REQUEST_URI']);
                                 exit();
                             }
+                        }
 
-                        } elseif (isset($post['navn']) && isset($post['pris']) && isset($post['avanse'])
-                            && isset($post['type']) && is_numeric($post['pris']) && is_numeric($post['avanse'])
-                        ) {
-                            $this->updateVin(true, $vinen->getBilde(), $vinen->getId());
-                            $_SESSION['success'] = 1;
-                            $_SESSION['msg'] = "Du endra vinen med navn: " . $vinen->getNavn();
-                            header('Location: ' . $_GET['ref']);
-                            exit();
-                        } elseif(isset($post['unslett']) && $vinen != null){
-                            $st = DB::getDB()->prepare('UPDATE vin SET slettet=0 WHERE id=:id');
-                            $st->bindParam(':id', $vinen->getId());
-                            $st->execute();
-                            $_SESSION['success'] = 1;
-                            $_SESSION['msg'] = "Du unsletta vinen med navn: " . $vinen->getNavn();
-                            $vinene = Vin::getAlle();
-                            $dok->set('vinene', $vinene);
-                            $dok->vis('kjeller_slettet_admin.php');
-                            exit();
-                            //header('Location: ' . $_GET['ref']);
-                            //exit();
+                        foreach ($post as $key => $val) {
+                            if ($post[$key] != $keys[$key]) {
+                                $this->updateVinUtenBilde($vinen->getId());
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Du endret vinen med navn " . $vinen->getNavn();
+
+                                header('location: ' . $_SERVER['REQUEST_URI']);
+                                exit();
+                                break;
+                            }
                         }
                     }
-                    if ($vinen != null) {
-                        //Redeclare i tilfelle endringer.
-                        $vinen = Vin::medId($sisteArg);
-                        $dok->set('vinen', $vinen);
-                        $dok->set('vintyper', $vintypene);
-                        $dok->vis('kjeller_endre_vin.php');
-                        exit();
-                    }
+
+                    //Redeclare i tilfelle endringer.
+                    $vinen = Vin::medId($sisteArg);
+                    $dok->set('vinen', $vinen);
+                    $dok->set('vintyper', $vintypene);
+                    $dok->vis('kjeller_endre_vin.php');
+                    exit();
                 }
+
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (isset($post['slett']) && is_numeric($post['slett']) && Vin::medId($post['slett']) != null) {
                         $st = DB::getDB()->prepare('UPDATE vin SET slettet=1 WHERE id=:id');
                         $st->bindParam(':id', $post['slett']);
                         $st->execute();
+                        $vinene = Vin::getAlle();
+                        $dok->set('vinene', $vinene);
+                        $dok->vis('kjeller_admin.php');
+                        exit();
                     }
                 }
                 $vinene = Vin::getAlle();
@@ -124,15 +173,15 @@ class KjellerCtrl extends AbstraktCtrl
                 break;
             case 'slettet_vin':
                 $dok = new Visning($this->cd);
-                if(isset($_POST) && count($_POST) > 0){
+                if (isset($_POST) && count($_POST) > 0) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if(isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) == 0){
+                    if (isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) == 0) {
                         $st = DB::getDB()->prepare('DELETE FROM vin WHERE id=:id');
                         $st->bindParam(':id', $post['slett']);
                         $st->execute();
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Slettet vinen med navn " . $vinen->getNavn() . " permanent.";
-                    } elseif(isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) != 0){
+                    } elseif (isset($post['slett']) && ($vinen = Vin::medId($post['slett'])) != null && Vinkryss::antallKryssVinId($post['slett']) != 0) {
                         $dok->set('tilbakemelding', "Kan ikke slette en vin som har blitt krysset!");
                     }
                 }
@@ -170,8 +219,7 @@ class KjellerCtrl extends AbstraktCtrl
                             $string = "Du registrerte " . $post['antall'] . " vin med navn " . $vinen->getNavn() . " på " . $beboeren->getFulltNavn();
                             $_SESSION['success'] = 1;
                             $_SESSION['msg'] = $string;
-                        }
-                        elseif($vinen->getAntall() < $post['antall']){
+                        } elseif ($vinen->getAntall() < $post['antall']) {
                             $_SESSION['error'] = 1;
                             $_SESSION['msg'] = "La ikke til regning! Du kan ikke krysse flere vin av denne typen enn det vi har i varebeholdningen!
                             <br/>Det er forløpig igjen " . $vinen->getAntall() . " av vinen med navn " . $vinen->getNavn() . " og du forsøkte å krysse " . $post['antall'] . ".";
@@ -201,7 +249,7 @@ class KjellerCtrl extends AbstraktCtrl
                                 $alle_kryss = Vinkryss::getAlleIkkeFakturertByBeboerId($beboer->getId());
                                 foreach ($alle_kryss as $krysset) {
                                     $beboer_vin['antall'] += round($krysset->getAntall(), 2);
-                                    $beboer_vin['kostnad'] += round($krysset->getKostnad()*$krysset->getVin()->getAvanse(), 2);
+                                    $beboer_vin['kostnad'] += round($krysset->getKostnad() * $krysset->getVin()->getAvanse(), 2);
                                 }
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
@@ -209,7 +257,7 @@ class KjellerCtrl extends AbstraktCtrl
                             $dok->vis('kjeller_lister_rapport.php');
                             exit();
                         case 'beboere_vin':
-                            if(isset($_POST) && isset($_POST['fakturer']) && $_POST['fakturer'] == 1){
+                            if (isset($_POST) && isset($_POST['fakturer']) && $_POST['fakturer'] == 1) {
                                 $st = DB::getDB()->prepare('UPDATE vinkryss SET fakturert=1 WHERE fakturert=0');
                                 $st->execute();
 
@@ -233,11 +281,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -260,11 +308,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -287,11 +335,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -314,11 +362,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
                                             'aktuell_vin' => $vin_kryss->getVin());
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad()*$vin_kryss->getVin()->getAvanse(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
                                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                                     }
                                 }
@@ -358,7 +406,7 @@ class KjellerCtrl extends AbstraktCtrl
                             $st->bindParam(':navn', $post['navn']);
                             $st->execute();
                         } elseif (isset($post['slett']) && is_numeric($post['slett'])) {
-                            if(Vintype::antallVinAvType($post['slett']) == 0){
+                            if (Vintype::antallVinAvType($post['slett']) == 0) {
                                 $st = DB::getDB()->prepare('DELETE FROM vintype WHERE id=:id');
                                 $st->bindParam(':id', $post['slett']);
                                 $st->execute();
@@ -410,7 +458,7 @@ class KjellerCtrl extends AbstraktCtrl
             case 'pafyll':
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if(isset($post['vin']) && Vin::medId($post['vin']) != null && isset($post['antall']) && is_numeric($post['antall'])){
+                    if (isset($post['vin']) && Vin::medId($post['vin']) != null && isset($post['antall']) && is_numeric($post['antall'])) {
                         $vinen = Vin::medId($post['vin']);
                         $nytt_antall = $vinen->getAntall() + $post['antall'];
                         $st = DB::getDB()->prepare('UPDATE vin SET antall=:antall WHERE id=:id');
@@ -441,7 +489,8 @@ class KjellerCtrl extends AbstraktCtrl
         }
     }
 
-    private function insertVin($medbilde = false, $bildenavn)
+    private
+    function insertVin($medbilde = false, $bildenavn)
     {
         $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -460,16 +509,15 @@ class KjellerCtrl extends AbstraktCtrl
         return true;
     }
 
-    private function updateVin($medbilde = false, $bildenavn, $id)
+    private
+    function updateVinUtenBilde($id)
     {
-        $bildet = $medbilde ? $bildenavn : ' ';
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,bilde=:bilde,pris=:pris,avanse=:avanse,
+        $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,pris=:pris,avanse=:avanse,
         typeId=:typeId,beskrivelse=:beskrivelse,land=:land WHERE id=:id');
 
         $st->bindParam(':id', $id);
         $st->bindParam(':navn', $post['navn']);
-        $st->bindParam(':bilde', $bildet);
         $st->bindParam(':pris', $post['pris']);
         $st->bindParam(':avanse', $post['avanse']);
         $st->bindParam(':typeId', $post['type']);
@@ -477,6 +525,18 @@ class KjellerCtrl extends AbstraktCtrl
         $st->bindParam(':land', $post['land']);
         $st->execute();
         return true;
+    }
+
+    private function updateVinMedBilde($id, $path)
+    {
+
+        $st = DB::getDB()->prepare('UPDATE vin SET bilde=:bilde WHERE id=:id');
+        $st->bindParam(':bilde', $path);
+        $st->bindParam(':id', $id);
+        $st->execute();
+
+        $this->updateVinUtenBilde($id);
+
     }
 }
 

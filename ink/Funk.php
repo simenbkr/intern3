@@ -37,6 +37,12 @@ class Funk {
         return $st->fetchColumn();
     }
 
+    public static function getLastVinId(){
+        $st = DB::getDB()->prepare('SELECT id FROM vin ORDER BY id DESC LIMIT 1');
+        $st->execute();
+        return $st->fetchColumn();
+    }
+
     public static function generatePassword($length = 12) {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $count = mb_strlen($chars);

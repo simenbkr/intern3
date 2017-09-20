@@ -1,6 +1,33 @@
 <?php
 require_once('topp_vinkjeller.php');
 require_once('topp.php');
+
+$arr = array();
+foreach ($beboerene as $beboer) {
+    $arr[$beboer->getId()] = 0;
+}
+
+foreach ($arr as $key => $val) {
+    //$arr[$key] = intdiv(100, count($arr));
+    $arr[$key] = floor(100/count($arr));
+}
+
+while (true) {
+
+    if (array_sum($arr) == 100) {
+        break;
+    }
+
+    foreach ($arr as $key => $val) {
+        if (array_sum($arr) == 100) {
+            break;
+        }
+        $arr[$key] += 1;
+    }
+    if (array_sum($arr) == 100) {
+        break;
+    }
+}
 ?>
 <style>
     #sliders {
@@ -42,9 +69,9 @@ require_once('topp.php');
                     <li>
                         <div class="navn"><?php echo $beboer->getFulltNavn(); ?></div>
                         <div class="slider"
-                             id="<?php echo $beboer->getId(); ?>"><?php echo round(1 / count($beboerene), 2) * 100; ?></div>
+                             id="<?php echo $beboer->getId(); ?>"><?php echo round($arr[$beboer->getId()]); ?></div>
                         <span class="value">0</span>%, (ca)
-                        <span class="pris"><?php echo round(1 * 1 / count($beboerene) * $vinen->getPris() * $vinen->getAvanse(), 2); ?></span>kr
+                        <span class="pris"><?php echo round($arr[$beboer->getId()]/100 * $vinen->getPris() * $vinen->getAvanse(), 2); ?></span>kr
                     </li>
 
 

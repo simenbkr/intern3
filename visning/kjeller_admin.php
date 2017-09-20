@@ -10,7 +10,8 @@ require_once ('topp.php');
                 data: 'slett=' + id,
                 method: 'POST',
                 success: function (html) {
-                    $(".container").replaceWith($('.container', $(html)));
+                    //$("#tabellen").replaceWith($('#tabellen', $(html)));
+                    document.getElementById(id).remove();
                     //$('#oppgave_' + id).html(data);
                     //location.reload();
                 },
@@ -50,11 +51,11 @@ require_once ('topp.php');
         <tbody>
         <?php
         foreach($vinene as $vin){
-            if($vin == null || !isset($vin) || $vin->erSlettet()){
+            if($vin == null || !isset($vin) || $vin->erSlettet() || $vin->getType() == null){
                 continue;
             }
             ?>
-            <tr>
+            <tr id="<?php echo $vin->getId();?>">
                 <td><a href="?a=kjeller/admin/<?php echo $vin->getId();?>"><?php echo $vin->getNavn();?></a></td>
                 <td><?php echo round($vin->getPris(),2);?></td>
                 <td><?php echo round($vin->getAvanse(),2); ?></td>
