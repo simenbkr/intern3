@@ -42,7 +42,8 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             exit();
         }
 
-
+        $vakter = VaktListe::medBrukerId($beboer->getBrukerId());
+        $visning->set('vakter', $vakter);
         $visning->set('options', $options);
         $visning->set('beboer', $beboer);
         $visning->vis('utvalg_vaktsjef_vaktoversikt_endre.php');
