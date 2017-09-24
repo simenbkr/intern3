@@ -52,11 +52,11 @@ require_once ('topp.php');
             </tr>
             <tr>
                 <td>Pris:</td>
-                <td><input type="number" name="pris" value="<?php echo $vinen->getPris(); ?>"></td>
+                <td><input type="text" name="pris" value="<?php echo $vinen->getPris(); ?>"></td>
             </tr>
             <tr>
                 <td>Avanse:</td>
-                <td><input type="number" name="avanse" value="<?php echo $vinen->getAvanse();?>"></td>
+                <td><input type="text" name="avanse" value="<?php echo $vinen->getAvanse();?>"></td>
             </tr>
             <tr>
                 <td>Antall i beholdning:</td>
