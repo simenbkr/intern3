@@ -198,6 +198,10 @@ class ProfilCtrl extends AbstraktCtrl
             $feil[] = 'Adresse mangler.';
             break;
         }
+            if (!filter_var($_POST['adresse'], FILTER_VALIDATE_STRING)) {
+                $feil[] = 'Adresse har ugyldig format.';
+                break;
+            }
             if (!isset($_POST['postnummer']) || !$_POST['postnummer']) {
                 $feil[] = 'Postnummer mangler.';
                 break;
