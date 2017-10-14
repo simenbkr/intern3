@@ -4,6 +4,9 @@ require_once('topp_utvalg.php');
 
 ?>
 <script>
+
+
+
 	function endreRegi(){
 		var halv = document.getElementById("1").value;
 		var full = document.getElementById("3").value;
@@ -20,6 +23,14 @@ require_once('topp_utvalg.php');
 			}
 		});
 	}
+
+    $(document).ready(function(){
+        $('#tabellen').DataTable({
+            "paging": false,
+            "searching": false
+        });
+
+    });
 </script>
 <div class="col-md-12">
 	<h1>Regi &raquo; Registatus</h1>
@@ -53,7 +64,7 @@ $totaltIgjen = 0;
 
 foreach ($tabeller as $tittel => $brukere) {
 	?>	<h2><?php echo $tittel; ?></h2>
-	<table class="table table-bordered">
+	<table class="table table-bordered" id="tabellen" data-toggle="table">
 		<thead>
 			<tr>
 				<th>Navn</th>
@@ -96,7 +107,8 @@ foreach ($brukere as $bruker) {
 ?>
 	<p>Totalt <strong><?php echo intern3\Funk::timerTilTidForm($totaltUtfort); ?></strong> timer utført og <strong><?php echo intern3\Funk::timerTilTidForm($totaltIgjen); ?></strong> igjen av <strong><?php echo intern3\Funk::timerTilTidForm($totaltTildelt); ?></strong> tildelte.</p>
 </div>
-
+<link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+<script type="text/javascript" src="js/dataTables.js"></script>
 <?php
 
 require_once('bunn.php');
