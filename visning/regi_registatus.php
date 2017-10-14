@@ -88,12 +88,12 @@ foreach ($brukere as $bruker) {
 	$totaltIgjen += $igjen;
 	?>
 			<tr>
-				<td><?php echo $beboer->getFulltNavn(); ?></td>
+				<td ><?php echo $beboer->getFulltNavn(); ?></td>
 				<td><?php echo $beboer->getRom()->getNavn(); ?></td>
 				<td><?php echo $beboer->getRolle()->getNavn(); ?></td>
-				<td><?php echo $tildelt; ?></td>
-				<td><?php echo intern3\Funk::timerTilTidForm($utfort); ?></td>
-				<td><?php echo intern3\Funk::timerTilTidForm($igjen); ?></td>
+				<td datatype="number"><?php echo $tildelt; ?></td>
+				<td datatype="number"><?php echo intern3\Funk::timerTilTidForm($utfort); ?></td>
+				<td datatype="number"><?php echo intern3\Funk::timerTilTidForm($igjen); ?></td>
 			</tr>
 <?php
 	}
