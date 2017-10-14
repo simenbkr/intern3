@@ -25,14 +25,10 @@ require_once('topp_utvalg.php');
 	}
 
     $(document).ready(function(){
-
-
         $('#tabellen').DataTable({
             "paging": false,
             "searching": false
         });
-        $.fn.dataTable.moment( 'HH:mm' );
-
     });
 
 
@@ -115,8 +111,6 @@ foreach ($brukere as $bruker) {
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <script type="text/javascript" src="js/dataTables.js"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
-<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.16/sorting/datetime-moment.js"></script>
 
 <?php
 
