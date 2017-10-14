@@ -25,12 +25,17 @@ require_once('topp_utvalg.php');
 	}
 
     $(document).ready(function(){
+
+
         $('#tabellen').DataTable({
             "paging": false,
             "searching": false
         });
+        $.fn.dataTable.moment( 'HH:mm' );
 
     });
+
+
 </script>
 <div class="col-md-12">
 	<h1>Regi &raquo; Registatus</h1>
@@ -70,9 +75,9 @@ foreach ($tabeller as $tittel => $brukere) {
 				<th>Navn</th>
 				<th>Rom</th>
 				<th>Rolle</th>
-				<th>Regitimer</th>
-				<th>Utført</th>
-				<th>Igjen</th>
+				<th datatype="number" data-sortable="true">Regitimer</th>
+				<th datatype="number" data-sortable="true">Utført</th>
+				<th datatype="number" data-sortable="true">Igjen</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -91,9 +96,9 @@ foreach ($brukere as $bruker) {
 				<td ><?php echo $beboer->getFulltNavn(); ?></td>
 				<td><?php echo $beboer->getRom()->getNavn(); ?></td>
 				<td><?php echo $beboer->getRolle()->getNavn(); ?></td>
-				<td datatype="number"><?php echo $tildelt; ?></td>
-				<td datatype="number"><?php echo intern3\Funk::timerTilTidForm($utfort); ?></td>
-				<td datatype="number"><?php echo intern3\Funk::timerTilTidForm($igjen); ?></td>
+				<td datatype="number" data-sortable="true" data-order="<?php echo $tildelt; ?>"><?php echo $tildelt; ?></td>
+				<td datatype="number" data-sortable="true" data-order="<?php echo $utfort; ?>"><?php echo intern3\Funk::timerTilTidForm($utfort); ?></td>
+				<td datatype="number" data-sortable="true" data-order="<?php echo $igjen;?>"><?php echo intern3\Funk::timerTilTidForm($igjen); ?></td>
 			</tr>
 <?php
 	}
@@ -109,6 +114,10 @@ foreach ($brukere as $bruker) {
 </div>
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <script type="text/javascript" src="js/dataTables.js"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.16/sorting/datetime-moment.js"></script>
+
 <?php
 
 require_once('bunn.php');
