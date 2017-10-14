@@ -75,7 +75,7 @@ class ProfilCtrl extends AbstraktCtrl
             $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
 
             if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
-                $bildets_navn = md5($file_name . "spisostdindostogfuckoff" . time()) . '.' . $file_ext;
+                $bildets_navn = md5($file_name . Funk::generatePassword(15) . time()) . '.' . $file_ext;
                 move_uploaded_file($tmp_file, "profilbilder/" . $bildets_navn);
                 chmod("profilbilder/" . $bildets_navn, 0644);
                 $id = LogginnCtrl::getAktivBruker()->getPerson()->getId();

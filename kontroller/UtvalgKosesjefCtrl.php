@@ -59,8 +59,8 @@ class UtvalgKosesjefCtrl extends AbstraktCtrl
                             $mottakere .= $beboer->getEpost() . ",";
                         }
                     }
-                    $df = new IntlDateFormatter('nb_NO',
-                        IntlDateFormatter::TRADITIONAL, IntlDateFormatter::NONE,
+                    $df = new \IntlDateFormatter('nb_NO',
+                        \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
                         'Europe/Oslo');
 
                     $mottakere = rtrim($mottakere, ','); //TODO UNCOMMENT
