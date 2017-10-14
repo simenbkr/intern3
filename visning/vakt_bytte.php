@@ -393,7 +393,12 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                                                     if (sizeof($vaktbytte->getForslagVakter()) > 0 && $vaktbytte->getForslagVakter() != null) {
                                                         foreach ($vaktbytte->getForslagVakter() as $forslag) {
                                                             if ($forslag != null) {
-                                                                echo $forslag->getBruker()->getPerson()->getFulltNavn();
+                                                                /* @var $forslag \intern3\Vakt */
+                                                                if($forslag->getBruker() && $forslag->getBruker()->getPerson() != null) {
+                                                                    echo $forslag->getBruker()->getPerson()->getFulltNavn();
+                                                                } else {
+                                                                    echo "Uhh";
+                                                                }
                                                                 $output = $forslag->getVakttype() . '. vakt ' . strftime('%A %d/%m', strtotime($forslag->getDato()));
                                                                 ?>:<br/>
                                                                 <input class="btn btn-primary" type="button"
