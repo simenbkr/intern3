@@ -123,6 +123,7 @@ class ProfilCtrl extends AbstraktCtrl
 
     private function endreGenerellInfo()
     {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $feil = $this->godkjennGenerellInfo();
         if (count($feil) == 0) {
             $endringer = array();
@@ -137,9 +138,9 @@ class ProfilCtrl extends AbstraktCtrl
                          'studie_id',
                          'klassetrinn'
                      ) as $felt) {
-                if (isset($_POST[$felt])) {
+                if (isset($post[$felt])) {
                     $endringer[] = $felt . '=:' . $felt;
-                    $parametre[':' . $felt] = $_POST[$felt];
+                    $parametre[':' . $felt] = $post[$felt];
                 }
             }
             if (count($endringer) > 0) {
@@ -151,6 +152,9 @@ class ProfilCtrl extends AbstraktCtrl
                     $st->bindValue($navn, $verdi);
                 }
                 $st->execute();
+
+                $_SESSION['success'] = 1;
+                $_SESSION['msg'] = 'Generell info endret!';
             }
         }
         return $feil;
@@ -198,10 +202,10 @@ class ProfilCtrl extends AbstraktCtrl
             $feil[] = 'Adresse mangler.';
             break;
         }
-            if (!filter_var($_POST['adresse'], FILTER_VALIDATE_STRING)) {
+            /*if (!filter_var($_POST['adresse'], FILTER_VALIDATE_STRING)) {
                 $feil[] = 'Adresse har ugyldig format.';
                 break;
-            }
+            } */
             if (!isset($_POST['postnummer']) || !$_POST['postnummer']) {
                 $feil[] = 'Postnummer mangler.';
                 break;
@@ -256,7 +260,9 @@ class ProfilCtrl extends AbstraktCtrl
             $st->execute();
             //setcookie('passord', $passord, $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
             $_SESSION['passord'] = $passord;
-            $feil = array("Endret passord");
+            //$feil = array("Endret passord");
+            $_SESSION['success'] = 1;
+            $_SESSION['msg'] = "Passord endret!";
         }
         return $feil;
     }

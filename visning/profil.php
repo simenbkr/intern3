@@ -4,11 +4,23 @@ require_once('topp.php');
 
 $beboer = $cd->getAktivBruker()->getPerson();
 
+if(isset($feil) && count($feil) > 0){
+    $st = '';
+    foreach ($feil as $pkt) {
+        $st .= '		<li>' . $pkt . '</li>' . PHP_EOL;
+    }
+    $st .= '	</ul>' . PHP_EOL;
+
+    $_SESSION['error'] = 1;
+    $_SESSION['msg'] = $st;
+}
+
 ?>
 <div class="col-md-12">
 	<h1>Profil</h1>
+    <?php require_once ('tilbakemelding.php'); ?>
 <?php
-
+/*
 if (count($feil) > 0) {
 	echo '	<ul style="color: #900;">' . PHP_EOL;
 	foreach ($feil as $pkt) {
@@ -16,6 +28,8 @@ if (count($feil) > 0) {
 	}
 	echo '	</ul>' . PHP_EOL;
 }
+*/
+if(false){}
 else {
 	echo '	<p>[ <a href="' . $cd->getBase() . 'beboer/' . $beboer->getId() . '">Se profil</a> ]</p>
 ';
