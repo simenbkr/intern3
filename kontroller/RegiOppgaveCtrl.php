@@ -12,6 +12,15 @@ class RegiOppgaveCtrl extends AbstraktCtrl
             //data: 'meldPa=1&id=' + id,
             if (isset($post['meldPa']) && $post['meldPa'] == 1 && isset($post['id']) && is_numeric($post['id'])) {
                 $oppgaven = Oppgave::medId($post['id']);
+
+                if($oppgaven->erFryst()){
+                    $_SESSION['error'] = 1;
+                    $_SESSION['msg'] = "Du kan ikke melde deg på - oppgaven er fryst.";
+
+                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                    exit();
+                }
+
                 $beboeren = LogginnCtrl::getAktivBruker()->getPerson();
                 if ($oppgaven != null && LogginnCtrl::getAktivBruker() != null && $beboeren != null && $oppgaven->getAnslagPersoner() > sizeof($oppgaven->getPameldteId())) {
 
@@ -32,8 +41,14 @@ class RegiOppgaveCtrl extends AbstraktCtrl
             //Melder aktiv bruker AV på aktuell regi-oppgave.
             //data: 'meldAv=1&id=' + id,
             elseif (isset($post['meldAv']) && $post['meldAv'] == 1 && isset($post['id']) && is_numeric($post['id'])) {
-
                 $oppgaven = Oppgave::medId($post['id']);
+                if($oppgaven->erFryst()){
+                    $_SESSION['error'] = 1;
+                    $_SESSION['msg'] = "Du kan ikke melde deg av - oppgaven er fryst.";
+
+                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                    exit();
+                }
                 $beboeren = LogginnCtrl::getAktivBruker()->getPerson();
                 if ($oppgaven != null && LogginnCtrl::getAktivBruker() != null && $beboeren != null && in_array($beboeren, $oppgaven->getPameldteBeboere())) {
                     $paameldt_array = $oppgaven->getPameldteId();

@@ -6,6 +6,8 @@ require_once('topp_utvalg.php');
 
 <div class="col-md-12">
     <h1>Utvalget &raquo; Regisjef &raquo; Oppgave</h1>
+
+    <?php require_once ('tilbakemelding.php'); ?>
     <?php if(isset($feilSubmit)){ ?>
         <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -22,8 +24,9 @@ require_once('topp_utvalg.php');
             data: 'fjern=' + id,
             method: 'POST',
             success: function (html) {
-                $(".container").replaceWith($('.container', $(html)));
-                //location.reload();
+                var parser = new DOMParser();
+                var response = parser.parseFromString(html, "text/html");
+                $('#' + id).replaceWith(response.getElementById(id));
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -38,9 +41,7 @@ require_once('topp_utvalg.php');
             data: 'slett=' + id,
             method: 'POST',
             success: function (html) {
-                $(".container").replaceWith($('.container', $(html)));
-                //$('#oppgave_' + id).html(data);
-                //location.reload();
+                document.getElementById(id).remove();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -56,8 +57,6 @@ require_once('topp_utvalg.php');
             method: 'POST',
             success: function (html) {
                 $(".container").replaceWith($('.container', $(html)));
-                //$('#oppgave_' + id).html(data);
-                //location.reload();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -72,9 +71,43 @@ require_once('topp_utvalg.php');
             data: 'godkjenn=' + id,
             method: 'POST',
             success: function (html) {
-                $(".container").replaceWith($('.container', $(html)));
-                //$('#oppgave_' + id).html(data);
-                //location.reload();
+                var parser = new DOMParser();
+                var response = parser.parseFromString(html, "text/html");
+                $('#' + id).replaceWith(response.getElementById(id));
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+    }
+
+    function frys(id) {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/oppgave/',
+            data: 'frys=' + id,
+            method: 'POST',
+            success: function (html) {
+                var parser = new DOMParser();
+                var response = parser.parseFromString(html, "text/html");
+                $('#' + id).replaceWith(response.getElementById(id));
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+    }
+
+    function afrys(id) {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/oppgave/',
+            data: 'afrys=' + id,
+            method: 'POST',
+            success: function (html) {
+                var parser = new DOMParser();
+                var response = parser.parseFromString(html, "text/html");
+                $('#' + id).replaceWith(response.getElementById(id));
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -150,6 +183,11 @@ require_once('topp_utvalg.php');
                               rows="5"><?php echo isset($_POST['beskrivelse']) ? $_POST['beskrivelse'] : ''; ?></textarea>
                 </td>
             </tr>
+
+            <tr>
+                <th>Sende ut e-post?</th>
+                <td><input type="checkbox" name="epost" value="1"/></td>
+            </tr>
             <tr>
                 <td></td>
                 <td><input type="submit" class="btn btn-primary" name="registrer" value="Registrer"></td>
@@ -178,6 +216,7 @@ require_once('topp_utvalg.php');
         <?php
 
         foreach ($oppgaveListe as $oppgave) {
+            /* @var \intern3\Oppgave $oppgave */
             $id = $oppgave->getId();
             $navn = $oppgave->getNavn();
             $pri = $oppgave->getPrioritetId();
@@ -218,8 +257,16 @@ require_once('topp_utvalg.php');
                     ?></td>
 
                 <td><?php if ($godkjent == 0) { ?>
-                    <button class="btn btn-default" onclick="godkjenn(<?php echo $id; ?>)">Godkjenn</button><?php } ?>
+                        <button class="btn btn-default" onclick="godkjenn(<?php echo $id; ?>)">Godkjenn</button>
+                    <?php } ?>
+
                     <button class="btn btn-default" onclick="fjern(<?php echo $id; ?>)">Fjern</button>
+
+                    <?php if(!$oppgave->erFryst()){ ?>
+                        <button class="btn btn-default" onclick="frys(<?php echo $id;?>)">Frys</button>
+                    <?php } else { ?>
+                        <button class="btn btn-default" onclick="afrys(<?php echo $id;?>)">Fjern frys</button>
+                    <?php } ?>
                 </td>
                 <td><button class="btn btn-sm btn-danger" onclick="slett(<?php echo $oppgave->getId(); ?>)">Slett oppgaven</button></td>
             </tr>

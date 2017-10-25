@@ -40,6 +40,9 @@ require_once('topp.php');
 </div>
 
 <div class="col-md-12 table-responsive">
+
+    <?php require_once ('tilbakemelding.php'); ?>
+
     <table class="table table-striped table-hover">
         <thead>
         <tr>
@@ -49,6 +52,7 @@ require_once('topp.php');
             <th>Anslag personer</th>
             <th>Beskrivelse</th>
             <th>Påmeldte</th>
+            <th>Status</th>
             <th></th>
             <!-- <th> </th> -->
         </tr>
@@ -57,6 +61,7 @@ require_once('topp.php');
         <?php
 
         foreach ($oppgaveListe as $oppgave) {
+            /* @var \intern3\Oppgave $oppgave */
             ?>
             <tr>
                 <td><?php echo $oppgave->getNavn(); ?></td>
@@ -73,13 +78,13 @@ require_once('topp.php');
                     }
                     echo $tekst
                     ?></td>
-
+                <td><?php echo $oppgave->erFryst() ? "Fryst." : "Åpen."; ?></td>
                 <?php //Kan bare melde seg på hvis man har (halv regi, full regi) og det er ledige plasser, og du er ikke påmeldt fra før.
                 if(sizeof($oppgave->getPameldteId()) < $oppgave->getAnslagPersoner() && !in_array($aktuell_beboer, $oppgave->getPameldteBeboere())
-                && in_array($aktuell_beboer->getRolleId(), array(1,3))){ ?>
+                && in_array($aktuell_beboer->getRolleId(), array(1,3)) && !$oppgave->erFryst()){ ?>
                 <td><button class="btn btn-sm btn-default" onclick="meldPa(<?php echo $oppgave->getId(); ?>)">Meld på</button></td>
                 <?php }
-                    else if(in_array($aktuell_beboer, $oppgave->getPameldteBeboere())){ ?>
+                    else if(in_array($aktuell_beboer, $oppgave->getPameldteBeboere()) && !$oppgave->erFryst()){ ?>
                         <td><button class="btn btn-sm btn-danger" onclick="meldAv(<?php echo $oppgave->getId();?>)">Meld av</button></td>
                         <?php
                 } else { ?>

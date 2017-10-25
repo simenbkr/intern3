@@ -15,11 +15,12 @@ class Oppgave
     private $godkjent;
     private $tid_godkjent;
     private $godkjent_bruker_id;
+    private $status;
 
     private $db;
 
     //latskapsinstansiering
-    private $paameldte;
+    private $pameldte;
     private $arbeidListe; //arbeidListe er flertallsformen av arbeid
     private $arbeidListeBrukerId;
 
@@ -47,6 +48,7 @@ class Oppgave
             $this->tid_godkjent = $rad['tid_godkjent'];
             $this->godkjent_bruker_id = $rad['godkjent_bruker_id'];
             $this->pameldte = $rad['paameldte'];
+            $this->status = $rad['status'];
 
             $this->brukere = null;
         }
@@ -65,6 +67,25 @@ class Oppgave
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getStatus(){
+        return $this->status;
+    }
+
+    public function erFryst(){
+        return $this->status == 1;
+    }
+
+    public function setFryst()
+    {
+        $this->status = 1;
+        $this->setStatus(1);
+    }
+
+    public function unFrys(){
+        $this->status = 0;
+        $this->setStatus(0);
     }
 
     public function getTidOppretta()
@@ -125,6 +146,11 @@ class Oppgave
         return Prioritet::medId($this->getPrioritetId());
     }
 
+    public function setStatus($status){
+        $this->status = $status;
+        DB::getDB()->query('UPDATE oppgave SET status=' . $status . ' WHERE id=' . $this->id);
+    }
+
     public static function setGodkjent($oppgaver_id, $godkjent)
     {
         $instans = new self(); //BUG: Får ikke tak i $this->db, så hva skal vi med $this->db ?
@@ -168,8 +194,9 @@ class Oppgave
     }
 
     public static function AddOppgave($navn,$pri,$anslagtid,$anslagpers,$beskrivelse){
-        $st = DB::getDB()->prepare('INSERT INTO oppgave (tid_oppretta,anslag_timer,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id) 
-        VALUES(NOW(),:anslagtimer,:anslagpersoner,:pri,:navn,:beskrivelse,0,NULL,NULL)');
+        $st = DB::getDB()->prepare('INSERT INTO oppgave 
+(tid_oppretta,anslag_timer,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id, status) 
+        VALUES(NOW(),:anslagtimer,:anslagpersoner,:pri,:navn,:beskrivelse,0,NULL,NULL,0)');
         $st->bindParam(':anslagtimer',$anslagtid);
         $st->bindParam(':anslagpersoner',$anslagpers);
         $st->bindParam(':pri',$pri);
