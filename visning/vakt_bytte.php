@@ -219,13 +219,14 @@ $har_vakt = $rolle == 1 || $rolle == 2;
                     </tr>
                     <?php
                     foreach (intern3\VaktListe::medBrukerId($cd->getAktivBruker()->getId()) as $vakt) {
+                        /* @var \intern3\Vakt $vakt */
                         $tid = strtotime($vakt->getDato());
                         //$tekst = $vakt->getVakttype() . '. vakt ' . strftime('%A %d/%m', $tid);
                         $tekst = $vakt->toString();
                         ?>
                         <tr>
                             <?php
-                            if ($vakt->erFerdig() || $vakt->getBytte()) {
+                            if ($vakt->erFerdig() || $vakt->getBytte() || $vakt->erStraffevakt()) {
                                 if ($visFerdig) {
                                     ?>
                                     <td class="celle_graa"><?php echo $tekst; ?></td>

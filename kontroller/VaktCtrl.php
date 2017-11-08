@@ -20,6 +20,16 @@ class VaktCtrl extends AbstraktCtrl
             $dok = new Visning($this->cd);
             if (isset($_POST)) {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                if(($vakt = Vakt::medId($post['id'])) != null && $vakt->erStraffevakt()){
+
+                    $_SESSION['error'] = 1;
+                    $_SESSION['msg'] = "Du kan ikke bytte bort en vakt som er straffevakt!";
+
+                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                    exit();
+                }
+
                 //foreach($post as $key => $val){setcookie($key,$val);}
                 //data: 'vaktbytte=1&id=' + id +'&action=' + action + "&passord=" + passord + "&passordet=" + passordet + "&merknad=" + merknad,
                 //var action = 0; //1 = gisbort, 0 = byttes
