@@ -285,7 +285,7 @@ class Arbeid
         foreach ($radene as $rad) {
             //172800s = 48 timer.
             if( ($tid_brukt = $rad['sekunder_brukt']) > 172800){
-                $tid_brukt = 48;
+                $tid_brukt = 172800;
             }
             $totalt_sek_utfort += $tid_brukt;
         }
@@ -298,7 +298,10 @@ class Arbeid
                 $maks_timer += $rollen->getRegiTimer();
             }
         }
-        return array($timer, $maks_timer);
+
+        $resterende_timer = Funk::tidTilTimer($maks_timer * 60 * 60 - $totalt_sek_utfort);
+
+        return array($timer, $maks_timer, $resterende_timer);
     }
 }
 
