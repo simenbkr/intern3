@@ -143,7 +143,7 @@ require_once('topp.php');
 </div>
 
 
-
+<?php if(count($oppgaveListe) > 0){ ?>
 <div class="col-sm-6 col-xs-12">
     <h1>Regioppgaver <a href="?a=regi/oppgave"><button class="btn btn-primary btn-sm">Påmelding</button></a><br/></h1>
     <hr>
@@ -182,7 +182,9 @@ require_once('topp.php');
     </table>
 </div>
 
+<?php }
 
+if(count($verv_meldinger) > 0) { ?>
 <div class="col-lg-6">
     <h1>Meldinger fra åpmend</h1>
     <hr>
@@ -201,6 +203,7 @@ require_once('topp.php');
         <?php } ?>
     </table>
 </div>
+<?php } ?>
 <?php
 
 require_once('bunn.php');
