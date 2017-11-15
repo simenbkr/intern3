@@ -95,6 +95,10 @@ require_once('topp_utvalg.php');
                     </th>
                     <th><input type="text" class="form-control" name="leietaker"></th>
                 </tr>
+                <tr>
+                    <th>Sende ut e-post?</th>
+                    <td><input type="checkbox" name="epost" value="1"/></td>
+                </tr>
             </table>
             <input type="submit" class="btn btn-sm btn-info" name="leggtil" value="Legg til">
         </form>
