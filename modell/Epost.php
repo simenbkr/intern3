@@ -100,6 +100,11 @@ class Epost
         og (helst) TLS mellom SMTP-servere.
         Per 2016-10-04 er DOBBEL satt opp slik.
         */
+
+        if ($_SERVER['SERVER_NAME'] != 'intern.singsaker.no'){
+            die("Ikke hosta på internsida, sup?");
+        }
+
         $headers = "From: Internsida Singsaker <no-reply@mail.singsaker.no>" . "\r\n";
         $headers .= "Reply-To: no-reply@mail.singsaker.no\r\n";
         $headers .= "Return-Path: no-reply@mail.singsaker.no\r\n";
