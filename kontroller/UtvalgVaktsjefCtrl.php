@@ -273,7 +273,9 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
                     Krysseliste::setPeriodeFakturert();
-                    $dok->set('periodeFakturert', 1);
+                    $_SESSION['success'] = 1;
+                    $_SESSION['msg'] = "Perioden ble nullstilt!";
+                    exit();
                 }
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();

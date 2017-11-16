@@ -26,9 +26,7 @@ require_once('topp_utvalg.php');
             data: 'settfakturert=1',
             method: 'POST',
             success: function (html) {
-                $('.modal-backdrop').hide();
-                $(".container").replaceWith($('.container', $(html)));
-                $("#kult").hide();
+                location.reload();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -41,13 +39,7 @@ require_once('topp_utvalg.php');
     <h3>[ Krysserapport ] [ <a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapportutskrift">Utskrift</a> ]
     </h3>
 
-    <?php if (isset($periodeFakturert)) { ?>
-        <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            Perioden ble nullstilt!
-        </div>
-        <p></p>
-    <?php unset($periodeFakturert); } ?>
+    <?php require_once('tilbakemelding.php'); ?>
 
     <table class="table table-bordered table-responsive">
         <tr>
@@ -71,7 +63,11 @@ require_once('topp_utvalg.php');
                 <div class="modal-body">
                     <button type="button" class="btn btn-md btn-danger" onclick="sett_fakturert()">Ja!</button>
                     <div id="kult" style="display:none">
-                        <p>Fakturer nå altså, vent litt!</p>
+                        <p>
+                            Fakturer nå. Chillen litt'a, plis.
+
+                            <img src="beboerkart/loading.gif">
+                        </p>
                     </div>
                 </div>
                 <div class="modal-footer">
