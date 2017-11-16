@@ -39,7 +39,15 @@ function underkjenn(id){
 
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Regisjef &raquo; Arbeid</h1>
-	Dette semesteret har Singsaker benyttet <b><?php echo $timer_brukt[0];?></b> (godkjente) av totalt <b><?php echo $timer_brukt[1] . ":00";?></b> regitimer.
+    <p>
+        Dette semesteret har Singsaker benyttet
+        <b><?php echo($timer_brukt[0] != null ? $timer_brukt[0] : '00:00'); ?></b>
+        (godkjente) av totalt <b><?php echo ($timer_brukt[1] != null) ? $timer_brukt[1] . ":00" : '??'; ?></b>
+        regitimer.
+        <br/>
+        Vi har igjen <b><?php echo $timer_brukt[2]; ?></b> timer dette semesteret.
+    </p>
+
 	<?php if(isset($endret)){ ?>
 		<div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
