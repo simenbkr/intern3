@@ -46,7 +46,7 @@ require_once ('topp_utvalg.php');
 <div class="container">
     <h1>Utvalget » Regisjef » Legg til regi for <b><?php echo $beboeren->getFulltNavn();?></b></h1>
     <hr>
-    <p>Legg til strafferegi ved å velge strafferegi fra kategori og legge inn en (positiv) verdi i tid brukt enten på form time:sekund eller time som desimaltall.</p>
+    <p>Legg til strafferegi ved å velge strafferegi fra kategori og legge inn en (positiv) verdi i tid brukt enten på form time:minutt eller time som desimaltall.</p>
     <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         <div class="col-md-8 table-responsive">
         <table class="table table-bordered">
