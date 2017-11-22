@@ -276,23 +276,42 @@ class Arbeid
             $start = "$year-07-01";
             $slutt = "$year-12-31";
         }
-        $st = DB::getDB()->prepare('SELECT sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt AND godkjent=1)');
+        //$st = DB::getDB()->prepare('SELECT bruker_id, sekunder_brukt FROM arbeid WHERE (tid_utfort>:start AND tid_utfort<=:slutt AND godkjent=1)');
+        $st = DB::getDB()->prepare('SELECT bruker_id, sum(sekunder_brukt) AS tot FROM arbeid 
+WHERE (tid_utfort>:start AND tid_utfort<=:slutt AND godkjent=1)
+GROUP BY bruker_id');
+
         $st->bindParam(':start', $start);
         $st->bindParam(':slutt', $slutt);
         $st->execute();
         $radene = $st->fetchAll();
         $totalt_sek_utfort = 0;
-        foreach ($radene as $rad) {
+        $beboerListe = BeboerListe::aktive();
+
+        /*foreach ($radene as $rad) {
             //172800s = 48 timer.
             if( ($tid_brukt = $rad['sekunder_brukt']) > 172800){
                 $tid_brukt = 172800;
             }
             $totalt_sek_utfort += $tid_brukt;
+        } */
+
+        foreach($radene as $rad){
+            /* @var \intern3\Beboer $beboer */
+            $max = Bruker::medId($rad['bruker_id'])->getPerson()->getRolle()->getRegitimer();
+
+            if($rad['tot'] > ($max_s = $max * 60 * 60) ){
+                $totalt_sek_utfort += $max_s;
+            } else {
+                $totalt_sek_utfort += $rad['tot'];
+            }
         }
+
+
         $timer = Funk::tidTilTimer($totalt_sek_utfort);
         $maks_timer = 0;
 
-        foreach (BeboerListe::aktive() as $beboer) {
+        foreach ($beboerListe as $beboer) {
             $rollen = $beboer->getRolle();
             if ($rollen != null) {
                 $maks_timer += $rollen->getRegiTimer();
