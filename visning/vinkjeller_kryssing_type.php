@@ -88,7 +88,10 @@ require_once('topp.php');
         margin-bottom: 5px;
     }
 
-
+    body {
+      background-color: #444341;
+      color: #FFF;
+    }
 </style>
 
 <div class="container">
@@ -103,8 +106,7 @@ require_once('topp.php');
             <div class="row">
 
             <?php for ($i = 0; $i < count($typeListe); $i++) {
-
-            if ($i != 0 && $i % 3 == 0){ ?>
+              if ($i != 0 && $i % 3 == 0){ ?>
         </div>
 
         <div class="row">

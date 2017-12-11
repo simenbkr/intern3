@@ -87,7 +87,13 @@ require_once('topp.php');
             margin-bottom: 5px;
         }
 
-
+        body {
+          background-color: #444341;
+          color: #FFF;
+        }
+        .button {
+          color: #4b768c;
+        }
     </style>
     <div class="container">
         <h1>Vinkjeller » Hovedside</h1>

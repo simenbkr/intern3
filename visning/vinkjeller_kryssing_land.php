@@ -88,7 +88,10 @@ require_once('topp.php');
         margin-bottom: 5px;
     }
 
-
+    body {
+      background-color: #444341;
+      color: #FFF;
+    }
 </style>
 
 <div class="container">
