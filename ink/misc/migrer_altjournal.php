@@ -2,7 +2,7 @@
 
 namespace intern3;
 
-require_once("autolast.php");
+require_once("../autolast.php");
 setlocale(LC_ALL, 'nb_NO.utf-8');
 date_default_timezone_set('Europe/Oslo');
 //Flytte fra Journal til AltJournal.

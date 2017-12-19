@@ -1,21 +1,24 @@
 <?php
-namespace intern3;
 
-require_once("autolast.php");
+namespace intern3;
+require_once("../autolast_absolute.php");
 setlocale(LC_ALL, 'nb_NO.utf-8');
 date_default_timezone_set('Europe/Oslo');
 
 
 set_time_limit(999999999);
 $start = time();
-echo "Endring av oppgave startet ved " . date('Y-m-d H:i:s');
+echo "Opprettelse av Helgaverv-tabell ved " . date('Y-m-d H:i:s');
 echo "\n";
 
 
-$sql = "ALTER TABLE `oppgave` ADD `status` INT NOT NULL AFTER `godkjent_bruker_id`;";
+$sql = "CREATE TABLE `helgaverv`
+( `id` INT NOT NULL AUTO_INCREMENT , 
+`navn` INT NOT NULL , 
+`tilgang` INT NOT NULL , 
+PRIMARY KEY (`id`)) ";
 
 DB::getDB()->query($sql);
-
 
 
 echo "FIN\n";
