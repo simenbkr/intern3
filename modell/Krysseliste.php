@@ -153,7 +153,7 @@ class Krysseliste
                 'Rikdom' => 0
             );*/
             $kryss = array();
-            foreach($drikke as $drikken){
+            foreach ($drikke as $drikken) {
                 $kryss[$drikken->getNavn()] = 0;
             }
             foreach ($Helekrysseliste as $delKryseListe) {
@@ -178,7 +178,7 @@ class Krysseliste
         foreach ($beboerListe as $beboer) {
             $Helekrysseliste = self::medBeboerId($beboer->getId());
             $kryss = array();
-            foreach($drikke as $drikken){
+            foreach ($drikke as $drikken) {
                 $kryss[$drikken->getNavn()] = 0;
             }
             foreach ($Helekrysseliste as $delKryseListe) {
@@ -197,12 +197,14 @@ class Krysseliste
     }
 
 
+
+
     public static function getAllIkkeFakturertBeboer($beboerId)
     {
         $Helekrysseliste = self::medBeboerId($beboerId);
         $drikke = Drikke::alle();
         $kryss = array();
-        foreach($drikke as $drikken){
+        foreach ($drikke as $drikken) {
             $kryss[$drikken->getNavn()] = 0;
         }
         foreach ($Helekrysseliste as $delKryseListe) {
@@ -227,7 +229,7 @@ class Krysseliste
         foreach ($beboerListe as $beboer) {
             $Helekrysseliste = self::medBeboerId($beboer->getId());
             $kryss = array();
-            foreach($drikke as $drikken){
+            foreach ($drikke as $drikken) {
                 $kryss[$drikken->getNavn()] = 0;
             }
             foreach ($Helekrysseliste as $delKryseListe) {
@@ -260,7 +262,7 @@ class Krysseliste
         $last = date('Y-m-t', strtotime($datoen));
 
         $kryss = array();
-        foreach($drikke as $drikken){
+        foreach ($drikke as $drikken) {
             $kryss[$drikken->getNavn()] = 0;
         }
 
@@ -290,7 +292,7 @@ class Krysseliste
         $krysserader = $st->fetchAll();
 
         $kryss = array();
-        foreach($drikke as $drikken){
+        foreach ($drikke as $drikken) {
             $kryss[$drikken->getNavn()] = 0;
         }
 
@@ -425,7 +427,8 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
     }
 
 
-    public static function getKryssByPeriode($start, $slutt){
+    public static function getKryssByPeriode($start, $slutt)
+    {
         //Må iterere over samtlige objekter pga elendig datastruktur. Takk'a.
         //Terminerer på sånn 1sek lokalt, tipper det er tigangen på tjenern. Hvorfor er det json i dette igjen?
         //Fuck databasenormalisering eller hva? :( :(
@@ -433,22 +436,22 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         $drikke = Drikke::alle();
 
         $beboerKrysselisteListe = array();
-        foreach($beboerListe as $beboer){
+        foreach ($beboerListe as $beboer) {
             /* @var Beboer $beboer */
 
             $beboers_kryssesum = array();
 
-            foreach($drikke as $drikken){
+            foreach ($drikke as $drikken) {
                 $beboers_kryssesum[$drikken->getNavn()] = 0;
             }
-            foreach(self::medBeboerId($beboer->getId()) as $krysseListe){
+            foreach (self::medBeboerId($beboer->getId()) as $krysseListe) {
                 /* @var Krysseliste $krysseListe */
                 $kryssDrikka = json_decode($krysseListe->krysseliste, true);
 
-                foreach($kryssDrikka as $kryss){
+                foreach ($kryssDrikka as $kryss) {
                     //Jeg vet, tre loops?! Ahahaha fuck this shit man
 
-                    if(strtotime($kryss['tid']) > strtotime($start) && strtotime($kryss['tid']) < strtotime($slutt)){
+                    if (strtotime($kryss['tid']) > strtotime($start) && strtotime($kryss['tid']) < strtotime($slutt)) {
                         //Satser på at ingen krysser når faktureringen pågår. AKA yolo.
                         $beboers_kryssesum[$krysseListe->getDrikke()->getNavn()] += $kryss['antall'];
 
@@ -459,11 +462,46 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         }
 
         $siste_lista = array();
-        foreach($beboerKrysselisteListe as $key => $lista){
-            if(array_sum($lista) > 0)
+        foreach ($beboerKrysselisteListe as $key => $lista) {
+            if (array_sum($lista) > 0)
                 $siste_lista[$key] = $lista;
         }
         return $siste_lista;
     }
+
+    public static function getAlleKryssPeriode($startdato, $sluttdato)
+    {
+        $beboerListe = BeboerListe::aktive();
+        $krysseListeListe = array();
+        $drikke = Drikke::alle();
+        foreach ($beboerListe as $beboer) {
+            $Helekrysseliste = self::medBeboerId($beboer->getId());
+            $kryss = array();
+            foreach ($drikke as $drikken) {
+                $kryss[$drikken->getNavn()] = 0;
+            }
+            foreach ($Helekrysseliste as $delKryseListe) {
+                $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
+
+                foreach ($KryssDrikka as $enkelt_kryss) {
+                    if ($enkelt_kryss['tid'] > $startdato && $enkelt_kryss['tid'] < $sluttdato) {
+                        $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
+                    }
+                }
+
+            }
+            $krysseListeListe[$beboer->getId()] = $kryss;
+        }
+        return $krysseListeListe;
+    }
+
+    public static function getKryssSistPeriode(){
+        $st = DB::getDB()->prepare('SELECT * from fakturert ORDER BY id DESC LIMIT 2');
+        $start = $st->fetch()['dato'];
+        $slutt = $st->fetch()['dato'];
+        return self::getAlleKryssPeriode($start, $slutt);
+    }
+
 }
+
 ?>
