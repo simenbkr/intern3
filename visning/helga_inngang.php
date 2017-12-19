@@ -52,6 +52,7 @@ switch ($dag_tall) {
                     alert(err);
                 }
             });
+            refresh();
         }
 
         function test() {
@@ -113,13 +114,6 @@ switch ($dag_tall) {
 
     </script>
 
-    <div class="asd">
-        <h4>Registrer folk</h4>
-        <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="gjester"
-               onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
-    </div>
-
-
     <div class="container" id="status">
 
         <h1><?php echo $side_tittel; ?></h1>
@@ -130,6 +124,12 @@ switch ($dag_tall) {
                 inne nå.</h4>
         </div>
         <br/>
+    </div>
+
+    <div class="asd">
+        <h4>Registrer folk</h4>
+        <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="gjester"
+               onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
     </div>
 
 
