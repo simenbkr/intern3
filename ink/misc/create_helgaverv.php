@@ -11,6 +11,13 @@ $start = time();
 echo "Opprettelse av Helgaverv-tabell ved " . date('Y-m-d H:i:s');
 echo "\n";
 
+print "Er du sikker? [y/N]\n";
+flush();
+$confirmation  =  trim( fgets( STDIN ) );
+if ( !in_array($confirmation, array('y', 'Y')) ) {
+    exit (0);
+}
+
 
 $sql = "CREATE TABLE `helgaverv`
 ( `id` INT NOT NULL AUTO_INCREMENT , 

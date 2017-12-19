@@ -2,6 +2,8 @@
 
 namespace intern3;
 
+require_once(__DIR__ . '/../config.php');
+
 if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 
 spl_autoload_register(function($klasse) {

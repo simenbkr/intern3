@@ -2,7 +2,7 @@
 
 namespace intern3;
 
-require_once("../autolast.php");
+require_once("../autolast_absolute.php");
 setlocale(LC_ALL, 'nb_NO.utf-8');
 date_default_timezone_set('Europe/Oslo');
 
