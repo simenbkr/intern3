@@ -23,20 +23,37 @@ switch ($dag_tall) {
 ?>
     <script>
         function registrer(id, verdi) {
+
+            if (verdi == 1) {
+                document.getElementById(id).classList.remove('bg-warning');
+                document.getElementById(id).classList.add('bg-success');
+                document.getElementById(id + "-knapp").checked = true;
+            } else {
+                document.getElementById(id).classList.remove('bg-success');
+                document.getElementById(id).classList.add('bg-warning');
+                document.getElementById(id + "-knapp").checked = false;
+            }
             $.ajax({
                 type: 'POST',
                 url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                 data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
                 method: 'POST',
                 success: function (html) {
-                    $("#" + id).replaceWith($('#' + id, $(html)));
-                    $("#gjester").replaceWith($("#gjester", $(html)));
+
+                      var parser = new DOMParser();
+                      var response = parser.parseFromString(html, "text/html");
+
+                      if(document.getElementById("gjester").innerHTML != response.getElementById('gjester').innerHTML) {
+                          $('#gjester').replaceWith(response.getElementById('gjester'));
+                      }
+
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
         }
+
         function test() {
             var shownVal = document.getElementById("tekstinput").value;
             var gjestid = document.querySelector("#gjester option[value='" + shownVal + "']").dataset.value;
@@ -50,14 +67,28 @@ switch ($dag_tall) {
                 url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                 method: 'GET',
                 success: function (html) {
-                    $(".subcontainer").replaceWith($('.subcontainer', $(html)));
-                    $(".tekst-ting").replaceWith($('.tekst-ting', $(html)));
+
+                    var parser = new DOMParser();
+                    var response = parser.parseFromString(html, "text/html");
+
+                    if(document.getElementById('status').innerHTML != response.getElementById('status').innerHTML){
+                        $('#status').replaceWith(response.getElementById('status'));
+                    }
+
+                    if(document.getElementById('lista').innerHTML != response.getElementById('lista')){
+                        $('#lista').replaceWith(response.getElementById('lista'));
+                    }
+
+                        //$(".subcontainer").replaceWith($('.subcontainer', $(html)));
+                    //$(".tekst-ting").replaceWith($('.tekst-ting', $(html)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
         }
+
+
         setInterval(function () {
             refresh()
         }, 500);
@@ -68,53 +99,72 @@ switch ($dag_tall) {
                     url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                     method: 'GET',
                     success: function (html) {
-                        $("#gjester").replaceWith($('#gjester', $(html)));
+                        //$("#gjester").replaceWith($('#gjester', $(html)));
+                        var parser = new DOMParser();
+                        var response = parser.parseFromString(html, "text/html");
+
+                        if(document.getElementById("gjester").innerHTML == response.getElementById('gjester').innerHTML){
+                           return; //console.log("hmm");
+                        }else {
+                            $('#gjester').replaceWith(response.getElementById('gjester'));
+                        }
                     },
                     error: function (req, stat, err) {
                         alert(err);
                     }
                 });
             },
-            120 * 1000
+            1000
         );
 
     </script>
-    <div class="container">
+
+    <div class="asd">
+        <h4>Registrer folk</h4>
+        <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="gjester"
+               onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
+    </div>
+
+
+    <div class="container" id="status">
 
         <h1><?php echo $side_tittel; ?></h1>
         <h3><?php echo $undertittel; ?></h3>
         <div class="tekst-ting">
             <h4>I dag er det invitert <b><?php echo $antall_inviterte; ?></b>, og det er
-                <b><?php echo $antall_inne; ?></b>
+                <b id="number"><?php echo $antall_inne; ?></b>
                 inne nå.</h4>
         </div>
         <br/>
-        <h4>Registrer folk</h4>
-        <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="gjester"
-               onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
-        <div class="subcontainer">
-            <?php
-            foreach ($gjesteliste_dag_gruppert as $beboers_id => $beboers_gjester) { ?>
-                <table class="table table-bordered table-responsive">
-                    <tr class="bg-info">
-                        <td>
-                            <b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() : ''; ?></b>
-                        </td>
-                    </tr>
-                    <?php
-                    foreach ($beboers_gjester as $gjest) {
-                        $klassen = $gjest->getInne() == 0 ? 'bg-warning' : 'bg-success';
-                        $checked = $gjest->getInne() == 0 ? 'none' : 'checked=\"checked\"';
-                        $verdi = $gjest->getInne() == 0 ? 1 : 0;
-                        echo "<tr class=\"$klassen\" id='" . $gjest->getId() . "' onclick='registrer(" . $gjest->getId() . ",$verdi)'>
-                        <td>" . $gjest->getNavn() . "</td>";
-                        echo "<td><input type=\"checkbox\"  value=\"" . $gjest->getId() . "\" onclick='registrer(" . $gjest->getId() . ",$verdi)' $checked></td></tr>";
-                    }
-                    ?></table>
+    </div>
+
+
+    <div class="subcontainer" id="lista">
+        <?php
+        foreach ($gjesteliste_dag_gruppert as $beboers_id => $beboers_gjester) { ?>
+            <table class="table table-bordered table-responsive">
+                <tr class="bg-info">
+                    <td>
+                        <b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() : ''; ?></b>
+                    </td>
+                </tr>
                 <?php
-            }
-            ?>
-        </div>
+                foreach ($beboers_gjester as $gjest) {
+                    /* @var \intern3\HelgaGjest $gjest */
+                    $klassen = $gjest->getInne() == 0 ? 'bg-warning' : 'bg-success';
+                    $checked = $gjest->getInne() == 0 ? 'none' : 'checked=\"checked\"';
+                    $verdi = $gjest->getInne() == 0 ? 1 : 0;
+                    echo "<tr class=\"$klassen\" id='" . $gjest->getId() .
+                        "' onclick='registrer(" . $gjest->getId() . ",$verdi)'>
+                        <td>" . $gjest->getNavn() . "</td>";
+                    
+                    echo "<td><input id=" . $gjest->getId() . "-knapp type=\"checkbox\"  value=\"" . $gjest->getId() . "\" onclick='registrer(" . $gjest->getId() . ",$verdi)' $checked></td></tr>";
+                }
+                ?></table>
+            <?php
+        }
+        ?>
+    </div>
     </div>
 
     <datalist id="gjester">
@@ -128,9 +178,7 @@ switch ($dag_tall) {
                     value="<?php echo $gjest->getNavn(); ?>"></option>
             <?php
         }
-        ?>
-    </datalist>
-
+        ?></datalist>
 
 <?php
 require_once('bunn.php');
