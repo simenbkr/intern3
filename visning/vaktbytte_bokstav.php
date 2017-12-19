@@ -36,6 +36,7 @@ require_once('topp.php');
                 <a href="javascript:history.back()">TILBAKE</a>
         </div>
     </div>
+</div>
 
 
     <?php
