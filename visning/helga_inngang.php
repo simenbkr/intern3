@@ -87,7 +87,7 @@ switch ($dag_tall) {
 
         setInterval(function () {
             refresh()
-        }, 500);
+        }, 3000);
 
         setInterval(function () {
                 $.ajax({
@@ -108,7 +108,7 @@ switch ($dag_tall) {
                     }
                 });
             },
-            1000
+            3000
         );
 
     </script>
