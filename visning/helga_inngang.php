@@ -74,7 +74,7 @@ switch ($dag_tall) {
                         $('#status').replaceWith(response.getElementById('status'));
                     }
 
-                    if(document.getElementById('lista').innerHTML != response.getElementById('lista')){
+                    if(document.getElementById('lista').innerHTML != response.getElementById('lista').innerHTML){
                         $('#lista').replaceWith(response.getElementById('lista'));
                     }
                 },
