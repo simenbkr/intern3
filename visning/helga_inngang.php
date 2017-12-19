@@ -67,7 +67,6 @@ switch ($dag_tall) {
                 url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                 method: 'GET',
                 success: function (html) {
-
                     var parser = new DOMParser();
                     var response = parser.parseFromString(html, "text/html");
 
@@ -78,9 +77,6 @@ switch ($dag_tall) {
                     if(document.getElementById('lista').innerHTML != response.getElementById('lista')){
                         $('#lista').replaceWith(response.getElementById('lista'));
                     }
-
-                        //$(".subcontainer").replaceWith($('.subcontainer', $(html)));
-                    //$(".tekst-ting").replaceWith($('.tekst-ting', $(html)));
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -103,9 +99,7 @@ switch ($dag_tall) {
                         var parser = new DOMParser();
                         var response = parser.parseFromString(html, "text/html");
 
-                        if(document.getElementById("gjester").innerHTML == response.getElementById('gjester').innerHTML){
-                           return; //console.log("hmm");
-                        }else {
+                        if(document.getElementById("gjester").innerHTML != response.getElementById('gjester').innerHTML) {
                             $('#gjester').replaceWith(response.getElementById('gjester'));
                         }
                     },
