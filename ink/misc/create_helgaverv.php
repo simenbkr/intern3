@@ -21,9 +21,20 @@ if ( !in_array($confirmation, array('y', 'Y')) ) {
 
 $sql = "CREATE TABLE `helgaverv`
 ( `id` INT NOT NULL AUTO_INCREMENT , 
-`navn` INT NOT NULL , 
+`navn` VARCHAR(512) NOT NULL , 
 `tilgang` INT NOT NULL , 
 PRIMARY KEY (`id`)) ";
+
+DB::getDB()->query($sql);
+
+$sql = "INSERT INTO helgaverv (navn,tilgang) VALUES('Sikkerhetssjef', 1)";
+
+DB::getDB()->query($sql);
+
+
+$sql = "CREATE TABLE `helgaverv_beboer`
+( `id` INT NOT NULL, 
+`beboer_id` INT NOT NULL)";
 
 DB::getDB()->query($sql);
 

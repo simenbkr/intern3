@@ -457,6 +457,23 @@ class Beboer implements Person
     public function toString(){
         return $this->getFulltNavn();
     }
+
+    public function harHelgaTilgang(){
+        if($this->harDataVerv() || $this->erHelgaGeneral() || $this->harUtvalgVerv()){
+            return true;
+        }
+        $st = DB::getDB()->prepare('SELECT * FROM helgaverv AS hv WHERE hv.id IN 
+(SELECT hvb.id FROM helgaverv_beboer AS hvb WHERE hvb.beboer_id=:id)');
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+        $helgaverv = Helgaverv::medId($st->fetch()['id']);
+        /* @var \intern3\Helgaverv $helgaverv */
+        if($helgaverv != null){
+            return $helgaverv->harInngangTilgang();
+        }
+        return false;
+    }
+
 }
 
 ?>

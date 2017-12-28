@@ -19,13 +19,18 @@ class HelgaCtrl extends AbstraktCtrl
         );
         if ($beboer != null && in_array($beboer, BeboerListe::aktive())) {
             switch ($aktueltArg) {
+                case 'vervmodal':
+                    $dok = new Visning($this->cd);
+                    $beboerListe = BeboerListe::aktive();
+                    $dok = new Visning($this->cd);
+                    $dok->set('beboerListe', $beboerListe);
+                    $dok->vis('helga_vervmodal.php');
+                    break;
                 case 'general':
-                    //Hvis bruker ikke er general går man til default. Ganske smart.
-                    if ($beboer->erHelgaGeneral() || $beboer->harUtvalgVerv()) {
+                    if ($beboer->erHelgaGeneral() || $beboer->harUtvalgVerv() || $beboer->harDataVerv()) {
                         $dok = new Visning($this->cd);
-                        if (isset($_POST)) {
+                        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            //foreach($post as $key=>$val){setcookie($key,$val);}
                             if (isset($post['endre']) && isset($post['epost_tekst'])) {
                                 $denne_helga->setEpostTekst($post['epost_tekst']);
                                 $dok->set('oppdatert', 1);
@@ -39,24 +44,74 @@ class HelgaCtrl extends AbstraktCtrl
                                 $st->bindParam(':max_gjest', $post['max_gjest']);
                                 $st->execute();
                                 $dok->set('oppdatert', 1);
+                            } elseif(isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null){
+                                if(isset($post['fjern'])){
+                                    $vervet->fjern($post['fjern']);
+                                    $_SESSION['success'] = 1;
+                                    $_SESSION['msg'] = "Fjerna beboeren!";
+                                }
+                            } elseif(isset($post['vervet'])){
+                                $postet = explode('&', $post['vervet']);
+                                $beboerId = $postet[0];
+                                $vervId = $postet[1];
+                                if (($beboer = Beboer::medId($beboerId)) != null
+                                    && ($verv = Helgaverv::medId($vervId)) != null) {
+                                    $verv->leggTil($beboerId);
+
+                                    $_SESSION['success'] = 1;
+                                    $_SESSION['msg'] = "La til beboeren!";
+
+                                    header('Location: ?a=helga/general');
+                                    exit();
+                                }
+                            } elseif(isset($post['form']) == 'addverv'){
+                                $st = DB::getDB()->prepare('INSERT INTO helgaverv (navn,tilgang) VALUES(:navn,:tilgang)');
+                                $st->bindParam(':navn', $post['navn']);
+                                $st->bindParam(':tilgang', $post['tilgang']);
+                                $st->execute();
+
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "La til vervet!";
+
+                                header('Location: ?a=helga/general');
+                                exit();
+                            } elseif(isset($post['fjernverv'])){
+                                $st = DB::getDB()->prepare('DELETE FROM helgaverv_beboer WHERE id=:id');
+                                $st->bindParam(':id', $post['fjernverv']);
+                                $st->execute();
+
+                                $st = DB::getDB()->prepare('DELETE FROM helgaverv WHERE id=:id');
+                                $st->bindParam(':id', $post['fjernverv']);
+                                $st->execute();
+
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Sletta vervet!";
+                            } elseif(isset($post['endretilgang'])
+                                && ($vervet = Helgaverv::medId($post['endretilgang'])) != null){
+
+                                $nyval = $vervet->getTilgang() > 0 ? 0 : 1;
+                                $vervet->setTilgang($nyval);
+
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Endra tilgangen for dette vervet!";
+
                             }
                         }
+                        $verv = Helgaverv::getAlle();
                         $denne_helga = Helga::getLatestHelga();
                         $alle_helga = Helga::getAlleHelga();
+                        $dok->set('helgaverv', $verv);
                         $dok->set('alle_helga', $alle_helga);
                         $dok->set('helga', $denne_helga);
                         $dok->vis('helga_general.php');
                         break;
                     }
                 case 'inngang':
-                    if ($beboer->erHelgaGeneral() || $beboer->harUtvalgVerv()) {
+                    if ($beboer->harHelgaTilgang()) {
                         $dok = new Visning($this->cd);
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            $bruker = LogginnCtrl::getAktivBruker();
-                            if ($bruker != null && $denne_helga->erHelgaGeneral($bruker->getPerson()->getId())
-                                && isset($post['registrer']) && isset($post['gjestid']) && isset($post['verdi'])
-                            ) {
+                            if (isset($post['registrer']) && isset($post['gjestid']) && isset($post['verdi'])){
                                 $gjesten = HelgaGjest::byId($post['gjestid']);
                                 //data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
                                 if ($gjesten != null && $gjesten->getAar() == $denne_helga->getAar()) {
