@@ -27,7 +27,6 @@ class RegiMinregiCtrl extends AbstraktCtrl
                 }
             }
         }
-        foreach($_POST as $key => $val){setcookie($key,$val);}
         if(isset($_POST['semester']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $_SESSION['regisemester'] = $post['semester'];
