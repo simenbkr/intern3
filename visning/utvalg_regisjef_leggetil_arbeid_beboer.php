@@ -192,7 +192,22 @@ require_once ('topp_utvalg.php');
             </tr>
         </table>
     </div>
-    <div class="col-md-12 table-responsive">
+    <div class="col-md-12">
+
+        <h3>Viser arbeid utført for følgende semester: <?php echo isset($_SESSION['regisemester-' . $beboeren->getId()])
+                ? intern3\Funk::semStrToReadable($_SESSION['regisemester-' . $beboeren->getId()])
+                : intern3\Funk::semStrToReadable(intern3\Funk::generateSemesterString(date('Y-m-d'))); ?></h3>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <?php foreach($mapping as $key => $val){ ?>
+                    <li><a href="#" onclick="setSemester('<?php echo $key;?>')"><?php echo $val;?></a></li>
+                <?php } ?>
+            </ul>
+
+        </div>
+
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -225,6 +240,25 @@ require_once ('topp_utvalg.php');
     </div>
 </div>
 </div>
+
+    <script>
+
+        function setSemester(string){
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/regisjef/leggtilarbeid/<?php echo $beboeren->getId();?>',
+                data: 'semester=' + string,
+                method: 'POST',
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+    </script>
+
 <?php
 require_once ('bunn.php');
 ?>

@@ -42,6 +42,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                 $dok->vis('regi_registatus.php');
                 return;
             case 'leggtilarbeid':
+                
                 $sisteArg = $this->cd->getSisteArg();
                 $dok = new Visning($this->cd);
                 if ($sisteArg != 'leggtilarbeid' && is_numeric($sisteArg) && ($beboeren = Beboer::medId($sisteArg)) != null) {
@@ -62,7 +63,21 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                             $st->execute();
                         }
                     }
-                    $arbeidListe = ArbeidListe::medBrukerIdSemester($beboeren->getBrukerId());
+
+                    if(isset($_POST['semester']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+                        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                        $_SESSION["regisemester-" . $beboeren->getId()] = $post['semester'];
+                    }
+
+                    if(isset($_SESSION['regisemester-' . $beboeren->getId()])
+                        && is_int(($unix = Funk::semStrToUnix($_SESSION['regisemester-' . $beboeren->getId()]))) && $unix > 0){
+
+                        $arbeidListe = ArbeidListe::medBrukerIdSemester($beboeren->getBrukerId(), $unix);
+                    } else {
+                        $arbeidListe = ArbeidListe::medBrukerIdSemester($beboeren->getBrukerId());
+                    }
+                    //$arbeidListe = ArbeidListe::medBrukerIdSemester($beboeren->getBrukerId());
+
                     $regitimer = array(
                         0 => 0,
                         1 => 0,
@@ -71,9 +86,16 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                     foreach ($arbeidListe as $arbeid) {
                         $regitimer[$arbeid->getIntStatus()] += $arbeid->getSekunderBrukt() / 3600;
                     }
+
+                    $semesterList = $beboeren->getSemesterlist();
+                    $mapping = array();
+                    foreach($semesterList as $sem){
+                        $mapping[$sem] = Funk::semStrToReadable($sem);
+                    }
                     $dok->set('regitimer', $regitimer);
                     $dok->set('arbeidListe', $arbeidListe);
                     $dok->set('beboeren', $beboeren);
+                    $dok->set('mapping', $mapping);
                     $dok->vis('utvalg_regisjef_leggetil_arbeid_beboer.php');
                     return;
                 }
@@ -136,7 +158,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         //TODO bruke sikker input!
         do {
-            if (!isset($_POST['polymorfkategori_velger']) || !$_POST['polymorfkategori_velger']) {
+            if (!isset($post['polymorfkategori_velger']) || !$post['polymorfkategori_velger']) {
                 $feil[] = 'Tilhørighet mangler.';
                 break;
             }
@@ -146,37 +168,37 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
             }
         } while (false);
         do {
-            if (!isset($_POST['polymorfkategori_id']) || !isset($_POST['polymorfkategori_id'][$_POST['polymorfkategori_velger']]) || !$_POST['polymorfkategori_id'][$_POST['polymorfkategori_velger']]) {
+            if (!isset($post['polymorfkategori_id']) || !isset($post['polymorfkategori_id'][$post['polymorfkategori_velger']]) || !$post['polymorfkategori_id'][$post['polymorfkategori_velger']]) {
                 $feil[] = 'Kategori mangler.';
                 break;
             }
         } while (false);
         do {
-            if (!isset($_POST['tid_utfort']) || !$_POST['tid_utfort']) {
+            if (!isset($post['tid_utfort']) || !$post['tid_utfort']) {
                 $feil[] = 'Utførelsesdato mangler.';
                 break;
             }
-            if (!Funk::erDatoGyldigFormat($_POST['tid_utfort'])) {
+            if (!Funk::erDatoGyldigFormat($post['tid_utfort'])) {
                 $feil[] = 'Utførelsesdato må være i formatet åååå-mm-dd.';
                 break;
             }
-            if (!Funk::finsDato($_POST['tid_utfort'])) {
+            if (!Funk::finsDato($post['tid_utfort'])) {
                 $feil[] = 'Utførelsesdato er ugyldig, datoen fins ikke.';
                 break;
             }
         } while (false);
         do {
-            if (!isset($_POST['tid_brukt']) || !$_POST['tid_brukt']) {
+            if (!isset($post['tid_brukt']) || !$post['tid_brukt']) {
                 $feil[] = 'Tid brukt mangler.';
                 break;
             }
             if (
-                !preg_match('/^[0-9]+(\:[0-9]{2})?$/', $_POST['tid_brukt'])
-                && !preg_match('/^[0-9]+(\,[0-9]+)?$/', $_POST['tid_brukt'])
-                && !preg_match('/^[0-9]+(\.[0-9]+)?$/', $_POST['tid_brukt']) &&
-                !preg_match('/^-[0-9]+(\:[0-9]{2})?$/', $_POST['tid_brukt'])
-                && !preg_match('/^-[0-9]+(\,[0-9]+)?$/', $_POST['tid_brukt'])
-                && !preg_match('/^-[0-9]+(\.[0-9]+)?$/', $_POST['tid_brukt'])
+                !preg_match('/^[0-9]+(\:[0-9]{2})?$/', $post['tid_brukt'])
+                && !preg_match('/^[0-9]+(\,[0-9]+)?$/', $post['tid_brukt'])
+                && !preg_match('/^[0-9]+(\.[0-9]+)?$/', $post['tid_brukt']) &&
+                !preg_match('/^-[0-9]+(\:[0-9]{2})?$/', $post['tid_brukt'])
+                && !preg_match('/^-[0-9]+(\,[0-9]+)?$/', $post['tid_brukt'])
+                && !preg_match('/^-[0-9]+(\.[0-9]+)?$/', $post['tid_brukt'])
             ) {
                 $feil[] = 'Tid brukt må være på formatet timer:minutter eller timer som desimaltall.';
                 break;
@@ -186,7 +208,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                 break;
             }
         } while (false);
-        if (!isset($_POST['kommentar']) || !$_POST['kommentar']) {
+        if (!isset($post['kommentar']) || !$post['kommentar']) {
             $feil[] = 'Kommentar mangler.';
         }
         do {
