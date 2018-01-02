@@ -88,6 +88,35 @@ class Funk {
         return $semestere;
     }
 
+    public static function genReadableSemStr($dato){
+        $year = date('Y', strtotime($dato));
+        $dato_time = strtotime($dato);
+
+        if ($dato_time > strtotime("$year-07-01")){
+            return "Høst $year";
+        } else {
+            return "Vår $year";
+        }
+    }
+
+    public static function semStrToReadable($str){
+	    if(strpos($str, "var-") !== false){
+            return str_replace("var-", "Vår ", $str);
+        } else {
+	        return str_replace('host-', "Høst ", $str);
+        }
+    }
+
+    public static function semStrToUnix($str){
+	    //str på format semester-år
+	    $year = explode('-', $str)[1];
+        if(strpos($str, "var-") !== false){
+            return strtotime("$year-02-01");
+        } else {
+            return strtotime("$year-09-01");
+        }
+    }
+
 }
 
 ?>

@@ -463,7 +463,7 @@ class Beboer implements Person
             return true;
         }
         $st = DB::getDB()->prepare('SELECT * FROM helgaverv AS hv WHERE hv.id IN 
-(SELECT hvb.id FROM helgaverv_beboer AS hvb WHERE hvb.beboer_id=:id)');
+                                  (SELECT hvb.id FROM helgaverv_beboer AS hvb WHERE hvb.beboer_id=:id)');
         $st->bindParam(':id', $this->id);
         $st->execute();
         $helgaverv = Helgaverv::medId($st->fetch()['id']);
@@ -472,6 +472,20 @@ class Beboer implements Person
             return $helgaverv->harInngangTilgang();
         }
         return false;
+    }
+
+    public function getSemesterlist(){
+        $innflyttet = $this->getRomhistorikk()->getPerioder()[0]->innflyttet;
+        $lista = array(Funk::generateSemesterString(date('Y-m-d', strtotime($innflyttet))));
+        //$innflytta_aar = date('Y', strtotime($innflyttet));
+        for($i = date('Y', strtotime($innflyttet)); $i <= date('Y'); $i++){
+            $lista[] = Funk::generateSemesterString(date('Y-m-d', strtotime("$i-01-01")));
+            if($i == date('Y')){
+                break;
+            }
+            $lista[] = Funk::generateSemesterString(date('Y-m-d', strtotime("$i-09-01")));
+        }
+        return array_reverse(array_unique($lista));
     }
 
 }

@@ -52,6 +52,7 @@ require_once('topp.php');
 
 <div class="col-md-6 col-sm-12">
     <?php
+    /*
 
     if (count($feil) > 0) {
         echo '	<ul style="color: #900;">' . PHP_EOL;
@@ -60,6 +61,8 @@ require_once('topp.php');
         }
         echo '	</ul>' . PHP_EOL;
     }
+    */
+    require_once ('tilbakemelding.php');
 
     ?>
     <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
@@ -208,7 +211,22 @@ require_once('topp.php');
     </table>
 </div>
 <div class="container">
-    <div class="col-md-12 table-responsive">
+    <div class="col-md-12">
+        <h3>Viser arbeid utført for følgende semester: <?php echo isset($_SESSION['regisemester'])
+                ? intern3\Funk::semStrToReadable($_SESSION['regisemester'])
+                : intern3\Funk::semStrToReadable(intern3\Funk::generateSemesterString(date('Y-m-d'))); ?></h3>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <?php foreach($mapping as $key => $val){ ?>
+                    <li><a href="#" onclick="setSemester('<?php echo $key;?>')"><?php echo $val;?></a></li>
+                <?php } ?>
+            </ul>
+
+        </div>
+
+
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -247,6 +265,26 @@ require_once('topp.php');
         </table>
     </div>
 </div>
+
+<script>
+
+    function setSemester(string){
+            $.ajax({
+                type: 'POST',
+                url: '?a=regi/minregi',
+                data: 'semester=' + string,
+                method: 'POST',
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+    }
+</script>
+
+
 <?php
 
 require_once('bunn.php');
