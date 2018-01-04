@@ -150,10 +150,11 @@ class AltJournal {
         $vaktnr = $vakt->getVaktnr() % 4 + 1;
         $dato = date('Y-m-d');
         $neste_vakt = Vakt::medDatoVakttype($dato, $vaktnr);
-        $bruker_id = $neste_vakt->getBrukerId();
-        if($bruker_id == null || Bruker::medId($bruker_id) == null) {
+        //$bruker_id = $neste_vakt->getBrukerId();
+        if($neste_vakt == null || ($bruker_id = $neste_vakt->getBrukerId()) == null || Bruker::medId($bruker_id) == null) {
             $bruker_id = Ansatt::getSisteAnsatt()->getBrukerId();
         }
+
         $st = DB::getDB()->prepare('INSERT INTO alt_journal (bruker_id,vakt,status) VALUES(:bruker_id,:vakt,:status)');
         $st->bindParam(':bruker_id', $bruker_id);
         $vaktnr = $vakt->getVaktnr() % 4 + 1;
