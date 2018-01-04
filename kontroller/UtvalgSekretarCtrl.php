@@ -8,6 +8,8 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
     {
         $aktueltArg = $this->cd->getAktueltArg();
         if ($aktueltArg == 'apmandsverv') {
+
+            /* Endre åpmandsverv-visning */
             if(($sisteArg = $this->cd->getSisteArg()) != $aktueltArg && is_numeric($sisteArg)
                 && ($vervet = Verv::medId($sisteArg)) != null){
 
@@ -21,7 +23,14 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                     } elseif($post['beskrivelse'] != $vervet->getBeskrivelse()) {
                         $vervet->setBeskrivelse($post['beskrivelse']);
                     }
-                    
+
+                    if(isset($post['slett']) && $post['slett'] == $vervet->getId()){
+                        Funk::setSuccess("Vervet " . $vervet->getNavn() . " ble slettet!");
+                        $vervet->slett();
+                        header('Location: ?a=utvalg/sekretar/apmandsverv');
+                        exit();
+                    }
+
                     Funk::setSuccess("Du endret dette vervet!");
 
                     header('Location: ?a=utvalg/sekretar/apmandsverv/' . $vervet->getId());
@@ -33,20 +42,45 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                 $dok->vis('utvalg_sekretar_apmandsverv_endre.php');
                 exit();
             }
+
+            /* Liste over åpmandsverv */
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if (isset($_POST['fjern']) && isset($_POST['verv'])) {
-                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                //Add verv
+                if(isset($_POST['navn']) && isset($_POST['beskrivelse']) && isset($_POST['regitimer'])){
+                    $utvalg = ($post['utvalg'] == 1);
+                    $epost = Funk::isValidEmail($post['epost']) ? $post['epost'] : '';
+
+                    /*
+                    if($epost != $post['epost'])
+                        Funk::setError("Vervet ble lagt til, men ikke med den innsendte eposten. Den var det noe galt med.");
+
+                    if(!is_numeric($post['regitimer']))
+                        Funk::setError("Advarsel: Regitimer kan ikke være tekst. Vervet ble oppretta med 0 regitimer.");
+                    */
+
+                    Verv::opprett($post['navn'], $post['beskrivelse'], intval($post['regitimer']), $epost, $utvalg);
+                    Funk::setSuccess("La til nytt åpmandsverv!");
+                    header('Location: ?a=utvalg/sekretar/apmandsverv');
+                    exit();
+                }
+                //Fjern beboer fra verv
+                elseif (isset($_POST['fjern']) && isset($_POST['verv'])) {
                     $beboerId = $post['fjern'];
                     $vervId = $post['verv'];
                     Verv::deleteBeboerFromVerv($beboerId, $vervId);
-                } else if (isset($_POST['vervet'])) {
-                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                }
+
+                //Legg til beboer til verv
+                else if (isset($_POST['vervet'])) {
                     $postet = explode('&', $post['vervet']);
                     $beboerId = $postet[0];
                     if ($beboerId != 0) {
                         $vervId = $postet[1];
                         Verv::updateVerv($beboerId, $vervId);
                         $page = '?a=utvalg/sekretar/apmandsverv';
+                        Funk::setSuccess("La til beboeren på dette vervet!");
                         header('Location: ' . $page, true, 303);
                         exit();
                     }

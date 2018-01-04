@@ -124,6 +124,28 @@ class Verv
             $this->oppdater();
     }
 
+    public static function opprett($navn, $beskrivelse, $regitimer, $epost, $utvalg){
+        $st = DB::getDB()->prepare('INSERT INTO verv (navn,beskrivelse,regitimer,epost,utvalg) 
+                                             VALUES(:navn,:besk,:regi,:epost,:utv)');
+        $st->bindParam(':navn', $navn);
+        $st->bindParam(':besk', $beskrivelse);
+        $st->bindParam(':regi', $regitimer);
+        $st->bindParam(':epost', $epost);
+        $st->bindParam(':utv', $utvalg);
+        $st->execute();
+    }
+
+    public function slett(){
+        $st = DB::getDB()->prepare('DELETE FROM verv WHERE id=:id');
+        $st->bindParam(':id', $this->id);
+
+        $st2 = DB::getDB()->prepare('DELETE FROM beboer_verv WHERE verv_id=:id');
+        $st2->bindParam(':id', $this->id);
+
+        $st2->execute();
+        $st->execute();
+    }
+
 }
 
 ?>
