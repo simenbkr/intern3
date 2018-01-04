@@ -14,7 +14,7 @@ class VervCtrl extends AbstraktCtrl
             $kan_redigere_beskrivelse = in_array($vervet, LogginnCtrl::getAktivBruker()->getPerson()->getVervListe()) || LogginnCtrl::getAktivBruker()->getPerson()->harUtvalgVerv();
             $har_vervet = in_array($vervet, LogginnCtrl::getAktivBruker()->getPerson()->getVervListe());
             if ($vervet != null) {
-                if (isset($_POST)) {
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if ($kan_redigere_beskrivelse && isset($post['beskrivelse'])) {
                         $st = DB::getDB()->prepare('UPDATE verv SET beskrivelse=:beskrivelse WHERE id=:id');

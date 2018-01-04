@@ -8,7 +8,32 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
     {
         $aktueltArg = $this->cd->getAktueltArg();
         if ($aktueltArg == 'apmandsverv') {
-            if (isset($_POST)) {
+            if(($sisteArg = $this->cd->getSisteArg()) != $aktueltArg && is_numeric($sisteArg)
+                && ($vervet = Verv::medId($sisteArg)) != null){
+
+                if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    if($post['navn'] != $vervet->getNavn() && $post['beskrivelse'] != $vervet->getBeskrivelse()){
+                        $vervet->setNavn($post['navn'], false);
+                        $vervet->setBeskrivelse($post['beskrivelse']);
+                    } elseif($post['navn'] != $vervet->getNavn()){
+                        $vervet->setNavn($post['navn']);
+                    } elseif($post['beskrivelse'] != $vervet->getBeskrivelse()) {
+                        $vervet->setBeskrivelse($post['beskrivelse']);
+                    }
+                    
+                    Funk::setSuccess("Du endret dette vervet!");
+
+                    header('Location: ?a=utvalg/sekretar/apmandsverv/' . $vervet->getId());
+                    exit();
+                }
+
+                $dok = new Visning($this->cd);
+                $dok->set('vervet', $vervet);
+                $dok->vis('utvalg_sekretar_apmandsverv_endre.php');
+                exit();
+            }
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (isset($_POST['fjern']) && isset($_POST['verv'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $beboerId = $post['fjern'];

@@ -58,14 +58,16 @@ function modal() {
         ?>
         <div id="<?php echo $verv->getId();?>">
         <tr id="<?php echo $verv->getId();?>">
-            <td><?php echo $verv->getNavn(); ?></td>
+            <td><a href="?a=utvalg/sekretar/apmandsverv/<?php echo $verv->getId();?>"><?php echo $verv->getNavn(); ?></a>
+                <a href="?a=utvalg/sekretar/apmandsverv/<?php echo $verv->getId(); ?>">(endre)</a></td>
             <td><?php
                 $i = 0;
                 foreach ($verv->getApmend() as $apmand) {
                     if ($i++ > 0) {
                         echo ', ';
                     }
-                    echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a>';?> <button onclick="fjern(<?php echo $apmand->getId(); ?>,<?php echo $verv->getId(); ?>)">&#x2718;</button>
+                    echo '<a href="?a=beboer/' . $apmand->getId() . '">' . $apmand->getFulltNavn() . '</a>';?>
+                    <button onclick="fjern(<?php echo $apmand->getId(); ?>,<?php echo $verv->getId(); ?>)">&#x2718;</button>
                 <?php } ?>
                 </td>
             <td></div>
@@ -86,12 +88,7 @@ function modal() {
             <?php
             }
             ?>
-
-
-
-        <!-- <input type="button" class="btn btn-sm btn-info" value="Endre"> -->
     </table>
-
 </div>
 
 <?php

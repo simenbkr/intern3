@@ -102,6 +102,28 @@ class Verv
         return $this->beskrivelse;
     }
 
+    private function oppdater(){
+        $st = DB::getDB()->prepare('UPDATE verv SET navn=:navn,beskrivelse=:beskrivelse WHERE id=:id');
+        $st->bindParam(':navn', $this->navn);
+        $st->bindParam(':beskrivelse', $this->beskrivelse);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+    }
+
+    public function setNavn($navn, $oppdater = true){
+        $this->navn = $navn;
+
+        if($oppdater)
+            $this->oppdater();
+    }
+
+    public function setBeskrivelse($beskrivelse, $oppdater = true){
+        $this->beskrivelse = $beskrivelse;
+
+        if($oppdater)
+            $this->oppdater();
+    }
+
 }
 
 ?>

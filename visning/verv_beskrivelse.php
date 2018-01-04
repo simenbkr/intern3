@@ -48,7 +48,7 @@ require_once('topp.php');
                     <td>Beskrivelse:</td>
                     <?php if ($kan_redigere_beskrivelse) { ?>
                         <form action="" method="POST">
-                            <td><textarea rows="10" cols="50" name="beskrivelse"><?php echo $vervet->getBeskrivelse(); ?></textarea> <input
+                            <td><textarea class="form-control" rows="10" cols="50" name="beskrivelse"><?php echo $vervet->getBeskrivelse(); ?></textarea> <input
                                         type="submit" value="Endre" class="btn btn-primary"></td>
                         </form>
                         <?php
@@ -60,7 +60,7 @@ require_once('topp.php');
                     <td>Meldinger</td>
 
                     <form action="" method="POST">
-                        <td><textarea name="melding" placeholder="Ny melding"></textarea><br/><input type="submit"
+                        <td><textarea class="form-control" name="melding" placeholder="Ny melding"></textarea><br/><input type="submit"
                                                                                                      value="Legg til"
                                                                                                      class="btn btn-primary">
                         </td>
