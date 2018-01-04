@@ -2,6 +2,7 @@
 
 namespace intern3;
 
+require_once ('autolast_absolute.php');
 
 function errorHandler($error_level, $error_message, $error_file, $error_line, $error_context)
 {
