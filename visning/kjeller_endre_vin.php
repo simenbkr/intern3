@@ -23,40 +23,22 @@ require_once ('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
-    <div class="tilbakemelding">
-        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
 
-            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <?php echo $_SESSION['msg']; ?>
-            </div>
-            <p></p>
-            <?php
-        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
-            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <?php echo $_SESSION['msg']; ?>
-            </div>
-            <p></p>
-            <?php
-        }
-        unset($_SESSION['success']);
-        unset($_SESSION['error']);
-        unset($_SESSION['msg']);
-        ?></div>
+    <?php require_once ('tilbakemelding.php'); ?>
+
     <form action="" method="post" enctype="multipart/form-data" onsubmit="">
         <table class="table table-bordered table-responsive">
             <tr>
                 <td>Navn:</td>
-                <td><input type="text" name="navn" value="<?php echo $vinen->getNavn(); ?>"></td>
+                <td><input type="text" class="form-control" name="navn" value="<?php echo $vinen->getNavn(); ?>"></td>
             </tr>
             <tr>
                 <td>Pris:</td>
-                <td><input type="text" name="pris" value="<?php echo $vinen->getPris(); ?>"></td>
+                <td><input type="text" class="form-control" name="pris" value="<?php echo $vinen->getPris(); ?>"></td>
             </tr>
             <tr>
                 <td>Avanse:</td>
-                <td><input type="text" name="avanse" value="<?php echo $vinen->getAvanse();?>"></td>
+                <td><input type="text" class="form-control" name="avanse" value="<?php echo $vinen->getAvanse();?>"></td>
             </tr>
             <tr>
                 <td>Antall i beholdning:</td>
@@ -65,7 +47,7 @@ require_once ('topp.php');
             </tr>
             <tr>
                 <td>Type:</td>
-                <td><select name="type">
+                <td><select name="type" class="form-control">
                         <?php
                         foreach($vintyper as $vintypen){
                             ?>
@@ -81,11 +63,11 @@ require_once ('topp.php');
             </tr>
             <tr>
                 <td>Land</td>
-                <td><input type="text" name="land" value="<?php echo $vinen->getLand(); ?>"></td>
+                <td><input type="text" class="form-control" name="land" value="<?php echo $vinen->getLand(); ?>"></td>
             </tr>
             <tr>
                 <td>Beskrivelse</td>
-                <td><textarea name="beskrivelse"><?php echo $vinen->getBeskrivelse();?></textarea></td>
+                <td><textarea name="beskrivelse" class="form-control"><?php echo $vinen->getBeskrivelse();?></textarea></td>
             </tr>
             <tr>
                 <td>Bilde:</td>

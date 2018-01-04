@@ -7,33 +7,15 @@ require_once ('topp.php');
         [ Påfyll ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
-    <div class="tilbakemelding">
-        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
 
-            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <?php echo $_SESSION['msg']; ?>
-            </div>
-            <p></p>
-            <?php
-        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
-            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <?php echo $_SESSION['msg']; ?>
-            </div>
-            <p></p>
-            <?php
-        }
-        unset($_SESSION['success']);
-        unset($_SESSION['error']);
-        unset($_SESSION['msg']);
-        ?></div>
+    <?php require_once ('tilbakemelding.php'); ?>
+
     <div class="col-md-12">
         <form action="" method="post" enctype="multipart/form-data">
             <table class="table table-bordered table-responsive">
                 <tr>
                     <td>Vin:</td>
-                    <td><select name="vin">
+                    <td><select name="vin" class="form-control">
                             <?php
                             foreach($vinene as $vinen){
                                 if($vinen == null || $vinen->erSlettet()){
@@ -47,7 +29,7 @@ require_once ('topp.php');
                 </tr>
                 <tr>
                     <td>Antall:</td>
-                    <td><input type="text" name="antall"></td>
+                    <td><input type="text" class="form-control" name="antall"></td>
                 </tr>
                 <tr>
                     <td></td>

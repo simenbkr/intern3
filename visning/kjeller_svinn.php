@@ -28,33 +28,15 @@ require_once('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ Svinn ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
-    <div class="tilbakemelding">
-        <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
 
-            <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <?php echo $_SESSION['msg']; ?>
-            </div>
-            <p></p>
-            <?php
-        } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
-            <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <?php echo $_SESSION['msg']; ?>
-            </div>
-            <p></p>
-            <?php
-        }
-        unset($_SESSION['success']);
-        unset($_SESSION['error']);
-        unset($_SESSION['msg']);
-        ?></div>
+    <?php require_once('tilbakemelding.php'); ?>
+
     <div class="col-md-12">
         <form action="" method="post" enctype="multipart/form-data">
             <table class="table table-bordered table-responsive">
                 <tr>
                 <td>Vin:</td>
-                    <td><select name="vin">
+                    <td><select name="vin" class="form-control">
                             <?php
                             foreach ($vinene as $vin) {
                                 if(!($vin->getAntall() > 0) || $vin->erSlettet()){
@@ -70,12 +52,12 @@ require_once('topp.php');
                 </tr>
                 <tr>
                     <td>Antall borte/svinn</td>
-                    <td><input type="text" name="antall"></td>
+                    <td><input type="text" name="antall" class="form-control"></td>
                 </tr>
                 <tr>
                     <td>Dato (ca når skjedde svinnet?):</td>
                     <td>
-                        <input type="text" name="dato" id="datepicker"/>
+                        <input type="text" name="dato" id="datepicker" class="form-control"/>
                     </td>
                 </tr>
                 <tr>

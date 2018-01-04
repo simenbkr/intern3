@@ -12,7 +12,7 @@ require_once ('topp.php');
             <table class="table table-bordered table-responsive">
                 <tr>
                     <td>Navn:</td>
-                    <td><input type="text" name="navn" value="<?php echo $vintypen->getNavn();?>"></td>
+                    <td><input type="text" class="form-control" name="navn" value="<?php echo $vintypen->getNavn();?>"></td>
                 </tr>
                 <tr>
                     <td></td>

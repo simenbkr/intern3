@@ -62,33 +62,13 @@ require_once ('topp.php');
         [ Regning] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
     <hr>
     <div class="col-md-12">
-        <div class="tilbakemelding">
-            <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
-
-                <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <?php echo $_SESSION['msg']; ?>
-                </div>
-                <p></p>
-                <?php
-            } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
-                <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <?php echo $_SESSION['msg']; ?>
-                </div>
-                <p></p>
-                <?php
-            }
-            unset($_SESSION['success']);
-            unset($_SESSION['error']);
-            unset($_SESSION['msg']);
-            ?></div>
+        <?php require_once ('tilbakemelding.php'); ?>
         </div>
         <form onSubmit="submitForm(); return false;" action="javascript:void(0);">
             <table class="table table-bordered table-responsive">
                 <tr>
                     <td>Beboer:</td>
-                    <td><select id="beboer" name="beboer">
+                    <td><select id="beboer" name="beboer" class="form-control">
                             <?php
                             foreach ($beboerlista as $beboeren) {
                                 ?>
@@ -101,7 +81,7 @@ require_once ('topp.php');
                 </tr>
                 <tr>
                     <td>Vin:</td>
-                    <td><select id="vin" name="vin">
+                    <td><select id="vin" name="vin" class="form-control">
                             <?php
                             foreach($vinene as $vinen){
                                 if($vinen->getAntall() < 1 || $vinen->erSlettet()){
@@ -116,12 +96,12 @@ require_once ('topp.php');
                 <div class="letsgo">
                 <tr>
                     <td>Antall: (Tall, ikke operasjoner. F.eks IKKE 1/3, men 0.33)</td>
-                    <td><input id="antall" type="text" name="antall"></td>
+                    <td><input id="antall" class="form-control" type="text" name="antall"></td>
                 </tr>
                 <tr>
                     <td>Dato:</td>
                     <td>
-                        <input type="text" name="dato" id="datepicker" value="<?php echo date('Y-m-d H:i:s');?>"/>
+                        <input type="text" class="form-control" name="dato" id="datepicker" value="<?php echo date('Y-m-d H:i:s');?>"/>
                     </td>
                 </tr>
                 </div>

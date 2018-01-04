@@ -13,28 +13,7 @@ if (!isset($beboer) || $beboer == null) {
         <h1>Utvalget » Romsjef » Gammel Beboerliste » Endre (gammel beboer)
             <b><?php echo $beboer->getFulltNavn(); ?></b></h1>
 
-        <div class="tilbakemelding">
-            <?php if (isset($_SESSION['success']) && isset($_SESSION['msg'])) { ?>
-
-                <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <?php echo $_SESSION['msg']; ?>
-                </div>
-                <p></p>
-                <?php
-            } elseif (isset($_SESSION['error']) && isset($_SESSION['msg'])) { ?>
-                <div class="alert alert-danger fade in" id="danger" style="display:table; margin: auto; margin-top: 5%">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <?php echo $_SESSION['msg']; ?>
-                </div>
-                <p></p>
-                <?php
-            }
-            unset($_SESSION['success']);
-            unset($_SESSION['error']);
-            unset($_SESSION['msg']);
-            ?></div>
-
+        <?php require_once ('tilbakemelding.php'); ?>
 
         <form action="" method="post">
             <input type="hidden" name="beboerid"
