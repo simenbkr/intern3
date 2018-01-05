@@ -307,11 +307,10 @@ GROUP BY bruker_id');
             }
         }
 
-
         $timer = Funk::tidTilTimer($totalt_sek_utfort);
         $maks_timer = 0;
 
-        foreach ($beboerListe as $beboer) {
+        foreach (BeboerListe::aktiveMedRegi() as $beboer) {
             $rollen = $beboer->getRolle();
             if ($rollen != null) {
                 $maks_timer += $rollen->getRegiTimer();
@@ -321,6 +320,14 @@ GROUP BY bruker_id');
         $resterende_timer = Funk::tidTilTimer($maks_timer * 60 * 60 - $totalt_sek_utfort);
 
         return array($timer, $maks_timer, $resterende_timer);
+    }
+
+    public function inCurrentSem(){
+
+        $now = Funk::semStrToUnix(Funk::generateSemesterString(date('Y-m-d')));
+        $done = Funk::semStrToUnix(Funk::generateSemesterString(date('Y-m-d',strtotime($this->tid_utfort))));
+
+        return $now === $done;
     }
 }
 

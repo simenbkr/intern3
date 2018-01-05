@@ -20,11 +20,15 @@ class RegiMinregiCtrl extends AbstraktCtrl
                 $arbeidId = $post['arbeid'];
                 $brukerId = LogginnCtrl::getAktivBruker()->getId();
                 $aktuell_arbeid = Arbeid::medId($arbeidId);
-                if(($aktuell_arbeid->getBrukerId() == $brukerId || Beboer::medBrukerId($brukerId)->harUtvalgVerv()) && $aktuell_arbeid->getGodkjent() == 0){
+                if(($aktuell_arbeid->getBrukerId() == $brukerId || Beboer::medBrukerId($brukerId)->harUtvalgVerv())
+                    && $aktuell_arbeid->getGodkjent() == 0 && $aktuell_arbeid->inCurrentSem()){
                     $st = DB::getDB()->prepare('DELETE FROM arbeid WHERE id=:id');
                     $st->bindParam(':id', $arbeidId);
                     $st->execute();
                 }
+
+                if(!$aktuell_arbeid->inCurrentSem())
+                    Funk::setError("Du kan ikke slette ført regi for tidligere semestere!");
             }
         }
         if(isset($_POST['semester']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
