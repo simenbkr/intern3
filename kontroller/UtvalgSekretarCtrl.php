@@ -10,31 +10,48 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
         if ($aktueltArg == 'apmandsverv') {
 
             /* Endre åpmandsverv-visning */
-            if(($sisteArg = $this->cd->getSisteArg()) != $aktueltArg && is_numeric($sisteArg)
-                && ($vervet = Verv::medId($sisteArg)) != null){
+            if (($sisteArg = $this->cd->getSisteArg()) != $aktueltArg && is_numeric($sisteArg)
+                && ($vervet = Verv::medId($sisteArg)) != null) {
 
-                if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if($post['navn'] != $vervet->getNavn() && $post['beskrivelse'] != $vervet->getBeskrivelse()){
-                        $vervet->setNavn($post['navn'], false);
-                        $vervet->setBeskrivelse($post['beskrivelse']);
-                    } elseif($post['navn'] != $vervet->getNavn()){
-                        $vervet->setNavn($post['navn']);
-                    } elseif($post['beskrivelse'] != $vervet->getBeskrivelse()) {
-                        $vervet->setBeskrivelse($post['beskrivelse']);
+
+                    /* Legg til beboer til det aktuelle vervet */
+                    if (isset($post['vervet'])) {
+                        $postet = explode('&', $post['vervet']);
+                        $beboerId = $postet[0];
+                        if ($beboerId != 0 && ($beboeren = Beboer::medId($beboerId)) != null) {
+                            $vervId = $postet[1];
+                            Verv::updateVerv($beboerId, $vervId);
+                            Funk::setSuccess("La til " . $beboeren->getFulltNavn() . " på åpmandsvervet " . $vervet->getNavn() . "!");
+                            header('Location: ?a=utvalg/sekretar/apmandsverv/' . $vervet->getId());
+                            exit();
+                        }
                     }
 
-                    if(isset($post['slett']) && $post['slett'] == $vervet->getId()){
+                    /* Fjern beboere fra verv, og slett vervet. */
+                    if (isset($post['slett']) && $post['slett'] == $vervet->getId()) {
                         Funk::setSuccess("Vervet " . $vervet->getNavn() . " ble slettet!");
                         $vervet->slett();
                         header('Location: ?a=utvalg/sekretar/apmandsverv');
                         exit();
                     }
 
-                    Funk::setSuccess("Du endret dette vervet!");
+                    /* Endre vervet */
+                    if(isset($post['navn']) && isset($post['beskrivelse'])) {
+                        $vervet->setNavn($post['navn'], true);
+                        $vervet->setBeskrivelse($post['beskrivelse'], true);
+                        $vervet->setUtvalg($post['utvalg'] == 1 ? 1 : 0, true);
+                        $vervet->setEpost($post['epost'], true);
+                        $vervet->setRegitimer($post['regitimer'], true);
 
-                    header('Location: ?a=utvalg/sekretar/apmandsverv/' . $vervet->getId());
-                    exit();
+                        Funk::setSuccess("Du endret dette vervet!");
+                        header('Location: ?a=utvalg/sekretar/apmandsverv/' . $vervet->getId());
+                        exit();
+                    }
+
+                    Funk::setError("Det ser ut som noe gikk galt der. Prøv på nytt. Dersom problemet vedvarer, hør med Data.");
+
                 }
 
                 $dok = new Visning($this->cd);
@@ -48,7 +65,7 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
                 //Add verv
-                if(isset($_POST['navn']) && isset($_POST['beskrivelse']) && isset($_POST['regitimer'])){
+                if (isset($_POST['navn']) && isset($_POST['beskrivelse']) && isset($_POST['regitimer'])) {
                     $utvalg = ($post['utvalg'] == 1);
                     $epost = Funk::isValidEmail($post['epost']) ? $post['epost'] : '';
 
@@ -64,15 +81,12 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                     Funk::setSuccess("La til nytt åpmandsverv!");
                     header('Location: ?a=utvalg/sekretar/apmandsverv');
                     exit();
-                }
-                //Fjern beboer fra verv
+                } //Fjern beboer fra verv
                 elseif (isset($_POST['fjern']) && isset($_POST['verv'])) {
                     $beboerId = $post['fjern'];
                     $vervId = $post['verv'];
                     Verv::deleteBeboerFromVerv($beboerId, $vervId);
-                }
-
-                //Legg til beboer til verv
+                } //Legg til beboer til verv
                 else if (isset($_POST['vervet'])) {
                     $postet = explode('&', $post['vervet']);
                     $beboerId = $postet[0];
@@ -86,6 +100,7 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                     }
                 }
             }
+
             $beboerListe = BeboerListe::aktive();
             $vervListe = VervListe::alle();
             $dok = new Visning($this->cd);

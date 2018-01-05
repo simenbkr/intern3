@@ -103,26 +103,59 @@ class Verv
     }
 
     private function oppdater(){
-        $st = DB::getDB()->prepare('UPDATE verv SET navn=:navn,beskrivelse=:beskrivelse WHERE id=:id');
+        $st = DB::getDB()->prepare('UPDATE verv SET 
+navn=:navn,beskrivelse=:beskrivelse,regitimer=:regitimer,utvalg=:utvalg,epost=:epost WHERE id=:id');
+
         $st->bindParam(':navn', $this->navn);
         $st->bindParam(':beskrivelse', $this->beskrivelse);
+        $st->bindParam(':regitimer', $this->regitimer);
+        $st->bindParam(':utvalg', $this->utvalg);
+        $st->bindParam(':epost', $this->epost);
         $st->bindParam(':id', $this->id);
         $st->execute();
     }
 
-    public function setNavn($navn, $oppdater = true){
+    public function setNavn($navn, $oppdater=true){
         $this->navn = $navn;
 
         if($oppdater)
             $this->oppdater();
     }
 
-    public function setBeskrivelse($beskrivelse, $oppdater = true){
+    public function setBeskrivelse($beskrivelse, $oppdater=true){
         $this->beskrivelse = $beskrivelse;
 
         if($oppdater)
             $this->oppdater();
     }
+
+    public function setUtvalg($utvalg, $oppdater=true){
+        $this->utvalg = ($utvalg != 0) ? 1 : 0;
+
+        if($oppdater)
+            $this->oppdater();
+    }
+
+    public function setRegitimer($timer, $oppdater=true){
+        if(!is_numeric($timer))
+            return;
+
+        $this->regitimer = $timer;
+
+        if($oppdater)
+            $this->oppdater();
+    }
+
+    public function setEpost($epost, $oppdater=true){
+        if(!Funk::isValidEmail($epost))
+            return;
+
+        $this->epost = $epost;
+
+        if($oppdater)
+            $this->oppdater();
+    }
+
 
     public static function opprett($navn, $beskrivelse, $regitimer, $epost, $utvalg){
         $st = DB::getDB()->prepare('INSERT INTO verv (navn,beskrivelse,regitimer,epost,utvalg) 

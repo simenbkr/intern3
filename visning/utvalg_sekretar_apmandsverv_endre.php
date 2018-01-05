@@ -3,6 +3,8 @@
 
 require_once('topp_utvalg.php');
 
+$checked = $vervet->erUtvalg() ? 'checked=checked' : '';
+
 ?>
 
     <div class="container">
@@ -22,6 +24,23 @@ require_once('topp_utvalg.php');
                         <td><textarea class="form-control" rows="10" cols="50"
                                       name="beskrivelse"><?php echo $vervet->getBeskrivelse(); ?></textarea></td>
                     </tr>
+
+                    <tr>
+                        <td>Regitimer:</td>
+                        <td><input type="number" name="regitimer" class="form-control"
+                                   value="<?php echo $vervet->getRegitimer(); ?>"></td>
+                    </tr>
+
+                    <tr>
+                        <td>E-post:</td>
+                        <td><input type="text" name="epost" class="form-control"
+                                   value="<?php echo $vervet->getEpost(); ?>"></td>
+                    </tr>
+                    <tr>
+                        <td>Utvalg?</td>
+                        <td><input type="checkbox" name="utvalg" value="1" <?php echo $checked; ?>> <br></td>
+                    </tr>
+
                     <tr>
                         <td>Åpmend</td>
                         <td><?php
@@ -32,63 +51,82 @@ require_once('topp_utvalg.php');
                                         '</a>, <button onclick="fjern(' . $beboer->getId() . ',' . $vervet->getId() . ')">&#x2718;</button>';
                                 }
                             }
-                            echo rtrim($str, ', '); ?></td>
+                            echo rtrim($str, ', '); ?>
+
+                            <div>
+                                <input type="button" class="btn btn-sm btn-info" value="Legg Til" onclick="modal.call(this)"
+                                       data-target="<?php echo $vervet->getId(); ?>" data-name="<?php echo $vervet->getNavn(); ?>">
+                                <div id="modal-<?php echo $vervet->getId(); ?>">
+                                </div>
+                            </div>
+
+                        </td>
                     </tr>
                     <tr>
                         <td></td>
                         <td><input class="btn btn-primary" type="submit" value="Endre" name="endre"></td>
                     </tr>
-
-                    <?php if (count($vervet->getApmend()) < 1) { ?>
-                        <tr>
-                            <td></td>
-                            <td><input class="btn btn-danger" type="submit" value="Slett vervet"
-                                       onclick="slett(<?php echo $vervet->getId(); ?>)"></td>
-                        </tr>
-
-                    <?php } else { ?>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <p><input type="button" class="btn btn-md btn-danger" value="Slett vervet"
-                                          data-toggle="modal" data-target="#modal-nullstill"></p>
-                                <div class="modal fade" id="modal-nullstill" role="dialog">
-                                    <div class="modal-dialog modal-sm">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;
-                                                </button>
-                                                <h4 class="modal-title">Er du sikker på at du vil
-                                                    slette <?php echo $vervet->getNavn(); ?>?</h4>
-                                                <p>Det har for øyeblikket <?php echo count($vervet->getApmend()); ?>
-                                                    åpmend. Slettingen kan <b>IKKE</b> reverseres.</p>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input class="btn btn-md btn-danger" type="submit"
-                                                       onclick="slett(<?php echo $vervet->getId(); ?>)" value="SLETT"/>
-                                                <div id="kult" style="display:none">
-                                                    <p>
-                                                        Oki. Sletter nå..
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                    Lukk
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </td>
-                        </tr>
-
-
-                    <?php } ?>
-
                 </table>
             </form>
+
+            <table>
+            <?php if (count($vervet->getApmend()) < 1) { ?>
+                <form action="" method="POST" onsubmit="">
+                    <table>
+                    <input type="hidden" name="slett" value="<?php echo $vervet->getid(); ?>">
+                    <tr>
+                        <td></td>
+                        <td><input class="btn btn-danger" type="submit" value="Slett vervet"
+                                   name="<?php echo $vervet->getId(); ?>"></td>
+                    </tr>
+                    </table>
+                </form>
+
+            <?php } else { ?>
+                <tr>
+                    <td></td>
+                    <td>
+                        <p><input type="button" class="btn btn-md btn-danger" value="Slett vervet"
+                                  data-toggle="modal" data-target="#modal-nullstill"></p>
+                        <div class="modal fade" id="modal-nullstill" role="dialog">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;
+                                        </button>
+                                        <h4 class="modal-title">Er du sikker på at du vil
+                                            slette <?php echo $vervet->getNavn(); ?>?</h4>
+                                        <p>Det har for øyeblikket <?php echo count($vervet->getApmend()); ?>
+                                            åpmend. Slettingen kan <b>IKKE</b> reverseres.</p>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <form action="" method="POST" onsubmit="">
+                                            <table>
+                                                <input type="hidden" name="slett" value="<?php echo $vervet->getid(); ?>">
+                                                <tr>
+                                                    <td></td>
+                                                    <td><input class="btn btn-danger" type="submit" value="Slett vervet"
+                                                               name="<?php echo $vervet->getId(); ?>"></td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                                            Lukk
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+
+
+            <?php } ?>
+            </table>
         </div>
     </div>
 
@@ -107,20 +145,20 @@ require_once('topp_utvalg.php');
                 }
             });
         }
-    </script>
-
-    <script>
-        function slett(id) {
+        function modal() {
+            var vervId = $(this).attr('data-target');
+            var vervNavn = $(this).attr('data-name');
             $.ajax({
+                cache: false,
                 type: 'POST',
-                url: '?a=utvalg/sekretar/apmandsverv/' + id,
-                data: 'slett=' + id,
-                method: 'POST',
+                url: '?a=utvalg/sekretar/apmandsverv_modal',
+                data: 'vervId=' + vervId + '&vervNavn=' + vervNavn,
                 success: function (data) {
-                    location.reload();
-                },
-                error: function (req, stat, err) {
-                    alert(err);
+                    $('#modal-' + vervId).html(data);
+                    $('#' + vervId + '-åpmand').modal('show');
+                    $('#' + VervId + '-åpmand').on('hidden.bs.modal', function () {
+                        $('#modal-' + vervId).html(' ');
+                    });
                 }
             });
         }
