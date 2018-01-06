@@ -47,7 +47,7 @@ require_once ('topp_utvalg.php');
         <table class="table-bordered table">
         <tr></tr>
 
-    <td>Beboer: <select name="beboerid" id="beboerid">
+    <td>Beboer: <select name="beboerid" id="beboerid" class="form-control">
             <option value="0">- velg -</option>
             <?php
             foreach ($BeboerListe as $beboer) {
@@ -74,7 +74,7 @@ require_once ('topp_utvalg.php');
             <table class="table table-bordered table-responsive">
                 <tr>
                 <td>År:</td>
-                <td><input type="text" name="aar" value="YYYY"</td>
+                <td><input type="text" name="aar" value="YYYY" class="form-control"/></td>
                 </tr>
                 <tr>
                     <td></td>

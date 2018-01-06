@@ -52,7 +52,7 @@ require_once ('topp_utvalg.php');
         <table class="table table-bordered">
             <tr>
                 <th>Tilhørighet</th>
-                <td><select name="polymorfkategori_velger" onchange="byttPolymorfkategori(this.value);">
+                <td><select name="polymorfkategori_velger" onchange="byttPolymorfkategori(this.value);" class="form-control">
                         <option
                             value="ymse"<?php echo !isset($_POST['polymorfkategori_velger']) || $_POST['polymorfkategori_velger'] == 'ymse' ? ' selected="selected"' : ''; ?>>
                             Generelt arbeid
@@ -74,7 +74,7 @@ require_once ('topp_utvalg.php');
             <tr>
                 <th>Kategori</th>
                 <td>
-                    <select name="polymorfkategori_id[ymse]" id="polymorfkategori_ymse">
+                    <select name="polymorfkategori_id[ymse]" id="polymorfkategori_ymse" class="form-control">
                         <?php
 
                         foreach (intern3\ArbeidskategoriListe::aktiveListe() as $ak) {
@@ -87,7 +87,7 @@ require_once ('topp_utvalg.php');
 
                         ?>
                     </select>
-                    <select name="polymorfkategori_id[feil]" id="polymorfkategori_feil">
+                    <select name="polymorfkategori_id[feil]" id="polymorfkategori_feil" class="form-control">
                         <?php
 
                         foreach (intern3\FeilkategoriListe::alle() as $fk) {
@@ -104,7 +104,7 @@ require_once ('topp_utvalg.php');
 
                         ?>
                     </select>
-                    <select name="polymorfkategori_id[rapp]" id="polymorfkategori_rapp">
+                    <select name="polymorfkategori_id[rapp]" id="polymorfkategori_rapp" class="form-control">
                         <optgroup label="Mine ansvarsområder">
                             <?php
 
@@ -118,7 +118,7 @@ require_once ('topp_utvalg.php');
 
                             ?>
                         </optgroup>
-                        <optgroup label="Mine egne rapporter">
+                        <optgroup label="Mine egne rapporter" class="form-control">
                             <?php
 
                             foreach (intern3\RapportListe::medBrukerId_brukerensEgne($this->cd->getAktivBruker()->getId()) as $r) {
@@ -149,19 +149,19 @@ require_once ('topp_utvalg.php');
             </tr>
             <tr>
                 <th>Dato utført</th>
-                <td><input name="tid_utfort" class="datepicker"
+                <td><input name="tid_utfort" class="datepicker form-control"
                            value="<?php echo isset($_POST['tid_utfort']) ? $_POST['tid_utfort'] : date('Y-m-d'); ?>">
                 </td>
             </tr>
             <tr>
                 <th>Tid brukt</th>
-                <td><input name="tid_brukt"
+                <td><input name="tid_brukt" class="form-control"
                            placeholder="0:00"<?php echo isset($_POST['tid_brukt']) ? ' value="' . $_POST['tid_brukt'] . '"' : ''; ?>>
                 </td>
             </tr>
             <tr>
                 <th>Kommentar</th>
-                <td><textarea name="kommentar" cols="50"
+                <td><textarea name="kommentar" cols="50" class="form-control"
                               rows="5"><?php echo isset($_POST['kommentar']) ? $_POST['kommentar'] : ''; ?></textarea>
                 </td>
             </tr>

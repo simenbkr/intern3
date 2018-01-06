@@ -46,11 +46,11 @@ require_once('topp_utvalg.php');
                 </tr>
                 <tr>
                     <th>Tema:</th>
-                    <td><input type="text" name="tema" value="<?php echo $helgaen->getTema(); ?>"></td>
+                    <td><input type="text" name="tema" class="form-control" value="<?php echo $helgaen->getTema(); ?>"></td>
                 </tr>
                 <tr>
                     <th>Start dato:</th>
-                    <td><input type="text" name="start" id="datepicker" class="datepicker" value="<?php echo $helgaen->getStartDato();?>"></td>
+                    <td><input type="text" name="start" id="datepicker" class="datepicker form-control" value="<?php echo $helgaen->getStartDato();?>"></td>
                 </tr>
                 <tr>
                     <td><input type="hidden" name="endre" value="<?php echo $helgaen->getAar(); ?>"></td>

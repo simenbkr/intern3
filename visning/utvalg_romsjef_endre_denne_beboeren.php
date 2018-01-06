@@ -31,42 +31,42 @@ if(!isset($beboer) || $beboer == null) {
         <table class="table table-bordered table-responsive">
             <tr>
                 <td>Fornavn:</td>
-                <td><input type="text" name="fornavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFornavn(); ?>"></td>
+                <td><input type="text" class="form-control" name="fornavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFornavn(); ?>"></td>
             </tr>
             <tr>
                 <td>Mellomnavn:</td>
-                <td><input type="text" name="mellomnavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getMellomnavn(); ?>"></td>
+                <td><input type="text" class="form-control" name="mellomnavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getMellomnavn(); ?>"></td>
             </tr>
             <tr>
                 <td>Etternavn:</td>
-                <td><input type="text" name="etternavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEtternavn(); ?>"></td>
+                <td><input type="text" class="form-control" name="etternavn" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEtternavn(); ?>"></td>
             </tr>
             <tr>
                 <td>Født (år-mnd-dag):</td>
-                <td><input type="text" id="datepicker" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
+                <td><input type="text" class="form-control" id="datepicker" name="fodselsdato" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getFodselsdato(); ?>"></td>
             </tr>
             <tr>
                 <td>Adresse:</td>
-                <td><input type="text" name="adresse" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getAdresse(); ?>"></td>
+                <td><input type="text" class="form-control" name="adresse" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getAdresse(); ?>"></td>
             </tr>
             <tr>
                 <td>Postnummer:</td>
-                <td><input type="text" name="postnummer" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getPostnummer(); ?>"></td>
+                <td><input type="text" class="form-control" name="postnummer" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getPostnummer(); ?>"></td>
             </tr>
             <tr>
                 <td>Telefon:</td>
-                <td><input type="text" name="mobil" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getTelefon(); ?>"></td>
+                <td><input type="text" class="form-control" name="mobil" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getTelefon(); ?>"></td>
             </tr>
 
             <tr>
                 <td>E-post:</td>
-                <td><input type="text" name="epost" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEpost(); ?>"></td>
+                <td><input type="text" class="form-control" name="epost" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getEpost(); ?>"></td>
             </tr>
 
             <tr>
                 <td>Skole:</td>
                 <td>
-                    <select name="skole_id">
+                    <select name="skole_id" class="form-control">
                         <?php
                         foreach ($skoleListe as $skole) {
                             ?>          <option <?php if (isset($beboer) && $beboer != null && $skole->getId() == $beboer->getSkoleId()) {echo 'selected="selected"';} ?> value="<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></option>
@@ -79,7 +79,7 @@ if(!isset($beboer) || $beboer == null) {
             <tr>
                 <td>Studie:</td>
                 <td>
-                    <select name="studie_id">
+                    <select name="studie_id" class="form-control">
                         <?php
                         foreach ($studieListe as $studie) {
                             ?>
@@ -93,7 +93,7 @@ if(!isset($beboer) || $beboer == null) {
             <tr>
                 <td>Klasse:</td>
                 <td>
-                    <select name="klasse">
+                    <select name="klasse" class="form-control">
                         <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '1') {echo 'selected="selected"';} ?> value="1">1</option>
                         <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '2') {echo 'selected="selected"';} ?> value="2">2</option>
                         <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '3') {echo 'selected="selected"';} ?> value="3">3</option>
@@ -109,7 +109,7 @@ if(!isset($beboer) || $beboer == null) {
             <tr>
                 <td>Rolle:</td>
                 <td>
-                    <select name="rolle_id">
+                    <select name="rolle_id" class="form-control">
                         <?php
                         foreach ($rolleListe as $rolle) {
                             ?>
@@ -137,7 +137,7 @@ if(!isset($beboer) || $beboer == null) {
             <tr>
                 <td>Rom:</td>
                 <td>
-                    <select name="rom_id">
+                    <select name="rom_id" class="form-control">
                         <?php
                         foreach ($romListe as $rom) {
                             ?>

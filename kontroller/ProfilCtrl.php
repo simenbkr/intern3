@@ -59,6 +59,8 @@ class ProfilCtrl extends AbstraktCtrl
                 $st->bindParam($var, $null);
             }
         }
+
+        Funk::setSuccess("Kryssepreferanser ble endret!");
         $st->bindParam(':id', LogginnCtrl::getAktivBruker()->getPerson()->getId());
         $st->execute();
         return array();
@@ -84,10 +86,12 @@ class ProfilCtrl extends AbstraktCtrl
                 $st->bindParam(':id', $id);
                 $st->execute();
             } else {
-                return array('Det var ikke et gyldig bilde!');
+                Funk::setError("Det var ikke et gyldig bilde!");
+                //return array('Det var ikke et gyldig bilde!');
             }
         } else {
-            return array('Du valgte ikke et bilde!');
+            Funk::setError("Du valgte ikke et bilde!");
+            //return array('Du valgte ikke et bilde!');
         }
         return null;
     }
@@ -97,8 +101,9 @@ class ProfilCtrl extends AbstraktCtrl
         if(($bruker = LogginnCtrl::getAktivBruker()) != null && ($beboer = $bruker->getPerson()) != null){
             $bebId = $beboer->getId();
         } else {
-            $_SESSION['error'] = 1;
-            $_SESSION['msg'] = "Noe gikk galt. Sikker på at du er innlogget?";
+            Funk::setError("Noe gikk galt.. Prøv på nytt");
+            //$_SESSION['error'] = 1;
+            //$_SESSION['msg'] = "Noe gikk galt. Sikker på at du er innlogget?";
             exit();
         }
 
@@ -114,6 +119,8 @@ class ProfilCtrl extends AbstraktCtrl
                 $st->bindParam($var, $null);
             }
         }
+
+        Funk::setSuccess("Varselpreferanser ble endret!");
 
         $st->bindParam(':id', $bebId);
         $st->execute();
@@ -153,8 +160,7 @@ class ProfilCtrl extends AbstraktCtrl
                 }
                 $st->execute();
 
-                $_SESSION['success'] = 1;
-                $_SESSION['msg'] = 'Generell info endret!';
+                Funk::setSuccess("Generell info ble endret!");
             }
         }
         return $feil;
@@ -270,10 +276,12 @@ class ProfilCtrl extends AbstraktCtrl
     private function godkjennPassord()
     {
         if ($_POST['passord1'] <> $_POST['passord2']) {
-            return array('De to passordene stemmer ikke.');
+            Funk::setError("De to passordene stemmer ikke!");
+            //return array('De to passordene stemmer ikke.');
         }
         if (strlen($_POST['passord1']) < 8) {
-            return array('Det nye passordet må være minst 8 tegn.');
+            Funk::setError("Det nye passordet må være minst 8 tegn.");
+            //return array('Det nye passordet må være minst 8 tegn.');
         }
         return array();
     }

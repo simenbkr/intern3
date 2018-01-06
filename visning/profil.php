@@ -43,27 +43,27 @@ else {
 		<table class="table table-bordered">
 			<tr>
 				<th>Fødselsdato</th>
-				<td><input type="text" name="fodselsdato" size="10" value="<?php echo isset($_POST['fodselsdato']) ? $_POST['fodselsdato'] : $beboer->getFodselsdato(); ?>"><br>(åååå-mm-dd)</td>
+				<td><input type="text" class="form-control" name="fodselsdato" size="10" value="<?php echo isset($_POST['fodselsdato']) ? $_POST['fodselsdato'] : $beboer->getFodselsdato(); ?>"><br>(åååå-mm-dd)</td>
 			</tr>
 			<tr>
 				<th>Epost</th>
-				<td><input type="text" name="epost" value="<?php echo isset($_POST['epost']) ? $_POST['epost'] : $beboer->getEpost(); ?>"></td>
+				<td><input type="text" class="form-control" name="epost" value="<?php echo isset($_POST['epost']) ? $_POST['epost'] : $beboer->getEpost(); ?>"></td>
 			</tr>
 			<tr>
 				<th>Telefon</th>
-				<td><input type="text" name="telefon" size="12" value="<?php echo isset($_POST['telefon']) ? $_POST['telefon'] : $beboer->getTelefon(); ?>"></td>
+				<td><input type="text" class="form-control" name="telefon" size="12" value="<?php echo isset($_POST['telefon']) ? $_POST['telefon'] : $beboer->getTelefon(); ?>"></td>
 			</tr>
 			<tr>
 				<th>Adresse</th>
-				<td><input type="text" name="adresse" value="<?php echo isset($_POST['adresse']) ? $_POST['adresse'] : $beboer->getAdresse(); ?>"></td>
+				<td><input type="text" class="form-control" name="adresse" value="<?php echo isset($_POST['adresse']) ? $_POST['adresse'] : $beboer->getAdresse(); ?>"></td>
 			</tr>
 			<tr>
 				<th>Postnummer</th>
-				<td><input type="text" name="postnummer" size="4" value="<?php echo isset($_POST['postnummer']) ? $_POST['postnummer'] : $beboer->getPostnummer(); ?>"></td>
+				<td><input type="text" class="form-control" name="postnummer" size="4" value="<?php echo isset($_POST['postnummer']) ? $_POST['postnummer'] : $beboer->getPostnummer(); ?>"></td>
 			</tr>
 			<tr>
 				<th>Skole</th>
-				<td><select name="skole_id">
+				<td><select name="skole_id" class="form-control">
 					<option value="0">- velg -</option>
 <?php
 
@@ -81,7 +81,7 @@ foreach (intern3\SkoleListe::alle() as $skole) {
 			</tr>
 			<tr>
 				<th>Studie</th>
-				<td><select name="studie_id">
+				<td><select name="studie_id" class="form-control">
 					<option value="0">- velg -</option>
 <?php
 
@@ -99,7 +99,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 			</tr>
 			<tr>
 				<th>Klassetrinn</th>
-				<td><input type="text" name="klassetrinn" size="1" value="<?php echo isset($_POST['klassetrinn']) ? $_POST['klassetrinn'] : $beboer->getKlassetrinn(); ?>"></td>
+				<td><input type="text" name="klassetrinn" class="form-control" size="1" value="<?php echo isset($_POST['klassetrinn']) ? $_POST['klassetrinn'] : $beboer->getKlassetrinn(); ?>"></td>
 			</tr>
 		</table>
 		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
@@ -112,11 +112,11 @@ foreach (intern3\StudieListe::alle() as $studie) {
 		<table class="table table-bordered">
 			<tr>
 				<th>Nytt passord</th>
-				<td><input type="password" name="passord1"></td>
+				<td><input type="password" name="passord1" class="form-control"></td>
 			</tr>
 			<tr>
 				<th>Gjenta passord</th>
-				<td><input type="password" name="passord2"></td>
+				<td><input type="password" name="passord2" class="form-control"></td>
 			</tr>
 		</table>
 		<p><input type="submit" class="btn btn-primary" value="Lagre"></p>
@@ -131,7 +131,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 			<table class="table table-bordered table-responsive">
 				<tr>
 					<td>Bilde:</td>
-					<td><input type="file" name="image"/></td>
+					<td><input type="file" class="form-control" name="image"/></td>
 				</tr>
 				<tr>
 					<td></td>
@@ -149,7 +149,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 			</tr>
 			<tr>
 				<td>når du har blitt tildelt en vakt</td>
-				<td><input type="checkbox" name="tildeltvakt" value="1" <?php if($epostInst['tildelt'] == 1) { ?> checked="checked"><?php } ?></td>
+				<td><input type="checkbox"  name="tildeltvakt" value="1" <?php if($epostInst['tildelt'] == 1) { ?> checked="checked"><?php } ?></td>
 			</tr>
 			<tr>
 				<td>når det er 24 timer igjen til å sitte vakt</td>
@@ -194,7 +194,7 @@ foreach (intern3\StudieListe::alle() as $studie) {
 
             <tr>
                 <td>Min pinkode er:</td>
-                <td><input type="text" name="pinkode" style="width:75%" value="<?php echo $prefs->getPinkode();?>"</td>
+                <td><input type="text" name="pinkode" class="form-control" style="width:75%" value="<?php echo $prefs->getPinkode();?>"</td>
             </tr>
 
         </table>

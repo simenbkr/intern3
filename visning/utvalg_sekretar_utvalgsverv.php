@@ -37,13 +37,13 @@ function fjern(beboerId,vervId) {
         </tr>
         <tr>
             <td>
-              <select name="vervid" id="vervid">
+              <select name="vervid" id="vervid" class="form-control">
                 <option value="0">- velg -</option>
                     <?php
                     foreach ($vervListe as $verv) {
                         ?>
 
-                        <option name="<?php echo $verv->getNavn(); ?>" value="<?php echo $verv->getId(); ?>">
+                        <option name="<?php echo $verv->getNavn(); ?>" value="<?php echo $verv->getId(); ?>" >
                             <?php echo $verv->getNavn(); ?>
                         </option>
 
@@ -53,7 +53,7 @@ function fjern(beboerId,vervId) {
               </select>
             </td>
             <td>
-              <select name="beboerid" id="beboerid">
+              <select name="beboerid" id="beboerid" class="form-control">
                 <option value="0">- velg -</option>
                     <?php
                     foreach ($beboerListe as $beboer) {

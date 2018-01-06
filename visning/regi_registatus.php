@@ -47,7 +47,7 @@ require_once('topp_utvalg.php');
                 ?>
                 <tr>
                     <td><?php echo $rollen->getNavn(); ?></td>
-                    <td><input type="text" name="host" id="<?php echo $rollen->getId(); ?>"
+                    <td><input type="text" name="host" class="form-control" id="<?php echo $rollen->getId(); ?>"
                                value="<?php echo $rollen->getRegitimer(); ?>" size="1"></td>
                 </tr>
                 <?php

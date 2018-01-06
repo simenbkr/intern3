@@ -111,8 +111,8 @@ switch($dag_tall) {
             <table class="table table-bordered table-responsive">
                         <tr>
                             <input type="hidden" name="add" value="<?php echo $dag_tall; ?>"/>
-                            <td>Navn: <input type="text" name="navn" value =""/></td>
-                            <td>Epost: <input type="text" name="epost" value =""/></td>
+                            <td>Navn: <input type="text" name="navn" value ="" class="form-control"/></td>
+                            <td>Epost: <input type="text" name="epost" value ="" class="form-control"/></td>
                             <td><input class="btn btn-primary" type="submit" value="Legg til"></td>
                         </tr>
             </table>

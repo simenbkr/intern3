@@ -156,30 +156,30 @@ require_once('topp_utvalg.php');
         <table class="table table-bordered">
             <tr>
                 <th>Navn</th>
-                <td><input name="navn" <?php echo isset($_POST['navn']) ? ' value="' . $_POST['navn'] . '"' : ''; ?>>
+                <td><input name="navn" class="form-control" <?php echo isset($_POST['navn']) ? ' value="' . $_POST['navn'] . '"' : ''; ?>>
                 </td>
             </tr>
             <tr>
                 <th>Prioritet</th>
                 <td><input
-                        name="prioritet" <?php echo isset($_POST['prioritet']) ? ' value="' . $_POST['prioritet'] . '"' : ''; ?>>
+                        name="prioritet" class="form-control" <?php echo isset($_POST['prioritet']) ? ' value="' . $_POST['prioritet'] . '"' : ''; ?>>
                 </td>
             </tr>
             <tr>
                 <th>Anslag timer</th>
-                <td><input name="timer"
+                <td><input name="timer" class="form-control"
                            placeholder="0:00"<?php echo isset($_POST['timer']) ? ' value="' . $_POST['timer'] . '"' : ''; ?>>
                 </td>
             </tr>
             <tr>
                 <th>Anslag personer</th>
                 <td><input
-                        name="personer" <?php echo isset($_POST['personer']) ? ' value="' . $_POST['personer'] . '"' : ''; ?>>
+                        name="personer" class="form-control" <?php echo isset($_POST['personer']) ? ' value="' . $_POST['personer'] . '"' : ''; ?>>
                 </td>
             </tr>
             <tr>
                 <th>Beskrivelse</th>
-                <td><textarea name="beskrivelse" cols="50"
+                <td><textarea name="beskrivelse" cols="50" class="form-control"
                               rows="5"><?php echo isset($_POST['beskrivelse']) ? $_POST['beskrivelse'] : ''; ?></textarea>
                 </td>
             </tr>
