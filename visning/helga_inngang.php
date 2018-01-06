@@ -52,7 +52,7 @@ switch ($dag_tall) {
                     alert(err);
                 }
             });
-            refresh();
+            refreshNum();
         }
 
         function test() {
@@ -60,6 +60,25 @@ switch ($dag_tall) {
             var gjestid = document.querySelector("#gjester option[value='" + shownVal + "']").dataset.value;
             registrer(gjestid, 1);
             document.getElementById("tekstinput").value = "";
+        }
+
+        function refreshNum(){
+            $.ajax({
+                type: 'GET',
+                url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
+                method: 'GET',
+                success: function (html) {
+                    var parser = new DOMParser();
+                    var response = parser.parseFromString(html, "text/html");
+
+                    if(document.getElementById('status').innerHTML != response.getElementById('status').innerHTML){
+                        $('#status').replaceWith(response.getElementById('status'));
+                    }
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
         }
 
         function refresh() {
