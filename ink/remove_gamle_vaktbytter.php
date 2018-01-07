@@ -2,8 +2,8 @@
 
 namespace intern3;
 
-//require_once("/var/www/intern.singsaker.no/ink/autolast_absolute.php");
-require_once ('autolast.php');
+
+require_once("/var/www/intern.singsaker.no/ink/autolast_absolute.php");
 
 $vaktbytter = Vaktbytte::getAlleUtgatte();
 $log = "---STARTLOG---\n";
