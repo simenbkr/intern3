@@ -1,0 +1,8 @@
+{
+    "name": "Intern3",
+    "description": "Internside for Singsaker Studenterhjem",
+    "require": {
+        "php": "^5.6.3 || ^7.0",
+        "aferrandini/phpqrcode": "1.0.1"
+    }
+}

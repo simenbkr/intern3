@@ -194,7 +194,7 @@ class HelgaCtrl extends AbstraktCtrl
                                     //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
                                     $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
                                 VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
-                                    $nokkel = hash('sha512', $post['epost'] . $beboer_id . $post['add'] . time());
+                                    $nokkel = hash('sha512', Funk::generatePassword(30));
                                     $null = 0;
                                     $st->bindParam(':navn', $post['navn']);
                                     $st->bindParam(':aar', $aar);
@@ -206,7 +206,12 @@ class HelgaCtrl extends AbstraktCtrl
                                     $st->bindParam(':nokkel', $nokkel);
                                     $st->execute();
 
-                                    \QRCode::png("http://intern.singsaker.no/?a=helga/reg/" . $nokkel, 'qrkoder/' . $nokkel . ".png");
+                                    \PHPQRCode\QRcode::png("http://intern.singsaker.no/?a=helga/reg/" . $nokkel,
+                                        PATH . '/www/qrkoder/' . $nokkel . ".png",
+                                        'L',
+                                        4,
+                                        2);
+
                                 } else {
                                     $_SESSION['error'] = 1;
                                     $_SESSION['msg'] = "Du har nådd maks gjestekapasitet!";
