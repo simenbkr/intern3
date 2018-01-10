@@ -13,6 +13,7 @@
     <table id="krysseliste">
             <tr><th class="navn">Navn</th>
                 <?php
+                $sum = array();
                 foreach($drikke as $drikken) {
                     if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
                         (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
@@ -20,7 +21,11 @@
                     }
                     ?>
                     <th class="sum"><?php echo $drikken->getNavn();?></th>
-                <?php }
+                <?php
+                
+                  $sum[$drikken->getNavn()] = 0;
+                
+                }
                 ?>
             </tr>
             <?php foreach($krysseListeMonthListe as $beboerID => $krysseliste){
@@ -34,13 +39,26 @@
                         }
                         ?>
                         <td class="<?php echo $drikken->getNavn();?>"><?php echo $krysseliste[$drikken->getNavn()];?></td>
-                    <?php } ?>
+                    <?php
+                    
+                      $sum[$drikken->getNavn()] += $krysseliste[$drikken->getNavn()];
+                    
+                    } ?>
                 </tr>
 
                 <?php
             }
 
             ?>
+
+        <tr><td>TOTALT</td>
+          <?php var_dump($sum); foreach ($sum as $drikken => $verdi) { ?>
+              <td><?php echo $verdi; ?></td>
+            <?php
+          }
+          ?>
+
+        </tr>
 </table>
         </div>
 
