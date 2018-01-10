@@ -52,7 +52,7 @@
             ?>
 
         <tr><td>TOTALT</td>
-          <?php var_dump($sum); foreach ($sum as $drikken => $verdi) { ?>
+          <?php foreach ($sum as $drikken => $verdi) { ?>
               <td><?php echo $verdi; ?></td>
             <?php
           }
