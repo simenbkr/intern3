@@ -41,8 +41,30 @@ class BeboerCtrl extends AbstraktCtrl
             $dok->vis('beboer_detaljer.php');
         } else {
             $beboerListe = BeboerListe::aktive();
+            
+            $fullvakt = 0;
+            $fullregi = 0;
+            $halv     = 0;
+            
+            foreach($beboerListe as $beboer){
+                /* @var Beboer $beboer */
+                switch($beboer->getRolle()->getRegitimer()){
+                  case 0:
+                      $fullvakt++;
+                      break;
+                  case 18:
+                      $halv++;
+                      break;
+                  case 48:
+                      $fullregi++;
+                }
+            }
+            
             $dok = new Visning($this->cd);
             $dok->set('beboerListe', $beboerListe);
+            $dok->set('fullregi',$fullregi);
+            $dok->set('fullvakt', $fullvakt);
+            $dok->set('halv', $halv);
             $dok->vis('beboer_beboerliste.php');
         }
     }

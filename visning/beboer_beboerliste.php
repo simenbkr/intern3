@@ -11,6 +11,7 @@ require_once('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>beboer/kart">Beboerkart</a> ]
         [ <a href="<?php echo $cd->getBase();?>beboer/gamle">Gamle Beboere</a> ]
     </p>
+    
     <table class="table table-bordered table-responsive">
         <tr>
             <th>Navn</th>
@@ -61,6 +62,31 @@ require_once('topp.php');
         }
 
         ?>
+    </table>
+</div>
+
+<div class="col-sm-6">
+    <table class="table table-responsive">
+        <tr>
+            <td>Antall beboere</td>
+            <td><?php echo count($beboerListe); ?></td>
+        </tr>
+
+        <tr>
+            <td>Full regi</td>
+            <td><?php echo $fullregi; ?></td>
+        </tr>
+
+        <tr>
+            <td>Full vakt</td>
+            <td><?php echo $fullvakt; ?></td>
+        </tr>
+
+        <tr>
+            <td>Halv vakt/halv regi</td>
+            <td><?php echo $halv; ?></td>
+        </tr>
+
     </table>
 </div>
 

@@ -8,6 +8,33 @@ require_once('topp_utvalg.php');
 	<h1>Utvalget &raquo; Romsjef &raquo; Beboerliste</h1>
 	<p>[ Beboerliste ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]</p>
   <p> </p>
+
+    <div class="col-sm-6">
+        <table class="table table-responsive">
+            <tr>
+                <td>Antall beboere</td>
+                <td><?php echo count($beboerListe); ?></td>
+            </tr>
+
+            <tr>
+                <td>Full regi</td>
+                <td><?php echo $fullregi; ?></td>
+            </tr>
+
+            <tr>
+                <td>Full vakt</td>
+                <td><?php echo $fullvakt; ?></td>
+            </tr>
+
+            <tr>
+                <td>Halv vakt/halv regi</td>
+                <td><?php echo $halv; ?></td>
+            </tr>
+
+        </table>
+    </div>
+    
+    
 	<table class="table-bordered table">
 		<tr>
 			<th>Navn</th>
