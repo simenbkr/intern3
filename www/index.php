@@ -14,7 +14,7 @@ require_once('../ink/autolast.php');
 
 //Composer-klasser.
 require '../vendor/autoload.php';
-
+session_save_path('../sessions');
 session_set_cookie_params(3600*24*100*100,"/");
 
 header('Content-Type: text/html; charset=utf-8');
