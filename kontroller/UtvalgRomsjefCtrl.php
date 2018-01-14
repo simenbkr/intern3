@@ -152,11 +152,13 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
 <a href='https://intern.singsaker.no'>Singsaker Studenterhjem sine internsider!</a> Velkommen skal du være.<br/>Brukernavn: $post[epost]<br/>Passord kan du sette selv, ved å benytte 'glemt-passord'-funksjonaliteten.<br/><br/>
 <br/><br/>Med vennlig hilsen<br/>Internsida.<br/><br/></body></html>";
         $tittel = "[SING-INTERN] Opprettelse av brukerkonto";
-        $epost = new Epost($beskjed);
-        $epost->addBrukerId($bruker_id);
-        $epost->send($tittel);
+        //$epost = new Epost($beskjed);
+        //$epost->addBrukerId($bruker_id);
+        //$epost->send($tittel);
         
-        $beboer_id = Beboer::medBrukerId($bruker_id)->getId();
+        $beboer = Beboer::medBrukerId($bruker_id);
+        
+        $beboer_id = $beboer->getId();
         $st_1 = DB::getDB()->prepare('INSERT INTO epost_pref (beboer_id,tildelt,snart_vakt,bytte,utleie,barvakt) VALUES(:id,1,1,1,1,1)');
         $st_1->bindParam(':id', $beboer_id);
         $st_1->execute();
@@ -165,6 +167,8 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
     VALUES(:id, 1, 1, 0, NULL, 0, NULL)');
         $st_2->bindParam(':id', $beboer_id);
         $st_2->execute();
+        
+        Epost::sendEpost($beboer->getEpost(), $tittel, $beskjed);
         
         $_SESSION['success'] = 1;
         $_SESSION['msg'] = "Du la til en ny beboer!";
