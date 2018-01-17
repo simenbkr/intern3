@@ -35,7 +35,8 @@ require_once('topp_utvalg.php');
     </div>
     
     
-	<table class="table-bordered table">
+	<table class="table-bordered table" id="tabellen">
+        <thead>
 		<tr>
 			<th>Navn</th>
 			<th>Rom</th>
@@ -45,6 +46,8 @@ require_once('topp_utvalg.php');
 			<th>Født</th>
 			<th>Rolle</th>
 		</tr>
+        </thead>
+        <tbody>
 <?php
 
 foreach ($beboerListe as $beboer){
@@ -80,8 +83,25 @@ foreach ($beboerListe as $beboer){
 	}
 
 ?>
+        </tbody>
 	</table>
 </div>
+
+<link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+<script type="text/javascript" src="js/dataTables.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#tabellen').DataTable({
+            "paging": false,
+            "searching": false,
+            //"scrollY": "500px"
+        });
+    });
+
+</script>
+
 
 <?php
 

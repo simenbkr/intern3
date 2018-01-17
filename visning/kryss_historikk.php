@@ -5,10 +5,12 @@ require_once('topp.php');
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <script>
     $(document).ready(function () {
-        $('#tabellen').DataTable({
+        var a = $('#tabellen').DataTable({
             "paging": true,
-            "searching": false
+            "searching": false,
+            "order": [[0, "desc"]]
         });
+
 
     });
 </script>

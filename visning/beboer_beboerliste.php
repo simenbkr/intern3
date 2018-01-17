@@ -12,7 +12,8 @@ require_once('topp.php');
         [ <a href="<?php echo $cd->getBase();?>beboer/gamle">Gamle Beboere</a> ]
     </p>
     
-    <table class="table table-bordered table-responsive">
+    <table class="table table-bordered table-responsive" id="tabellen">
+        <thead>
         <tr>
             <th>Navn</th>
             <th>Rom</th>
@@ -22,6 +23,8 @@ require_once('topp.php');
             <th>Født</th>
             <th>Rolle</th>
         </tr>
+        </thead>
+        <tbody>
         <?php
 
         foreach ($beboerListe as $beboer) {
@@ -62,6 +65,7 @@ require_once('topp.php');
         }
 
         ?>
+        </tbody>
     </table>
 </div>
 
@@ -89,6 +93,22 @@ require_once('topp.php');
 
     </table>
 </div>
+
+
+<link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+<script type="text/javascript" src="js/dataTables.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#tabellen').DataTable({
+            "paging": false,
+            "searching": false,
+            //"scrollY": "500px"
+        });
+    });
+
+</script>
 
 <?php
 

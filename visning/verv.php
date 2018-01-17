@@ -5,12 +5,15 @@ require_once('topp.php');
 ?>
 <div class="col-md-12">
 	<h1>Verv</h1>
-	<table class="table table-bordered">
+	<table class="table table-bordered" id="tabellen">
+        <thead>
 		<tr>
 			<th>Åpmandsverv</th>
 			<th>Åpmand/åpmend</th>
 			<th>Epost</th>
 		</tr>
+        </thead>
+    <tbody>
 <?php
 
 foreach ($vervListe as $verv) {
@@ -38,8 +41,25 @@ foreach ($vervListe as $verv) {
 }
 
 ?>
+    </tbody>
 	</table>
 </div>
+
+<link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+<script type="text/javascript" src="js/dataTables.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#tabellen').DataTable({
+            "paging": false,
+            "searching": false,
+            //"scrollY": "500px"
+        });
+    });
+
+</script>
+
 <?php
 
 require_once('bunn.php');
