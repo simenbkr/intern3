@@ -3,6 +3,27 @@ require_once ('topp_vinkjeller.php');
 require_once('topp.php');
 //Denne brukes av samtlige. Pæss over vinListe som en liste med vin-objekter også funkære.
 ?>
+<style>
+  body {
+    background-color: #444341;
+    color: #FFF;
+  }
+  tr:nth-child(even)
+  {
+    background-color: #504f4d !important;
+    color:white;
+  }
+  tr:nth-child(odd)
+  {
+    background-color: #444341 !important;
+    color:white;
+  }
+  a {
+    color: #ccc;
+    text-shadow: 1px 1px 2px black;
+  }
+</style>
+
 <div class="container">
 
     <h1>Vinkjeller » Velg vin</h1>

@@ -35,36 +35,54 @@ require_once('topp.php');
         display: table;
         table-layout: fixed;
     }
+
+    body {
+      background-color: #444341;
+      color: #FFF;
+    }
+    table {
+      color: #000;
+    }
+    /*tr:nth-child(even)
+    {
+      background-color: #504f4d !important;
+      color:white;
+    }
+    tr:nth-child(odd)
+    {
+      background-color: #444341 !important;
+      color:white;
+    }*/
 </style>
 <div class="container">
 
     <h1>Vinkjeller » Kryss <?php echo $vinen->getNavn(); ?></h1>
     <hr>
     <div class="col-lg-12">
-    <table class="table table-bordered table-responsive">
+      <div class="col-lg-2">
+        <?php if($vinen->getBilde() != null && $vinen->getBilde() != ""){ ?>
+        <img src="vinbilder/<?php echo $vinen->getBilde(); ?>">
+        <?php } else { ?>
+        <img src="vinbilder/ayy.jpg">
+        <?php } ?>
+      </div>
+      <div class="col-lg-3">
+        Navn: <?php echo $vinen->getNavn(); ?><br/>
+        Land: <?php echo $vinen->getLand(); ?><br/>
+        Beskrivelse: <br/><?php echo $vinen->getBeskrivelse(); ?>
+      </div>
+      <div class="col-lg-3">
+        Pris: <?php echo round($vinen->getPris() * $vinen->getAvanse(), 2); ?> kr <br/>
+        Antall: <?php echo $vinen->getAntall(); ?>
+      </div>
 
-        <tr>
-            <td><?php echo $vinen->getNavn(); ?></td>
-            <td><?php echo round($vinen->getPris() * $vinen->getAvanse(), 2); ?>kr/enhet</td>
-            <td><?php echo $vinen->getBeskrivelse(); ?></td>
-
-            <?php if($vinen->getBilde() != null && $vinen->getBilde() != ""){ ?>
-            <td><img src="vinbilder/<?php echo $vinen->getBilde(); ?>"</td>
-            <?php } ?>
-
-            <td>
-                <button class="btn btn-primary" onclick="videre()">Velg</button>
-            </td>
-        </tr>
-
-    </table>
-</div>
-    <hr>
-    <br/>
-
+      <div class="col-lg-2">
+        <button class="btn btn-primary" onclick="videre()">Velg</button>
+      </div>
+    </div>
+    <br/><br/><br/><br/><br/><hr>
     <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
     <br/>
-
 
     <table id="tabellen" data-togle="table" class="table table-bordered table-responsive tableSection">
         <thead>
