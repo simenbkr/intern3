@@ -53,7 +53,7 @@ while (true) {
     <h1>Vinkjeller » Kryss » <?php echo $vinen->getNavn(); ?></h1>
     <h3>Enhetspris: <?php echo $vinen->getPris() * $vinen->getAvanse(); ?>kr</h3>
     <hr>
-    <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
+    <button class="btn btn-primary btn-block" onclick="javascript:window.location.href= '<?php echo $back; ?>';">Tilbake</button>
     <div class="col-md-6">
 
         <h3>Velg antall <i><?php echo $vinen->getNavn(); ?></i> du/dere ønsker krysset.</h3>
