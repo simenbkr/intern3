@@ -197,6 +197,12 @@ foreach (intern3\StudieListe::alle() as $studie) {
                 <td><input type="text" name="pinkode" class="form-control" style="width:75%" value="<?php echo $prefs->getPinkode();?>"</td>
             </tr>
 
+            <tr>
+                <td>Min pinkode til vinkjelleren er:</td>
+                <td><input type="text" name="vinpin" class="form-control" style="width:75%" value="<?php echo $prefs->getVinPinkode();?>"</td>
+            </tr>
+            <p>Notat: Pinkode er obligatorisk for vinkjelleren.</p>
+
         </table>
         <p><input type="submit" class="btn btn-primary" value="Lagre"></p>
     </form>

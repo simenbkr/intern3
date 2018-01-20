@@ -40,13 +40,10 @@ class ProfilCtrl extends AbstraktCtrl
 
     private function endrePrefs(){
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        if ( $post['pinkode'] == null || $post['pinkode'] == ""){
-            $st = DB::getDB()->prepare('UPDATE prefs SET resepp=:resepp, vinkjeller=:vinkjeller, pinboo=:pinboo WHERE beboerId=:id');
-        } else {
-            $st = DB::getDB()->prepare('UPDATE prefs SET resepp=:resepp, vinkjeller=:vinkjeller, pinboo=:pinboo, pinkode=:pinkode WHERE beboerId=:id');
-            $st->bindParam(':pinkode', $post['pinkode']);
-        }
+        
+        $st = DB::getDB()->prepare('UPDATE prefs SET resepp=:resepp, vinkjeller=:vinkjeller, pinboo=:pinboo, pinkode=:pinkode, vinpin=:vinpinkode WHERE beboerId=:id');
+        $st->bindParam(':vinpinkode', $post['vinpin']);
+        $st->bindParam(':pinkode', $post['pinkode']);
 
         $options = array("resepp", "vinkjeller", "pinboo");
         $en = 1;
@@ -59,7 +56,6 @@ class ProfilCtrl extends AbstraktCtrl
                 $st->bindParam($var, $null);
             }
         }
-
         Funk::setSuccess("Kryssepreferanser ble endret!");
         $st->bindParam(':id', LogginnCtrl::getAktivBruker()->getPerson()->getId());
         $st->execute();
