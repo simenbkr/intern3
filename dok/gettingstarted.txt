@@ -1,0 +1,58 @@
+Nødvendigheter:
+
+- Git
+- Apache2
+- PHP7 (>=7.0)
+- MySQL
+
+1)
+Sett opp din egen apache2-host. Dette er ganske rettfrem. F.eks på Debian er det inkludert, og du kan gå direkte til neste steg. På Windows kan det være greit å installere f.eks ampps. På Mac skal det være greit å installere apache2 manuelt, evt kan man kjøre på med ampps der óg.
+
+2)
+git clone ssh://brukarnamn@dev.singsaker.no:22/var/git/intern3.git
+Clone til et passende directory. F.eks /var/www/intern3 e.l.
+
+3)
+Sett opp MySQL.
+Opprett bruker, og importer intern3-databasen (burde være i Git-repo)
+mysql -u brukarnamn -p intern3_dev < intern3_dev.sql
+Endre brukernavn og passord i ink/DB.php til å passe med ditt lokale miljø.
+
+4)
+Installér utvidelser som er nødvendige.
+- PHP-PDO
+- PHP-IntlDateFormatter
+
+Disse aktiveres i PHP sin innstillingsfil - php.ini. Den finnes gjerne her:
+
+/etc/php/<versjon>/apache2/php.ini
+Notér at PDO er standard enablet. Intl pleier å være det, men kan være disablet. Hvis den er disablet vil det gi en Fatal Error når klassen IntlDateFormatter kalles (f.eks i vakt-visning).
+
+5) Installer Composer i root-mappa til prosjektet:
+
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
+Dette installerer dependenciene som trengs (per d.d. er det bare aferrandini/phpqrcode).
+
+6)
+Sikkert greit å kjøre skriptet ink/endre_passord_test.php slik at alle passord endres til test. Det gjør det en del enklere å debugge/teste.
+
+7)
+Sett opp intern3/config.php med riktige instillinger for din lokale installasjon. Basically, sett opp databasebruker og sleng inn. Ganske selvforklarende egentlig.
+
+8) OPTIONAL
+
+Hvis du skal styre med bildeopplasting husk å gjøre de aktuelle opplastningsmappene skrivbare av www-data-brukeren. På devmaskin (yolo):
+
+chmod -R 666 <mappe/fil>
+Eventuelt
+sudo chmod -R 666 <mappe/fil>
+Dersom du ikke er eier av mappen/filen.
+F.eks til profilbilder:
+sudo chmod -R 666 <intern3-lokasjon>/www/profilbilder
+Eventuelt kan du gjøre det ordentlig:
+
+sudo chown -R <brukernavn>:www-data <intern3-lok>
+sudo chmod +x -R *.php .
+sudo chmod 666 -R <intern3-lok>/www
+sudo chmod 770 -R <intern3-lok>/www/index.php
