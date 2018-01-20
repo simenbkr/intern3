@@ -23,15 +23,24 @@ switch ($dag_tall) {
 ?>
     <script>
         function registrer(id, verdi) {
+            
+            var elem = document.getElementById(id);
 
             if (verdi == 1) {
-                document.getElementById(id).classList.remove('bg-warning');
-                document.getElementById(id).classList.add('bg-success');
+                
+                elem.classList.remove('bg-warning');
+                elem.classList.add('bg-success');
                 document.getElementById(id + "-knapp").checked = true;
+                
+                elem.onclick = function() { registrer(id, 0); };
+                document.getElementById(id + "-knapp").onclick = function() { registrer(id, 0); };
+                
             } else {
-                document.getElementById(id).classList.remove('bg-success');
-                document.getElementById(id).classList.add('bg-warning');
+                elem.classList.remove('bg-success');
+                elem.classList.add('bg-warning');
                 document.getElementById(id + "-knapp").checked = false;
+                elem.onclick = function() {registrer(id, 1); };
+                document.getElementById(id + "-knapp").onclick = function() { registrer(id, 1); };
             }
             $.ajax({
                 type: 'POST',
@@ -128,7 +137,7 @@ switch ($dag_tall) {
                     }
                 });
             },
-            3000
+            10000
         );
 
     </script>
