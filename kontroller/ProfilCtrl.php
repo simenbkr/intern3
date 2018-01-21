@@ -128,7 +128,7 @@ class ProfilCtrl extends AbstraktCtrl
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         
-        if(Bruker::medEpost($post['epost']) != null){
+        if(($brukeren = Bruker::medEpost($post['epost'])) != null && $brukeren->getId() != $this->cd->getAktivBruker()->getId()){
           Funk::setError("En annen beboer har allerede epost $post[epost]!");
           return array("En annen beboer har allerede epost $post[epost]!");
         }
