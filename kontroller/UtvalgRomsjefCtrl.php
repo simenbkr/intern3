@@ -114,6 +114,14 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
     } else if ($aktueltArg == 'nybeboer') {
       if (isset($_POST) && isset($_POST['fornavn'])) {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        
+        if(Bruker::medEpost($post['epost']) != null){
+          Funk::setError("Det finnes allerede en beboer med
+          epost $post[epost]! Beboeren $post[fornavn] $post[etternavn]
+          ble ikke oppretta");
+          exit();
+        }
+        
         $bruker_id = Funk::getLastBrukerId() + 1;
         $st = DB::getDB()->prepare('INSERT INTO beboer 
 (bruker_id,fornavn,mellomnavn,etternavn,fodselsdato,adresse,postnummer,telefon,studie_id,skole_id,klassetrinn,alkoholdepositum,rolle_id,epost,romhistorikk)
