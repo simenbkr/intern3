@@ -119,6 +119,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
           Funk::setError("Det finnes allerede en beboer med
           epost $post[epost]! Beboeren $post[fornavn] $post[etternavn]
           ble ikke oppretta");
+          $dok->vis('utvalg_romsjef_nybeboer.php');
           exit();
         }
         
