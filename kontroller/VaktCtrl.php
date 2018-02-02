@@ -10,6 +10,10 @@ class VaktCtrl extends AbstraktCtrl
         $vaktbytteListe = VaktbytteListe::etterVakttype();
         $sisteArg = $this->cd->getSisteArg();
 
+        if(!isset($_SESSION['semester'])){
+          $_SESSION['semester'] = 'frana';
+        }
+        
         if ($sisteArg == 'setvar') {
             $_SESSION['semester'] = "var";
         } elseif ($sisteArg == 'sethost') {
