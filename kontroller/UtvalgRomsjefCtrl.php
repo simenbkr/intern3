@@ -252,7 +252,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('romListe', $romListe);
                 $dok->vis('utvalg_romsjef_endrebeboer_tabell.php');
             } else if ($aktueltArg == 'endregammelbeboer') {
-                if (isset($_POST)) {
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $beboer_id = $post['beboerid'];
                     $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
@@ -312,7 +312,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $beboerListe = BeboerListe::ikkeAktive();
                 
                 if ($sisteArg != $aktueltArg && is_numeric($sisteArg)) {
-                    if (isset($_POST)) {
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         $beboer_id = $post['beboerid'];
                         $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
