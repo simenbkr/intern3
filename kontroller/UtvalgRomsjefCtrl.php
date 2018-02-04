@@ -182,6 +182,16 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 $_SESSION['success'] = 1;
                 $_SESSION['msg'] = "Du la til en ny beboer!";
                 
+                try {
+                    $groupmanager = new \Group\GroupManage();
+    
+                    $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
+                    $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_SLARV);
+                } catch(\Exception $e){
+                    Epost::sendEpost("data@singsaker.no", "[SING-BOTS] Ble ikke lagt inn i epostlister",
+                        "Beboeren " . $beboer->getFulltNavn() . " med e-post " . $beboer->getEpost() . " ble ikke
+                        lagt til epostgruppene. Errormelding:<br/>\n" . $e->getMessage());
+                }
             }
             
             $dok->vis('utvalg_romsjef_nybeboer.php');
@@ -199,7 +209,6 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                         $romhistorikk->addPeriode($post['rom_id'], date('Y-m-d'), null);
                         $raden = $romhistorikk->tilJson();
                     }
-                    
                     $st = DB::getDB()->prepare('UPDATE beboer SET fornavn=:fornavn,mellomnavn=:mellomnavn,etternavn=:etternavn,
 fodselsdato=:fodselsdato,adresse=:adresse,postnummer=:postnummer,telefon=:telefon,studie_id=:studie_id,skole_id=:skole_id,
 klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk WHERE id=:id');
@@ -243,7 +252,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('romListe', $romListe);
                 $dok->vis('utvalg_romsjef_endrebeboer_tabell.php');
             } else if ($aktueltArg == 'endregammelbeboer') {
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $beboer_id = $post['beboerid'];
                     $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
@@ -303,7 +312,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $beboerListe = BeboerListe::ikkeAktive();
                 
                 if ($sisteArg != $aktueltArg && is_numeric($sisteArg)) {
-                    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         $beboer_id = $post['beboerid'];
                         $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');

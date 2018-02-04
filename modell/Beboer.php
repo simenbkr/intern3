@@ -2,6 +2,8 @@
 
 namespace intern3;
 
+use Group\GroupManage;
+
 class Beboer implements Person
 {
     private $id;
@@ -292,7 +294,11 @@ class Beboer implements Person
         $st->bindParam(':bid', Ansatt::getSisteAnsatt()->getBrukerId());
         $st->bindParam(':id', $this->getBrukerId());
         $st->execute();
-
+    
+        $groupmanager = new \Group\GroupManage();
+        
+        $groupmanager->removeFromGroup($this->epost, SING_ALLE);
+        $groupmanager->removeFromGroup($this->epost, SING_SLARV);
     }
 
     public function flyttInn(){
@@ -310,6 +316,11 @@ class Beboer implements Person
         $st->bindParam(':historikk', $romhistorikken);
         $st->bindParam(':id', $this->id);
         $st->execute();
+    
+        $groupmanager = new \Group\GroupManage();
+        
+        $groupmanager->addToGroup($this->epost, 'MEMBER', SING_ALLE);
+        $groupmanager->addToGroup($this->epost, 'MEMBER', SING_SLARV);
     }
 
     public function getVakterOgVakterSittet(){
