@@ -184,13 +184,13 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
                 
                 try {
                     $groupmanager = new \Group\GroupManage();
-    
+                    
                     $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
                     $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_SLARV);
-                } catch(\Exception $e){
+                } catch (\Exception $e) {
                     Epost::sendEpost("data@singsaker.no", "[SING-BOTS] Ble ikke lagt inn i epostlister",
                         "Beboeren " . $beboer->getFulltNavn() . " med e-post " . $beboer->getEpost() . " ble ikke
-                        lagt til epostgruppene. Errormelding:<br/>\n" . $e->getMessage());
+                       lagt til epostgruppene. Errormelding:<br/>\n" . $e->getMessage());
                 }
             }
             

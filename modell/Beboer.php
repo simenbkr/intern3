@@ -295,10 +295,15 @@ class Beboer implements Person
         $st->bindParam(':id', $this->getBrukerId());
         $st->execute();
     
-        $groupmanager = new \Group\GroupManage();
-        
-        $groupmanager->removeFromGroup($this->epost, SING_ALLE);
-        $groupmanager->removeFromGroup($this->epost, SING_SLARV);
+        try {
+            $groupmanager = new \Group\GroupManage();
+            
+            $groupmanager->addToGroup($this->epost, 'MEMBER', SING_VETERAN);
+    
+            $groupmanager->removeFromGroup($this->epost, SING_ALLE);
+            $groupmanager->removeFromGroup($this->epost, SING_SLARV);
+            
+        } catch(\Exception $e){}
     }
 
     public function flyttInn(){
@@ -317,10 +322,14 @@ class Beboer implements Person
         $st->bindParam(':id', $this->id);
         $st->execute();
     
-        $groupmanager = new \Group\GroupManage();
-        
-        $groupmanager->addToGroup($this->epost, 'MEMBER', SING_ALLE);
-        $groupmanager->addToGroup($this->epost, 'MEMBER', SING_SLARV);
+        try {
+            $groupmanager = new \Group\GroupManage();
+
+            $groupmanager->addToGroup($this->epost, 'MEMBER', SING_ALLE);
+            $groupmanager->addToGroup($this->epost, 'MEMBER', SING_SLARV);
+            
+            $groupmanager->removeFromGroup($this->epost, SING_VETERAN);
+        } catch(\Exception $e){}
     }
 
     public function getVakterOgVakterSittet(){
