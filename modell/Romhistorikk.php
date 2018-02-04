@@ -30,7 +30,12 @@ class Romhistorikk {
   }
 
 	public function addPeriode($romId, $innflyttet, $utflyttet) {
-		$this->romHistorikk[] = new Romhistorikk\Periode($romId, $innflyttet, $utflyttet);
+		foreach($this->getPerioder() as $periode){
+			if($periode->utflyttet == null){
+				$periode->utflyttet = date('Y-m-d');
+			}
+		}
+        $this->romHistorikk[] = new Romhistorikk\Periode($romId, $innflyttet, $utflyttet);
 	}
 
 	public function tilJson() {
