@@ -19,6 +19,7 @@
     ],
     "require": {
         "php": "^7.0",
-        "aferrandini/phpqrcode": "1.0.1"
+        "aferrandini/phpqrcode": "1.0.1",
+        "simenbkr/groupmanage": "^1.00"
     }
 }

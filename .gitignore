@@ -2,5 +2,6 @@
 DB.php
 .idea/
 config.php
+config
 composer.phar
 /vendor/
