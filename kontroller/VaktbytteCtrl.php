@@ -128,7 +128,6 @@ class VaktbytteCtrl extends AbstraktCtrl
                         exit();
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
-                    $dok->set('slett', 1);
                     $dok->vis('vakt_bytte_modal_slett.php');
                     exit();
 
@@ -138,9 +137,11 @@ class VaktbytteCtrl extends AbstraktCtrl
                         header('Location: ?a=vakt/bytte');
                         exit();
                     }
-                    $dok->set('vaktbyttet', $vaktbyttet);
-                    $dok->set('bytt', 1);
 
+                    $egne_vakter = VaktListe::medBrukerIdEtter($bruker->getId(), date('Y-m-d'));
+
+                    $dok->set('vaktbyttet', $vaktbyttet);
+                    $dok->se('egne_vakter', $egne_vakter);
                     $dok->vis('vakt_bytte_modal_bytt.php');
                     exit();
 
@@ -151,7 +152,6 @@ class VaktbytteCtrl extends AbstraktCtrl
                         exit();
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
-                    $dok->set('gibort', 1);
 
                     $dok->vis('vakt_bytte_modal_gibort.php');
                     exit();

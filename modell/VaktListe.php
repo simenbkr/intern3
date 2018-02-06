@@ -27,6 +27,13 @@ class VaktListe {
 		return $res;
 	}
 
+	public static function medBrukerIdEtter($brukerid, $dato){
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE (bruker_id=:brukerId AND dato>:dato) ORDER BY dato, vakttype;');
+        $st->bindParam(':brukerId', $brukerId);
+        $st->bindParam(':dato', $dato);
+        return self::medPdoSt($st);
+	}
+
 }
 
 ?>
