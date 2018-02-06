@@ -81,6 +81,14 @@ class Vaktbytte
         $st->execute();
     }
 
+    public function slett(){
+
+        $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+        unset($this);
+    }
+
     public static function taVakt($vaktId, $bruker_id){
         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bruker_id, bekreftet=1,autogenerert=0,bytte=0 WHERE id=:id');
         $st->bindParam(':bruker_id', $bruker_id);
@@ -188,6 +196,37 @@ class Vaktbytte
     
         return $vaktbytter;
         
+    }
+
+    public static function getAlle(){
+
+
+        $sql = "SELECT id FROM vaktbytte";
+        $st = DB::getDB()->prepare($sql);
+        $st->execute();
+
+        $vaktbytter = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $vaktbytter[] = Vaktbytte::medId($st->fetch()['id']);
+        }
+
+        return $vaktbytter;
+
+    }
+
+    public function leggTilForslag($vaktId){
+        if($this->forslag == null){
+            $forslag = $vaktId;
+        } else {
+            $forslag = array_push($this->forslag, $vaktId);
+        }
+
+        $st = DB::getDB()->prepare('UPDATE vaktbytte SET forslag=:forslag WHERE id=:id');
+        $st->bindParam(':forslag',$forslag);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+
     }
 
 }

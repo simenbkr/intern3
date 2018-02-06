@@ -425,6 +425,65 @@ class Vakt
         return $vakter;
     }
 
+    public function fjernFraAlleBytter(){
+
+        foreach(Vaktbytte::getAlle() as $vaktbytte){
+            /* @var \intern3\Vaktbytte $vaktbytte */
+            if(in_array($this->id,$vaktbytte->getForslagIder())) {
+                $vaktbytte->slettForslag($this->id);
+            }
+        }
+    }
+
+    public function setBruker($brukerId){
+
+        if(($brukeren = Bruker::medId($brukerId)) != null) {
+
+            $this->brukerId = $brukerId;
+            $this->bruker = $brukeren;
+            $this->oppdater();
+        }
+    }
+
+    /*  $instance = new self();
+        $instance->id = $rad['id'];
+        $instance->brukerId = $rad['bruker_id'];
+        $instance->vakttype = $rad['vakttype'];
+        $instance->dato = $rad['dato'];
+        $instance->bytte = $rad['bytte'] == 1 ? true : false;
+        $instance->bekreftet = $rad['bekreftet'];
+        $instance->autogenerert = $rad['autogenerert'];
+        $instance->dobbelvakt = $rad['dobbelvakt'];
+        $instance->straffevakt = $rad['straffevakt'];
+        $instance->vaktbytteDenneErMedI = explode(',', $rad['vaktbytte_id']);
+        return $instance;
+     *
+     *
+     */
+
+
+    private function oppdater(){
+        $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bid, vakttype=:typen, dato=:dato, 
+        bytte=:bytte, bekreftet=:bekreftet, autogenerert=:autogenerert, dobbelvakt=:dobbelvakt, straffevakt=:straffevakt, vaktbytte_id=:vaktbytte WHERE id=:id');
+
+        $bytte = $this->bytte ? 1 : 0;
+
+
+        $st->bindParam(':id', $this->id);
+        $st->bindParam(':bid', $this->brukerId);
+        $st->bindParam(':typen', $this->vakttype);
+        $st->bindParam(':dato', $this->dato);
+        $st->bindParam(':bytte', $bytte);
+        $st->bindParam(':bekreftet', $this->bekreftet);
+        $st->bindParam(':autogenerert', $this->autogenerert);
+        $st->bindParam(':dobbelvakt', $this->dobbelvakt);
+        $st->bindParam(':straffevakt', $this->straffevakt);
+        $st->bindParam(':vaktbytte', implode(',' , $this->vaktbytteDenneErMedI));
+
+        $st->execute();
+
+    }
+
 }
 
 ?>
