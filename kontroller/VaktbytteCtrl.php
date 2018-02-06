@@ -6,26 +6,27 @@ namespace intern3;
 class VaktbytteCtrl extends AbstraktCtrl
 {
 
-    private function redirect(){
+    private function redirect()
+    {
         header('Location: ?a=vakt/bytte');
         exit();
     }
-    
+
     public function bestemHandling()
     {
-        
+
         $aktueltArg = $this->cd->getAktueltArg();
         $bruker = LogginnCtrl::getAktivBruker();
-        
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $sisteArg = $this->cd->getSisteArg();
             switch ($aktueltArg) {
-                
+
                 //Slette eget vaktbytte
                 case 'slett':
 
-                    if(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId()){
+                    if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId()) {
                         $vaktbyttet->slett();
                         Funk::setSuccess("Vaktbyttet ditt ble slettet!");
                     } else {
@@ -37,77 +38,83 @@ class VaktbytteCtrl extends AbstraktCtrl
                 //Legge til eget vaktbytte
                 case 'leggtil':
                     //byttes=>[byttes|gisbort], passord=>[yes|no], passordtekst => passordtekst, merknad => merknad
-                    
+
                     $sisteArg = $this->cd->getSisteArg();
-                    if(!(($vakt = Vakt::medId($sisteArg)) != null || $vakt->getBrukerId() === $bruker->getId())){
+                    if (!(($vakt = Vakt::medId($sisteArg)) != null || $vakt->getBrukerId() === $bruker->getId())) {
                         Funk::setError("Denne vakten kan ikke byttes!");
                         break;
                     }
-                    
-                    if(Vaktbytte::medVaktId($sisteArg) != null){
+
+                    if (Vaktbytte::medVaktId($sisteArg) != null) {
                         Funk::setError("Denne vakten er allerede på byttemarkedet!");
                         break;
                     }
-                    
+
                     $gisbort = $post['byttes'] == 'byttes' ? 0 : 1;
                     $harpw = $post['passord'] == 'yes' ? 1 : 0;
                     Vaktbytte::nyttVaktBytte($sisteArg, $gisbort, $post['merknad'], $harpw, $post['passordtekst']);
-                    
+
                     Funk::setSuccess("Vaktbyttet ble oppretta for din vakt " . $vakt->toString());
 
                     $this->redirect();
-                
+
                 //Ta vakt som er gitt bort, med og uten passord
                 case 'ta':
-                    if(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null &&
+                    if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null &&
                         $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()
-                        && $vaktbyttet->getGisBort()){
+                        && $vaktbyttet->getGisBort()) {
 
-                        $vakta = $vaktbyttet->getVakt();
-                        $vakta->fjernFraAlleBytter();
+                        if (($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord'])) ||
+                            !$vaktbyttet->harPassord()) {
 
-                        $vakta->setBruker($bruker->getId());
-                        $vaktbyttet->slett();
+                            $vakta = $vaktbyttet->getVakt();
+                            $vakta->fjernFraAlleBytter();
 
-                        Funk::setSuccess("Du tok vakta " . $vakta->toString());
-                        $this->redirect();
-                    } else {
-                        Funk::setError("Noe gikk galt. Du fikk ikke tatt vakta!");
-                        $this->redirect();
+                            $vakta->setBruker($bruker->getId());
+                            $vaktbyttet->slett();
+
+                            Funk::setSuccess("Du tok vakta " . $vakta->toString());
+                            $this->redirect();
+                        }
                     }
+
+                    Funk::setError("Noe gikk galt. Du fikk ikke tatt vakta!");
+                    $this->redirect();
 
 
                     break;
 
                 //Legge til forslag på vaktbytte
                 case 'forslag':
-                    if(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || ($forslag_vakt = Vakt::medId($post['forslag'])) == null){
+
+                    foreach($post as $key=>$val){setcookie($key,$val);}
+
+                    if (($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || ($forslag_vakt = Vakt::medId($post['forslag'])) == null) {
                         Funk::setError("Det ser ut til at dette vaktbyttet eller den foreslåtte vakta ikke eksisterer!");
                         $this->redirect();
                     }
 
-                    if($vaktbyttet->harPassord() && !$vaktbyttet->stemmerPassord($post['passord'])){
-                        Funk::setError("Feil passord!");
-                        $this->redirect();
-                    } else {
+                    if(($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord'])) || !$vaktbyttet->harPassord()){
                         $vaktbyttet->leggTilForslag($forslag_vakt->getId());
                         Funk::setSuccess("Vakta " . $forslag_vakt->toString() . " ble lagt til som forslag!");
                         $this->redirect();
+                    } else {
+                        Funk::setError("Noe gikk galt! Du fikk ikke foreslått vakt. Feil passord?");
                     }
 
                     break;
                 //Godta bytteforslag
                 case 'bytte':
-                    
+
                     break;
-                
+
                 //Fjerne bytteforslag
                 case 'slettbytte':
-                    
+
                     break;
             }
 
-        } elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
+        } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
             $dok = new Visning($this->cd);
             $sisteArg = $this->cd->getSisteArg();
@@ -122,7 +129,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     exit();
 
                 case 'modal_slett':
-                    if(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()){
+                    if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()) {
                         Funk::setError("Det skjedde noe galt!");
                         header('Location: ?a=vakt/bytte');
                         exit();
@@ -132,21 +139,22 @@ class VaktbytteCtrl extends AbstraktCtrl
                     exit();
 
                 case 'modal_bytt':
-                    if(!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())){
+                    if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
                         Funk::setError("Det skjedde noe galt!");
                         header('Location: ?a=vakt/bytte');
                         exit();
                     }
 
                     $egne_vakter = VaktListe::medBrukerIdEtter($bruker->getId(), date('Y-m-d'));
+                    //$egne_vakter = VaktListe::medBrukerId($bruker->getId());
 
                     $dok->set('vaktbyttet', $vaktbyttet);
-                    $dok->se('egne_vakter', $egne_vakter);
+                    $dok->set('egne_vakter', $egne_vakter);
                     $dok->vis('vakt_bytte_modal_bytt.php');
                     exit();
 
                 case 'modal_gibort':
-                    if(!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())){
+                    if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
                         Funk::setError("Det skjedde noe galt!");
                         header('Location: ?a=vakt/bytte');
                         exit();
@@ -156,22 +164,22 @@ class VaktbytteCtrl extends AbstraktCtrl
                     $dok->vis('vakt_bytte_modal_gibort.php');
                     exit();
             }
-            
+
         }
-        
-        
+
+
         $egne_vakter = VaktListe::medBrukerId($bruker->getId());
         $vaktbytter = Vaktbytte::getAlleMulige();
-        
+
         $dok = new Visning($this->cd);
-        
+
         $dok->set('beboer', $bruker->getPerson());
         $dok->set('egne_vakter', $egne_vakter);
         $dok->set('vaktbytter', $vaktbytter);
-        
+
         $dok->vis('vakt_bytte_liste_ny.php');
         return;
-        
-        
+
+
     }
 }
