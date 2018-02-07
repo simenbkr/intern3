@@ -83,10 +83,14 @@ class Vaktbytte
 
     public function slett(){
 
+        $vaktid = $this->getVaktId();
         $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');
         $st->bindParam(':id', $this->id);
         $st->execute();
-        unset($this);
+
+        $st = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=NULL WHERE id=:id');
+        $st->bindParam(':id', $vaktid);
+        $st->execute();
     }
 
     public static function taVakt($vaktId, $bruker_id){
@@ -217,10 +221,12 @@ class Vaktbytte
 
     public function leggTilForslag($vaktId){
         if($this->forslag == null){
-            $forslag = $vaktId;
+            $forslag = array($vaktId);
         } else {
-            $forslag = array_push($this->forslag, $vaktId);
+            $forslag = array_merge($this->forslag, array($vaktId));
         }
+
+        $forslag = implode(',', $forslag);
 
         $st = DB::getDB()->prepare('UPDATE vaktbytte SET forslag=:forslag WHERE id=:id');
         $st->bindParam(':forslag',$forslag);

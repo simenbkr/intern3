@@ -7,7 +7,7 @@
 
 
 <h2>Forslag til <?php echo $vaktbyttet->getVakt()->toString(); ?></h2>
-<form action="?a=vakt/bytte/forslag/<?php echo $vaktbyttet->getId(); ?>" method="POST">
+<form action="?a=vakt/bytte/forslag/<?php echo $vaktbyttet->getId(); ?>" method="POST" id="formen">
     <p>Hvilken vakt vil du foreslå for dette vaktbyttet?</p>
 
     <table class="table table-bordered">
@@ -16,7 +16,22 @@
             /* @var \intern3\Vakt $vakt */
             ?>
         <tr>
-            <td><button type="submit" class="btn btn-primary" name="vakt" value="<?php echo $vakt->getId(); ?>"><?php echo $vakt->shortToString(); ?></button></td>
+            <td>
+                <button type="submit" class="btn btn-primary" name="vakt" value="<?php echo $vakt->getId(); ?>"><?php echo $vakt->shortToString(); ?></button>
+
+                <?php
+                if(in_array($vakt->getId(), $vaktbyttet->getForslagIder())){ ?>
+
+                    <button type="submit" class="btn btn-danger" name="vakt"
+                            onclick="submitForm('?a=vakt/bytte/slettbytte/<?php echo $vaktbyttet->getId(); ?>')"
+                            value="<?php echo $vakt->getId(); ?>">X</button>
+
+                <?php
+                }
+
+                ?>
+
+            </td>
         </tr>
 
         <?php } ?>
@@ -29,3 +44,11 @@
     <?php } ?>
 
 </form>
+
+<script>
+    function submitForm(action) {
+        console.log("sup");
+        document.getElementById('formen').action = action;
+        document.getElementById('formen').submit();
+    }
+</script>

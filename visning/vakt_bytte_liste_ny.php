@@ -31,19 +31,35 @@ require_once('topp.php');
             <tr>
                 <?php
 
-                if ($vakt->erFerdig() || $vakt->erStraffevakt()) {
+                if ($vakt->erFerdig() || $vakt->erStraffevakt() || $vakt->getDato() == date('Y-m-d')) {
                     //Vakter brukere ikke kan gjøre noe med.
                     ?>
 
                     <td class="celle_graa"> <?php echo $vakt->toString(); ?></td>
 
-                    <?php
+                    <?php }
+                    elseif($vakt->getVaktbytte() != null && $vakt->getVaktbytte()->getGisbort()){ ?>
+
+                        <td class="celle_oransje"> <?php echo $vakt->toString(); ?></td>
+                        <?php
                 } else {
-                    ?>
+
+                    if(!$vakt->getVaktbytte()) { ?>
+
                     <td><a href="?a=vakt/bytte/modal_egen/<?php echo $vakt->getId(); ?>" data-toggle="modal"
                            data-target="#myModal" data-remote="false"
                            class="btn btn-primary"><?php echo $vakt->toString(); ?></a></td>
-                    <?php
+                    <?php }
+                        else { ?>
+                            <td>
+                                <?php echo $vakt->toString(); ?>
+
+                                <a href="?a=vakt/bytte/modal_forslag/<?php echo $vakt->getVaktbytte()->getId(); ?>" data-toggle="modal"
+                               data-target="#myModal" data-remote="false" class="btn-sm btn-primary pull-right">
+                                    Se forslag</a></td>
+
+                            <?php
+                        }
                 }
                 ?>
             </tr>
@@ -89,6 +105,9 @@ require_once('topp.php');
                             <?php }
 
                             if ($vaktbytte->getVakt()->getBrukerId() === $beboer->getBrukerId()) { ?>
+                                <a href="?a=vakt/bytte/modal_forslag/<?php echo $vaktbytte->getId(); ?>" data-toggle="modal"
+                                   data-target="#myModal" data-remote="false" class="btn-sm btn-primary pull-right">
+                                    Se forslag</a>
                                 <a href="?a=vakt/bytte/modal_slett/<?php echo $vaktbytte->getId(); ?>" data-toggle="modal"
                                    data-target="#myModal" data-remote="false" class="btn-sm btn-danger pull-right">
                                     Trekk</a>
