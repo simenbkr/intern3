@@ -91,16 +91,12 @@ class VaktbytteCtrl extends AbstraktCtrl
                 //Legge til forslag på vaktbytte
                 case 'forslag':
 
-                    foreach($post as $key=>$val){setcookie($key,$val);}
-
                     if (($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || ($forslag_vakt = Vakt::medId($post['vakt'])) == null) {
                         Funk::setError("Det ser ut til at dette vaktbyttet eller den foreslåtte vakta ikke eksisterer!");
                         $this->redirect();
                     }
 
                     if(($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord'])) || !$vaktbyttet->harPassord()){
-                        setcookie("satan","oste");
-                        setcookie('faenisatan', $forslag_vakt->getId());
                         $vaktbyttet->leggTilForslag($forslag_vakt->getId());
                         Funk::setSuccess("Vakta " . $forslag_vakt->toString() . " ble lagt til som forslag!");
                         $this->redirect();
