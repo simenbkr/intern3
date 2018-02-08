@@ -27,10 +27,9 @@
         <?php }
 
         if (count($vaktbyttet->getForslagVakter()) < 1){ ?>
-            <p> Det ser ut til at det ikke er noen forslag enda!<p/>
+            <p> Det ser ut til at det ikke er noen forslag enda!</p>
 
         <?php }
 
         ?>
-
 </form>

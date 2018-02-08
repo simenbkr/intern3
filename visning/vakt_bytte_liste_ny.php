@@ -21,7 +21,7 @@ require_once('topp.php');
 
     <div class="col-md-3 col-sm-6 col-sx-12">
         <table class="table table-bordered">
-
+            
             <tr>
                 <th>Dine vakter</th>
             </tr>
@@ -35,12 +35,16 @@ require_once('topp.php');
                     if ($vakt->erFerdig() || $vakt->erStraffevakt() || $vakt->getDato() == date('Y-m-d')) {
                         //Vakter brukere ikke kan gjøre noe med.
                         ?>
-
                         <td class="celle_graa"> <?php echo $vakt->toString(); ?></td>
-
                     <?php } elseif ($vakt->getVaktbytte() != null && $vakt->getVaktbytte()->getGisbort()) { ?>
-
-                        <td class="celle_oransje"> <?php echo $vakt->toString(); ?></td>
+                        <td>
+                            <a href="?a=vakt/bytte/modal_slett/<?php echo $vakt->getVaktbytte()->getId(); ?>"
+                               data-toggle="modal"
+                               data-target="#myModal" data-remote="false" class="btn btn-warning">
+                                <?php echo $vakt->toString(); ?>
+                                <span title="Byttes" class="glyphicon glyphicon-warning-sign"></span>
+                            </a>
+                        </td>
                         <?php
                     } else {
                         if (!$vakt->getVaktbytte()) { ?>
@@ -55,7 +59,10 @@ require_once('topp.php');
                                     <?php echo $vakt->toString(); ?>
                                     <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
                                 </a>
-
+                                <a href="?a=vakt/bytte/modal_slett/<?php echo $vakt->getVaktbytte()->getId(); ?>"
+                                   data-toggle="modal"
+                                   data-target="#myModal" data-remote="false" class="btn btn-danger">
+                                    Trekk</a>
                             </td>
                             <?php
                         }
