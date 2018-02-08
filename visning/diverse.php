@@ -4,6 +4,17 @@ require_once('topp.php');
 
 ?>
 <script>
+    function mer(elem){
+        document.getElementById(elem + 'mer').style.display = 'block';
+        document.getElementById(elem + 'mindre').style.display = 'none';
+        console.log(document.getElementById(elem + 'mer').style.display = 'block');
+    }
+
+    function mindre(elem){
+        document.getElementById(elem + 'mer').style.display = 'none';
+        document.getElementById(elem + 'mindre').style.display = 'block';
+    }
+
 
     function meldPa(id) {
         $.ajax({
@@ -181,28 +192,55 @@ require_once('topp.php');
         </tbody>
     </table>
 </div>
-
+    
 <?php }
 
-if(count($verv_meldinger) > 0) { ?>
+if(count($verv_meldinger) > 0) {
+   
+    ?>
 <div class="col-lg-6">
     <h1>Meldinger fra åpmend</h1>
     <hr>
     <table class="table table-responsive table-bordered">
         <?php foreach ($verv_meldinger as $verv_melding) {
-            if($verv_melding == null || $verv_melding->getVerv() == null || $verv_melding->getBeboer() == null || strlen($verv_melding->getTekst()) < 3){
+            /* @var \intern3\VervMelding $verv_melding */
+    
+            if($verv_melding == null || $verv_melding->getVerv() == null ||
+                $verv_melding->getBeboer() == null || strlen($verv_melding->getTekst()) < 3){
                 continue;
             }
             ?>
             <tr>
-                <td><?php echo $verv_melding->getVerv()->getNavn(); ?>, <?php echo $verv_melding->getBeboer()->getFulltNavn(); ?> (<?php echo $verv_melding->getDato();?>):
+                <td>
+                    <?php echo $verv_melding->getVerv()->getNavn(); ?>,
+                    <?php echo $verv_melding->getBeboer()->getFulltNavn(); ?>
+                    (<?php echo $verv_melding->getDato();?>):
                 </td>
-                <td><p><?php echo substr($verv_melding->getTekst(),0,50); ?><?php if(strlen($verv_melding->getTekst()) > 50) { ?><span class="read-more-content"><?php echo substr($verv_melding->getTekst(),50,strlen($verv_melding->getTekst())); ?></span><?php } ?></p>
+                <td><p><span id="<?php echo $verv_melding->getId(); ?>mindre">
+                            
+                            <?php echo substr($verv_melding->getTekst(),0,50); ?>
+                        
+                            <a href="#" onclick="mer('<?php echo $verv_melding->getId(); ?>')">Mer</a>
+                        </span>
+                        
+                        
+                        <?php if(strlen($verv_melding->getTekst()) > 50) { ?>
+                            
+                            
+                            <span id="<?php echo $verv_melding->getId(); ?>mer" style="display:none">
+                            
+                            <?php echo $verv_melding->getTekst(); ?>
+                                
+                                <a href="#" onclick="mindre('<?php echo $verv_melding->getId(); ?>')">Mindre</a>
+                            </span>
+                        <?php } ?>
+                    </p>
                 </td>
             </tr>
         <?php } ?>
     </table>
 </div>
+
 <?php } ?>
 <?php
 

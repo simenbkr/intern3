@@ -2,24 +2,16 @@
 require_once('topp.php');
 ?>
     <script>
-        $(document).ready(function () {
-            $('.read-more-content').addClass('hide')
-            // Set up a link to expand the hidden content:
-                .before(' <a class="read-more-show" href="#">Mer</a>')
-                // Set up a link to hide the expanded content.
-                .append(' <a class="read-more-hide" href="#">Mindre</a>');
-            // Set up the toggle effect:
-            $('.read-more-show').on('click', function (e) {
-                $(this).next('.read-more-content').removeClass('hide');
-                $(this).addClass('hide');
-                e.preventDefault();
-            });
+        function mer(elem) {
+            document.getElementById(elem + 'mer').style.display = 'block';
+            document.getElementById(elem + 'mindre').style.display = 'none';
+            console.log(document.getElementById(elem + 'mer').style.display = 'block');
+        }
 
-            $('.read-more-hide').on('click', function (e) {
-                $(this).parent('.read-more-content').addClass('hide').parent().children('.read-more-show').removeClass('hide');
-                e.preventDefault();
-            });
-        })
+        function mindre(elem) {
+            document.getElementById(elem + 'mer').style.display = 'none';
+            document.getElementById(elem + 'mindre').style.display = 'block';
+        }
     </script>
     <div class="container">
         <h1>Verv » Om åpmandsverv</h1>
@@ -48,7 +40,8 @@ require_once('topp.php');
                     <td>Beskrivelse:</td>
                     <?php if ($kan_redigere_beskrivelse) { ?>
                         <form action="" method="POST">
-                            <td><textarea class="form-control" rows="10" cols="50" name="beskrivelse"><?php echo $vervet->getBeskrivelse(); ?></textarea> <input
+                            <td><textarea class="form-control" rows="10" cols="50"
+                                          name="beskrivelse"><?php echo $vervet->getBeskrivelse(); ?></textarea> <input
                                         type="submit" value="Endre" class="btn btn-primary"></td>
                         </form>
                         <?php
@@ -60,30 +53,55 @@ require_once('topp.php');
                     <td>Meldinger</td>
 
                     <form action="" method="POST">
-                        <td><textarea class="form-control" name="melding" placeholder="Ny melding"></textarea><br/><input type="submit"
-                                                                                                     value="Legg til"
-                                                                                                     class="btn btn-primary">
+                        <td><textarea class="form-control" name="melding"
+                                      placeholder="Ny melding"></textarea><br/><input type="submit"
+                                                                                      value="Legg til"
+                                                                                      class="btn btn-primary">
                         </td>
                     </form>
                     <?php
                     } ?>
                 </tr>
                 <?php if (count($verv_meldinger) > 0) {
-                    foreach ($verv_meldinger as $melding) { ?>
-                        <tr>
-                            <td><?php echo ($melding->getBeboer()) != null ? $melding->getBeboer()->getFulltNavn() : ''; ?>
-                                den <?php echo date('Y-m-d', strtotime($melding->getDato())); ?>:
-                            </td>
-                            <td><p><?php echo substr($melding->getTekst(), 0, 50); ?>
-                                    <?php if (strlen($melding->getTekst()) > 50) { ?><span
-                                            class="read-more-content"><?php echo substr($melding->getTekst(), 50, strlen($melding->getTekst())); ?></span><?php } ?>
-                                </p>
-                            </td>
-                        </tr>
-                        <?php
-                    }
+                foreach ($verv_meldinger
+                
+                as $verv_melding) {
+                /* @var \intern3\VervMelding $verv_melding */
+                
+                if ($verv_melding == null || $verv_melding->getVerv() == null ||
+                    $verv_melding->getBeboer() == null || strlen($verv_melding->getTekst()) < 3) {
+                    continue;
                 }
                 ?>
+                <tr>
+                    <td>
+                        <?php echo $verv_melding->getVerv()->getNavn(); ?>,
+                        <?php echo $verv_melding->getBeboer()->getFulltNavn(); ?>
+                        (<?php echo $verv_melding->getDato(); ?>):
+                    </td>
+                    <td><p><span id="<?php echo $verv_melding->getId(); ?>mindre">
+                            
+                            <?php echo substr($verv_melding->getTekst(), 0, 50); ?>
+
+                                <a href="#" onclick="mer('<?php echo $verv_melding->getId(); ?>')">Mer</a>
+                        </span>
+                            
+                            
+                            <?php if (strlen($verv_melding->getTekst()) > 50) { ?>
+
+
+                                <span id="<?php echo $verv_melding->getId(); ?>mer" style="display:none">
+                            
+                            <?php echo $verv_melding->getTekst(); ?>
+
+                                    <a href="#" onclick="mindre('<?php echo $verv_melding->getId(); ?>')">Mindre</a>
+                            </span>
+                                <?php
+                            }
+                            }
+                            }
+                            
+                            ?>
             </table>
         </div>
     </div>
