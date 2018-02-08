@@ -26,7 +26,9 @@ class VaktbytteCtrl extends AbstraktCtrl
                 //Slette eget vaktbytte
                 case 'slett':
 
-                    if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId()) {
+                    if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null &&
+                        $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId()) {
+
                         $vaktbyttet->slett();
                         Funk::setSuccess("Vaktbyttet ditt ble slettet!");
                     } else {
@@ -34,12 +36,12 @@ class VaktbytteCtrl extends AbstraktCtrl
                     }
 
                     $this->redirect();
+                    break;
 
                 //Legge til eget vaktbytte
                 case 'leggtil':
                     //byttes=>[byttes|gisbort], passord=>[yes|no], passordtekst => passordtekst, merknad => merknad
 
-                    $sisteArg = $this->cd->getSisteArg();
                     if (!(($vakt = Vakt::medId($sisteArg)) != null || $vakt->getBrukerId() === $bruker->getId())) {
                         Funk::setError("Denne vakten kan ikke byttes!");
                         break;
@@ -61,6 +63,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     Funk::setSuccess("Vaktbyttet ble oppretta for  " . $vakt->toString());
 
                     $this->redirect();
+                    break;
 
                 //Ta vakt som er gitt bort, med og uten passord
                 case 'ta':
@@ -68,8 +71,8 @@ class VaktbytteCtrl extends AbstraktCtrl
                         $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()
                         && $vaktbyttet->getGisBort()) {
 
-                        if (($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord'])) ||
-                            !$vaktbyttet->harPassord()) {
+                        if (!$vaktbyttet->harPassord() ||
+                            ($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord']))) {
 
                             $vakta = $vaktbyttet->getVakt();
                             $vakta->fjernFraAlleBytter();
@@ -84,8 +87,6 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                     Funk::setError("Noe gikk galt. Du fikk ikke tatt vakta!");
                     $this->redirect();
-
-
                     break;
 
                 //Legge til forslag på vaktbytte
@@ -96,7 +97,9 @@ class VaktbytteCtrl extends AbstraktCtrl
                         $this->redirect();
                     }
 
-                    if(($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord'])) || !$vaktbyttet->harPassord()){
+                    if(!$vaktbyttet->harPassord() ||
+                        ($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord']))){
+
                         $vaktbyttet->leggTilForslag($forslag_vakt->getId());
                         Funk::setSuccess("Vakta " . $forslag_vakt->toString() . " ble lagt til som forslag!");
                         $this->redirect();
@@ -110,19 +113,19 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                     if(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null &&
                         $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId() &&
-                        ($vakt = Vakt::medId($post['vakt'])) != null &&
-                         $vakt->getBrukerId() != $vaktbyttet->getVakt()->getBrukerId()){
+                        ($forslag_vakt = Vakt::medId($post['vakt'])) != null &&
+                         $forslag_vakt->getBrukerId() != $vaktbyttet->getVakt()->getBrukerId()){
 
+                        $bytte_vakt = $vaktbyttet->getVakt();
 
-                        $bruker_id = $vakt->getBrukerId();
-                        $bruker2_id = $vaktbyttet->getVakt()->getBrukerId();
+                        $forslag_bruker_id = $forslag_vakt->getBrukerId();
+                        $bytte_bruker_id = $vaktbyttet->getVakt()->getBrukerId();
 
-                        $vakt->setBruker($bruker2_id);
+                        $forslag_vakt->setBruker($bytte_bruker_id);
+                        $bytte_vakt->setBruker($forslag_bruker_id);
 
-                        $vaktbyttet->getVakt()->setBruker($bruker_id);
-
-                        $vakt->fjernFraAlleBytter();
-                        $vaktbyttet->getVakt()->fjernFraAlleBytter();
+                        $forslag_vakt->fjernFraAlleBytter();
+                        $bytte_vakt->fjernFraAlleBytter();
 
                         $vaktbyttet->slett();
 
@@ -170,8 +173,7 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                 case 'modal_slett':
                     if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()) {
-                        Funk::setError("Det skjedde noe galt!");
-                        $this->redirect();
+                        exit("Du kan ikke slette dette vaktbyttet!");
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
                     $dok->vis('vakt_bytte_modal_slett.php');
@@ -179,8 +181,7 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                 case 'modal_bytt':
                     if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
-                        Funk::setError("Det skjedde noe galt!");
-                        $this->redirect();
+                        exit("Du kan ikke bytte denne vakta!");
                     }
 
                     $egne_vakter = VaktListe::medBrukerIdEtter($bruker->getId(), date('Y-m-d'));
@@ -193,8 +194,7 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                 case 'modal_gibort':
                     if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
-                        Funk::setError("Det skjedde noe galt!");
-                        $this->redirect();
+                        exit("Du kan ikke ta denne vakta!");
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
 
@@ -202,7 +202,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     exit();
                 case 'modal_forslag':
                     if(!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId())){
-                        exit();
+                        exit("Du kan ikke se forslag her!");
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
 
@@ -224,7 +224,6 @@ class VaktbytteCtrl extends AbstraktCtrl
 
         $dok->vis('vakt_bytte_liste_ny.php');
         return;
-
 
     }
 }
