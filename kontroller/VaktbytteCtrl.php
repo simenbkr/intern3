@@ -238,7 +238,11 @@ class VaktbytteCtrl extends AbstraktCtrl
         $dok->set('egne_vakter', $egne_vakter);
         $dok->set('vaktbytter', $vaktbytter);
 
-        $dok->vis('vakt_bytte_liste_ny.php');
+        if($bruker->getPerson()->harVakt()) {
+            $dok->vis('vakt_bytte_liste_ny.php');
+        } else {
+            $dok->vis('vakt_bytte_uten_vakt.php');
+        }
         return;
 
     }

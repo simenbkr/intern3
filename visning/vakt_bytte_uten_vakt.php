@@ -1,79 +1,104 @@
 <?php
+
 require_once('topp.php');
-$visBytteListe = true;
+
+/* @var \intern3\Beboer $beboer */
+/* @var \intern3\VaktListe $egne_vakter */
+
+
 ?>
+
+<div class="container">
+
     <div class="col-md-12">
-        <h1>Vakt &raquo; Vaktbytte</h1>
-        <p>[ <a href="<?php echo $cd->getBase(); ?>vakt">Vaktliste</a> ] [ Vaktbytte ]</p>
-        <p>Du har ikke vakt, og kan (såklart) ikke bytte vakt!</p>
-    </div>
-    <div class="container">
-<?php
-if (isset($visBytteListe)) { ?>
-    <div class="col-md-12"></div>
-    <?php
-    foreach (range(1, 4) as $vakttype) {
-        ?>
-        <div class="col-md-3 col-sm-6 col-sx-12">
-            <table class="table table-bordered">
-                <tr>
-                    <th><?php echo $vakttype; ?>.&nbsp;vakt</th>
-                </tr>
-                <?php
-                foreach ($vaktbytteListe[$vakttype] as $vaktbytte) {
-                    $bruker = $vaktbytte->getVakt()->getBruker();
-                    if ($bruker == null) {
-                        //continue;
-                    }
-                    if(strtotime($vaktbytte->getVakt()->getDato()) < strtotime(date('Y-m-d'))){
-                        continue;
-                    }
-
-                    $modalId = 'modal-' . date('m-d', strtotime($vaktbytte->getVakt()->getDato())) . '-' . $vaktbytte->getVakt()->getVakttype();
-                    ?>
-                    <tr>
-                    <td>
-                        <fieldset disabled>
-                        <?php
-
-                        if ($vaktbytte->harPassord()) {
-                            echo "<span title=\"Passordlåst\" class=\"glyphicon glyphicon-lock\"></span>";
-                        }
-                        if ($vaktbytte->getGisBort()) {
-                            echo "<span title=\"Gis bort\" class=\"glyphicon glyphicon-alert\"></span>";
-                        } else {
-                            echo "<span title=\"Byttes\" class=\"glyphicon glyphicon-refresh\"></span>";
-                        }
-                        if ($vaktbytte->getVakt()->getBrukerId() != $cd->getAktivBruker()->getId() && $vaktbytte->getGisBort()) {
-                            echo '<input type="button" class="btn btn-sm btn-info pull-right" value="Ta vakt" data-toggle="modal"';
-                        } elseif ($vaktbytte->getVakt()->getBrukerId() != $cd->getAktivBruker()->getId() && !$vaktbytte->getGisBort()) {
-                            echo '<input type="button" class="btn btn-sm btn-info pull-right" value="Bytt" data-toggle="modal"';
-                        } else { ?>
-                            <input class="btn btn-sm btn-danger pull-right" type="button" value="Trekk">
-                            <?php
-                            if (!$vaktbytte->getGisBort() && $har_vakt) { ?>
-                                <input class="btn btn-sm btn-warning pull-right" type="button"
-                                       value="Se forslag">
-                                <?php
-                            }
-                        }
-                        echo '<strong>' . ucfirst(strftime('%A %d/%m', strtotime($vaktbytte->getVakt()->getDato()))) . '</strong>' . PHP_EOL;
-                        echo '<br>' . PHP_EOL;
-                        echo ($bruker != null && $bruker->getPerson() != null) ? $bruker->getPerson()->getFulltNavn() : 'Fritz Müller';
-                        $merknaden = $vaktbytte->getMerknad();
-                        if ($merknaden != null) {
-                            echo "<br/>" . $vaktbytte->getMerknad();
-                        }
-
-                        ?></fieldset>
-                    </td>
-                    </tr><?php } ?>
-            </table>
-        </div>
+        <h1>Vakt » Vaktbytte</h1>
+        <p>[ <a href="?a=vakt">Vakt</a> ] [ Vaktbytte ]</p>
+        
         <?php
-    }
-}
-?>
+        require_once('tilbakemelding.php');
+        ?>
+    </div>
+
+    <div class="col-md-3 col-sm-6 col-sx-12">
+        <p class="tekst_dinevakter">Du skal ikke sitte vakter, og har ingen vakter å bytte.</p>
+        
+    </div>
+
+    <div class="col-md-12">
+        
+        <?php
+        foreach (range(1, 4) as $type) { ?>
+
+            <div class="col-md-3 col-sm-6 col-sx-12">
+                <table class="table table-bordered">
+                    <tr>
+                        <th><?php echo $type; ?>. vakt</th>
+                    </tr>
+                    
+                    <?php foreach ($vaktbytter as $vaktbytte) {
+                        /* @var \intern3\Vaktbytte $vaktbytte */
+                        
+                        if ($vaktbytte->getVakt()->getVakttype() != $type) {
+                            continue;
+                        }
+                        
+                        ?>
+
+                        <tr>
+                            <td>
+                                
+                                <?php
+                                
+                                if ($vaktbytte->harPassord()) { ?>
+                                    <span title="Passordlåst" class="glyphicon glyphicon-lock"></span>
+                                <?php }
+                                if ($vaktbytte->getGisBort()) { ?>
+                                    <span title="Gis bort" class="glyphicon glyphicon-alert"></span>
+                                    <?php
+                                } else { ?>
+                                    <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
+                                <?php }
+                                
+                                if ($vaktbytte->getVakt()->getBrukerId() === $beboer->getBrukerId()) { ?>
+                                    <button class="btn-sm btn-primary pull-right disabled" disabled="disabled">
+                                        Se forslag</button>>
+                                    <button data-target="#myModal" data-remote="false" class="btn-sm btn-danger pull-right disabled" disabled="disabled">
+                                        Trekk</button>>
+                                <?php } else {
+                                    if (!$vaktbytte->getGisBort()) { ?>
+                                        <button class="btn-sm btn-info pull-right disabled">Bytt</button>
+                                        <?php
+                                    } else { ?>
+                                        <button class="btn-sm btn-warning pull-right disabled">Ta vakt</button>
+                                        <?php
+                                    }
+                                    
+                                }
+                                
+                                echo $vaktbytte->getVakt()->shortToString();
+                                echo "<br/>";
+                                echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
+                                
+                                if($vaktbytte->getMerknad() != null && strlen($vaktbytte->getMerknad()) > 1){
+                                    echo "<br/>";
+                                    echo $vaktbytte->getMerknad();
+                                }
+                                
+                                ?>
+
+                            </td>
+                        </tr>
+                    <?php }
+                      ?>
+                </table>
+            </div>
+        <?php }
+        ?>
+    </div>
+</div>
+
 <?php
+
 require_once('bunn.php');
+
 ?>
