@@ -1,30 +1,32 @@
+<?php
+
+/* @var \intern3\Vakt $vakt */
+
+?>
 
 <h3><b><?php echo $vakt->medToString(); ?></b></h3>
 <form action="?a=vakt/bytte/leggtil/<?php echo $vakt->getId();?>" method="POST">
-    <table class="table">
-        <tr>
-            <td>Byttes <input class="radio-inline" type="radio" name="byttes" value="byttes" checked></td>
-            <td>Gis bort <input class="radio-inline" type="radio" name="byttes" value="gibort"></td>
-        </tr>
-        
-        <tr>
-            <td>Uten passord <input class="radio-inline" type="radio" name="passord" value="no"
-                                    checked onclick="setPassord(0, <?php echo $vakt->getId();?>)"></td>
-            
-            <td>Med passord <input class="radio-inline" type="radio" name="passord" value="yes"
-                                   onclick="setPassord(1, <?php echo $vakt->getId();?>)"></td>
-            
-            <td><input class="form-control" type="password" name="passordtekst" placeholder="Passord"
-                       id="<?php echo $vakt->getId();?>" style="display:none;"></td>
-        </tr>
-        <tr>
-            <td>Merknad</td>
-            <td><textarea class="form-control" name="merknad"></textarea></td>
-            
-        </tr>
-        
-    </table>
-    <button class="btn btn-primary">Send!</button>
+
+    <div class="radio">
+        <label><input type="radio" class="radio-inline" name="byttes" value="byttes" checked="checked">Byttes</label>
+        <label><input type="radio" class="radio-inline" name="byttes" value="gibort">Gis bort</label>
+    </div>
+
+    Passord?
+    <div class="radio">
+        <label><input type="radio" class="radio-inline" name="passord" value="no"
+                      onclick="setPassord(0, <?php echo $vakt->getId(); ?>)" checked="checked">Uten passord</label>
+        <label><input type="radio" class="radio-inline" name="passord" value="yes"
+                      onclick="setPassord(1, <?php echo $vakt->getId(); ?>)">Med passord</label>
+    </div>
+
+    <p><input type="password" class="form-control" name="passordtekst" placeholder="Passord"
+              id="<?php echo $vakt->getId(); ?>" style="display:none;"></p>
+
+
+    <p><textarea class="form-control" name="merknad" placeholder="Merknad"></textarea></p>
+
+    <button class="btn btn-primary">Legg ut!</button>
 </form>
 
 

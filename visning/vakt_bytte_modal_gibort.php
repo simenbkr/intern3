@@ -8,7 +8,7 @@
 
     <?php if($vaktbyttet->harPassord()){ ?>
 
-    <input type="password" name="passord" placeholder="Passord" class="form-control"/>
+        <p><input type="password" name="passord" placeholder="Passord" class="form-control"/></p>
 
     <?php } ?>
 

@@ -133,6 +133,11 @@ require_once('topp.php');
                                 echo "<br/>";
                                 echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
 
+                                if($vaktbytte->getMerknad() != null && strlen($vaktbytte->getMerknad()) > 1){
+                                    echo "<br/>";
+                                    echo $vaktbytte->getMerknad();
+                                }
+
                                 ?>
 
                             </td>
