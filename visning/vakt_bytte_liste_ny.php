@@ -8,142 +8,146 @@ require_once('topp.php');
 
 ?>
 
+<div class="container">
 
-<div class="col-md-12">
-    <h1>Vakt » Vaktbytte</h1>
-    <p>[ <a href="?a=vakt">Vakt</a> ] [ Vaktbytte ]</p>
+    <div class="col-md-12">
+        <h1>Vakt » Vaktbytte</h1>
+        <p>[ <a href="?a=vakt">Vakt</a> ] [ Vaktbytte ]</p>
 
-    <?php
-    require_once('tilbakemelding.php');
-    ?>
-</div>
+        <?php
+        require_once('tilbakemelding.php');
+        ?>
+    </div>
 
-<div class="col-md-3 col-sm-6 col-sx-12">
-    <table class="table table-bordered">
+    <div class="col-md-3 col-sm-6 col-sx-12">
+        <table class="table table-bordered">
 
-        <tr>
-            <th>Dine vakter</th>
-        </tr>
-
-        <?php foreach ($egne_vakter as $vakt) {
-            /* @var \intern3\Vakt $vakt */
-            ?>
             <tr>
-                <?php
+                <th>Dine vakter</th>
+            </tr>
 
-                if ($vakt->erFerdig() || $vakt->erStraffevakt() || $vakt->getDato() == date('Y-m-d')) {
-                    //Vakter brukere ikke kan gjøre noe med.
-                    ?>
+            <?php foreach ($egne_vakter as $vakt) {
+                /* @var \intern3\Vakt $vakt */
+                ?>
+                <tr>
+                    <?php
 
-                    <td class="celle_graa"> <?php echo $vakt->toString(); ?></td>
+                    if ($vakt->erFerdig() || $vakt->erStraffevakt() || $vakt->getDato() == date('Y-m-d')) {
+                        //Vakter brukere ikke kan gjøre noe med.
+                        ?>
 
-                    <?php }
-                    elseif($vakt->getVaktbytte() != null && $vakt->getVaktbytte()->getGisbort()){ ?>
+                        <td class="celle_graa"> <?php echo $vakt->toString(); ?></td>
+
+                    <?php } elseif ($vakt->getVaktbytte() != null && $vakt->getVaktbytte()->getGisbort()) { ?>
 
                         <td class="celle_oransje"> <?php echo $vakt->toString(); ?></td>
                         <?php
-                } else {
-
-                    if(!$vakt->getVaktbytte()) { ?>
-
-                    <td><a href="?a=vakt/bytte/modal_egen/<?php echo $vakt->getId(); ?>" data-toggle="modal"
-                           data-target="#myModal" data-remote="false"
-                           class="btn btn-primary"><?php echo $vakt->toString(); ?></a></td>
-                    <?php }
-                        else { ?>
+                    } else {
+                        if (!$vakt->getVaktbytte()) { ?>
+                            <td><a href="?a=vakt/bytte/modal_egen/<?php echo $vakt->getId(); ?>" data-toggle="modal"
+                                   data-target="#myModal" data-remote="false"
+                                   class="btn btn-primary"><?php echo $vakt->toString(); ?></a></td>
+                        <?php } else { ?>
                             <td>
-                                <?php echo $vakt->toString(); ?>
+                                <a href="?a=vakt/bytte/modal_forslag/<?php echo $vakt->getVaktbytte()->getId(); ?>"
+                                   data-toggle="modal"
+                                   data-target="#myModal" data-remote="false" class="btn btn-warning">
+                                    <?php echo $vakt->toString(); ?>
+                                    <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
+                                </a>
 
-                                <a href="?a=vakt/bytte/modal_forslag/<?php echo $vakt->getVaktbytte()->getId(); ?>" data-toggle="modal"
-                               data-target="#myModal" data-remote="false" class="btn-sm btn-primary pull-right">
-                                    Se forslag</a></td>
-
+                            </td>
                             <?php
                         }
-                }
-                ?>
-            </tr>
-
-        <?php } ?>
-    </table>
-</div>
-</div>
-
-<div class="col-md-12">
-
-    <?php
-    foreach (range(1, 4) as $type) { ?>
-
-        <div class="col-md-3 col-sm-6 col-sx-12">
-            <table class="table table-bordered">
-                <tr>
-                    <th><?php echo $type; ?>. vakt</th>
+                    }
+                    ?>
                 </tr>
 
-                <?php foreach ($vaktbytter as $vaktbytte) {
-                    /* @var \intern3\Vaktbytte $vaktbytte */
+            <?php } ?>
+        </table>
+    </div>
 
-                    if($vaktbytte->getVakt()->getVakttype() != $type){
-                        continue;
-                    }
+    <div class="col-md-12">
 
-                    ?>
+        <?php
+        foreach (range(1, 4) as $type) { ?>
 
+            <div class="col-md-3 col-sm-6 col-sx-12">
+                <table class="table table-bordered">
                     <tr>
-                        <td>
+                        <th><?php echo $type; ?>. vakt</th>
+                    </tr>
 
-                            <?php
+                    <?php foreach ($vaktbytter as $vaktbytte) {
+                        /* @var \intern3\Vaktbytte $vaktbytte */
 
-                            if ($vaktbytte->harPassord()) { ?>
-                                <span title="Passordlåst" class="glyphicon glyphicon-lock"></span>
-                            <?php }
-                            if ($vaktbytte->getGisBort()) { ?>
-                                <span title="Gis bort" class="glyphicon glyphicon-alert"></span>
+                        if ($vaktbytte->getVakt()->getVakttype() != $type) {
+                            continue;
+                        }
+
+                        ?>
+
+                        <tr>
+                            <td>
+
                                 <?php
-                            } else { ?>
-                                <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
-                            <?php }
 
-                            if ($vaktbytte->getVakt()->getBrukerId() === $beboer->getBrukerId()) { ?>
-                                <a href="?a=vakt/bytte/modal_forslag/<?php echo $vaktbytte->getId(); ?>" data-toggle="modal"
-                                   data-target="#myModal" data-remote="false" class="btn-sm btn-primary pull-right">
-                                    Se forslag</a>
-                                <a href="?a=vakt/bytte/modal_slett/<?php echo $vaktbytte->getId(); ?>" data-toggle="modal"
-                                   data-target="#myModal" data-remote="false" class="btn-sm btn-danger pull-right">
-                                    Trekk</a>
-                            <?php } else {
-                                if (!$vaktbytte->getGisBort()) { ?>
-                                    <a href="?a=vakt/bytte/modal_bytt/<?php echo $vaktbytte->getId(); ?>" data-toggle="modal"
-                                       data-target="#myModal" data-remote="false" class="btn-sm btn-info pull-right">Bytt</a>
+                                if ($vaktbytte->harPassord()) { ?>
+                                    <span title="Passordlåst" class="glyphicon glyphicon-lock"></span>
+                                <?php }
+                                if ($vaktbytte->getGisBort()) { ?>
+                                    <span title="Gis bort" class="glyphicon glyphicon-alert"></span>
                                     <?php
                                 } else { ?>
-                                    <a href="?a=vakt/bytte/modal_gibort/<?php echo $vaktbytte->getId(); ?>" data-toggle="modal"
-                                       data-target="#myModal" data-remote="false" class="btn-sm btn-warning pull-right">
-                                        Ta vakt</a>
-                                    <?php
+                                    <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
+                                <?php }
+
+                                if ($vaktbytte->getVakt()->getBrukerId() === $beboer->getBrukerId()) { ?>
+                                    <a href="?a=vakt/bytte/modal_forslag/<?php echo $vaktbytte->getId(); ?>"
+                                       data-toggle="modal"
+                                       data-target="#myModal" data-remote="false" class="btn-sm btn-primary pull-right">
+                                        Se forslag</a>
+                                    <a href="?a=vakt/bytte/modal_slett/<?php echo $vaktbytte->getId(); ?>"
+                                       data-toggle="modal"
+                                       data-target="#myModal" data-remote="false" class="btn-sm btn-danger pull-right">
+                                        Trekk</a>
+                                <?php } else {
+                                    if (!$vaktbytte->getGisBort()) { ?>
+                                        <a href="?a=vakt/bytte/modal_bytt/<?php echo $vaktbytte->getId(); ?>"
+                                           data-toggle="modal"
+                                           data-target="#myModal" data-remote="false"
+                                           class="btn-sm btn-info pull-right">Bytt</a>
+                                        <?php
+                                    } else { ?>
+                                        <a href="?a=vakt/bytte/modal_gibort/<?php echo $vaktbytte->getId(); ?>"
+                                           data-toggle="modal"
+                                           data-target="#myModal" data-remote="false"
+                                           class="btn-sm btn-warning pull-right">
+                                            Ta vakt</a>
+                                        <?php
+                                    }
+
                                 }
 
-                            }
+                                echo $vaktbytte->getVakt()->shortToString();
+                                echo "<br/>";
+                                echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
 
-                            echo $vaktbytte->getVakt()->shortToString();
-                            echo "<br/>";
-                            echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
+                                ?>
 
-                            ?>
-
-                        </td>
-                    </tr>
-                <?php }
-                  ?>
-            </table>
-        </div>
-    <?php }
-    ?>
+                            </td>
+                        </tr>
+                    <?php }
+                      ?>
+                </table>
+            </div>
+        <?php }
+        ?>
+    </div>
 </div>
 
-
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>

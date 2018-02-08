@@ -8,6 +8,7 @@
 <h2>Forslag til <?php echo $vaktbyttet->getVakt()->toString(); ?></h2>
 <form action="?a=vakt/bytte/bytte/<?php echo $vaktbyttet->getId(); ?>" method="POST">
     <p>Her er forslagene til bytte for denne vakta:</p>
+    <hr>
 
     <table class="table table-bordered">
 
@@ -17,7 +18,7 @@
             <tr>
                 <td>
                     <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
-                    <button type="submit" class="btn btn-primary" name="vakt" value="<?php echo $vakt->getId(); ?>"><?php echo $vakt->shortToString(); ?></button>
+                    <button type="submit" class="btn btn-primary" name="vakt" value="<?php echo $vakt->getId(); ?>"><?php echo $vakt->medToString(); ?></button>
                     <br/>
                     <?php echo $vakt->getBruker()->getPerson()->getFulltNavn(); ?>
                 </td>

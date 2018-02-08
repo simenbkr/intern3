@@ -17,19 +17,26 @@
             ?>
         <tr>
             <td>
-                <button type="submit" class="btn btn-primary" name="vakt" value="<?php echo $vakt->getId(); ?>"><?php echo $vakt->shortToString(); ?></button>
 
                 <?php
                 if(in_array($vakt->getId(), $vaktbyttet->getForslagIder())){ ?>
 
-                    <button type="submit" class="btn btn-danger" name="vakt"
-                            onclick="submitForm('?a=vakt/bytte/slettbytte/<?php echo $vaktbyttet->getId(); ?>')"
-                            value="<?php echo $vakt->getId(); ?>">X</button>
+                    <button disabled="disabled" class="btn btn-primary disabled"><?php echo $vakt->medToString(); ?></button>
+
+                    <p>
+                        <button type="submit" class="btn btn-danger" name="vakt"
+                                onclick="submitForm('?a=vakt/bytte/slettbytte/<?php echo $vaktbyttet->getId(); ?>')"
+                                value="<?php echo $vakt->getId(); ?>">Trekk</button>
+                    </p>
+
+
 
                 <?php
-                }
+                } else {  ?>
 
-                ?>
+                    <button type="submit" class="btn btn-primary" name="vakt" value="<?php echo $vakt->getId(); ?>"><?php echo $vakt->medToString(); ?></button>
+
+                <?php } ?>
 
             </td>
         </tr>
@@ -47,7 +54,6 @@
 
 <script>
     function submitForm(action) {
-        console.log("sup");
         document.getElementById('formen').action = action;
         document.getElementById('formen').submit();
     }

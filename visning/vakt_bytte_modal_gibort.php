@@ -4,7 +4,7 @@
 
 ?>
 <form action="?a=vakt/bytte/ta/<?php echo $vaktbyttet->getId(); ?>" method="POST">
-    <h3>Vil du ta vakta <?php echo $vaktbyttet->getVakt()->toString();?>?</h3>
+    <h3>Vil du ta vakta <?php echo $vaktbyttet->getVakt()->medToString();?>?</h3>
 
     <?php if($vaktbyttet->harPassord()){ ?>
 

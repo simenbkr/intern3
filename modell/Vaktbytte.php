@@ -183,7 +183,7 @@ class Vaktbytte
         return $vaktbytter;
     }
     
-    public static function getAlleMulige(){
+    public static function getAlleMulige() {
     
         $date = date('Y-m-d');
     
@@ -232,6 +232,21 @@ class Vaktbytte
         $st->bindParam(':forslag',$forslag);
         $st->bindParam(':id', $this->id);
         $st->execute();
+
+    }
+
+    public static function iEtVaktbytte($vakt_id){
+
+        foreach(self::getAlleMulige() as $vaktbytte){
+
+            /* @var \intern3\Vaktbytte $vaktbytte */
+
+            if(in_array($vakt_id, $vaktbytte->getForslagIder())) {
+                return true;
+            }
+        }
+
+        return false;
 
     }
 

@@ -56,8 +56,8 @@ class VaktbytteCtrl extends AbstraktCtrl
                         break;
                     }
 
-                    $gisbort = $post['byttes'] == 'byttes' ? 0 : 1;
-                    $harpw = $post['passord'] == 'yes' ? 1 : 0;
+                    $gisbort = ($post['byttes'] == 'byttes' ? 0 : 1);
+                    $harpw = ($post['passord'] == 'yes' ? 1 : 0);
                     Vaktbytte::nyttVaktBytte($sisteArg, $gisbort, $post['merknad'], $harpw, $post['passordtekst']);
 
                     Funk::setSuccess("Vaktbyttet ble oppretta for  " . $vakt->toString());
@@ -114,7 +114,8 @@ class VaktbytteCtrl extends AbstraktCtrl
                     if(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null &&
                         $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId() &&
                         ($forslag_vakt = Vakt::medId($post['vakt'])) != null &&
-                         $forslag_vakt->getBrukerId() != $vaktbyttet->getVakt()->getBrukerId()){
+                         $forslag_vakt->getBrukerId() != $vaktbyttet->getVakt()->getBrukerId() &&
+                        in_array($forslag_vakt->getId(), $vaktbyttet->getForslagIder())){
 
                         $bytte_vakt = $vaktbyttet->getVakt();
 
@@ -126,6 +127,10 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                         $forslag_vakt->fjernFraAlleBytter();
                         $bytte_vakt->fjernFraAlleBytter();
+
+                        if($forslag_vakt->getVaktbytte() != null){
+                            $forslag_vakt->getVaktbytte()->slett();
+                        }
 
                         $vaktbyttet->slett();
 
@@ -165,6 +170,9 @@ class VaktbytteCtrl extends AbstraktCtrl
             switch ($aktueltArg) {
                 //Modal for egen vakt
                 case 'modal_egen':
+                    if(($vakt = Vakt::medId($sisteArg)) == null) {
+                        exit("Denne vakten ser ikke ut til å eksistere!");
+                    }
 
                     $vakt = Vakt::medId($sisteArg);
                     $dok->set('vakt', $vakt);
@@ -175,17 +183,17 @@ class VaktbytteCtrl extends AbstraktCtrl
                     if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null && $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()) {
                         exit("Du kan ikke slette dette vaktbyttet!");
                     }
+
                     $dok->set('vaktbyttet', $vaktbyttet);
                     $dok->vis('vakt_bytte_modal_slett.php');
                     exit();
 
                 case 'modal_bytt':
-                    if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
+                    if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
                         exit("Du kan ikke bytte denne vakta!");
                     }
 
                     $egne_vakter = VaktListe::medBrukerIdEtter($bruker->getId(), date('Y-m-d'));
-                    //$egne_vakter = VaktListe::medBrukerId($bruker->getId());
 
                     $dok->set('vaktbyttet', $vaktbyttet);
                     $dok->set('egne_vakter', $egne_vakter);
@@ -193,7 +201,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     exit();
 
                 case 'modal_gibort':
-                    if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
+                    if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null || $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
                         exit("Du kan ikke ta denne vakta!");
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
@@ -201,7 +209,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     $dok->vis('vakt_bytte_modal_gibort.php');
                     exit();
                 case 'modal_forslag':
-                    if(!(($vaktbyttet = Vaktbytte::medId($sisteArg)) == null || $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId())){
+                    if(!(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null || $bruker->getId() == $vaktbyttet->getVakt()->getBrukerId())){
                         exit("Du kan ikke se forslag her!");
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);

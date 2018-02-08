@@ -1,5 +1,5 @@
 
-<h3><b><?php echo $vakt->toString(); ?></b></h3>
+<h3><b><?php echo $vakt->medToString(); ?></b></h3>
 <form action="?a=vakt/bytte/leggtil/<?php echo $vakt->getId();?>" method="POST">
     <table class="table">
         <tr>

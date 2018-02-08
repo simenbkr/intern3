@@ -203,6 +203,14 @@ class Vakt
         return ucfirst($df->format(strtotime($this->getDato())));
     }
 
+    public function medToString(){
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::FULL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+
+        return $this->vakttype . '. vakt ' . ucfirst($df->format(strtotime($this->getDato())));
+    }
+
     public static function antallVakter()
     {
         $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt');
