@@ -143,6 +143,16 @@ class Vinkryss
         $st->execute();
         return $st->rowCount();
     }
+    
+    public static function getAlle(){
+        $st = DB::getDB()->prepare('SELECT * FROM vinkryss ORDER by tiden');
+        $st->execute();
+        $objektene = array();
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $objektene[] = self::init($st);
+        }
+        return $objektene;
+    }
 
 
 }
