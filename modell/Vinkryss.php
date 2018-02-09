@@ -15,6 +15,8 @@ class Vinkryss
     private $beboerId;
     private $beboeren;
     private $prisen;
+    private $ansvarligId;
+    private $ansvarlig;
 
     private static function init(\PDOStatement $st) {
         $rad = $st->fetch();
@@ -31,6 +33,9 @@ class Vinkryss
         $instance->beboerId = $rad['beboerId'];
         $instance->beboeren = Beboer::medId($instance->beboerId);
         $instance->prisen = $rad['prisen'];
+        $instance->ansvarligId = $rad['ansvarlig'];
+        $instance->ansvarlig = Beboer::medId($rad['ansvarlig']);
+        
         return $instance;
     }
 
@@ -54,6 +59,14 @@ class Vinkryss
 
     public function getId(){
         return $this->id;
+    }
+    
+    public function getAnsvarligId() : int {
+        return $this->ansvarligId;
+    }
+    
+    public function getAnsvarlig() : Beboer {
+        return $this->ansvarlig;
     }
 
     public function getPrisen(){
