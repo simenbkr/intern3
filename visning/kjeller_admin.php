@@ -21,16 +21,6 @@ require_once('topp.php');
                 });
             }
 
-
-            var table;
-            $(document).ready(function () {
-                table = $('#tabellen').DataTable({
-                    "paging": false,
-                    "searching": false
-                });
-
-            });
-
         </script>
         <h1>Kjellermester » Vinadministrasjon</h1>
         <p>[ Vinadministrasjon ]
@@ -45,7 +35,6 @@ require_once('topp.php');
             [ <a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a> ]
         </p>
         <hr>
-        <button id="filter" onclick="test()">filter > 1</button>
         <table id="tabellen" class="table table-bordered table-responsive" data-toggle="table">
             <thead>
             <tr>
@@ -101,6 +90,22 @@ require_once('topp.php');
         <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
         <script type="text/javascript" src="js/dataTables.js"></script>
     </div>
+
+    <script>
+
+
+
+        var table;
+        $(document).ready(function () {
+            table = $('#tabellen').DataTable({
+                "paging": false,
+                "searching": false
+            });
+        });
+
+
+    </script>
+
 <?php
 require_once('bunn.php');
 ?>
