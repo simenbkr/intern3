@@ -30,9 +30,17 @@ require_once ('topp.php');
         });
     </script>
 <h1>Kjellermester » Vinadministrasjon</h1>
-    <p>[ Vinadministrasjon ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/slettet_vin">Slettet vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
-        [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
-        [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ] [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]</p>
+    <p>[ Vinadministrasjon ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/slettet_vin">Slettet vin</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/leggtil">Legg til vin</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/add_type">Vintyper</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ]
+        [<a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/regning">Regning</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a> ]
+    </p>
     <hr>
     <table id="tabellen" class="table table-bordered table-responsive" data-toggle="table">
         <thead>

@@ -1,4 +1,5 @@
 <?php
+
 namespace intern3;
 
 
@@ -483,6 +484,12 @@ class KjellerCtrl extends AbstraktCtrl
                 $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
                 $dok->vis('kjeller_pafyll.php');
+                break;
+            case 'oversikt':
+                $transaksjoner = Vinkryss::getAlle();
+
+                $dok->set('transaksjoner', $transaksjoner);
+                $dok->vis('kjeller_kryss_oversikt.php');
                 break;
             default:
                 $dok->vis('kjeller_hoved.php');
