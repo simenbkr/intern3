@@ -31,6 +31,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
                     }
                 } elseif (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
                     $beboer_id = $post['beboerid'];
                     $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
                     $st->bindParam(':id', $beboer_id);
@@ -112,86 +113,28 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $_SESSION['msg'] = "Hmm.. Noe galt skjedde - kan det hende beboeren er alt innflyttet?";
             }
         } else if ($aktueltArg == 'nybeboer') {
-            if (isset($_POST) && isset($_POST['fornavn'])) {
+
+            if($_SERVER['REQUEST_METHOD'] === 'POST'){
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                
-                if (Bruker::medEpost($post['epost']) != null) {
-                    Funk::setError("Det finnes allerede en beboer med
-          epost $post[epost]! Beboeren $post[fornavn] $post[etternavn]
-          ble ikke oppretta");
-                    $dok->vis('utvalg_romsjef_nybeboer.php');
-                    exit();
+
+                $values = array('fornavn' => 'fornavn', 'etternavn' => 'etternavn',
+                    'fodselsdato' => 'fødselsdato', 'adresse' => 'adresse', 'postnummer' => 'postnummer',
+                    'mobil' => 'mobil', 'studie_id' => 'studie', 'skole_id' => 'skole', 'klasse' => 'klasse',
+                    'alkodepositum' => 'alkoholdepositum', 'rolle_id' => 'rolle', 'epost' => 'e-post', 'rom_id' => 'rom');
+
+                foreach($values as $value){
+
+                    if(!isset($post[$value])){
+                        Funk::setError("Oops! Det ser ut til at du mangler " . $values[$value]);
+                        $dok->vis('utvalg_romsjef_nybeboer.php');
+                        exit();
+                    }
                 }
-                
-                $bruker_id = Funk::getLastBrukerId() + 1;
-                $st = DB::getDB()->prepare('INSERT INTO beboer
-(bruker_id,fornavn,mellomnavn,etternavn,fodselsdato,adresse,postnummer,telefon,studie_id,skole_id,klassetrinn,alkoholdepositum,rolle_id,epost,romhistorikk)
-VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnummer,:telefon,:studie_id,:skole_id,:klassetrinn,:alko,:rolle_id,:epost,:romhistorikk)');
-                $st->bindParam(':bruker_id', $bruker_id);
-                $st->bindParam(':fornavn', $post['fornavn']);
-                $st->bindParam(':mellomnavn', $post['mellomnavn']);
-                $st->bindParam(':etternavn', $post['etternavn']);
-                $st->bindParam(':fodselsdato', $post['fodselsdato']);
-                $st->bindParam(':adresse', $post['adresse']);
-                $st->bindParam(':postnummer', $post['postnummer']);
-                $st->bindParam(':telefon', $post['mobil']);
-                $st->bindParam(':studie_id', $post['studie_id']);
-                $st->bindParam(':skole_id', $post['skole_id']);
-                $st->bindParam(':klassetrinn', $post['klasse']);
-                $st->bindParam(':alko', $post['alkodepositum']);
-                $st->bindParam(':rolle_id', $post['rolle_id']);
-                $st->bindParam(':epost', $post['epost']);
-                $rom = new Romhistorikk();
-                $rom->addPeriode($post['rom_id'], date('Y-m-d'), null);
-                $romhistorikken = $rom->tilJson();
-                $st->bindParam(':romhistorikk', $romhistorikken);
-                $st->execute();
-                
-                
-                $st = DB::getDB()->prepare('INSERT INTO bruker (id,passord,salt) VALUES(:id,:passord,:salt)');
-                $st->bindParam(':id', $bruker_id);
-                $passord = Funk::generatePassword();
-                $saltet = Funk::generatePassword(28);
-                $hashen = LogginnCtrl::genererHashMedSalt($passord, $saltet);
-                $st->bindParam(':passord', $hashen);
-                $st->bindParam(':salt', $saltet);
-                $st->execute();
-                
-                $beskjed = "<html><body>Hei!<br/><br/>Du har fått opprettet en brukerkonto på
-<a href='https://intern.singsaker.no'>Singsaker Studenterhjem sine internsider!</a> Velkommen skal du være.<br/>Brukernavn: $post[epost]<br/>Passord kan du sette selv, ved å benytte 'glemt-passord'-funksjonaliteten.<br/><br/>
-<br/><br/>Med vennlig hilsen<br/>Internsida.<br/><br/></body></html>";
-                $tittel = "[SING-INTERN] Opprettelse av brukerkonto";
-                //$epost = new Epost($beskjed);
-                //$epost->addBrukerId($bruker_id);
-                //$epost->send($tittel);
-                
-                $beboer = Beboer::medBrukerId($bruker_id);
-                
-                $beboer_id = $beboer->getId();
-                $st_1 = DB::getDB()->prepare('INSERT INTO epost_pref (beboer_id,tildelt,snart_vakt,bytte,utleie,barvakt) VALUES(:id,1,1,1,1,1)');
-                $st_1->bindParam(':id', $beboer_id);
-                $st_1->execute();
-                
-                $st_2 = DB::getDB()->prepare('INSERT INTO prefs (beboerId, resepp, vinkjeller, pinboo, pinkode, vinpinboo, vinpin)
-    VALUES(:id, 1, 1, 0, NULL, 0, NULL)');
-                $st_2->bindParam(':id', $beboer_id);
-                $st_2->execute();
-                
-                Epost::sendEpost($beboer->getEpost(), $tittel, $beskjed);
-                
-                $_SESSION['success'] = 1;
-                $_SESSION['msg'] = "Du la til en ny beboer!";
-                
-                try {
-                    $groupmanager = new \Group\GroupManage();
-                    
-                    $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
-                    $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_SLARV);
-                } catch (\Exception $e) {
-                    Epost::sendEpost("data@singsaker.no", "[SING-BOTS] Ble ikke lagt inn i epostlister",
-                        "Beboeren " . $beboer->getFulltNavn() . " med e-post " . $beboer->getEpost() . " ble ikke
-                       lagt til epostgruppene. Errormelding:<br/>\n" . $e->getMessage());
-                }
+                $alko = (isset($post['alkodepositum']) && $post['alkodepositum'] == 'on') ? 1 : 0;
+                $beboer = Beboer::nyBeboer(
+                    $post['fornavn'], $post['mellomnavn'], $post['etternavn'], $post['fodselsdato'],
+                    $post['adresse'], $post['postnummer'], $post['mobil'], $post['studie_id'], $post['skole_id'],
+                    $post['klasse'], $alko , $post['rolle_id'], $post['epost'], $post['rom_id']);
             }
             
             $dok->vis('utvalg_romsjef_nybeboer.php');

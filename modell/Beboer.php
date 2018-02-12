@@ -115,9 +115,19 @@ class Beboer implements Person
         return $this->brukerId;
     }
 
+    public function setBrukerId($bruker_id){
+        $this->brukerId = $bruker_id;
+        $this->oppdater();
+    }
+
     public function getFornavn()
     {
         return $this->fornavn;
+    }
+
+    public function setFornavn($fornavn){
+        $this->fornavn = $fornavn;
+        $this->oppdater();
     }
 
     public function getMellomnavn()
@@ -125,9 +135,19 @@ class Beboer implements Person
         return $this->mellomnavn;
     }
 
+    public function setMellomnavn($mellomnavn){
+        $this->mellomnavn = $mellomnavn;
+        $this->oppdater();
+    }
+
     public function getEtternavn()
     {
         return $this->etternavn;
+    }
+
+    public function setEtternavn($etternavn){
+        $this->etternavn = $etternavn;
+        $this->oppdater();
     }
 
     public function getFulltNavn()
@@ -506,6 +526,114 @@ class Beboer implements Person
             $lista[] = Funk::generateSemesterString(date('Y-m-d', strtotime("$i-09-01")));
         }
         return array_reverse(array_unique($lista));
+    }
+
+    public static function nyBeboer ($fornavn, $mellomnavn, $etternavn, $fodselsdato, $adresse, $postnr, $mobilnr,
+                                     $studie_id, $skole_id, $klasse, $alko, $rolle_id, $epost, $rom_id) : Beboer {
+
+        //Opprett beboer
+
+        $bruker_id = Funk::getLastBrukerId() + 1;
+        $st = DB::getDB()->prepare('INSERT INTO beboer
+(bruker_id,fornavn,mellomnavn,etternavn,fodselsdato,adresse,postnummer,telefon,studie_id,skole_id,klassetrinn,alkoholdepositum,rolle_id,epost,romhistorikk)
+VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnummer,:telefon,:studie_id,:skole_id,:klassetrinn,:alko,:rolle_id,:epost,:romhistorikk)');
+
+        $st->bindParam(':bruker_id', $bruker_id);
+        $st->bindParam(':fornavn', $fornavn);
+        $st->bindParam(':mellomnavn', $mellomnavn);
+        $st->bindParam(':etternavn', $etternavn);
+        $st->bindParam(':fodselsdato', $fodselsdato);
+        $st->bindParam(':adresse', $adresse);
+        $st->bindParam(':postnummer', $postnr);
+        $st->bindParam(':telefon', $mobilnr);
+        $st->bindParam(':studie_id', $studie_id);
+        $st->bindParam(':skole_id', $skole_id);
+        $st->bindParam(':klassetrinn', $klasse);
+        $st->bindParam(':alko', $alko);
+        $st->bindParam(':rolle_id', $rolle_id);
+        $st->bindParam(':epost', $epost);
+        $rom = new Romhistorikk();
+        $rom->addPeriode($rom_id, date('Y-m-d'), null);
+        $romhistorikken = $rom->tilJson();
+        $st->bindParam(':romhistorikk', $romhistorikken);
+        $st->execute();
+
+
+        //Opprett bruker
+
+        $st = DB::getDB()->prepare('INSERT INTO bruker (id,passord,salt) VALUES(:id,:passord,:salt)');
+        $st->bindParam(':id', $bruker_id);
+        $passord = Funk::generatePassword();
+        $saltet = Funk::generatePassword(28);
+        $hashen = LogginnCtrl::genererHashMedSalt($passord, $saltet);
+        $st->bindParam(':passord', $hashen);
+        $st->bindParam(':salt', $saltet);
+        $st->execute();
+
+
+        $beboer = Beboer::medBrukerId($bruker_id);
+
+        //Opprett epost-prefs
+        $beboer_id = $beboer->getId();
+        $st = DB::getDB()->prepare('INSERT INTO epost_pref (beboer_id,tildelt,snart_vakt,bytte,utleie,barvakt) VALUES(:id,1,1,1,1,1)');
+        $st->bindParam(':id', $beboer_id);
+        $st->execute();
+
+        //Opprett prefs
+        $st = DB::getDB()->prepare('INSERT INTO prefs (beboerId, resepp, vinkjeller, pinboo, pinkode, vinpinboo, vinpin)
+    VALUES(:id, 1, 1, 0, NULL, 0, NULL)');
+        $st->bindParam(':id', $beboer_id);
+        $st->execute();
+
+        Funk::setSuccess("Du la til " . $beboer->getFulltNavn() . " til Internsida!");
+
+        //Legg til på epostlister
+        try {
+            $groupmanager = new \Group\GroupManage();
+            $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
+            $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_SLARV);
+            Funk::setSuccess("Du la til " . $beboer->getFulltNavn() . " til Internsida, SING-ALLE og SING-SLARV!");
+        } catch(\Exception $e){
+            Epost::sendEpost("data@singsaker.no", "[SING-BOTS] Ble ikke lagt inn i epostlister",
+                "Beboeren " . $beboer->getFulltNavn() . " med e-post " . $beboer->getEpost() . " ble ikke
+                       lagt til epostgruppene. Errormelding:<br/>\n" . $e->getMessage());
+        }
+
+        //Send e-post til den nye beboeren
+
+        $beskjed = "<html><body>Hei!<br/><br/>Du har fått opprettet en brukerkonto på
+<a href='https://intern.singsaker.no'>Singsaker Studenterhjem sine internsider!</a> Velkommen skal du være.<br/>Brukernavn: $post[epost]<br/>Passord kan du sette selv, ved å benytte 'glemt-passord'-funksjonaliteten.<br/><br/>
+<br/><br/>Med vennlig hilsen<br/>Internsida.<br/><br/></body></html>";
+        $tittel = "[SING-INTERN] Opprettelse av brukerkonto";
+        Epost::sendEpost($beboer->getEpost(), $tittel, $beskjed);
+
+        return $beboer;
+    }
+
+    private function oppdater(){
+
+        $st = DB::getDB()->prepare('UPDATE beboer SET fornavn=:fornavn,mellomnavn=:mellomnavn,etternavn=:etternavn,
+fodselsdato=:fodselsdato,adresse=:adresse,postnummer=:postnummer,telefon=:telefon,studie_id=:studie_id,skole_id=:skole_id,
+klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk WHERE id=:id');
+
+        $st->bindParam(':id', $this->id);
+        $st->bindParam(':fornavn', $this->fornavn);
+        $st->bindParam(':mellomnavn', $this->mellomnavn);
+        $st->bindParam(':etternavn', $this->etternavn);
+        $st->bindParam(':fodselsdato', $this->fodselsdato);
+        $st->bindParam(':adresse', $this->adresse);
+        $st->bindParam(':postnummer', $this->postnummer);
+        $st->bindParam(':telefon', $this->telefon);
+        $st->bindParam(':studie_id', $this->studieId);
+        $st->bindParam(':skole_id', $this->skoleId);
+        $st->bindParam(':klassetrinn', $this->klassetrinn);
+        $alko = $this->alkoholdepositum > 0 ? 1 : 0;
+        $st->bindParam(':alko', $alko);
+        $st->bindParam(':rolle', $this->rolleId);
+        $st->bindParam(':epost', $this->epost);
+        $st->bindParam('romhistorikk', $this->romhistorikk);
+        $st->execute();
+
     }
 
 }
