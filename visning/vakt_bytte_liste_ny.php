@@ -32,7 +32,7 @@ require_once('topp.php');
                 <tr>
                     <?php
 
-                    if ($vakt->erFerdig() || $vakt->erStraffevakt() || $vakt->getDato() == date('Y-m-d')) {
+                    if ($vakt->erFerdig() || $vakt->erStraffevakt()) {
                         //Vakter brukere ikke kan gjøre noe med.
                         ?>
                         <td class="celle_graa"> <?php echo $vakt->toString(); ?></td>

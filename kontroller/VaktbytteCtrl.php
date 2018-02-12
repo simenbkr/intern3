@@ -47,7 +47,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                         break;
                     }
 
-                    if($vakt->erFerdig() || $vakt->getDato() == date('Y-m-d')){
+                    if($vakt->erFerdig()){
                         Funk::setError("Denne vakten er ferdig, eller kan ikke byttes!");
                     }
 
