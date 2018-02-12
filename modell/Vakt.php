@@ -147,7 +147,7 @@ class Vakt
                 $tid = strtotime('+19 hour', $tid);
                 break;
             case '4':
-                $tid = strtotime('+1 hour', $tid);
+                $tid = strtotime('+25 hour', $tid);
                 break;
         }
         return $tid <= $_SERVER['REQUEST_TIME'];
