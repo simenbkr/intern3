@@ -3,6 +3,9 @@ require_once ('topp_utvalg.php');
 if(!isset($beboer) || $beboer == null) {
     exit();
 }
+
+/* @var \intern3\Beboer $beboer */
+
 ?>
 <script>
     function flyttUt(id){
@@ -12,7 +15,7 @@ if(!isset($beboer) || $beboer == null) {
             data: 'flyttut=1&beboerId=' + id,
             method: 'POST',
             success: function (html) {
-                $("#formen").replaceWith($('#formen', $(html)));
+                location.reload();
             },
             error: function (req, stat, err) {
                 alert(err);
@@ -22,9 +25,29 @@ if(!isset($beboer) || $beboer == null) {
     $(function () {
         $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
     });
+
+    function flyttinn() {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/romsjef/flyttinn',
+            data: 'id=' + '<?php echo $beboer->getId(); ?>',
+            method: 'POST',
+            success: function (data) {
+                location.reload();
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+
+    }
+
 </script>
 <div class="container">
     <h1>Utvalget » Romsjef » Beboerliste » Endre <b><?php echo $beboer->getFulltNavn(); ?></b></h1>
+
+
+    <?php require_once ('tilbakemelding.php'); ?>
 
     <form action="" method="post">
         <input type="hidden" name="beboerid" value="<?php echo !isset($beboer) || $beboer == null ? '' : $beboer->getId(); ?>">
@@ -146,7 +169,6 @@ if(!isset($beboer) || $beboer == null) {
                         }
                         ?>
                     </select>
-                    <button class="btn btn-sm btn-danger" onclick="flyttUt(<?php echo $beboer->getId();?>)">Flytt ut</button>
                 </td>
             </tr>
             <tr>
@@ -155,6 +177,21 @@ if(!isset($beboer) || $beboer == null) {
             </tr>
         </table>
     </form>
+<?php
+if($beboer->erAktiv()){ ?>
+    <button class="btn btn-sm btn-danger" onclick="flyttUt(<?php echo $beboer->getId();?>)">Flytt ut</button>
+
+    <?php } else { ?>
+
+    <button class="btn btn-sm btn-danger" onclick="flyttinn(<?php echo $beboer->getId();?>)">Flytt inn</button>
+
+
+<?php }
+
+ ?>
+
+
+
 </div>
 <?php
 require_once ('bunn.php');

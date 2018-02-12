@@ -2,8 +2,6 @@
 
 namespace intern3;
 
-use Group\GroupManage;
-
 class Beboer implements Person
 {
     private $id;
@@ -160,9 +158,19 @@ class Beboer implements Person
         return $this->fodselsdato;
     }
 
+    public function setFodselsdato($dato){
+        $this->fodselsdato = date('Y-m-d', $dato);
+        $this->oppdater();
+    }
+
     public function getBilde()
     {
         return $this->bilde;
+    }
+
+    public function setBilde($bilde){
+        $this->bilde = $bilde;
+        $this->bilde = $bilde;
     }
 
     public function getFodselsar()
@@ -185,14 +193,29 @@ class Beboer implements Person
         return $this->adresse;
     }
 
+    public function setAdresse($adresse){
+        $this->adresse = $adresse;
+        $this->oppdater();
+    }
+
     public function getPostnummer()
     {
         return $this->postnummer;
     }
 
+    public function setPostnummer($nr){
+        $this->postnummer = $nr;
+        $this->oppdater();
+    }
+
     public function getAnsiennitet()
     {
         return $this->ansiennitet;
+    }
+
+    public function setAnsiennitet($ans){
+        $this->ansiennitet = $ans;
+        $this->oppdater();
     }
 
     public function getTelefon()
@@ -203,9 +226,19 @@ class Beboer implements Person
         return $this->telefon;
     }
 
+    public function setTelefon($tel){
+        $this->telefon = $tel;
+        $this->oppdater();
+    }
+
     public function getKlassetrinn()
     {
         return $this->klassetrinn;
+    }
+
+    public function setKlassetrinn($trinn){
+        $this->klassetrinn = $trinn;
+        $this->oppdater();
     }
 
     public function harAlkoholdepositum()
@@ -213,9 +246,20 @@ class Beboer implements Person
         return $this->alkoholdepositum > 0;
     }
 
+    public function setAlko($alko){
+        $this->alkoholdepositum = $alko;
+        $this->oppdater();
+    }
+
     public function getStudieId()
     {
         return $this->studieId;
+    }
+
+    public function setStudieId($id){
+        $this->studieId = $id;
+        $this->oppdater();
+        $this->studie = Studie::medId($id);
     }
 
     public function getStudie()
@@ -231,6 +275,12 @@ class Beboer implements Person
         return $this->skoleId;
     }
 
+    public function setSkoleId($id){
+        $this->skoleId = $id;
+        $this->oppdater();
+        $this->skole = Skole::medId($id);
+    }
+
     public function getSkole()
     {
         if ($this->skole == null) {
@@ -244,9 +294,22 @@ class Beboer implements Person
         return $this->epost;
     }
 
+    public function setEpost($epost){
+        if(Funk::isValidEmail($epost)) {
+            $this->epost = $epost;
+            $this->oppdater();
+        }
+    }
+
     public function getRolleId()
     {
         return $this->rolleId;
+    }
+
+    public function setRolleId($id){
+        $this->rolleId = $id;
+        $this->oppdater();
+        $this->rolle = Rolle::medId($id);
     }
 
     public function getRolle()
@@ -263,6 +326,12 @@ class Beboer implements Person
             $this->romId = $this->getRomhistorikk()->getAktivRomId();
         }
         return $this->romId;
+    }
+
+    public function setRomId($id){
+        $this->romId = $id;
+        $this->oppdater();
+        $this->rom = Rom::medId($id);
     }
 
     public function getRom()
@@ -614,7 +683,7 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
 
         $st = DB::getDB()->prepare('UPDATE beboer SET fornavn=:fornavn,mellomnavn=:mellomnavn,etternavn=:etternavn,
 fodselsdato=:fodselsdato,adresse=:adresse,postnummer=:postnummer,telefon=:telefon,studie_id=:studie_id,skole_id=:skole_id,
-klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk WHERE id=:id');
+klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk,ansiennitet=:ans WHERE id=:id');
 
         $st->bindParam(':id', $this->id);
         $st->bindParam(':fornavn', $this->fornavn);
@@ -632,8 +701,12 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $st->bindParam(':rolle', $this->rolleId);
         $st->bindParam(':epost', $this->epost);
         $st->bindParam('romhistorikk', $this->romhistorikk);
+        $st->bindParam(':ansiennitet', $this->ansiennitet);
         $st->execute();
+    }
 
+    public function erAktiv(){
+        return $this->getRomhistorikk()->romHistorikk[count($this->getRomhistorikk()->romHistorikk) -1]->utflyttet === null;
     }
 
 }
