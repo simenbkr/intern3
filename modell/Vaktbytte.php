@@ -187,7 +187,7 @@ class Vaktbytte
     
         $date = date('Y-m-d');
     
-        $sql = "SELECT vaktbytte.id FROM vaktbytte WHERE vaktbytte.vakt_id IN (SELECT vakt.id FROM vakt WHERE vakt.dato>:datoen)";
+        $sql = "SELECT vaktbytte.id FROM vaktbytte WHERE vaktbytte.vakt_id IN (SELECT vakt.id FROM vakt WHERE vakt.dato>=:datoen)";
         $st = DB::getDB()->prepare($sql);
         $st->bindParam(':datoen', $date);
         $st->execute();
