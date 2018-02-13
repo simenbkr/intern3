@@ -127,6 +127,10 @@ class Funk {
 	    $_SESSION['msg'] = $text;
     }
 
+    public static function compareFloats($delta, $a, $b){
+	    return (abs($a - $b) < $delta);
+    }
+
 }
 
 ?>
