@@ -1,9 +1,5 @@
 <?php
 
-namespace intern3;
-
-require_once ('autolast_absolute.php');
-
 function sanitize_output($buffer) {
 
     $search = array(
