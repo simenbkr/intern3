@@ -11,35 +11,36 @@ class VinkjellerCtrl extends AbstraktCtrl
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
 
-        if ($aktivBruker != null && ($aktivBruker->getPerson()->erKjellerMester() || $aktivBruker->getPerson()->harUtvalgVerv())) {
+        if ($aktivBruker != null &&
+            (
+                $aktivBruker->getPerson()->erKjellerMester() ||
+                $aktivBruker->getPerson()->harUtvalgVerv())
+        ) {
             //Time to set token yo
             session_destroy();
             session_start();
             $token = Token::createToken('vinkjeller', 15768000);
             $_SESSION['token'] = $token->getToken();
-            $_SESSION['success'] = 1;
-            $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på vinkjelleren.";
+            Funk::setSuccess("Du har blitt logget ut av egen bruker, og inn på vinkjelleren.");
         } elseif (
             !isset($_SESSION['token'])
             || ($token = Token::byToken($_SESSION['token'])) == null
             || !$token->isValidToken('vinkjeller')
         ) {
-            setcookie("fuck", "off");
-            header('Location: ?a=diverse');
             session_destroy();
+            header('Location: ?a=diverse');
             exit();
         }
 
 
-        $aktuelarg = $this->cd->getAktueltArg();
+        $aktueltarg = $this->cd->getAktueltArg();
 
         $dok = new Visning($this->cd);
         $dok->set('skjulMeny', 1);
-        switch ($aktuelarg) {
+        switch ($aktueltarg) {
             case 'pinkode':
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
 
                     $ansvarlig = Beboer::medId($post['ansvarlig']);
                     $resten = array();
@@ -51,7 +52,7 @@ class VinkjellerCtrl extends AbstraktCtrl
                     break;
                 }
             case 'kryssing':
-                if (($sisteArg = $this->cd->getSisteArg()) != $aktuelarg) {
+                if (($sisteArg = $this->cd->getSisteArg()) != $aktueltarg) {
                     $this->handleKryssing($dok);
                     break;
                 }
@@ -204,7 +205,7 @@ class VinkjellerCtrl extends AbstraktCtrl
     private function handleKryss($dok)
     {
 
-        if (isset($_POST) && count($_POST) < 1) {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
             //AKA fuck off
             $dok->vis('vinkjeller_hoved.php');
             return;
@@ -228,11 +229,11 @@ class VinkjellerCtrl extends AbstraktCtrl
 
         $beboerene = array();
         foreach ($beboerIDs as $id) {
+            //Gotta do them docs yo.
+            /* @var Beboer $beboer */
             if (($beboer = Beboer::medId($id)) == null) {
                 exit();
             }
-            //Gotta do them docs yo.
-            /* @var Beboer $beboer */
             $beboerene[] = $beboer;
         }
 
@@ -242,20 +243,28 @@ class VinkjellerCtrl extends AbstraktCtrl
         }*/
 
         if (($vinen = Vin::medId($vinId)) == null) {
+            Funk::setError("Denne vinen eksisterer ikke!");
             exit();
         }
         if ($antall < 1) {
+            Funk::setError("Du må krysse minst én vin!");
             exit();
         }
         if ($antall > $vinen->getAntall()) {
+            Funk::setError("Du kan ikke krysse flere vin enn det er igjen!");
             exit();
         }
         if (!$this->isInt($antall)) {
+            Funk::setError("Du kan bare krysse heltalls antall viner!");
             exit();
         }
 
-        if (round(array_sum($fordeling), 2) < 99.99 || round(array_sum($fordeling), 2) > 100.99) {
-            exit();
+        //Akseptabel avstand til sannheten. 0.0001 for den dyreste vinen tilsvarer 0.03kr.
+        $delta = 0.0001;
+
+        $sum = array_sum($fordeling);
+        if(abs($sum - 100)/100 > $delta) {
+            Funk::setError("Du/dere må betale 100%!");
         }
 
         //Ait, we gucci.

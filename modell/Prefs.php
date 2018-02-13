@@ -62,7 +62,8 @@ class Prefs
     }
 
     public function harVinPin(){
-        return $this->vinpinboo == 1;
+        //Må ha vinpin.
+        return true;
     }
 
     public function getVinPinkode(){

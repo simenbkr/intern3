@@ -84,6 +84,8 @@ require_once('topp.php');
     <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
     <br/>
 
+    <p>Står du ikke på lista? Sjekk at du har satt pinkode!</p>
+
     <table id="tabellen" data-togle="table" class="table table-bordered table-responsive tableSection">
         <thead>
         <tr>
@@ -96,6 +98,13 @@ require_once('topp.php');
 
         foreach ($beboerListe as $beboer) {
             /* @var intern3\Beboer $beboer */
+
+            if($beboer->getPrefs() == null ||
+               !$beboer->getPrefs()->harVinPin() ||
+               strlen($beboer->getPrefs()->getVinPinkode() < 1) ){
+
+                continue;
+            }
             ?>
 
             <tr id="<?php echo $beboer->getId(); ?>" onclick="select(<?php echo $beboer->getId(); ?>)">

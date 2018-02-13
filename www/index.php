@@ -13,7 +13,6 @@ $arg = isset($_GET['a']) ? explode('/', $_GET['a']) : array();
 
 //For egne klasser.
 require_once('../ink/errorhandlers.php');
-//require_once ('../ink/minimizer.php');
 require_once('../ink/autolast.php');
 
 //Composer-klasser.
@@ -25,6 +24,14 @@ require '../vendor/autoload.php';
 */
 session_save_path('../sessions');
 session_set_cookie_params(3600*24*100*100,"/");
+
+
+ob_start(
+    'ob_gzhandler',
+    16000,
+    PHP_OUTPUT_HANDLER_FLUSHABLE
+);
+
 
 header('Content-Type: text/html; charset=utf-8');
 

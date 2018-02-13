@@ -42,7 +42,7 @@ require_once('topp.php');
             ?>
             <tr>
                 <td><?php echo $kryss->getTiden(); ?></td>
-                <td><?php echo round($kryss->getAntall(), 1); ?></td>
+                <td><?php echo round($kryss->getAntall(), 2); ?></td>
                 <td><?php echo $kryss->getVin()->getNavn(); ?></td>
             </tr>
 
