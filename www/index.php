@@ -13,7 +13,7 @@ $arg = isset($_GET['a']) ? explode('/', $_GET['a']) : array();
 
 //For egne klasser.
 require_once('../ink/errorhandlers.php');
-require_once ('../ink/minimizer.php');
+//require_once ('../ink/minimizer.php');
 require_once('../ink/autolast.php');
 
 //Composer-klasser.
