@@ -18,6 +18,7 @@ class VaktbytteCtrl extends AbstraktCtrl
         $aktueltArg = $this->cd->getAktueltArg();
         $bruker = LogginnCtrl::getAktivBruker();
 
+        //API-endpoint for å endre ting.
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $sisteArg = $this->cd->getSisteArg();
@@ -42,7 +43,8 @@ class VaktbytteCtrl extends AbstraktCtrl
                 case 'leggtil':
                     //byttes=>[byttes|gisbort], passord=>[yes|no], passordtekst => passordtekst, merknad => merknad
 
-                    if (!(($vakt = Vakt::medId($sisteArg)) != null || $vakt->getBrukerId() === $bruker->getId())) {
+                    if (!(($vakt = Vakt::medId($sisteArg)) != null || $vakt->getBrukerId() === $bruker->getId())
+                        || $vakt->erStraffevakt()) {
                         Funk::setError("Denne vakten kan ikke byttes!");
                         break;
                     }
@@ -81,6 +83,9 @@ class VaktbytteCtrl extends AbstraktCtrl
                             $vaktbyttet->slett();
 
                             Funk::setSuccess("Du tok vakta " . $vakta->toString());
+                            $this->redirect();
+                        } else {
+                            Funk::setError("Feil passord!");
                             $this->redirect();
                         }
                     }
@@ -162,6 +167,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     break;
             }
 
+            //Modal-seksjon
         } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
             $dok = new Visning($this->cd);
