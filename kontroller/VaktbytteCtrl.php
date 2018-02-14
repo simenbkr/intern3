@@ -198,6 +198,7 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                 case 'modal_bytt':
                     if (!(($vaktbyttet = Vaktbytte::medId($sisteArg)) != null ||
+                        $vaktbyttet->getVakt() != null ||
                         $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId())) {
 
                         exit("Du kan ikke bytte denne vakta!");
