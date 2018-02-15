@@ -61,7 +61,7 @@ require_once('topp.php');
     <div class="col-lg-12">
       <div class="col-lg-2">
         <?php if($vinen->getBilde() != null && $vinen->getBilde() != ""){ ?>
-        <img src="vinbilder/<?php echo $vinen->getBilde(); ?>">
+        <img height="500px" src="vinbilder/<?php echo $vinen->getBilde(); ?>">
         <?php } else { ?>
         <img src="vinbilder/ayy.jpg">
         <?php } ?>

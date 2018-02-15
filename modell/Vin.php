@@ -128,7 +128,7 @@ class Vin
     }
 
     public static function getAktiveOrderedByNavn(){
-        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE slettet=0 ORDER BY navn');
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE (vin.slettet=0 OR slettet IS NULL) ORDER BY navn');
         $st->execute();
         $vinene = array();
         for($i = 0; $i < $st->rowCount(); $i++){
