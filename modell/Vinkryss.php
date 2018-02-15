@@ -66,6 +66,9 @@ class Vinkryss
     }
     
     public function getAnsvarlig() : Beboer {
+        if($this->ansvarlig == null){
+            return $this->beboeren;
+        }
         return $this->ansvarlig;
     }
 
