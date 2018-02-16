@@ -97,7 +97,6 @@ switch ($dag_tall) {
                         $('#status').replaceWith(response.getElementById('status'));
                     }
                     //reloadAvkryss();
-                    reloadGjest();
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -125,6 +124,7 @@ switch ($dag_tall) {
         
         setInterval(function(){
             reloadAvkryss();
+            reloadGjest();
         }, 60 * 1000)
 
     </script>
