@@ -149,6 +149,7 @@ foreach ($beboerene as $beboer) {
 
                 // Update display to current value
                 if (ids.length > 1) {
+
                     $(this).siblings('.value').text(ui.value);
                     $(this).siblings('.pris').text(Math.round(ui.value / 100 * antall * pris * 100) / 100);
 
@@ -173,25 +174,28 @@ foreach ($beboerene as $beboer) {
                     // Update each slider
                     sliders.not(this).each(function () {
 
-                        //console.log($(this).context.id);
-
                         var t = $(this),
                             value = t.slider("option", "value");
 
-                        var new_value = value + Math.round((delta / (ids.length - 1)* 10))/10;
+                        var new_value = value + Math.round((delta / (ids.length - 1) * 100000000000))/100000000000;
 
                         if (new_value < 0 || ui.value == 100)
                             new_value = 0;
                         if (new_value > 100)
                             new_value = 100;
 
-                        t.siblings('.value').text(new_value);
-                        t.slider('value', new_value);
+
+                        var avrunda_prosent = Math.round(new_value * 100)/100;
+                        t.siblings('.value').text(avrunda_prosent);
+                        t.slider('value', avrunda_prosent);
 
                         id = $(this).context.id;
                         prosent[id] = new_value;
 
-                        t.siblings('.pris').text(Math.round(antall * new_value / 100 * pris * 100) / 100);
+                        var avrunda_pris = Math.round(new_value/100 * pris * antall * 100) / 100;
+                        t.siblings('.pris').text(avrunda_pris);
+
+                        //t.siblings('.pris').text(Math.round(antall * new_value / 100 * pris * 10000) / 10000);
                     });
                 }
             }
@@ -209,9 +213,9 @@ foreach ($beboerene as $beboer) {
                 var t = $(this),
                     value = t.slider("option", "value");
 
-                new_value = t.slider("option", "value");
+                new_value = prosent[t.context.id];
                 new_pris = Math.round(antall * new_value / 100 * pris * 100) / 100;
-                t.siblings('.value').text(new_value);
+                t.siblings('.value').text(Math.round(new_value * 100) / 100);
                 t.siblings('.pris').text(new_pris);
             })
         } else {

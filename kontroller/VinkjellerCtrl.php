@@ -259,17 +259,20 @@ class VinkjellerCtrl extends AbstraktCtrl
             exit();
         }
 
-        foreach($post as $key => $val){setcookie($key,$val);}
+        foreach ($post as $key => $val) {
+            setcookie($key, $val);
+        }
 
         //Akseptabel avstand til sannheten. 0.000001 for den dyreste vinen tilsvarer 0.0003kr.
-        $delta = 0.000001;
+        $delta = 0.00000001;
         $sum = array_sum($fordeling);
         $sum_analytisk = 100.0;
 
-        if(Funk::compareFloats($delta, $sum, $sum_analytisk)){
+        if (abs($sum - $sum_analytisk) > $delta) {
             Funk::setError("Dere må betale 100%!");
             exit();
         }
+
 
         //Ait, we gucci.
         $msg = "Du krysset " . $antall . "stk " . $vinen->getNavn() . " til " . $vinen->getPris() * $vinen->getAvanse()
