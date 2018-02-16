@@ -96,7 +96,8 @@ switch ($dag_tall) {
                     if(document.getElementById('status').innerHTML != response.getElementById('status').innerHTML){
                         $('#status').replaceWith(response.getElementById('status'));
                     }
-                    reloadAvkryss();
+                    //reloadAvkryss();
+                    reloadGjest();
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -104,32 +105,15 @@ switch ($dag_tall) {
             });
         }
 
-
         setInterval(function () {
             refresh()
         }, 3000);
-
-        setInterval(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
-                    method: 'GET',
-                    success: function (html) {
-                        reloadAvkryss();
-                    },
-                    error: function (req, stat, err) {
-                        alert(err);
-                    }
-                });
-            },
-            10000
-        );
-
+        
         $(document).ready(function(){
             refreshNum();
             reloadGjest();
             reloadAvkryss();
-        })
+        });
 
         function reloadGjest(){
             $("#gjesteliste").load("?a=helga/gjesteliste/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
@@ -138,6 +122,10 @@ switch ($dag_tall) {
         function reloadAvkryss(){
             $("#gjestavkryss").load("?a=helga/gjestavkryss/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
         }
+        
+        setInterval(function(){
+            reloadAvkryss();
+        }, 60 * 1000)
 
     </script>
 
