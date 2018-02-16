@@ -154,6 +154,113 @@ class HelgaCtrl extends AbstraktCtrl
                     } else {
                         header('Location: ?a=helga');
                     }
+
+                case 'gjesteliste':
+                    if($beboer->harHelgaTilgang()){
+                        $dagen = $this->cd->getSisteArg();
+
+                        if(!in_array($dagen, array('fredag', 'lordag', 'torsdag'))){
+                            break;
+                        }
+
+                        switch ($dagen) {
+                            case 'fredag':
+                                $dag = 1;
+                                break;
+                            case 'lordag':
+                                $dag = 2;
+                                break;
+                            case 'torsdag':
+                            default:
+                                $dag = 0;
+                        }
+
+                        $gjesteliste_dag = HelgaGjesteListe::getGjesterUngrouped($denne_helga->getAar(), $dag);
+                        $beboerlista = array();
+                        foreach (BeboerListe::aktive() as $beboer) {
+                            $beboerlista[$beboer->getId()] = $beboer;
+                        }
+                        $dok = new Visning($this->cd);
+                        $dok->set('gjesteliste_dag', $gjesteliste_dag);
+                        $dok->set('beboerliste', $beboerlista);
+                        $dok->vis('helga_gjesteliste.php');
+                        exit();
+                    }
+                case 'gjestavkryss':
+                    if($beboer->harHelgaTilgang()){
+                        $dagen = $this->cd->getSisteArg();
+
+                        if(!in_array($dagen, array('fredag', 'lordag', 'torsdag'))){
+                            break;
+                        }
+
+                        switch ($dagen) {
+                            case 'fredag':
+                                $dag = 1;
+                                break;
+                            case 'lordag':
+                                $dag = 2;
+                                break;
+                            case 'torsdag':
+                            default:
+                                $dag = 0;
+                        }
+
+                        $gjesteliste_dag_gruppert = HelgaGjesteListe::getGjesterGroupedbyHost($denne_helga->getAar(), $dag);
+                        $beboerlista = array();
+                        foreach (BeboerListe::aktive() as $beboer) {
+                            $beboerlista[$beboer->getId()] = $beboer;
+                        }
+                        $dok = new Visning($this->cd);
+                        $dok->set('gjesteliste_dag_gruppert', $gjesteliste_dag_gruppert);
+                        $dok->set('beboerliste', $beboerlista);
+                        $dok->vis('helga_gjestavkryss.php');
+                        exit();
+                    }
+                case 'registrer':
+                    if($beboer->harHelgaTilgang()) {
+                        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                            if (($gjesten = HelgaGjest::byId($post['gjestid'])) != null) {
+                                if ($gjesten->getInne()) {
+                                    $gjesten->setInne(0);
+                                } else {
+                                    $gjesten->setInne(1);
+                                }
+                            }
+                        }
+                        $dagen = $post['dag'];
+                        switch ($dagen) {
+                            case 'fredag':
+                                $dag = 1;
+                                break;
+                            case 'lordag':
+                                $dag = 2;
+                                break;
+                            case 'torsdag':
+                            default:
+                                $dag = 0;
+                        }
+                        $dok = new Visning($this->cd);
+
+                        $antall_inne = $denne_helga->getAntallInnePerDag()[$dagen];
+                        $antall_inviterte = $denne_helga->getAntallPerDag()[$dagen];
+                        $gjesteliste_dag = HelgaGjesteListe::getGjesterUngrouped($denne_helga->getAar(), $dag);
+                        $gjesteliste_dag_gruppert = HelgaGjesteListe::getGjesterGroupedbyHost($denne_helga->getAar(), $dag);
+                        $beboerlista = array();
+                        foreach (BeboerListe::aktive() as $beboer) {
+                            $beboerlista[$beboer->getId()] = $beboer;
+                        }
+                        $dok->set('antall_inne', $antall_inne);
+                        $dok->set('antall_inviterte', $antall_inviterte);
+                        $dok->set('gjesteliste_dag', $gjesteliste_dag);
+                        $dok->set('gjesteliste_dag_gruppert', $gjesteliste_dag_gruppert);
+                        //$dok->set('gjestelista', $gjestelista);
+                        $dok->set('beboerliste', $beboerlista);
+                        $dok->set('dag_tall', $dag);
+                        $dok->vis('helga_inngang.php');
+                        break;
+                    }
                 case 'reg':
                     $sisteArg = $this->cd->getSisteArg();
                     if ($sisteArg != 'reg' && strlen($sisteArg) == 128) {

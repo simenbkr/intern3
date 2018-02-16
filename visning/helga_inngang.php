@@ -42,20 +42,14 @@ switch ($dag_tall) {
                 elem.onclick = function() {registrer(id, 1); };
                 document.getElementById(id + "-knapp").onclick = function() { registrer(id, 1); };
             }
+
             $.ajax({
                 type: 'POST',
                 url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                 data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
                 method: 'POST',
                 success: function (html) {
-
-                      var parser = new DOMParser();
-                      var response = parser.parseFromString(html, "text/html");
-
-                      if(document.getElementById("gjester").innerHTML != response.getElementById('gjester').innerHTML) {
-                          $('#gjester').replaceWith(response.getElementById('gjester'));
-                      }
-
+                    reloadGjest();
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -102,10 +96,7 @@ switch ($dag_tall) {
                     if(document.getElementById('status').innerHTML != response.getElementById('status').innerHTML){
                         $('#status').replaceWith(response.getElementById('status'));
                     }
-
-                    if(document.getElementById('lista').innerHTML != response.getElementById('lista').innerHTML){
-                        $('#lista').replaceWith(response.getElementById('lista'));
-                    }
+                    reloadAvkryss();
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -124,13 +115,7 @@ switch ($dag_tall) {
                     url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
                     method: 'GET',
                     success: function (html) {
-                        //$("#gjester").replaceWith($('#gjester', $(html)));
-                        var parser = new DOMParser();
-                        var response = parser.parseFromString(html, "text/html");
-
-                        if(document.getElementById("gjester").innerHTML != response.getElementById('gjester').innerHTML) {
-                            $('#gjester').replaceWith(response.getElementById('gjester'));
-                        }
+                        reloadAvkryss();
                     },
                     error: function (req, stat, err) {
                         alert(err);
@@ -139,6 +124,20 @@ switch ($dag_tall) {
             },
             10000
         );
+
+        $(document).ready(function(){
+            refreshNum();
+            reloadGjest();
+            reloadAvkryss();
+        })
+
+        function reloadGjest(){
+            $("#gjesteliste").load("?a=helga/gjesteliste/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
+        }
+
+        function reloadAvkryss(){
+            $("#gjestavkryss").load("?a=helga/gjestavkryss/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
+        }
 
     </script>
 
@@ -161,46 +160,11 @@ switch ($dag_tall) {
     </div>
 
 
-    <div class="subcontainer" id="lista">
-        <?php
-        foreach ($gjesteliste_dag_gruppert as $beboers_id => $beboers_gjester) { ?>
-            <table class="table table-bordered table-responsive">
-                <tr class="bg-info">
-                    <td>
-                        <b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() : ''; ?></b>
-                    </td>
-                </tr>
-                <?php
-                foreach ($beboers_gjester as $gjest) {
-                    /* @var \intern3\HelgaGjest $gjest */
-                    $klassen = $gjest->getInne() == 0 ? 'bg-warning' : 'bg-success';
-                    $checked = $gjest->getInne() == 0 ? 'none' : 'checked=\"checked\"';
-                    $verdi = $gjest->getInne() == 0 ? 1 : 0;
-                    echo "<tr class=\"$klassen\" id='" . $gjest->getId() .
-                        "' onclick='registrer(" . $gjest->getId() . ",$verdi)'>
-                        <td>" . $gjest->getNavn() . "</td>";
-                    
-                    echo "<td><input id=" . $gjest->getId() . "-knapp type=\"checkbox\"  value=\"" . $gjest->getId() . "\" onclick='registrer(" . $gjest->getId() . ",$verdi)' $checked></td></tr>";
-                }
-                ?></table>
-            <?php
-        }
-        ?>
-    </div>
-    </div>
+<div id="gjestavkryss">
+</div>
 
-    <datalist id="gjester">
-        <?php
-        foreach ($gjesteliste_dag as $gjest) {
-            if ($gjest->getInne() != 0) {
-                continue;
-            }
-            ?>
-            <option data-value="<?php echo $gjest->getId(); ?>"
-                    value="<?php echo $gjest->getNavn(); ?>"></option>
-            <?php
-        }
-        ?></datalist>
+<div id="gjesteliste">
+</div>
 
 <?php
 require_once('bunn.php');
