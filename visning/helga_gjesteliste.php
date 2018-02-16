@@ -5,7 +5,8 @@
             continue;
         }
         ?>
-        <option data-value="<?php echo $gjest->getId(); ?>"
+        <option id="liste-<?php echo $gjest->getId(); ?>"
+                data-value="<?php echo $gjest->getId(); ?>"
                 value="<?php echo $gjest->getNavn(); ?>"></option>
         <?php
     }

@@ -49,7 +49,7 @@ switch ($dag_tall) {
                 data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
                 method: 'POST',
                 success: function (html) {
-                    reloadGjest();
+                    $("#liste-" + id).remove();
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -58,7 +58,7 @@ switch ($dag_tall) {
             refreshNum();
         }
 
-        function test() {
+        function keyboardInput() {
             var shownVal = document.getElementById("tekstinput").value;
             var gjestid = document.querySelector("#gjester option[value='" + shownVal + "']").dataset.value;
             registrer(gjestid, 1);
@@ -156,11 +156,12 @@ switch ($dag_tall) {
     <div class="asd">
         <h4>Registrer folk</h4>
         <input placeholder="Ola Nordmann" id="tekstinput" class="form-control" type="text" list="gjester"
-               onkeydown="if (event.keyCode == 13) { test()}"><br/><br/>
+               onkeydown="if (event.keyCode == 13) { keyboardInput()}"><br/><br/>
     </div>
 
 
 <div id="gjestavkryss">
+    <datalist id="gjester"></datalist>
 </div>
 
 <div id="gjesteliste">
