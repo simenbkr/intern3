@@ -10,11 +10,13 @@ class VinkjellerCtrl extends AbstraktCtrl
     {
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
-
+        $aktueltarg = $this->cd->getAktueltArg();
+        $sisteArg = $this->cd->getSisteArg();
         if ($aktivBruker != null &&
             (
                 $aktivBruker->getPerson()->erKjellerMester() ||
-                $aktivBruker->getPerson()->harUtvalgVerv())
+                $aktivBruker->getPerson()->harUtvalgVerv())  ||
+            ($aktueltarg == 'token' && ($token = Token::byToken($sisteArg)) != null && $token->isValidToken("vinkjeller") )
         ) {
             //Time to set token yo
             session_destroy();
