@@ -20,6 +20,12 @@ class JournalCtrl extends AbstraktCtrl
             $_SESSION['token'] = $token->getToken();
             $_SESSION['success'] = 1;
             $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på Journalen.";
+
+            if($aktueltArg == 'token'){
+                header('?a=journal/kryssing');
+                exit();
+            }
+
         } elseif (
             !isset($_SESSION['token'])
             || ($token = Token::byToken($_SESSION['token'])) == null
