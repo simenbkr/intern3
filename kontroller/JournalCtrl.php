@@ -8,8 +8,11 @@ class JournalCtrl extends AbstraktCtrl
     {
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
+        $aktueltArg = $this->cd->getAktueltArg();
+        $sistearg = $this->cd->getSisteArg();
 
-        if ($aktivBruker != null && $aktivBruker->getPerson()->harUtvalgVerv()) {
+        if ($aktivBruker != null && $aktivBruker->getPerson()->harUtvalgVerv() ||
+            ($aktueltArg == 'token' && ($token = Token::byToken($sistearg)) != null && $token->isValidToken('journal'))) {
             //Time to set token yo
             session_destroy();
             session_start();
