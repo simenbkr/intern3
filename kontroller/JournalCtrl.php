@@ -22,7 +22,7 @@ class JournalCtrl extends AbstraktCtrl
             $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på Journalen.";
 
             if($aktueltArg == 'token'){
-                header('?a=journal/kryssing');
+                header('Location: ?a=journal/krysseliste');
                 exit();
             }
 
