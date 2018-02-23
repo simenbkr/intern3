@@ -106,6 +106,9 @@ require_once('topp.php');
             <div class="row">
 
                 <?php for ($i = 0; $i < count($land); $i++) {
+                    if(strlen($land[$i]) < 1 ){
+                        continue;
+                    }
 
                 if ($i != 0 && $i % 3 == 0){ ?>
             </div>

@@ -65,6 +65,8 @@ class VinkjellerCtrl extends AbstraktCtrl
                 $this->handleKryss($dok);
                 break;
             case 'regler':
+                $regel = Vinregel::getRegel();
+                $dok->set('regel', $regel);
                 $dok->vis('vinkjeller_regler.php');
                 break;
             case '':

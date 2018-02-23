@@ -485,6 +485,23 @@ class KjellerCtrl extends AbstraktCtrl
                 $dok->set('vinene', $vinene);
                 $dok->vis('kjeller_pafyll.php');
                 break;
+            case 'regler':
+                
+                if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    if(strlen($post['regel']) > 1){
+                        Vinregel::nyRegel($_POST['regel']);
+                        Funk::setSuccess("Regelen ble endret!");
+                        header('Location: ?a=kjeller/regler');
+                        exit();
+                    }
+                }
+                
+                $regel = Vinregel::getRegel();
+                $dok->set('regel', $regel);
+                $dok->vis('kjeller_regel.php');
+                break;
+                
             case 'oversikt':
                 $transaksjoner = Vinkryss::getAlle();
 
