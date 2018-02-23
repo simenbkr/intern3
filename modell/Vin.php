@@ -167,7 +167,7 @@ class Vin
 
     public static function getAlleLand(){
 
-        $sql = "SELECT DISTINCT land FROM vin WHERE (slettet=0 OR sluttet IS NULL)";
+        $sql = "SELECT DISTINCT land FROM vin WHERE (slettet=0 OR slettet IS NULL)";
         $st = DB::getDB()->query($sql);
 
         $land = array();
