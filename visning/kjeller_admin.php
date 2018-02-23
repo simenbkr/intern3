@@ -33,6 +33,7 @@ require_once('topp.php');
             [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]
             [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]
             [ <a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a> ]
+            [ <a href="<?php echo $cd->getBase(); ?>kjeller/regler">Regler</a> ]
         </p>
         <hr>
         <table id="tabellen" class="table table-bordered table-responsive" data-toggle="table">

@@ -34,6 +34,7 @@ require_once('topp.php');
         [ Svinn ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/regler">Regler</a> ]
     </p>
     <hr>
 

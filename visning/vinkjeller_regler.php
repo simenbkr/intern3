@@ -14,11 +14,9 @@ require_once('topp.php');
 <div class="container">
     
     <div class="col-lg-12">
-        <h4>
+        <p>
         <?php echo $regel->getTekst(); ?>
-        
-        </h4>
-        
+        </p>
     </div>
     
 </div>

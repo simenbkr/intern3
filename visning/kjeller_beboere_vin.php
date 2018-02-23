@@ -29,6 +29,7 @@ require_once ('topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]
         [ Fakturer ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/regler">Regler</a> ]
     </p>
     <hr>
     <?php require_once ('tilbakemelding.php'); ?>
