@@ -8,8 +8,11 @@ class JournalCtrl extends AbstraktCtrl
     {
 
         $aktivBruker = LogginnCtrl::getAktivBruker();
+        $aktueltArg = $this->cd->getAktueltArg();
+        $sistearg = $this->cd->getSisteArg();
 
-        if ($aktivBruker != null && $aktivBruker->getPerson()->harUtvalgVerv()) {
+        if (($aktivBruker != null && $aktivBruker->getPerson()->harUtvalgVerv()) ||
+            ($aktueltArg == 'token' && ($token = Token::byToken($sistearg)) != null && $token->isValidToken('journal'))) {
             //Time to set token yo
             session_destroy();
             session_start();
@@ -17,6 +20,12 @@ class JournalCtrl extends AbstraktCtrl
             $_SESSION['token'] = $token->getToken();
             $_SESSION['success'] = 1;
             $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på Journalen.";
+
+            if($aktueltArg == 'token'){
+                header('Location: ?a=journal/krysseliste');
+                exit();
+            }
+
         } elseif (
             !isset($_SESSION['token'])
             || ($token = Token::byToken($_SESSION['token'])) == null
