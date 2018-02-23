@@ -118,6 +118,7 @@ if (!isset($skjulMeny)) {
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/regning">Registrer regning</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Registrer svinn</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a></li>
+                                    <li><a href="<?php echo $cd->getBase(); ?>kjeller/regler">Regler</a></li>
                                     <li><a href="<?php echo $cd->getBase(); ?>vinkjeller/">Vinkjelleren</a></li>
                                 </ul>
                             </li>
