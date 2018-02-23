@@ -118,7 +118,7 @@ class Vin
     }
 
     public static function getAktive(){
-        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE slettet=0');
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE (slettet=0 OR slettet IS NULL)');
         $st->execute();
         $vinene = array();
         for($i = 0; $i < $st->rowCount(); $i++){
@@ -128,7 +128,7 @@ class Vin
     }
 
     public static function getAktiveOrderedByNavn(){
-        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE (vin.slettet=0 OR slettet IS NULL) ORDER BY navn');
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE (vin.slettet=0 OR vin.slettet IS NULL) ORDER BY navn');
         $st->execute();
         $vinene = array();
         for($i = 0; $i < $st->rowCount(); $i++){
@@ -140,7 +140,7 @@ class Vin
     public static function getAktiveAvType($type){
         $typeId = $type->getId();
 
-        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE (slettet=0 AND typeId=:typeId)');
+        $st = DB::getDB()->prepare('SELECT * FROM vin WHERE ((slettet=0 OR slettet IS NULL) AND typeId=:typeId)');
         $st->bindParam(':typeId', $typeId);
         $st->execute();
         $vinene = array();
@@ -167,7 +167,7 @@ class Vin
 
     public static function getAlleLand(){
 
-        $sql = "SELECT DISTINCT land FROM vin WHERE slettet=0";
+        $sql = "SELECT DISTINCT land FROM vin WHERE (slettet=0 OR sluttet IS NULL)";
         $st = DB::getDB()->query($sql);
 
         $land = array();
