@@ -43,79 +43,86 @@ require_once('topp.php');
     table {
       color: #000;
     }
-    /*tr:nth-child(even)
-    {
-      background-color: #504f4d !important;
-      color:white;
-    }
-    tr:nth-child(odd)
-    {
-      background-color: #444341 !important;
-      color:white;
-    }*/
 </style>
 <div class="container">
 
     <h1>Vinkjeller » Kryss <?php echo $vinen->getNavn(); ?></h1>
     <hr>
     <div class="col-lg-12">
-      <div class="col-lg-2">
+      <div class="col-lg-2" style="background: gray; text-align: center">
         <?php if($vinen->getBilde() != null && $vinen->getBilde() != ""){ ?>
-        <img height="500px" src="vinbilder/<?php echo $vinen->getBilde(); ?>">
+        <img height="300px" src="vinbilder/<?php echo $vinen->getBilde(); ?>">
         <?php } else { ?>
-        <img src="vinbilder/ayy.jpg">
+        <img src="vinbilder/default.png" style="max-height: 300px">
         <?php } ?>
       </div>
-      <div class="col-lg-3">
-        Navn: <?php echo $vinen->getNavn(); ?><br/>
-        Land: <?php echo $vinen->getLand(); ?><br/>
-        Beskrivelse: <br/><?php echo $vinen->getBeskrivelse(); ?>
+      <div class="col-lg-10">
+        <div class="col-lg-5" style="background: gray; text-align: center">
+          <h1><?php echo $vinen->getNavn(); ?></h1>
+        </div>
       </div>
-      <div class="col-lg-3">
-        Pris: <?php echo round($vinen->getPris() * $vinen->getAvanse(), 2); ?> kr <br/>
-        Antall: <?php echo $vinen->getAntall(); ?>
+      <div class="col-lg-9">
+        <?php if (!$vinen->getLand() == 'udefinert' && !$vinen->getLand() == ''){?>
+        <div class="col-lg-3" style="background: gray; margin-top: 20px; margin-right: 38px; text-align: center">
+          <h2><?php echo $vinen->getLand(); ?></h2>
+        </div>
+      <?php }?>
+        <div class="col-lg-2" style="background: gray; margin-top: 20px; text-align: center">
+          <h2><?php echo round($vinen->getPris() * $vinen->getAvanse(), 2); ?> kr</h2>
+        </div>
+      </div>
+      <?php if ($vinen->getBeskrivelse()){?>
+      <div class="col-lg-10">
+        <div class="col-lg-5" style="background: gray; margin-top: 20px; text-align: center">
+          <h2><?php echo $vinen->getBeskrivelse(); ?></h2>
+        </div>
+      </div>
+      <?php }?>
+      <div class="col-lg-9">
+        <div class="col-lg-2" style="background: gray; margin-top: 20px; text-align: center">
+          <h2>Antall: <?php echo round($vinen->getAntall()); ?></h2>
+        </div>
       </div>
 
-      <div class="col-lg-2">
-        <button class="btn btn-primary" onclick="videre()">Velg</button>
-      </div>
     </div>
-    <br/><br/><br/><br/><br/><hr>
-    <button class="btn btn-primary btn-block" onclick="javascript:history.back();">Tilbake</button>
-    <br/>
+    <div class="col-lg-12">
+      <hr>
+      <button class="btn btn-primary btn-block" onclick="videre()">Velg</button>
+      <br/>
+    </div>
 
-    <p>Står du ikke på lista? Sjekk at du har satt pinkode!</p>
+    <div class="col-lg-12">
+      <p>Står du ikke på lista? Sjekk at du har satt pinkode!</p>
+    </div>
+      <table id="tabellen" data-togle="table" class="table table-bordered table-responsive tableSection">
+          <thead>
+          <tr>
+              <td>Navn</td>
+          </tr>
+          </thead>
 
-    <table id="tabellen" data-togle="table" class="table table-bordered table-responsive tableSection">
-        <thead>
-        <tr>
-            <td>Navn</td>
-        </tr>
-        </thead>
+          <tbody>
+          <?php
 
-        <tbody>
-        <?php
+          foreach ($beboerListe as $beboer) {
+              /* @var intern3\Beboer $beboer */
 
-        foreach ($beboerListe as $beboer) {
-            /* @var intern3\Beboer $beboer */
+              if($beboer->getPrefs() == null ||
+                 !$beboer->getPrefs()->harVinPin() ||
+                 strlen($beboer->getPrefs()->getVinPinkode() < 1) ){
 
-            if($beboer->getPrefs() == null ||
-               !$beboer->getPrefs()->harVinPin() ||
-               strlen($beboer->getPrefs()->getVinPinkode() < 1) ){
+                  continue;
+              }
+              ?>
 
-                continue;
-            }
-            ?>
-
-            <tr id="<?php echo $beboer->getId(); ?>" onclick="select(<?php echo $beboer->getId(); ?>)">
-                <td><?php echo $beboer->getFulltNavn(); ?></td>
-            </tr>
-            <?php
-        }
-        ?>
-        </tbody>
-    </table>
-    <p>Trykk på navn for å velge.</p>
+              <tr id="<?php echo $beboer->getId(); ?>" onclick="select(<?php echo $beboer->getId(); ?>)">
+                  <td><?php echo $beboer->getFulltNavn(); ?></td>
+              </tr>
+              <?php
+          }
+          ?>
+          </tbody>
+      </table>
 
 
 </div>
