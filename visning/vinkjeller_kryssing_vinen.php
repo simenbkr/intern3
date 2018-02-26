@@ -49,7 +49,7 @@ require_once('topp.php');
     <h1>Vinkjeller » Kryss <?php echo $vinen->getNavn(); ?></h1>
     <hr>
     <div class="col-lg-12">
-      <div class="col-lg-2" style="background: gray; text-align: center">
+      <div class="col-lg-2" style="text-align: center">
         <?php if($vinen->getBilde() != null && $vinen->getBilde() != ""){ ?>
         <img height="300px" src="vinbilder/<?php echo $vinen->getBilde(); ?>">
         <?php } else { ?>
@@ -57,29 +57,31 @@ require_once('topp.php');
         <?php } ?>
       </div>
       <div class="col-lg-10">
-        <div class="col-lg-5" style="background: gray; text-align: center">
+        <div class="col-lg-10">
           <h1><?php echo $vinen->getNavn(); ?></h1>
         </div>
       </div>
-      <div class="col-lg-9">
-        <?php if (!$vinen->getLand() == 'udefinert' && !$vinen->getLand() == ''){?>
-        <div class="col-lg-3" style="background: gray; margin-top: 20px; margin-right: 38px; text-align: center">
+      <div class="col-lg-10">
+        <?php if (!$vinen->getLand() == 'udefinert' && $vinen->getLand() == ''){?>
+        <div class="col-lg-10" style="margin-top: 20px;">
           <h2><?php echo $vinen->getLand(); ?></h2>
         </div>
       <?php }?>
-        <div class="col-lg-2" style="background: gray; margin-top: 20px; text-align: center">
+      </div>
+      <div class="col-lg-10">
+        <div class="col-lg-2" style="margin-top: 20px;">
           <h2><?php echo round($vinen->getPris() * $vinen->getAvanse(), 2); ?> kr</h2>
         </div>
       </div>
       <?php if ($vinen->getBeskrivelse()){?>
       <div class="col-lg-10">
-        <div class="col-lg-5" style="background: gray; margin-top: 20px; text-align: center">
+        <div class="col-lg-10" style="margin-top: 20px;">
           <h2><?php echo $vinen->getBeskrivelse(); ?></h2>
         </div>
       </div>
       <?php }?>
-      <div class="col-lg-9">
-        <div class="col-lg-2" style="background: gray; margin-top: 20px; text-align: center">
+      <div class="col-lg-10">
+        <div class="col-lg-10" style="margin-top: 20px;">
           <h2>Antall: <?php echo round($vinen->getAntall()); ?></h2>
         </div>
       </div>
