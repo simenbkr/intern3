@@ -5,3 +5,4 @@ config.php
 config
 composer.phar
 /vendor/
+beboerliste.csv
