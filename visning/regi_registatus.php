@@ -24,7 +24,7 @@ require_once('topp_utvalg.php');
     }
 
     $(document).ready(function () {
-        $('#tabellen').DataTable({
+        $('.tabellen').DataTable({
             "paging": false,
             "searching": false
         });
@@ -80,7 +80,7 @@ require_once('topp_utvalg.php');
 
         foreach ($tabeller as $tittel => $brukere) {
             ?>    <h2><?php echo $tittel; ?></h2>
-            <table class="table table-bordered" id="tabellen" data-toggle="table">
+            <table class="table table-bordered tabellen" data-toggle="table">
                 <thead>
                 <tr>
                     <th>Navn</th>
