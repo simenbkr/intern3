@@ -373,6 +373,9 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('romListe', $romListe);
 
                 $dok->vis('utvalg_romsjef_beboerliste.php');
+            } else if ($aktueltArg == 'epost') {
+                $valgtCtrl = new UtvalgRomsjefEpostCtrl($this->cd->skiftArg());
+                return $valgtCtrl->bestemHandling();
             } else if (is_numeric($aktueltArg)) {
                 $beboer = Beboer::medId($aktueltArg);
                 // Trenger feilhåndtering her.
