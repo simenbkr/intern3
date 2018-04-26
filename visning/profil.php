@@ -172,6 +172,32 @@ foreach (intern3\StudieListe::alle() as $studie) {
 	</form>
 </div>
 
+
+<script>
+    function sjekk(id) {
+        $("#" + id).load("?a=profil/epost/");
+    }
+
+    function leggTil(id, group) {
+        $("#" + id + " ." + group.split("@")[0]).load("?a=profil/epost/" + group, {"group": group, "id": id});
+    }
+
+    function del(id, group) {
+        $.ajax({
+            url: '?a=profil/epost/' + group,
+            type: 'DELETE',
+            success: function(result) {
+                $("#" + id + " ." + group.split("@"[0])).html(result);
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        sjekk('<?php echo $beboer->getId(); ?>')
+    });
+
+</script>
+
 <div class="col-md-4 col-sm-6">
     <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         <?php /* @var \intern3\Prefs $prefs */ ?>
@@ -206,6 +232,35 @@ foreach (intern3\StudieListe::alle() as $studie) {
         </table>
         <p><input type="submit" class="btn btn-primary" value="Lagre"></p>
     </form>
+</div>
+
+<div class="col-md-4 col-sm-6">
+
+    <h3>E-postlister</h3>
+
+    <table class="table table-bordered table-responsive">
+        <thead>
+        <tr>
+            <td>Epost</td>
+            <td>SING-ALLE</td>
+            <td>SING-SLARV</td>
+            <td>Sjekk</td>
+        </tr>
+
+        </thead>
+        <tbody>
+        <tr id="<?php echo $beboer->getId(); ?>">
+            <td><?php echo $beboer->getEpost(); ?></td>
+            <td class=sing-alle">Laster..</td>
+            <td class=sing-slarv">Laster..</td>
+            <td>
+                <button class="btn btn-danger" onclick="sjekk('<?php echo $beboer->getId(); ?>')">Sjekk</button>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
 </div>
 
 <?php

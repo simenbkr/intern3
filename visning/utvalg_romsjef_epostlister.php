@@ -16,10 +16,27 @@ require_once('topp_utvalg.php');
         $("#" + id + " ." + group.split("@")[0]).load("?a=utvalg/romsjef/epost/" + group + "/" + id, {"group": group, "id": id});
     }
 
+    function del(id, group) {
+        $.ajax({
+            url: '?a=utvalg/romsjef/epost/' + group + "/" + id,
+            type: 'DELETE',
+            success: function(result) {
+                $("#" + id + " ." + group.split("@"[0])).html(result);
+            }
+        });
+    }
+
 
 </script>
 <div class="container">
     <h1>Utvalget &raquo; Romsjef &raquo; Epostlister</h1>
+    <p> Her kan du legge til/fjerne folk fra e-postlister. Beboerenes status lastes ikke automagisk, da det tar jævlig
+        lang tid fordi Google har et tregt API.
+    </p>
+    <p>
+        NB: Når folk flyttes ut, fjernes de fra alle disse epostlistene
+        og legges inn på veteranlista automagisk.
+    </p>
     <hr>
     <div class="col-md-12">
 

@@ -183,6 +183,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/beboerliste">Beboerliste</a></li>
                     <li><a href="<?php echo $cd->getBase();?>utvalg/romsjef/gammelbeboer_tabell">Gamle beboerliste</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/epost">E-postlister</a></li>
                   <?php /*<li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endrebeboer">Endre beboer</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endregammelbeboer">Endre Gammel beboer</a></li>*/ ?>
                 </ul>

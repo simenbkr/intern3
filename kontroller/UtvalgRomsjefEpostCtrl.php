@@ -14,11 +14,12 @@ class UtvalgRomsjefEpostCtrl extends AbstraktCtrl
         $aktueltArg = $this->cd->getAktueltArg();
         $dok = new Visning($this->cd);
         $beboerliste = BeboerListe::aktive();
+        $group = new GroupManage();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             switch($aktueltArg){
                 case in_array($aktueltArg, MAIL_LISTS) && ($beboer = Beboer::medId($this->cd->getSisteArg())) != null:
-                    $group = new GroupManage();
+
                     if(!$group->inGroup($beboer->getEpost(), $aktueltArg)){
                         $group->addToGroup($beboer->getEpost(), "MEMBER", $aktueltArg);
                         print $beboer->getEpost() . " ble lagt til i " . $aktueltArg . "!";
@@ -29,28 +30,45 @@ class UtvalgRomsjefEpostCtrl extends AbstraktCtrl
                     }
             }
 
-        } else {
+        } else if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+
+            if(in_array($aktueltArg, MAIL_LISTS) && ($beboer = Beboer::medId($this->cd->getSisteArg())) != null){
+
+                if($group->inGroup($beboer->getEpost(), $aktueltArg)){
+                    $group->removeFromGroup($beboer->getEpost(), $aktueltArg);
+                    print $beboer->getEpost() . " ble fjernet fra " . $aktueltArg . "!";
+                } else {
+                    print $beboer->getEpost() . " er allerede fjernet fra " . $aktueltArg . "!";
+                }
+            } else {
+                print "uhh";
+            }
+
+        }
+
+        else {
 
             switch ($aktueltArg) {
                 case is_numeric($aktueltArg):
                     if (($beboer = Beboer::medId($aktueltArg)) != null) {
                         $status = array();
-                        $group = new GroupManage();
                         $ret = '<td>' . $beboer->getFulltNavn() . "</td><td>" . $beboer->getEpost() . "</td>";
+                        $id = $beboer->getId();
+
                         foreach(MAIL_LISTS as $lista){
+                            $classname = explode("@", $lista)[0];
+
                             if($group->inGroup($beboer->getEpost(), $lista)){
-                                $status[] = "✔";
-                                $ret .= "<td class='$lista'>✔</td>";
+                                $button_string = "✔ <button class='btn btn-danger' onclick='del($id, \"$lista\")'>Fjern</button>";
+                                $ret .= "<td class='$classname'>$button_string</td>";
                             } else {
-                                $id = $beboer->getId();
-                                $classname = explode("@", $lista)[0];
                                 $button_string = "✗ <button class='btn btn-warning' onclick='leggTil($id, \"$lista\")'>Legg til</button>";
                                 $ret .= "<td class='$classname'>$button_string</td>";
                             }
                         }
                         //print '<td>' . $beboer->getFulltNavn() . "</td><td>" . $beboer->getEpost() . "</td><td>" .
                          //   implode('</td><td>', $status) . "</td>";
-                        print $ret;
+                        print $ret . "<td></td>";
                         break;
                     }
                 case '':

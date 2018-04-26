@@ -6,27 +6,35 @@ class ProfilCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
-        $feil = array();
-        if (isset($_POST['endre'])) {
-            switch ($_POST['endre']) {
-                case 'generell':
-                    $feil = array_merge($feil, $this->endreGenerellInfo());
-                    break;
-                case 'passord':
-                    $feil = array_merge($feil, $this->endrePassord());
-                    break;
-                case 'bilde':
-                    $feil = array_merge($feil, $this->endreBilde());
-                    break;
-                case 'varsler':
-                    $feil = array_merge($feil, $this->endreVarsler());
-                    break;
-                case 'prefs':
-                    $feil = array_merge($feil, $this->endrePrefs());
-            }
-            if (count($feil) == 0) {
-                header('Location: ' . $_SERVER['REQUEST_URI']);
-                exit();
+
+        if($this->cd->getAktueltArg() == 'epost'){
+            $ctrl = new ProfilEpostCtrl($this->cd->skiftArg());
+            $ctrl->bestemHandling();
+            exit();
+        } else {
+            $feil = array();
+            if (isset($_POST['endre'])) {
+                switch ($_POST['endre']) {
+                    case 'generell':
+                        $feil = array_merge($feil, $this->endreGenerellInfo());
+                        break;
+                    case 'passord':
+                        $feil = array_merge($feil, $this->endrePassord());
+                        break;
+                    case 'bilde':
+                        $feil = array_merge($feil, $this->endreBilde());
+                        break;
+                    case 'varsler':
+                        $feil = array_merge($feil, $this->endreVarsler());
+                        break;
+                    case 'prefs':
+                        $feil = array_merge($feil, $this->endrePrefs());
+                        break;
+                }
+                if (count($feil) == 0) {
+                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                    exit();
+                }
             }
         }
         $epostInst = LogginnCtrl::getAktivBruker()->getPerson()->getEpostPref();
