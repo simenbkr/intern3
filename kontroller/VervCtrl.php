@@ -39,14 +39,14 @@ class VervCtrl extends AbstraktCtrl
                 $dok->set('har_vervet', $har_vervet);
                 $dok->set('verv_meldinger', $verv_meldinger);
                 $dok->set('vervet', $vervet);
-                $dok->vis('verv_beskrivelse.php');
+                $dok->vis('verv/verv_beskrivelse.php');
                 exit();
             }
         }
 
         $vervListe = VervListe::alle();
         $dok->set('vervListe', $vervListe);
-        $dok->vis('verv.php');
+        $dok->vis('verv/verv.php');
     }
 }
 

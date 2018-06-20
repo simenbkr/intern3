@@ -17,7 +17,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
         $dok->set('studieListe', $studieListe);
         $dok->set('rolleListe', $rolleListe);
         $dok->set('romListe', $romListe);
-        $dok->vis('utvalg_romsjef_endre_denne_beboeren.php');
+        $dok->vis('utvalg/romsjef/utvalg_romsjef_endre_denne_beboeren.php');
         return;
     }
 
@@ -133,7 +133,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
             $dok->set('romListe', $romListe);
             $dok->set('showTable', 1);
 
-            $dok->vis('utvalg_romsjef_beboerliste.php');
+            $dok->vis('utvalg/romsjef/utvalg_romsjef_beboerliste.php');
         } else if ($aktueltArg == 'flyttinn') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             if (($beboer = Beboer::medId($post['id'])) != null && !in_array($beboer, BeboerListe::aktive())) {
@@ -160,7 +160,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                     if (!isset($post[$value])) {
                         setcookie("Dank", $value);
                         Funk::setError("Oops! Det ser ut til at du mangler " . $values[$key]);
-                        $dok->vis('utvalg_romsjef_nybeboer.php');
+                        $dok->vis('utvalg/romsjef/utvalg_romsjef_nybeboer.php');
                         exit();
                     }
                 }
@@ -175,7 +175,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 exit();
             }
 
-            $dok->vis('utvalg_romsjef_nybeboer.php');
+            $dok->vis('utvalg/romsjef/utvalg_romsjef_nybeboer.php');
         } else
             if ($aktueltArg == 'endrebeboer') {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -228,7 +228,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('romListe', $romListe);
 
                 $dok->set('beboerListe', $beboerListe);
-                $dok->vis('utvalg_romsjef_endre_denne_beboeren.php');
+                $dok->vis('utvalg/romsjef/utvalg_romsjef_endre_denne_beboeren.php');
             } else if ($aktueltArg == 'endrebeboer_tabell') {
                 $beboer = Beboer::medId($this->cd->getArg($this->cd->getAktuellArgPos() + 1));
                 if ($beboer == null) {
@@ -283,7 +283,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('studieListe', $studieListe);
                 $dok->set('rolleListe', $rolleListe);
                 $dok->set('romListe', $romListe);
-                $dok->vis('utvalg_romsjef_endre_denne_beboeren.php');
+                $dok->vis('utvalg/romsjef/utvalg_romsjef_endre_denne_beboeren.php');
             } else if ($aktueltArg == 'endregammelbeboer_tabell') {
                 $beboer = Beboer::medId($this->cd->getArg($this->cd->getAktuellArgPos() + 1));
                 if ($beboer == null) {
@@ -301,7 +301,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('rolleListe', $rolleListe);
                 $dok->set('romListe', $romListe);
 
-                $dok->vis('utvalg_romsjef_endre_denne_beboeren.php');
+                $dok->vis('utvalg/romsjef/utvalg_romsjef_endre_denne_beboeren.php');
             } else if ($aktueltArg == 'gammelbeboer_tabell') {
                 $dok = new Visning($this->cd);
                 $sisteArg = $this->cd->getSisteArg();
@@ -356,7 +356,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                         $dok->set('rolleListe', $rolleListe);
                         $dok->set('romListe', $romListe);
 
-                        $dok->vis('utvalg_romsjef_endre_denne_beboeren.php');
+                        $dok->vis('utvalg/romsjef/utvalg_romsjef_endre_denne_beboeren.php');
                         return;
                     }
 
@@ -372,7 +372,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok->set('rolleListe', $rolleListe);
                 $dok->set('romListe', $romListe);
 
-                $dok->vis('utvalg_romsjef_beboerliste.php');
+                $dok->vis('utvalg/romsjef/utvalg_romsjef_beboerliste.php');
             } else if ($aktueltArg == 'epost') {
                 $valgtCtrl = new UtvalgRomsjefEpostCtrl($this->cd->skiftArg());
                 return $valgtCtrl->bestemHandling();
@@ -382,10 +382,10 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 $dok = new Visning($this->cd);
                 $dok->set('beboer', $beboer);
 
-                $dok->vis('beboer_detaljer.php');
+                $dok->vis('beboer/beboer_detaljer.php');
             } else {
                 $dok = new Visning($this->cd);
-                $dok->vis('utvalg_romsjef.php');
+                $dok->vis('utvalg/romsjef/utvalg_romsjef.php');
             }
     }
 }

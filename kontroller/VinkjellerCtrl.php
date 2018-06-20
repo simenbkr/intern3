@@ -58,7 +58,7 @@ class VinkjellerCtrl extends AbstraktCtrl
                     $this->handleKryssing($dok);
                     break;
                 }
-                $dok->vis('vinkjeller_kryssing.php');
+                $dok->vis('vinkjeller/vinkjeller_kryssing.php');
                 break;
 
             case 'kryss_vin':
@@ -67,11 +67,11 @@ class VinkjellerCtrl extends AbstraktCtrl
             case 'regler':
                 $regel = Vinregel::getRegel();
                 $dok->set('regel', $regel);
-                $dok->vis('vinkjeller_regler.php');
+                $dok->vis('vinkjeller/vinkjeller_regler.php');
                 break;
             case '':
             default:
-                $dok->vis('vinkjeller_hoved.php');
+                $dok->vis('vinkjeller/vinkjeller_hoved.php');
                 break;
         }
 
@@ -90,7 +90,7 @@ class VinkjellerCtrl extends AbstraktCtrl
 
         if (count($alleArgs) < 1) {
             /* @var $dok \intern3\Visning */
-            $dok->vis('vinkjeller_kryssing.php');
+            $dok->vis('vinkjeller/vinkjeller_kryssing.php');
             return;
         }
 
@@ -98,17 +98,17 @@ class VinkjellerCtrl extends AbstraktCtrl
             case 'navn':
                 $vinListe = Vin::getAktiveOrderedByNavn();
                 $dok->set('vinListe', $vinListe);
-                $dok->vis('vinkjeller_kryssing_navn.php');
+                $dok->vis('vinkjeller/vinkjeller_kryssing_navn.php');
                 return;
             case 'type':
                 $typeListe = Vintype::getAlle();
                 $dok->set('typeListe', $typeListe);
-                $dok->vis('vinkjeller_kryssing_type.php');
+                $dok->vis('vinkjeller/vinkjeller_kryssing_type.php');
                 return;
             case 'land':
                 $land = Vin::getAlleLand();
                 $dok->set('land', $land);
-                $dok->vis('vinkjeller_kryssing_land.php');
+                $dok->vis('vinkjeller/vinkjeller_kryssing_land.php');
                 return;
             case 'kryss':
                 $this->handleKryss($dok);
@@ -123,16 +123,16 @@ class VinkjellerCtrl extends AbstraktCtrl
             if (($typen = Vintype::medId($lastArg)) != null) {
                 $vinListe = Vin::getAktiveAvType($typen);
                 $dok->set('vinListe', $vinListe);
-                $dok->vis('vinkjeller_kryssing_navn.php');
+                $dok->vis('vinkjeller/vinkjeller_kryssing_navn.php');
                 return;
             } else {
-                $dok->vis('vinkjeller_hoved.php');
+                $dok->vis('vinkjeller/vinkjeller_hoved.php');
                 return;
             }
         } elseif (in_array('land', $alleArgs) && in_array($lastArg, Vin::getAlleLand())) {
             $vinListe = Vin::getByLand($lastArg);
             $dok->set('vinListe', $vinListe);
-            $dok->vis('vinkjeller_kryssing_navn.php');
+            $dok->vis('vinkjeller/vinkjeller_kryssing_navn.php');
             return;
         }
 
@@ -143,7 +143,7 @@ class VinkjellerCtrl extends AbstraktCtrl
             $beboerListe = BeboerListe::vinkjellerListe();
             $dok->set('beboerListe', $beboerListe);
             $dok->set('vinen', $aktuell_vin);
-            $dok->vis('vinkjeller_kryssing_vinen.php');
+            $dok->vis('vinkjeller/vinkjeller_kryssing_vinen.php');
             return;
         } else {
             /* ?a=vinkjeller/kryssing/<vinID>/<beboerID-varargs> */
@@ -165,7 +165,7 @@ class VinkjellerCtrl extends AbstraktCtrl
             $dok->set('back', $back);
             $dok->set('beboerene', $beboerene);
             $dok->set('vinen', $aktuell_vin);
-            $dok->vis('vinkjeller_kryss.php');
+            $dok->vis('vinkjeller/vinkjeller_kryss.php');
             exit();
         }
 
@@ -196,7 +196,7 @@ class VinkjellerCtrl extends AbstraktCtrl
         }
         $dok->set('vinid', $vinid);
         $dok->set('idene', json_encode($idene));
-        $dok->vis('vinkjeller_pinkode.php');
+        $dok->vis('vinkjeller/vinkjeller_pinkode.php');
         exit();
     }
 
@@ -211,7 +211,7 @@ class VinkjellerCtrl extends AbstraktCtrl
 
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
             //AKA fuck off
-            $dok->vis('vinkjeller_hoved.php');
+            $dok->vis('vinkjeller/vinkjeller_hoved.php');
             return;
         }
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);

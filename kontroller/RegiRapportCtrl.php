@@ -39,7 +39,7 @@ class RegiRapportCtrl extends AbstraktCtrl {
 		$dok = new Visning($this->cd);
 		$dok->set('ekstraTittel', $ekstraTittel);
 		$dok->set('rapportListe', $rapportListe);
-		$dok->vis('regi_rapport.php');
+		$dok->vis('regi/regi_rapport.php');
 	}
 }
 

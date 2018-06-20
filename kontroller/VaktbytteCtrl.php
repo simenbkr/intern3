@@ -182,7 +182,7 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                     $vakt = Vakt::medId($sisteArg);
                     $dok->set('vakt', $vakt);
-                    $dok->vis('vakt_bytte_liste_modal.php');
+                    $dok->vis('vaktbytte/vakt_bytte_liste_modal.php');
                     exit();
 
                 case 'modal_slett':
@@ -194,7 +194,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     }
 
                     $dok->set('vaktbyttet', $vaktbyttet);
-                    $dok->vis('vakt_bytte_modal_slett.php');
+                    $dok->vis('vaktbytte/vakt_bytte_modal_slett.php');
                     exit();
 
                 case 'modal_bytt':
@@ -210,7 +210,7 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                     $dok->set('vaktbyttet', $vaktbyttet);
                     $dok->set('egne_vakter', $egne_vakter);
-                    $dok->vis('vakt_bytte_modal_bytt.php');
+                    $dok->vis('vaktbytte/vakt_bytte_modal_bytt.php');
                     exit();
 
                 case 'modal_gibort':
@@ -223,7 +223,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
 
-                    $dok->vis('vakt_bytte_modal_gibort.php');
+                    $dok->vis('vaktbytte/vakt_bytte_modal_gibort.php');
                     exit();
 
                 case 'modal_forslag':
@@ -236,7 +236,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                     }
                     $dok->set('vaktbyttet', $vaktbyttet);
 
-                    $dok->vis('vakt_bytte_modal_forslag.php');
+                    $dok->vis('vaktbytte/vakt_bytte_modal_forslag.php');
                     exit();
             }
 
@@ -253,9 +253,9 @@ class VaktbytteCtrl extends AbstraktCtrl
         $dok->set('vaktbytter', $vaktbytter);
 
         if($bruker->getPerson()->harVakt()) {
-            $dok->vis('vakt_bytte_liste_ny.php');
+            $dok->vis('vaktbytte/vakt_bytte_liste_ny.php');
         } else {
-            $dok->vis('vakt_bytte_uten_vakt.php');
+            $dok->vis('vaktbytte/vakt_bytte_uten_vakt.php');
         }
         return;
 

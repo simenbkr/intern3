@@ -74,7 +74,7 @@ class RegiOppgaveCtrl extends AbstraktCtrl
         $aktuell_beboer = LogginnCtrl::getAktivBruker()->getPerson();
         $dok->set('aktuell_beboer', $aktuell_beboer);
         $dok->set('oppgaveListe', $oppgaveListe);
-        $dok->vis('regi_oppgaver.php');
+        $dok->vis('regi/regi_oppgaver.php');
     }
 }
 

@@ -46,7 +46,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
         $visning->set('vakter', $vakter);
         $visning->set('options', $options);
         $visning->set('beboer', $beboer);
-        $visning->vis('utvalg_vaktsjef_vaktoversikt_endre.php');
+        $visning->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktoversikt_endre.php');
         exit();
     }
 
@@ -105,7 +105,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('antallUfordelte', $antallUfordelte);
                 $dok->set('antallUbekreftet', $antallUbekreftet);
                 $dok->set('roller', $roller);
-                $dok->vis('utvalg_vaktsjef_vaktoversikt.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktoversikt.php');
                 break;
             case 'vaktstyring':
                 $beboerListe = BeboerListe::harVakt();
@@ -115,13 +115,13 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('denneUka', @date('W'));
                 $dok->set('detteAret', @date('Y'));
                 $dok->set('beboerListe', $beboerListe);
-                $dok->vis('utvalg_vaktsjef_vaktstyring.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktstyring.php');
                 break;
             case 'vaktstyring_modal':
                 $beboerListe = BeboerListe::harVakt();
                 $dok = new Visning($this->cd);
                 $dok->set('beboerListe', $beboerListe);
-                $dok->vis('utvalg_vaktsjef_vaktstyring_modal.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktstyring_modal.php');
                 break;
             case 'vaktstyring_settvakt':
                 if (isset($_POST['beboerId']) && isset($_POST['vaktId_1'])) {
@@ -163,7 +163,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         $dok->set('visFerdig', 1);
                         $dok->set('beboer', $beboer);
-                        $dok->vis('utvalg_vaktsjef_vaktstyring_byttvakt.php');
+                        $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktstyring_byttvakt.php');
                     }
                 }
                 break;
@@ -239,7 +239,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok = new Visning($this->cd);
                 $dok->set('krysseting', $krysseinstans->getUkeKryss());
                 $dok->set('journal', $krysseinstans->getKrysseInfo());
-                $dok->vis('utvalg_vaktsjef_ukesrapport.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_ukesrapport.php');
                 break;
             case 'ukerapport_tabell':
                 $Uke = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
@@ -256,7 +256,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('periode_start', $periode_start);
                 $dok->set('krysseting', $krysseinstans->getUkeKryss());
                 $dok->set('journal', $krysseinstans->getKrysseInfo());
-                $dok->vis('utvalg_vaktsjef_ukesrapport_tabell.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_ukesrapport_tabell.php');
                 break;
             case 'detaljkryss':
                 $beboerId = $this->cd->getSisteArg();
@@ -289,7 +289,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
-                $dok->vis('utvalg_vaktsjef_krysserapport.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport.php');
                 break;
             case 'krysserapportutskrift':
                 $drikke = Drikke::alle();
@@ -306,11 +306,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
-                $dok->vis('utvalg_vaktsjef_krysserapport_utskrift.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport_utskrift.php');
                 break;
             case 'kryss':
                 $dok = new Visning($this->cd);
-                $dok->vis('utvalg_vaktsjef_kryss.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_kryss.php');
                 break;
             case 'endre_drikke':
                 if (($drikken = Drikke::medId($this->cd->getSisteArg())) != null) {
@@ -335,7 +335,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     }
                     $dok = new Visning($this->cd);
                     $dok->set('drikka', $drikken);
-                    $dok->vis('utvalg_vaktsjef_endre_drikke.php');
+                    $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_endre_drikke.php');
                     break;
                 }
             case 'drikke':
@@ -372,11 +372,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $drikke = Drikke::alle();
                 $dok = new Visning($this->cd);
                 $dok->set('drikke', $drikke);
-                $dok->vis('utvalg_vaktsjef_drikke.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_drikke.php');
                 break;
             case 'vaktliste_utskrift':
                 $dok = new Visning($this->cd);
-                $dok->vis('utvalg_vaktsjef_vaktliste_utskrivbar.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktliste_utskrivbar.php');
                 break;
             case 'krysserapport_historie':
                 $dok = new Visning($this->cd);
@@ -390,7 +390,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 }
 
                 $dok->set('datoer', $datoer);
-                $dok->vis('utvalg_vaktsjef_krysserapport_historie.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport_historie.php');
                 break;
             case 'krysserapport_historie_tabell':
                 $lastArg = $this->cd->getSisteArg();
@@ -420,11 +420,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe2_0);
                 $dok->set('krysseListeMonthListe', $krysseListe);
-                $dok->vis('utvalg_vaktsjef_krysserapport_historie_tabell.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport_historie_tabell.php');
                 break;
             default:
                 $dok = new Visning($this->cd);
-                $dok->vis('utvalg_vaktsjef.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef.php');
                 break;
         }
     }

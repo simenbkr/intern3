@@ -74,7 +74,7 @@ class UtvalgRomsjefEpostCtrl extends AbstraktCtrl
                 case '':
                 default:
                     $dok->set('beboerliste', $beboerliste);
-                    $dok->vis('utvalg_romsjef_epostlister.php');
+                    $dok->vis('utvalg/romsjef/utvalg_romsjef_epostlister.php');
             }
 
         }

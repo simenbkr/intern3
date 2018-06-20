@@ -80,17 +80,17 @@ class UtvalgKosesjefCtrl extends AbstraktCtrl
             }
             $utleier = Utleie::getUtleierFremover();
             $dok->set('utleier', $utleier);
-            $dok->vis('utvalg_kosesjef_utleie.php');
+            $dok->vis('utvalg/kosesjef/utvalg_kosesjef_utleie.php');
         }
         elseif( $aktueltArg == 'krysseliste' ){
             $beboerliste = BeboerListe::aktiveMedAlko();
             $dok = new Visning($this->cd);
             $dok->set('beboerliste', $beboerliste);
-            $dok->vis('utvalg_kosesjef_krysseliste_bodega.php');
+            $dok->vis('utvalg/kosesjef/utvalg_kosesjef_krysseliste_bodega.php');
         }
         else {
             $dok = new Visning($this->cd);
-            $dok->vis('utvalg_kosesjef.php');
+            $dok->vis('utvalg/kosesjef/utvalg_kosesjef.php');
         }
     }
 }

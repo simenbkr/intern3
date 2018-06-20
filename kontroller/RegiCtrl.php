@@ -16,7 +16,7 @@ class RegiCtrl extends AbstraktCtrl
                     'Har gjenværende regitimer' => BrukerListe::harRegiIgjen($unix),
                     'Har ikke gjenværende regitimer' => BrukerListe::harIkkeRegiIgjen($unix)
                 ));
-                $dok->vis('regi_registatus.php');
+                $dok->vis('regi/regi_registatus.php');
                 return;
             }
             case 'rapport':
@@ -32,12 +32,12 @@ class RegiCtrl extends AbstraktCtrl
             case 'minregi':
                 $dok = new Visning($this->cd);
                 $unix = $_SERVER['REQUEST_TIME'];
-                $dok->vis('regi_minregi.php');
+                $dok->vis('regi/regi_minregi.php');
                 return;
             case '':
             default:
                 $dok = new Visning($this->cd);
-                $dok->vis('regi.php');
+                $dok->vis('regi/regi.php');
                 return;
         }
         $valgtCtrl->bestemHandling();

@@ -88,7 +88,7 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
         }
         $oppgaveListe = OppgaveListe::alle();
         $dok->set('oppgaveListe', $oppgaveListe);
-        $dok->vis('utvalg_regisjef_oppgave.php');
+        $dok->vis('utvalg/regisjef/utvalg_regisjef_oppgave.php');
         $dok->set('feilSubmit', null);
     }
 }

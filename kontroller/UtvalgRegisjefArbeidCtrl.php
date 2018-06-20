@@ -47,7 +47,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                         }
                     }
                     $dok->set('arbeidet', $arbeidet);
-                    $dok->vis('utvalg_regisjef_arbeid_tilbakemelding.php');
+                    $dok->vis('utvalg/regisjef/utvalg_regisjef_arbeid_tilbakemelding.php');
                     break;
                 }
             case 'endre':
@@ -69,7 +69,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                         }
                     }
                     $dok->set('arbeidet', $arbeidet);
-                    $dok->vis('utvalg_regisjef_arbeid_endre.php');
+                    $dok->vis('utvalg/regisjef/utvalg_regisjef_arbeid_endre.php');
                     $done = 1;
                 } while (false);
                 if(isset($done)){
@@ -83,7 +83,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                 $dok->set('arbeidListe', ArbeidListe::alle($sideinndeling));
                 $dok->set('sideinndeling', $sideinndeling);
                 $dok->set('timer_brukt', $timer_brukt);
-                $dok->vis('utvalg_regisjef_arbeid.php');
+                $dok->vis('utvalg/regisjef/utvalg_regisjef_arbeid.php');
                 break;
         }
     }
@@ -105,7 +105,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
         $arbeid = Arbeid::medId($id);
         $dok = new Visning($this->cd);
         $dok->set('arbeid', $arbeid);
-        $dok->vis('utvalg_regisjef_arbeid_rad.php');
+        $dok->vis('utvalg/regisjef/utvalg_regisjef_arbeid_rad.php');
         exit();
     }
 

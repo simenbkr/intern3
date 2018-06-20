@@ -41,7 +41,7 @@ class JournalCtrl extends AbstraktCtrl
             case 'hoved':
                 $dok = new Visning($this->cd);
                 $dok->set('skjulMeny', 1);
-                $dok->vis('journal.php');
+                $dok->vis('journal/journal.php');
                 break;
 
             case 'pinkode':
@@ -161,7 +161,7 @@ class JournalCtrl extends AbstraktCtrl
                     $dok->set('drikke_farger', $drikke_farger);
                     $dok->set('skjulMeny', 1);
                     $dok->set('beboer', $beboer);
-                    $dok->vis('journal_kryss.php');
+                    $dok->vis('journal/journal_kryss.php');
 
                     if ($_SESSION[md5($beboer->getFulltNavn())] < 1) {
                         unset($_SESSION[md5($beboer->getFulltNavn())]);
@@ -181,7 +181,7 @@ class JournalCtrl extends AbstraktCtrl
                 $dok->set('krysseliste', $krysseliste);
                 $dok->set('beboere', $beboere);
                 $dok->set('skjulMeny', 1);
-                $dok->vis('krysselista.php');
+                $dok->vis('journal/krysselista.php');
                 break;
             case 'pafyll':
                 $dok = new Visning($this->cd);
@@ -236,7 +236,7 @@ class JournalCtrl extends AbstraktCtrl
                 $dok->set('skjulMeny', 1);
                 $dok->set('vakta', $vakta);
                 $dok->set('vaktSesj', $denne_vakta);
-                $dok->vis('journal_pafyll.php');
+                $dok->vis('journal/journal_pafyll.php');
                 break;
             case 'vaktbytte':
                 $denneVakt = AltJournal::getLatest();
@@ -269,7 +269,7 @@ class JournalCtrl extends AbstraktCtrl
                     $dok->set('beboere', $beboere);
                     $dok->set('denne_vakta', $denne_vakta);
                     $dok->set('skjulMeny', 1);
-                    $dok->vis('vaktbytte.php');
+                    $dok->vis('journal/vaktbytte.php');
                     break;
                 } else {
                     if ($sistearg == "TORILD") {
@@ -284,7 +284,7 @@ class JournalCtrl extends AbstraktCtrl
                         }
                         $dok->set('aktuelle', $aktuelle);
                         $dok->set('skjulMeny', 1);
-                        $dok->vis('vaktbytte_bokstav.php');
+                        $dok->vis('journal/vaktbytte_bokstav.php');
                         break;
                     }
                 }
@@ -330,7 +330,7 @@ class JournalCtrl extends AbstraktCtrl
                 $dok->set('denne_vakta', $denne_vakta);
                 $dok->set('vakta', $vakta);
                 $dok->set('drikke_med_id', $drikke_med_ting);
-                $dok->vis('journal_signering.php');
+                $dok->vis('journal/journal_signering.php');
                 break;
             case 'logout':
             default:

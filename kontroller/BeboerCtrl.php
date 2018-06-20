@@ -14,23 +14,23 @@ class BeboerCtrl extends AbstraktCtrl
             $dok = new Visning($this->cd);
             $dok->set('beboerListe', $beboerListe);
             $dok->set('skjulMeny', 1);
-            $dok->vis('beboer_utskrift.php');
+            $dok->vis('beboer/beboer_utskrift.php');
         } else if ($aktueltArg == 'statistikk') {
             $this->visStatistikk();
         } else if ($aktueltArg == 'kart') {
             $dok = new Visning($this->cd);
             $beboerlista = BeboerListe::aktive();
             $dok->set('beboerlista', $beboerlista);
-            $dok->vis('beboer_kart.php');
+            $dok->vis('beboer/beboer_kart.php');
         } else if ($aktueltArg == 'gamle') {
             $dok = new Visning($this->cd);
             $beboerListe = BeboerListe::ikkeAktive();
             $dok->set('beboerlista', $beboerListe);
-            $dok->vis('beboer_gamle.php');
+            $dok->vis('beboer/beboer_gamle.php');
         } else if($aktueltArg == 'olstat'){
             $dok = new Visning($this->cd);
 
-            $dok->vis('beboer_olstat.php');
+            $dok->vis('beboer/beboer_olstat.php');
         }
 
         else if (is_numeric($aktueltArg)) {
@@ -38,7 +38,7 @@ class BeboerCtrl extends AbstraktCtrl
             // Trenger feilhåndtering her.
             $dok = new Visning($this->cd);
             $dok->set('beboer', $beboer);
-            $dok->vis('beboer_detaljer.php');
+            $dok->vis('beboer/beboer_detaljer.php');
         } else {
             $beboerListe = BeboerListe::aktive();
             
@@ -65,7 +65,7 @@ class BeboerCtrl extends AbstraktCtrl
             $dok->set('fullregi',$fullregi);
             $dok->set('fullvakt', $fullvakt);
             $dok->set('halv', $halv);
-            $dok->vis('beboer_beboerliste.php');
+            $dok->vis('beboer/beboer_beboerliste.php');
         }
     }
 
@@ -93,7 +93,7 @@ class BeboerCtrl extends AbstraktCtrl
         }
         $dok = new Visning($this->cd);
         $dok->set('histogram', $this->histogram);
-        $dok->vis('beboer_statistikk.php');
+        $dok->vis('beboer/beboer_statistikk.php');
     }
 
     private function addStatistikk($navn, $nokkel, $verdi = 1)

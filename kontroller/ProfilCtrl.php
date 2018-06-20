@@ -43,7 +43,7 @@ class ProfilCtrl extends AbstraktCtrl
         $dok->set('prefs', $prefs);
         $dok->set('epostInst', $epostInst);
         $dok->set('feil', $feil);
-        $dok->vis('profil.php');
+        $dok->vis('profil/profil.php');
     }
 
     private function endrePrefs(){

@@ -95,7 +95,7 @@ class KjellerCtrl extends AbstraktCtrl
 
 
                 $dok->set('vintyper', $vintypene);
-                $dok->vis('kjeller_add.php');
+                $dok->vis('kjeller/kjeller_add.php');
                 break;
             case 'admin':
                 $sisteArg = $this->cd->getSisteArg();
@@ -152,7 +152,7 @@ class KjellerCtrl extends AbstraktCtrl
                     $vinen = Vin::medId($sisteArg);
                     $dok->set('vinen', $vinen);
                     $dok->set('vintyper', $vintypene);
-                    $dok->vis('kjeller_endre_vin.php');
+                    $dok->vis('kjeller/kjeller_endre_vin.php');
                     exit();
                 }
 
@@ -164,13 +164,13 @@ class KjellerCtrl extends AbstraktCtrl
                         $st->execute();
                         $vinene = Vin::getAlle();
                         $dok->set('vinene', $vinene);
-                        $dok->vis('kjeller_admin.php');
+                        $dok->vis('kjeller/kjeller_admin.php');
                         exit();
                     }
                 }
                 $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
-                $dok->vis('kjeller_admin.php');
+                $dok->vis('kjeller/kjeller_admin.php');
                 break;
             case 'slettet_vin':
                 $dok = new Visning($this->cd);
@@ -188,7 +188,7 @@ class KjellerCtrl extends AbstraktCtrl
                 }
                 $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
-                $dok->vis('kjeller_slettet_admin.php');
+                $dok->vis('kjeller/kjeller_slettet_admin.php');
                 break;
             case 'regning':
                 if (isset($_POST)) {
@@ -230,7 +230,7 @@ class KjellerCtrl extends AbstraktCtrl
                 $beboerlista = BeboerListe::aktive();
                 $dok->set('vinene', $vinene);
                 $dok->set('beboerlista', $beboerlista);
-                $dok->vis('kjeller_regning.php');
+                $dok->vis('kjeller/kjeller_regning.php');
                 break;
             case 'lister':
                 $sisteArg = $this->cd->getSisteArg();
@@ -238,7 +238,7 @@ class KjellerCtrl extends AbstraktCtrl
                     switch ($sisteArg) {
                         case 'varebeholdning_utskrift':
                             $dok->set('vinene', $vinene);
-                            $dok->vis('kjeller_lister_varebeholdning_utskrift.php');
+                            $dok->vis('kjeller/kjeller_lister_varebeholdning_utskrift.php');
                             exit();
                         case 'rapport':
                             $beboerlista = BeboerListe::aktive();
@@ -255,7 +255,7 @@ class KjellerCtrl extends AbstraktCtrl
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
                             $dok->set('beboer_antall_vin', $beboer_antall_vin);
-                            $dok->vis('kjeller_lister_rapport.php');
+                            $dok->vis('kjeller/kjeller_lister_rapport.php');
                             exit();
                         case 'beboere_vin':
                             if (isset($_POST) && isset($_POST['fakturer']) && $_POST['fakturer'] == 1) {
@@ -294,7 +294,7 @@ class KjellerCtrl extends AbstraktCtrl
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
                             $dok->set('beboer_vin', $beboer_antall_vin);
-                            $dok->vis('kjeller_beboere_vin.php');
+                            $dok->vis('kjeller/kjeller_beboere_vin.php');
                             exit();
                         case 'beboere_vin_utskrift':
                             $beboerlista = BeboerListe::aktive();
@@ -321,7 +321,7 @@ class KjellerCtrl extends AbstraktCtrl
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
                             $dok->set('beboer_vin', $beboer_antall_vin);
-                            $dok->vis('kjeller_beboere_vin_utskrift.php');
+                            $dok->vis('kjeller/kjeller_beboere_vin_utskrift.php');
                             exit();
                         case 'beboere_vin_fakturerte':
                             $beboerlista = BeboerListe::aktive();
@@ -348,7 +348,7 @@ class KjellerCtrl extends AbstraktCtrl
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
                             $dok->set('beboer_vin', $beboer_antall_vin);
-                            $dok->vis('kjeller_beboere_vin_fakturert.php');
+                            $dok->vis('kjeller/kjeller_beboere_vin_fakturert.php');
                             exit();
                         case 'beboere_vin_utskrift_fakturerte':
                             $beboerlista = BeboerListe::aktive();
@@ -375,11 +375,11 @@ class KjellerCtrl extends AbstraktCtrl
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
                             $dok->set('beboer_vin', $beboer_antall_vin);
-                            $dok->vis('kjeller_beboere_vin_fakturert_utskrift.php');
+                            $dok->vis('kjeller/kjeller_beboere_vin_fakturert_utskrift.php');
                             exit();
                     }
                 }
-                $dok->vis('kjeller_lister.php');
+                $dok->vis('kjeller/kjeller_lister.php');
                 break;
             case 'add_type':
                 $sisteArg = $this->cd->getSisteArg();
@@ -396,7 +396,7 @@ class KjellerCtrl extends AbstraktCtrl
                     }
                     $vintypen = Vintype::medId($sisteArg);
                     $dok->set('vintypen', $vintypen);
-                    $dok->vis('kjeller_endre_typen.php');
+                    $dok->vis('kjeller/kjeller_endre_typen.php');
                     exit();
                 }
                 if (isset($_POST)) {
@@ -423,7 +423,7 @@ class KjellerCtrl extends AbstraktCtrl
                 }
                 $vintyper = Vintype::getAlle();
                 $dok->set('vintyper', $vintyper);
-                $dok->vis('kjeller_add_type.php');
+                $dok->vis('kjeller/kjeller_add_type.php');
                 break;
             case 'svinn':
                 if (isset($_POST)) {
@@ -454,7 +454,7 @@ class KjellerCtrl extends AbstraktCtrl
                 }
                 $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
-                $dok->vis('kjeller_svinn.php');
+                $dok->vis('kjeller/kjeller_svinn.php');
                 break;
             case 'pafyll':
                 if (isset($_POST)) {
@@ -483,7 +483,7 @@ class KjellerCtrl extends AbstraktCtrl
 
                 $vinene = Vin::getAlle();
                 $dok->set('vinene', $vinene);
-                $dok->vis('kjeller_pafyll.php');
+                $dok->vis('kjeller/kjeller_pafyll.php');
                 break;
             case 'regler':
                 
@@ -499,17 +499,17 @@ class KjellerCtrl extends AbstraktCtrl
                 
                 $regel = Vinregel::getRegel();
                 $dok->set('regel', $regel);
-                $dok->vis('kjeller_regel.php');
+                $dok->vis('kjeller/kjeller_regel.php');
                 break;
                 
             case 'oversikt':
                 $transaksjoner = Vinkryss::getAlle();
 
                 $dok->set('transaksjoner', $transaksjoner);
-                $dok->vis('kjeller_kryss_oversikt.php');
+                $dok->vis('kjeller/kjeller_kryss_oversikt.php');
                 break;
             default:
-                $dok->vis('kjeller_hoved.php');
+                $dok->vis('kjeller/kjeller_hoved.php');
         }
     }
 

@@ -23,7 +23,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
     $dok->set('feilVarighet', $feilVarighet);
     $dok->set('feilEnkelt', $feilEnkelt);
     $dok->set('feilPeriode', $feilPeriode);
-    $dok->vis('utvalg_vaktsjef_generer.php');
+    $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_generer.php');
   }
   
   private function sendEpostTilVakter()

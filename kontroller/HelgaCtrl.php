@@ -24,7 +24,7 @@ class HelgaCtrl extends AbstraktCtrl
                     $beboerListe = BeboerListe::aktive();
                     $dok = new Visning($this->cd);
                     $dok->set('beboerListe', $beboerListe);
-                    $dok->vis('helga_vervmodal.php');
+                    $dok->vis('helga/helga_vervmodal.php');
                     break;
                 case 'general':
                     if ($beboer->erHelgaGeneral() || $beboer->harUtvalgVerv() || $beboer->harDataVerv()) {
@@ -103,7 +103,7 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok->set('helgaverv', $verv);
                         $dok->set('alle_helga', $alle_helga);
                         $dok->set('helga', $denne_helga);
-                        $dok->vis('helga_general.php');
+                        $dok->vis('helga/helga_general.php');
                         break;
                     }
                 case 'inngang':
@@ -149,7 +149,7 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok->set('gjesteliste_dag_gruppert', $gjesteliste_dag_gruppert);
                         //$dok->set('gjestelista', $gjestelista);
                         $dok->set('beboerliste', $beboerlista);
-                        $dok->vis('helga_inngang.php');
+                        $dok->vis('helga/helga_inngang.php');
                         break;
                     } else {
                         header('Location: ?a=helga');
@@ -183,7 +183,7 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         $dok->set('gjesteliste_dag', $gjesteliste_dag);
                         $dok->set('beboerliste', $beboerlista);
-                        $dok->vis('helga_gjesteliste.php');
+                        $dok->vis('helga/helga_gjesteliste.php');
                         exit();
                     }
                 case 'gjestavkryss':
@@ -214,7 +214,7 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         $dok->set('gjesteliste_dag_gruppert', $gjesteliste_dag_gruppert);
                         $dok->set('beboerliste', $beboerlista);
-                        $dok->vis('helga_gjestavkryss.php');
+                        $dok->vis('helga/helga_gjestavkryss.php');
                         exit();
                     }
                 case 'registrer':
@@ -258,7 +258,7 @@ class HelgaCtrl extends AbstraktCtrl
                         //$dok->set('gjestelista', $gjestelista);
                         $dok->set('beboerliste', $beboerlista);
                         $dok->set('dag_tall', $dag);
-                        $dok->vis('helga_inngang.php');
+                        $dok->vis('helga/helga_inngang.php');
                         break;
                     }
                 case 'reg':
@@ -280,12 +280,12 @@ class HelgaCtrl extends AbstraktCtrl
                                 $gjesten->setInne(1);
                             }
                         }
-                        $dok->vis('helga_reg_gjest.php');
+                        $dok->vis('helga/helga_reg_gjest.php');
                         exit();
                     } else {
                         $dok = new Visning($this->cd);
                         $dok->set('success', 0);
-                        $dok->vis('helga_reg_gjest.php');
+                        $dok->vis('helga/helga_reg_gjest.php');
                         exit();
                     }
                 case 'helga':
@@ -385,7 +385,7 @@ class HelgaCtrl extends AbstraktCtrl
                     $dok->set('beboers_gjester', $beboers_gjester);
                     $dok->set('gjeste_count', $gjeste_count);
                     $dok->set('dagen', $dagen);
-                    $dok->vis('helga.php');
+                    $dok->vis('helga/helga.php');
                     exit();
             }
         }

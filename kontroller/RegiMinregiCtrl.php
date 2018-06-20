@@ -63,7 +63,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
         $dok->set('mapping', $mapping);
         $dok->set('regitimer', $regitimer);
         $dok->set('arbeidListe', $arbeidListe);
-        $dok->vis('regi_minregi.php');
+        $dok->vis('regi/regi_minregi.php');
     }
 
     private function registrerArbeid()

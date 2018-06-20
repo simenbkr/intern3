@@ -8,7 +8,7 @@ class UtvalgAdminCtrl extends AbstraktCtrl {
 		if ($bruker == null) {
 			$dok = new Visning($this->cd);
 			$dok->set('personListe', BeboerListe::aktive());
-			$dok->vis('utvalg_admin.php');
+			$dok->vis('utvalg/utvalg_admin.php');
 		}
 		else {
 			$hovedCtrl = new HovedCtrl($this->cd->skiftArgMedRot($bruker));

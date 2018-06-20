@@ -15,14 +15,14 @@ class UtvalgVaktsjefVaktstyringCtrl extends AbstraktCtrl
                 } else {
                     $dok = new Visning($this->cd);
                     $dok->set('beboer', $beboer);
-                    $dok->vis('utvalg_vaktsjef_vaktstyring_byttvakt.php');
+                    $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktstyring_byttvakt.php');
                 }
                 break;
             case 'modal':
                 $beboerListe = BeboerListe::harVakt();
                 $dok = new Visning($this->cd);
                 $dok->set('beboerListe', $beboerListe);
-                $dok->vis('utvalg_vaktsjef_vaktstyring_modal.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktstyring_modal.php');
                 break;
             case 'vaktstyring':
                 $beboerListe = BeboerListe::harVakt();
@@ -32,7 +32,7 @@ class UtvalgVaktsjefVaktstyringCtrl extends AbstraktCtrl
                 $dok->set('denneUka', @date('W'));
                 $dok->set('detteAret', @date('Y'));
                 $dok->set('beboerListe', $beboerListe);
-                $dok->vis('utvalg_vaktsjef_vaktstyring.php');
+                $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_vaktstyring.php');
                 break;
         }
     }

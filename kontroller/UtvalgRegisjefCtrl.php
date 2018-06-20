@@ -39,7 +39,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                 $roller = RolleListe::alle();
                 $dok->set('roller', $roller);
                 $dok->set('timer_brukt', $timer_brukt);
-                $dok->vis('regi_registatus.php');
+                $dok->vis('utvalg/regisjef/regi_registatus.php');
                 return;
             case 'leggtilarbeid':
                 
@@ -96,13 +96,13 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                     $dok->set('arbeidListe', $arbeidListe);
                     $dok->set('beboeren', $beboeren);
                     $dok->set('mapping', $mapping);
-                    $dok->vis('utvalg_regisjef_leggetil_arbeid_beboer.php');
+                    $dok->vis('utvalg/regisjef/utvalg_regisjef_leggetil_arbeid_beboer.php');
                     return;
                 }
                 $har_regi = BeboerListe::aktiveMedRegi();
 
                 $dok->set('beboerliste', $har_regi);
-                $dok->vis('utvalg_regisjef_leggetil_arbeid.php');
+                $dok->vis('utvalg/regisjef/utvalg_regisjef_leggetil_arbeid.php');
                 return;
             case 'arbeid':
                 $valgtCtrl = new UtvalgRegisjefArbeidCtrl($this->cd->skiftArg());
@@ -113,7 +113,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
 
             default:
                 $dok = new Visning($this->cd);
-                $dok->vis('utvalg_regisjef.php');
+                $dok->vis('utvalg/regisjef/utvalg_regisjef.php');
                 return;
         }
         $valgtCtrl->bestemHandling();
