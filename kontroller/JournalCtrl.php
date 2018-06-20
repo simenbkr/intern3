@@ -92,12 +92,10 @@ class JournalCtrl extends AbstraktCtrl
                         //Har ikke kake. Ayyy, get out you shit.
                         header('Location: ?a=journal/pinkode/' . $lastArg);
                         exit();
-                    } else {
-                        $_SESSION[md5($beboer->getFulltNavn())] = $_SESSION[md5($beboer->getFulltNavn())] - 1;
                     }
                 }
 
-                if (isset($_POST)) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (isset($post['beboerId']) && isset($post['antall']) && isset($post['type'])) {
                         $beboerId = $post['beboerId'];
                         $beboer = Beboer::medId($beboerId);
