@@ -72,6 +72,12 @@ class JournalCtrl extends AbstraktCtrl
                 $dok->set('beboer', $beboer);
                 $dok->vis("pinkode.php");
                 break;
+                
+            case 'multikryss':
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                $str = rtrim($post['summary'], ', ') . " på " . Beboer::medId($post['beboerId'])->getFulltNavn();
+                Funk::setSuccess($str);
+                break;
             case 'kryssing':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $lastArg = $this->cd->getSisteArg();
@@ -128,10 +134,15 @@ class JournalCtrl extends AbstraktCtrl
                                 $denne_vakta->updateObject($aktuelt_krysseobjekt);
                                 $denne_vakta->calcAvlevert();
                             }
-                            $_SESSION['success'] = 1;
-                            $_SESSION['msg'] = "Du krysset " . $post['antall'] . " " .
-                                Drikke::medId($drikkeid)->getNavn() . " på " .
-                                Beboer::medId($beboerId)->getFulltNavn();
+                            
+                            if(!isset($post['nofeedback'])){
+                                $_SESSION['success'] = 1;
+                                $_SESSION['msg'] = "Du krysset " . $post['antall'] . " " .
+                                    Drikke::medId($drikkeid)->getNavn() . " på " .
+                                    Beboer::medId($beboerId)->getFulltNavn();
+                            }
+                            
+                            
 
                             if($beboer->getPrefs()->harPinkode()){
                                 unset($_SESSION[md5($beboer->getFulltNavn())]);
@@ -169,6 +180,7 @@ class JournalCtrl extends AbstraktCtrl
 
                     break;
                 }
+            
             case 'krysseliste':
                 $beboere = BeboerListe::reseppListe();
                 $dato = AltJournal::getLatest()->getDato();

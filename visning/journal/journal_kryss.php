@@ -13,8 +13,6 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
         changeKnapp();
     }
     var count = 0;
-
-    //var drikker = ['','Pant','Øl','Cider','Carlsberg','Rikdom'];
     var drikker = <?php echo json_encode($drikke_navn) . ';';?>
     var drikke_farger = <?php echo json_encode($drikke_farger) . ';';?>
 
@@ -22,6 +20,10 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 
     var teller = 0;
     var forrige = -1;
+    var elemcount = 0;
+    
+    var cart = {}; // {elemcount => [drikkeid, count}
+    
     function updateCount(num) {
         if (teller == 0) {
             count = num;
@@ -48,24 +50,7 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
     }
 
     function updateDrikkeid(id) {
-        console.log(id);
         drikkeid = id;
-        /*if (drikkeid==0) {
-         color = '#4B515D';
-         //color = '#5bc0de'
-         }
-         else if (drikkeid==1) {
-         color = '#5bc0de';
-         }
-         else if (drikkeid==2) {
-         color = '#ffbb33';
-         }
-         else if (drikkeid==3) {
-         color = '#00C851';
-         }
-         else if (drikkeid==4) {
-         color = '#ff4444';
-         }*/
         if (drikke_farger[drikkeid] != undefined) {
             color = drikke_farger[drikkeid];
         }
@@ -79,16 +64,117 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 
     function changeKnapp() {
         var klassen = document.getElementById('krysseknapp');
+        var cartknapp = document.getElementById('cartknapp');
+        var cartkryssknapp = document.getElementById('cartkryss');
+        
+        if (Object.keys(cart).length > 0){
+            cartkryssknapp.style.display = "block";
+            cartkryssknapp.innerHTML = "KRYSS ALT";
+        } else {
+            cartkryssknapp.style.display = "none";
+        }
+        
+        
         if (count == 0) {
             klassen.style.display = "none";
+            cartknapp.style.display = "none";
         }
         else if (count < 0) {
             klassen.innerHTML = "Fjern " + -count + " " + drikker[drikkeid];
+            cartknapp.style.display = "none";
         }
         else {
-            klassen.innerHTML = "Kryss " + count + " " + drikker[drikkeid];
-            klassen.style.display = "block"
+            if (Object.keys(cart).length > 0){
+                cartknapp.style.display = "block";
+                cartknapp.innerHTML = "Legg til " + count + " " + drikker[drikkeid];
+                
+                cartkryssknapp.style.display = "block";
+                cartkryssknapp.innerHTML = "KRYSS ALT";
+
+                klassen.style.display = "none"
+            } else {
+
+                klassen.innerHTML = "Kryss " + count + " " + drikker[drikkeid];
+                klassen.style.display = "block"
+
+                cartknapp.style.display = "block";
+                cartknapp.innerHTML = "Legg til " + count + " " + drikker[drikkeid];
+            }
         }
+    }
+    
+    function addToCart(){
+        elemcount++;
+        
+        cart[elemcount] = [drikkeid, count];
+        var cartelement = document.getElementById('cart');
+        var nyknapp = document.createElement('button');
+        var buttonclasses = ['btn', 'btn-danger', 'btn-block'];
+        
+        buttonclasses.forEach(function(entry){
+            nyknapp.classList.add(entry);
+        });
+        
+        nyknapp.id = elemcount;
+        nyknapp.innerHTML = count + " " + drikker[drikkeid];
+        nyknapp.onclick = function() { slettFraCart(nyknapp.id) };
+        
+        cartelement.appendChild(nyknapp);
+        count = 0;
+        drikkeid = <?php echo $forste; ?>;
+        updateDrikkeid(drikkeid);
+    }
+    
+    function slettFraCart(id){
+        delete cart[id];
+        document.getElementById(id).remove();
+        elemcount--;
+        changeKnapp()
+    }
+    
+    function cartkryss(beboerId) {
+    
+        var summaryStr = "Du krysset ";
+        
+        for(var key in cart){
+            
+            var curr_id = cart[key][0];
+            var curr_count = cart[key][1];
+
+            summaryStr += curr_count + " " + drikker[curr_id] + ", ";
+            
+            if(!isNumber(curr_id) || !isNumber(curr_count)){
+                alert("Noe gikk veldig galt. Alt ble ikke krysset ordentlig. Påkall vakt elns.");
+            }
+            
+            $.ajax({
+                type: 'POST',
+                url: '?a=journal/kryssing/',
+                data: 'beboerId=' + beboerId + "&antall=" + curr_count + "&type=" + curr_id + "&nofeedback=1",
+                method: 'POST',
+                success: function(data) {
+                    //window.location.replace("?a=journal/krysseliste");
+                },
+                error: function(req, stat, err){
+                    alert("Noe gikk galt! Prøv på nytt.");
+                }
+            });
+            
+        }
+        
+        $.ajax({
+            type: 'POST',
+            url: '?a=journal/multikryss/',
+            data: 'summary=' + summaryStr + "&beboerId=" + beboerId,
+            method: 'POST',
+            success: function(data){
+                window.location.replace("?a=journal/krysseliste");
+            },
+            error: function(req, stat, err){
+                alert("Noe gikk galt!");
+            }
+        })
+    
     }
 
     function kryss(beboerId) {
@@ -106,8 +192,14 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             }
         });
     }
+
+    function isNumber(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    
     document.body.style.backgroundColor = '#5bc0de';
 </script>
+
 
 <style>
     @media screen and (min-device-width: 698px) {
@@ -197,6 +289,12 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
 
 </style>
 
+<div class="col-md-12">
+    <div class="list-group" id="cart">
+    
+    </div>
+</div>
+
 <h1 style="text-align: center; font-size:2vw;">Kryssing for <?php echo $beboer->getFulltNavn(); ?></h1>
 <hr>
 <div class="col-lg-12 text-centered" style="text-align:center;">
@@ -209,11 +307,6 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
                 if(!$drikke->getAktiv()){
                     continue;
                 }
-                /*<li><button class="btn btn-info btn-lg" onclick="updateDrikkeid(2)">Øl</button></li>
-                <li><button class="btn btn-warning btn-lg" onclick="updateDrikkeid(3)">Cider</button></li>
-                <li><button class="btn btn-success btn-lg" onclick="updateDrikkeid(4)">Carlsberg</button></li>
-                <li><button class="btn btn-danger btn-lg" onclick="updateDrikkeid(5)">Rikdom</button></li>
-                <li><button class="btn btn-muted btn-lg" onclick="updateDrikkeid(1)">Pant</button></li>*/
                 ?>
                 <li>
                     <button class="btn btn-lg <?php echo $knapp_klasser[$neste_klasse]; ?>"
@@ -271,9 +364,20 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
     <hr>
     <button class="btn btn-lg btn-primary btn-block" id="krysseknapp"
             onclick="kryss(<?php echo $beboer->getId(); ?>)"></button>
+
+    <button class="btn btn-lg btn-primary btn-block" id="cartknapp"
+            onclick="addToCart()">Legg til</button>
+    
+    <button class="btn btn-lg btn-primary btn-block" id="cartkryss"
+            onclick="cartkryss(<?php echo $beboer->getId(); ?>)">
+    </button>
+    
     <br/>
     <h1><a href="javascript:history.back()">TILBAKE</a></h1>
 </div>
+
+
+
 <?php
 
 require_once(__DIR__ . '/../static/bunn.php');
