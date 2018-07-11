@@ -1,8 +1,12 @@
 *.DS_Store*DB*
 DB.php
 .idea/
-config.php
+*config.php*
 config
 composer.phar
 /vendor/
 beboerliste.csv
+/sessions/sess*
+*.jpg
+*.png
+*.sql
