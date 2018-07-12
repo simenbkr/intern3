@@ -1,12 +1,9 @@
 <?php
 $skjulMeny = 1;
-require_once ('topp_journal.php');
-require_once('topp.php');
+require_once ('journal/topp_journal.php');
+require_once('static/topp.php');
 
 ?>
-
-<?php //$_SESSION[md5($beboer->getFulltNavn())] = 1; ?>
-
 <script>
     var pinkoden = [];
 
