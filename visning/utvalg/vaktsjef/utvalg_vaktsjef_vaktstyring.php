@@ -130,14 +130,6 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
       $dato = date('Y-m-d', $unix);
 			$vakt = intern3\Vakt::medDatoVakttype($dato, $vakttype);
       $modalId = 'modal-' . $dato . '-' . $vakttype;
-
-			// if ($vakt == null && $vakttype==2 && $ukedag>=0 && $ukedag<=4) {
-      //   echo '			<td class="celle_graa">';
-      //   echo '			<a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '">' . PHP_EOL; // TODO funker ikke!
-			// 	echo $torild->getFulltNavn();
-      //   echo '</a>' . PHP_EOL;
-      //   // continue; // TODO må fjernes
-			// }
 			if ($vakt == null) {
 				echo '			<td style="text-align: center;"><input type="button" onclick="lagVakt(\'' . $modalId . '\')" class="btn btn-sm btn-info" value="Legg til vakt">' . PHP_EOL;
 			}
@@ -166,6 +158,9 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
   			}
   			else {
           echo '			 <a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
+          if(!$bruker->getPerson()->erBeboer()){
+              echo "(UTFLYTTET) ";
+          }
           echo $bruker->getPerson()->getFulltNavn();
           echo '</a>' . PHP_EOL;
   			}

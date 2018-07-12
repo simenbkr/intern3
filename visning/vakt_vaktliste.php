@@ -191,6 +191,9 @@ $df = new IntlDateFormatter('nb_NO',
                         if ($bruker == null || $bruker->getPerson() == null) {
                             echo ' ';
                         } else {
+                            if(!$bruker->getPerson()->erBeboer()){
+                                echo "(UTFLYTTET) ";
+                            }
                             echo $bruker->getPerson()->getFulltNavn();
                         }
                         echo '</td>' . PHP_EOL;

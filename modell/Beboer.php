@@ -355,7 +355,9 @@ class Beboer implements Person
         /*
          * Flytter ut beboer. Setter siste romhistorikk til (ikke null).
          * Fjerner fra evt åpmandsverv.
-         * Fjerner fra evt vakter.
+         * Fjerner fra evt vakter. <- NEI! (Vaktsjef) - Beboeren skal sitte vakter den er satt opp på, uavhengig
+         * om den flytter ut.
+         * Fjerner vaktbytter på vakter tilhørende denne beboeren.
          */
 
         $romhistorikken = $this->romhistorikk;
@@ -377,12 +379,15 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('DELETE FROM beboer_verv WHERE beboer_id=:id');
         $st->bindParam(':id', $this->getId());
         $st->execute();
-
-        //Slette vakter tilhørende beboer (setter de som "torildvakt").
-        $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bid WHERE bruker_id=:id');
-        $st->bindParam(':bid', Ansatt::getSisteAnsatt()->getBrukerId());
-        $st->bindParam(':id', $this->getBrukerId());
-        $st->execute();
+        
+        //Slett aktive vaktbytter.
+        
+        foreach(Vaktbytte::getAlle() as $vaktbytte){
+            /* @var Vaktbytte $vaktbytte */
+            if($vaktbytte->getVakt()->getBruker()->getPerson()->getId() === $this->id){
+                $vaktbytte->slett();
+            }
+        }
     
         try {
             $groupmanager = new \Group\GroupManage();

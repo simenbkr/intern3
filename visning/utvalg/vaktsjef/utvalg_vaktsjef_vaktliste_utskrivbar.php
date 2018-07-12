@@ -141,7 +141,18 @@ foreach (range($denneUka, $denneUka > 26 ? date('W', mktime(0, 0, 0, 12, 31, dat
                 }
                 if($vakta != null && $vakta->getBruker() != null && $vakta->getBruker()->getPerson() != null) {
                     ?>
-                    <td class="<?php echo $class;?>"><?php echo ($vakta->getBruker()) != null ? $vakta->getBruker()->getPerson()->getFulltNavn() : 'uhh'; ?></td>
+                    <td class="<?php echo $class;?>">
+                        <?php
+                        
+                        if($vakta->getBruker() != null){
+                            if(!$vakta->getBruker()->getPerson()->erBeboer()){
+                                echo "(UTFLYTTET) ";
+                            }
+                            echo $vakta->getBruker()->getPerson()->getFulltNavn();
+                        }
+                        
+                        ?>
+                    </td>
                     <?php
                 } else { ?>
                     <td></td>
