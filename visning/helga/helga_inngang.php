@@ -23,24 +23,32 @@ switch ($dag_tall) {
 ?>
     <script>
         function registrer(id, verdi) {
-            
+
             var elem = document.getElementById(id);
 
             if (verdi == 1) {
-                
+
                 elem.classList.remove('bg-warning');
                 elem.classList.add('bg-success');
                 document.getElementById(id + "-knapp").checked = true;
-                
-                elem.onclick = function() { registrer(id, 0); };
-                document.getElementById(id + "-knapp").onclick = function() { registrer(id, 0); };
-                
+
+                elem.onclick = function () {
+                    registrer(id, 0);
+                };
+                document.getElementById(id + "-knapp").onclick = function () {
+                    registrer(id, 0);
+                };
+
             } else {
                 elem.classList.remove('bg-success');
                 elem.classList.add('bg-warning');
                 document.getElementById(id + "-knapp").checked = false;
-                elem.onclick = function() {registrer(id, 1); };
-                document.getElementById(id + "-knapp").onclick = function() { registrer(id, 1); };
+                elem.onclick = function () {
+                    registrer(id, 1);
+                };
+                document.getElementById(id + "-knapp").onclick = function () {
+                    registrer(id, 1);
+                };
             }
 
             $.ajax({
@@ -63,9 +71,11 @@ switch ($dag_tall) {
             var gjestid = document.querySelector("#gjester option[value='" + shownVal + "']").dataset.value;
             registrer(gjestid, 1);
             document.getElementById("tekstinput").value = "";
+            $("#gjesteinfo").load("?a=helga/gjest/" + gjestid);
+            $("#modal-gjest").modal("show");
         }
 
-        function refreshNum(){
+        function refreshNum() {
             $.ajax({
                 type: 'GET',
                 url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
@@ -74,7 +84,7 @@ switch ($dag_tall) {
                     var parser = new DOMParser();
                     var response = parser.parseFromString(html, "text/html");
 
-                    if(document.getElementById('status').innerHTML != response.getElementById('status').innerHTML){
+                    if (document.getElementById('status').innerHTML != response.getElementById('status').innerHTML) {
                         $('#status').replaceWith(response.getElementById('status'));
                     }
                 },
@@ -93,7 +103,7 @@ switch ($dag_tall) {
                     var parser = new DOMParser();
                     var response = parser.parseFromString(html, "text/html");
 
-                    if(document.getElementById('status').innerHTML != response.getElementById('status').innerHTML){
+                    if (document.getElementById('status').innerHTML != response.getElementById('status').innerHTML) {
                         $('#status').replaceWith(response.getElementById('status'));
                     }
                     //reloadAvkryss();
@@ -107,22 +117,22 @@ switch ($dag_tall) {
         setInterval(function () {
             refresh()
         }, 3000);
-        
-        $(document).ready(function(){
+
+        $(document).ready(function () {
             refreshNum();
             reloadGjest();
             reloadAvkryss();
         });
 
-        function reloadGjest(){
+        function reloadGjest() {
             $("#gjesteliste").load("?a=helga/gjesteliste/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
         }
 
-        function reloadAvkryss(){
+        function reloadAvkryss() {
             $("#gjestavkryss").load("?a=helga/gjestavkryss/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
         }
-        
-        setInterval(function(){
+
+        setInterval(function () {
             reloadAvkryss();
             reloadGjest();
         }, 60 * 1000)
@@ -148,12 +158,30 @@ switch ($dag_tall) {
     </div>
 
 
-<div id="gjestavkryss">
-    <datalist id="gjester"></datalist>
-</div>
+    <div id="gjestavkryss">
+        <datalist id="gjester"></datalist>
+    </div>
 
-<div id="gjesteliste">
-</div>
+    <div id="gjesteliste">
+    </div>
+
+    <div class="modal fade" id="modal-gjest" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Gjesteinformasjon</h4>
+                </div>
+                <div class="modal-body" id="gjesteinfo">
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <?php
 require_once(__DIR__ . '/../static/bunn.php');

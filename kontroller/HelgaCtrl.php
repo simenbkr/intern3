@@ -217,6 +217,18 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok->vis('helga/helga_gjestavkryss.php');
                         exit();
                     }
+                    
+                case 'gjest':
+                    $sisteArg = $this->cd->getSisteArg();
+                    if($sisteArg != $aktueltArg && is_numeric($sisteArg) &&
+                        ($gjest = HelgaGjest::byId($sisteArg)) != null) {
+                    
+                        $dok = new Visning($this->cd);
+                        $dok->set('gjest', $gjest);
+                        $dok->vis('helga/helga_gjest.php');
+                        
+                    }
+                    break;
                 case 'registrer':
                     if($beboer->harHelgaTilgang()) {
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
