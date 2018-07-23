@@ -64,7 +64,7 @@ class JournalCtrl extends AbstraktCtrl
 
                     if ($post['pinkode'] == $beboer->getPrefs()->getPinkode()) {
                         /* 2 fordi man skal få én visning av aktuell krysseside, samt ett POST for å krysse én gang. */
-                        $_SESSION[md5($beboer->getFulltNavn())] = 2;
+                        $_SESSION[md5($beboer->getFulltNavn())] = 10;
                     }
                 }
 
@@ -75,9 +75,10 @@ class JournalCtrl extends AbstraktCtrl
                 
             case 'multikryss':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                $str = rtrim($post['summary'], ', ') . " på " . Beboer::medId($post['beboerId'])->getFulltNavn();
+                $beboer = Beboer::medId($post['beboerId']);
+                $str = rtrim($post['summary'], ', ') . " på " . $beboer->getFulltNavn();
                 Funk::setSuccess($str);
-                break;
+                unset($_SESSION[md5($beboer->getFulltNavn())]);
             case 'kryssing':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $lastArg = $this->cd->getSisteArg();
@@ -144,14 +145,17 @@ class JournalCtrl extends AbstraktCtrl
                             
                             
 
-                            if($beboer->getPrefs()->harPinkode()){
+                            if($beboer->getPrefs()->harPinkode() && !isset($post['multikryss'])){
                                 unset($_SESSION[md5($beboer->getFulltNavn())]);
+                            } elseif(isset($post['multikryss']) && $beboer->getPrefs()->harPinkode()) {
+                                $_SESSION[md5($beboer->getFulltNavn())]++;
                             }
 
                             $_SESSION['scroll'] = $beboerId;
                             break;
                         }
                     }
+                    exit();
                 }
                 $beboerId = $this->cd->getSisteArg();
                 $beboer = Beboer::medId($beboerId);

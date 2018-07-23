@@ -131,6 +131,7 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
         elemcount--;
         changeKnapp()
     }
+
     
     function cartkryss(beboerId) {
     
@@ -150,13 +151,14 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             $.ajax({
                 type: 'POST',
                 url: '?a=journal/kryssing/',
-                data: 'beboerId=' + beboerId + "&antall=" + curr_count + "&type=" + curr_id + "&nofeedback=1",
+                data: 'beboerId=' + beboerId + "&antall=" + curr_count + "&type=" + curr_id + "&nofeedback=1&multikryss=1",
                 method: 'POST',
                 success: function(data) {
                     //window.location.replace("?a=journal/krysseliste");
                 },
                 error: function(req, stat, err){
                     alert("Noe gikk galt! Prøv på nytt.");
+                    break;
                 }
             });
             
