@@ -208,13 +208,21 @@ class Beboer implements Person
         $this->oppdater();
     }
 
-    public function getAnsiennitet()
+    public function getAnsiennitet() : int
     {
-        return $this->ansiennitet;
+        if(is_numeric($this->ansiennitet)){
+            return $this->ansiennitet;
+        }
+        return 0;
     }
 
     public function setAnsiennitet($ans){
         $this->ansiennitet = $ans;
+        $this->oppdater();
+    }
+    
+    public function inkrementerAnsiennitet(){
+        $this->ansiennitet++;
         $this->oppdater();
     }
 
@@ -705,8 +713,8 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $st->bindParam(':alko', $alko);
         $st->bindParam(':rolle', $this->rolleId);
         $st->bindParam(':epost', $this->epost);
-        $st->bindParam('romhistorikk', $this->romhistorikk);
-        $st->bindParam(':ansiennitet', $this->ansiennitet);
+        $st->bindParam(':romhistorikk', $this->romhistorikk);
+        $st->bindParam(':ans', $this->ansiennitet);
         $st->execute();
     }
 

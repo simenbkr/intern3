@@ -376,7 +376,11 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
             } else if ($aktueltArg == 'epost') {
                 $valgtCtrl = new UtvalgRomsjefEpostCtrl($this->cd->skiftArg());
                 return $valgtCtrl->bestemHandling();
-            } else if (is_numeric($aktueltArg)) {
+            } else if ($aktueltArg == 'ansiennitet') {
+                $valgtCtrl = new UtvalgRomsjefAnsiennitetCtrl($this->cd->skiftArg());
+                return $valgtCtrl->bestemHandling();
+            }
+            else if (is_numeric($aktueltArg)) {
                 $beboer = Beboer::medId($aktueltArg);
                 // Trenger feilhåndtering her.
                 $dok = new Visning($this->cd);
