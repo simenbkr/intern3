@@ -1,6 +1,6 @@
 <?php
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 ?>
 
@@ -58,6 +58,6 @@ if ($f->getBeskrivelse() <> null) {
 </form>
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

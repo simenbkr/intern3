@@ -2,6 +2,6 @@
 
 $visUtvalgMeny = true;
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 ?>

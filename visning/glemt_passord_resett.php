@@ -1,9 +1,9 @@
 <?php
-require_once ('topp.php');
+require_once ('static/topp.php');
 ?>
     <div style="display:table; margin: auto; margin-top: 20%">
 
-        <?php require_once ('tilbakemelding.php'); ?>
+        <?php require_once ('static/tilbakemelding.php'); ?>
 
         <h1 style="text-align: center;">Singsaker Studenterhjem</h1>
         <h1 style="font-size: 45px; text-align: center;">Internside</h1>
@@ -13,11 +13,11 @@ require_once ('topp.php');
             <table class="table borderless">
                 <tr>
                     <th>Passord</th>
-                    <td><input type="password" name="passord1"></td>
+                    <td><input class="form-control" type="password" name="passord1"></td>
                 </tr>
                 <tr>
                     <th>Bekreft passord</th>
-                    <td><input type="password" name="passord2"></td>
+                    <td><input class="form-control" type="password" name="passord2"></td>
                 </tr>
                 <tr>
                     <td> </td>
@@ -29,5 +29,5 @@ require_once ('topp.php');
     </div>
 
 <?php
-require_once ('bunn.php');
+require_once ('static/bunn.php');
 ?>

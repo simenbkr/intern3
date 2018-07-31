@@ -1,6 +1,6 @@
 <?php
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 ?>
 
@@ -9,6 +9,6 @@ require_once('topp.php');
 
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

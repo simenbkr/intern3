@@ -1,5 +1,5 @@
 <?php
-require_once('topp.php');
+require_once('static/topp.php');
 
 $df = new IntlDateFormatter('nb_NO',
     IntlDateFormatter::TRADITIONAL, IntlDateFormatter::NONE,
@@ -211,6 +211,6 @@ $df = new IntlDateFormatter('nb_NO',
 </div>
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 ?>
 <div class="col-md-12">
@@ -9,6 +9,6 @@ require_once('topp.php');
 </div>
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

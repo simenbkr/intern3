@@ -1,6 +1,6 @@
 <?php
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 if (isset($visError)) {
 ?>
@@ -13,7 +13,7 @@ if (isset($visError)) {
 }
 ?>
   <div style="display:table; margin: auto; margin-top: <?php if (isset($visError)) { echo '5%'; } else { echo '20%'; } ?>">
-      <?php require_once ('tilbakemelding.php'); ?>
+      <?php require_once ('static/tilbakemelding.php'); ?>
 
   	<h1 style="text-align: center;">Singsaker Studenterhjem</h1>
   	<h1 style="font-size: 45px; text-align: center;">Internside</h1>
@@ -22,11 +22,11 @@ if (isset($visError)) {
   		<table class="table borderless">
   			<tr>
   				<th>Epost</th>
-  				<td><input type="text" name="brukernavn"></td>
+  				<td><input class="form-control" type="text" name="brukernavn"></td>
   			</tr>
   			<tr>
   				<th>Passord</th>
-  				<td><input type="password" name="passord"></td>
+  				<td><input class="form-control" type="password" name="passord"></td>
   			</tr>
   			<tr>
   				<td> </td>
@@ -38,6 +38,6 @@ if (isset($visError)) {
 </div>
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

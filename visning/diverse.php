@@ -1,6 +1,6 @@
 <?php
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 ?>
 <script>
@@ -244,6 +244,6 @@ if(count($verv_meldinger) > 0) {
 <?php } ?>
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

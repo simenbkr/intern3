@@ -1,5 +1,5 @@
 <?php
-require_once('topp.php');
+require_once('static/topp.php');
 ?>
 <script>
     function meldPa(utleieid, felt) {
@@ -80,5 +80,5 @@ require_once('topp.php');
     </div>
 </div>
 <?php
-require_once('bunn.php');
+require_once('static/bunn.php');
 ?>

@@ -22,6 +22,6 @@ require_once(__DIR__ . '/../static/topp.php');
   </div>
 <?php
 
-require_once(__DIR__ . '../bunn.php');
+require_once(__DIR__ . '/../static/bunn.php');
 
 ?>

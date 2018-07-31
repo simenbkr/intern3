@@ -63,7 +63,7 @@ if (!isset($skjulMeny)) {
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regi <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="<?php echo $cd->getBase(); ?>regi/oppgave">Oppgaver</a></li>
-									<li><a href="<?php echo $cd->getBase(); ?>regi/rapport">Rapporter</a></li>
+									<!--<li><a href="<?php echo $cd->getBase(); ?>regi/rapport">Rapporter</a></li>-->
 									<li><a href="<?php echo $cd->getBase(); ?>regi/minregi">Min regi</a></li>
 									<?php /*<li><a href="<?php echo $cd->getBase(); ?>regi/registatus">Registatus</a></li>*/?>
 								</ul>
@@ -71,7 +71,7 @@ if (!isset($skjulMeny)) {
 							<li><a href="<?php echo $cd->getBase(); ?>verv">Verv</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>kryss">Kryss</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>wiki">Wiki</a></li>
-							<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>
+							<!--<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>-->
 
                             <?php
                             if ($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->erHelgaGeneral()) {

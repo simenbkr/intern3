@@ -1,6 +1,6 @@
 <?php
 
-require_once('topp.php');
+require_once('static/topp.php');
 
 ?>
 
@@ -18,6 +18,6 @@ foreach ($romListe as $rom) {
 
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>

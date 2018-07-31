@@ -131,6 +131,6 @@ rad = <?php echo $_SESSION['scroll']; ?>;
 </div>
 <?php
 
-require_once('bunn.php');
+require_once(__DIR__ . '/../static/bunn.php');
 
 ?>

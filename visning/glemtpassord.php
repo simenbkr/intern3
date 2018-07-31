@@ -1,5 +1,5 @@
 <?php
-require_once('topp.php');
+require_once('static/topp.php');
 
 if(isset($epostSendt) && $epostSendt == 1){
     ?>
@@ -32,6 +32,6 @@ if(isset($epostSendt) && $epostSendt == 1){
 </div>
 <?php
 
-require_once('bunn.php');
+require_once('static/bunn.php');
 
 ?>
