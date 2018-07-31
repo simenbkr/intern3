@@ -1,5 +1,5 @@
 <?php
-require_once('topp.php');
+require_once('static/topp.php');
 ?>
 <div class="container">
     <?php if (isset($success)) {
@@ -44,5 +44,5 @@ require_once('topp.php');
 
 </div>
 <?php
-require_once('bunn.php');
+require_once('static/bunn.php');
 ?>
