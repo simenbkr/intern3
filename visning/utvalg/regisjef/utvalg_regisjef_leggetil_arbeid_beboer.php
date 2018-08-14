@@ -216,6 +216,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <th>Tid brukt</th>
                 <th>Kommentar</th>
                 <th>Status</th>
+                <th>Detaljer</th>
                 <th></th>
             </tr>
             </thead>
@@ -230,6 +231,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <td><?php echo intern3\Funk::timerTilTidForm($arbeid->getSekunderBrukt() / 3600); ?></td>
                     <td><?php echo htmlspecialchars($arbeid->getKommentar()); ?></td>
                     <td><?php echo $arbeid->getGodkjent() ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
+                    <td><a href="?a=regi/minregi/<?php echo $arbeid->getId();?>">Detaljer</a></td>
                     <td><?php echo $arbeid->getGodkjent() ? ' ' : '<button class="btn btn-danger" onclick="slett(' . $arbeid->getId() . ')">Slett</button>'; ?></td>
                 </tr>
                 <?php

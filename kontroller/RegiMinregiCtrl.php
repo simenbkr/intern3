@@ -2,10 +2,30 @@
 
 namespace intern3;
 
+
 class RegiMinregiCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
+        $aktueltArg = $this->cd->getAktueltArg();
+        $sisteArg = $this->cd->getSisteArg();
+        
+        if(is_numeric($aktueltArg) &&
+            ($arbeid = Arbeid::medId($this->cd->getSisteArg())) != null){
+            
+            if($this->cd->getAktivBruker() === $arbeid->getBruker() ||
+                LogginnCtrl::getAktivBruker()->getPerson()->harUtvalgVerv()) {
+    
+                $dok = new Visning($this->cd);
+                $dok->set('arbeidet', $arbeid);
+                $dok->vis('regi/regi_minregi_detaljert.php');
+            } else {
+                Funk::setError("Du har ikke tilgang til dette objektet!");
+                header('Location: ?a=regi/minregi');
+            }
+            exit();
+        }
+        
         $feil = array();
         if (isset($_POST['registrer'])) {
             $feil = $this->registrerArbeid();
@@ -16,34 +36,39 @@ class RegiMinregiCtrl extends AbstraktCtrl
         }
         if (isset($_POST['slett']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            if($post['slett'] == 1 && isset($post['arbeid']) && is_numeric($post['arbeid'])){
+            if ($post['slett'] == 1 && isset($post['arbeid']) && is_numeric($post['arbeid'])) {
                 $arbeidId = $post['arbeid'];
                 $brukerId = LogginnCtrl::getAktivBruker()->getId();
                 $aktuell_arbeid = Arbeid::medId($arbeidId);
-                if(($aktuell_arbeid->getBrukerId() == $brukerId || Beboer::medBrukerId($brukerId)->harUtvalgVerv())
-                    && $aktuell_arbeid->getGodkjent() == 0 && $aktuell_arbeid->inCurrentSem()){
+                if (($aktuell_arbeid->getBrukerId() == $brukerId || Beboer::medBrukerId($brukerId)->harUtvalgVerv())
+                    && $aktuell_arbeid->getGodkjent() == 0 && $aktuell_arbeid->inCurrentSem()) {
                     $st = DB::getDB()->prepare('DELETE FROM arbeid WHERE id=:id');
                     $st->bindParam(':id', $arbeidId);
                     $st->execute();
+                    
+                    foreach(ArbeidBilde::medArbeidId($arbeidId) as $arbeidbilde){
+                        $arbeidbilde->slett();
+                    }
+                    
                 }
-
-                if(!$aktuell_arbeid->inCurrentSem())
+                
+                if (!$aktuell_arbeid->inCurrentSem())
                     Funk::setError("Du kan ikke slette ført regi for tidligere semestere!");
             }
         }
-        if(isset($_POST['semester']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+        if (isset($_POST['semester']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $_SESSION['regisemester'] = $post['semester'];
             header('Location: ?a=regi/minregi');
             exit();
         }
-
-        if(isset($_SESSION['regisemester']) && is_int(($unix = Funk::semStrToUnix($_SESSION['regisemester']))) && $unix > 0){
+        
+        if (isset($_SESSION['regisemester']) && is_int(($unix = Funk::semStrToUnix($_SESSION['regisemester']))) && $unix > 0) {
             $arbeidListe = ArbeidListe::medBrukerIdSemester($this->cd->getAktivBruker()->getId(), $unix);
         } else {
             $arbeidListe = ArbeidListe::medBrukerIdSemester($this->cd->getAktivBruker()->getId());
         }
-
+        
         $regitimer = array(
             '0' => 0,
             '1' => 0,
@@ -54,10 +79,10 @@ class RegiMinregiCtrl extends AbstraktCtrl
         }
         $semesterList = LogginnCtrl::getAktivBruker()->getPerson()->getSemesterlist();
         $mapping = array();
-        foreach($semesterList as $sem){
+        foreach ($semesterList as $sem) {
             $mapping[$sem] = Funk::semStrToReadable($sem);
         }
-
+        
         $dok = new Visning($this->cd);
         $dok->set('feil', $feil);
         $dok->set('mapping', $mapping);
@@ -65,7 +90,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
         $dok->set('arbeidListe', $arbeidListe);
         $dok->vis('regi/regi_minregi.php');
     }
-
+    
     private function registrerArbeid()
     {
         $feil = $this->godkjennArbeid();
@@ -92,10 +117,46 @@ class RegiMinregiCtrl extends AbstraktCtrl
                 $st->bindValue($navn, $verdi);
             }
             $st->execute();
+            
+            $st = DB::getDB()->prepare('SELECT * FROM arbeid ORDER BY ID DESC LIMIT 1');
+            $st->execute();
+            $rad = $st->fetch();
+            $id = $rad['id'];
+            
+            $this->lastOppBilder($id);
+            
         }
         return $feil;
     }
-
+    
+    private function lastOppBilder($id)
+    {
+        $gyldige_extensions = array("jpeg", "jpg", "png", "gif");
+        $regibilder_path = dirname(__DIR__) . '/www/regibilder/';
+        
+        $antall = count($_FILES['file']['name']);
+        
+        for($key = 0; $key < $antall; $key++){
+            
+            $file_ext = strtolower(end(explode('.', $_FILES['file']['name'][$key])));
+            
+            if(!in_array($file_ext, $gyldige_extensions)){
+                break;
+            }
+            
+            $filnavn = md5($_FILES['file']['name'] . Funk::generatePassword()) . '.' . $file_ext;
+            $bildesti = $regibilder_path . $filnavn;
+            if(!move_uploaded_file($_FILES['file']['tmp_name'][$key], $bildesti)){
+                Throw new \RuntimeException("dafuqqers");
+            }
+            
+            chmod($bildesti, 0644);
+            ArbeidBilde::opprett("$filnavn", $id);
+        }
+        
+        
+    }
+    
     private function godkjennArbeid()
     {
         $feil = array();
@@ -178,14 +239,14 @@ class RegiMinregiCtrl extends AbstraktCtrl
             $dagens_aar = date('Y');
             $semester_start = null;
             $semester_slutt = null;
-
-            if($tiden > $dagens_dato){
+            
+            if ($tiden > $dagens_dato) {
                 $feil[] = "Du kan ikke registrere regi for fremtiden!";
                 $_SESSION['error'] = 1;
                 $_SESSION['msg'] = "Du kan ikke registrere regi for fremtiden!";
             }
-
-            if(strtotime($tiden) > strtotime("$dagens_aar-01-01") && strtotime($tiden) < strtotime("$dagens_aar-07-01")){
+            
+            if (strtotime($tiden) > strtotime("$dagens_aar-01-01") && strtotime($tiden) < strtotime("$dagens_aar-07-01")) {
                 //Vår semester
                 $semester_start = date('Y-m-d', strtotime("$dagens_aar-01-01"));
                 $semester_slutt = date('Y-m-d', strtotime("$dagens_aar-07-01"));
@@ -194,16 +255,16 @@ class RegiMinregiCtrl extends AbstraktCtrl
                 $semester_start = date('Y-m-d', strtotime("$dagens_aar-07-01"));
                 $semester_slutt = date('Y-m-d', strtotime("$dagens_aar-12-31"));
             }
-
-            if ($tiden > $semester_slutt || $tiden < $semester_start){
+            
+            if ($tiden > $semester_slutt || $tiden < $semester_start) {
                 $feil[] = 'Du kan ikke registrere regi for et annet semester!';
                 $_SESSION['error'] = 1;
                 $_SESSION['msg'] = "Du kan ikke registrere regi for et annet semester!";
             }
-        } while(false);
+        } while (false);
         return $feil;
     }
-
+    
     private function getSekunderBrukt()
     {
         if (preg_match('/^([0-9]+)$/', $_POST['tid_brukt'], $treff)) {
@@ -220,7 +281,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
         }
         return 0;
     }
-
+    
     private function getPolymorfkategoriVelger()
     {
         $polymorf = -1;

@@ -65,7 +65,7 @@ require_once(__DIR__ . '/../static/topp.php');
     include(__DIR__ . '/../static/tilbakemelding.php');
 
     ?>
-    <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+    <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype='multipart/form-data'>
         <table class="table table-bordered">
             <tr>
                 <th>Tilhørighet</th>
@@ -183,6 +183,12 @@ require_once(__DIR__ . '/../static/topp.php');
                 </td>
             </tr>
             <tr>
+                <th>Bilder</th>
+                <td>
+                    <input type="file" name="file[]" multiple id="file">
+                </td>
+            </tr>
+            <tr>
                 <td></td>
                 <td><input type="submit" class="btn btn-primary" name="registrer" value="Registrer"></td>
             </tr>
@@ -236,6 +242,7 @@ require_once(__DIR__ . '/../static/topp.php');
                 <th>Kommentar</th>
                 <th>Tilbakemelding</th>
                 <th>Status</th>
+                <th>Detaljer</th>
                 <th></th>
             </tr>
             </thead>
@@ -256,6 +263,7 @@ require_once(__DIR__ . '/../static/topp.php');
                     </td>
                     <?php /*<td><?php echo $arbeid->getGodkjent() ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>*/
                     ?><td><?php echo $arbeid->getStatus();?></td>
+                    <td><a href="?a=regi/minregi/<?php echo $arbeid->getId();?>">Detaljer</a></td>
                     <td><?php echo $arbeid->getStatus() == 'Godkjent' || $arbeid->getStatus() == 'Underkjent' ? ' ' : '<button class="btn btn-danger" onclick="slett(' . $arbeid->getId() . ')">Slett</button>'; ?></td>
                 </tr>
                 <?php

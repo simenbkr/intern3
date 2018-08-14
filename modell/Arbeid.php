@@ -33,6 +33,7 @@ class Arbeid
     private $tid_godkjent;
     private $godkjent_bruker_id;
     private $tilbakemelding;
+    private $arbeidbilder;
 
     private $db;
 
@@ -63,6 +64,7 @@ class Arbeid
             $this->tid_godkjent = $rad['tid_godkjent'];
             $this->godkjent_bruker_id = $rad['godkjent_bruker_id'];
             $this->tilbakemelding = $rad['tilbakemelding'];
+            $this->arbeidbilder = ArbeidBilde::medArbeidId($this->id);
 
             $this->bruker = null;
         }
@@ -328,6 +330,10 @@ GROUP BY bruker_id');
         $done = Funk::semStrToUnix(Funk::generateSemesterString(date('Y-m-d',strtotime($this->tid_utfort))));
 
         return $now === $done;
+    }
+    
+    public function getArbeidBilder(){
+        return $this->arbeidbilder;
     }
 }
 

@@ -39,6 +39,29 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <td><input type="hidden" name="endre" value="<?php echo $arbeidet->getId(); ?>"></td>
                 <td><input type="submit" class="btn btn-primary" value="Overskriv"></td>
             </tr>
+    
+            <?php
+    
+            foreach($arbeidet->getArbeidBilder() as $arbeidbilde){
+                /* @var \intern3\ArbeidBilde $arbeidbilde */
+                ?>
+                <tr>
+                    <th>Bilde:</th>
+                    <td>
+                        <a href="<?php echo $arbeidbilde->getPath(); ?>">
+                            <img class="img-responsive" src="<?php echo $arbeidbilde->getPath(); ?>">
+                        </a>
+                    </td>
+
+                </tr>
+        
+        
+                <?php
+            }
+    
+    
+            ?>
+            
         </table>
     </form>
 
