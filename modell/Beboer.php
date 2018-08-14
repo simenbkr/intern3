@@ -607,6 +607,11 @@ class Beboer implements Person
             }
             $lista[] = Funk::generateSemesterString(date('Y-m-d', strtotime("$i-09-01")));
         }
+        $current = Funk::generateSemesterString(date('Y-m-d'));
+        if(!in_array($current, $lista)){
+            $lista[] = $current;
+        }
+        
         return array_reverse(array_unique($lista));
     }
 
