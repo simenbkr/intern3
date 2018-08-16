@@ -368,6 +368,24 @@ class Oppgave
         return self::init_ny($st);
     }
     
+    public static function getOppgaverByUtforelseDato($dato){
+        $st = DB::getDB()->prepare('SELECT * FROM oppgave WHERE tid_utfore=:dato');
+        $st->bindParam(':dato', $dato);
+        $st->execute();
+        
+        if($st->rowCount() == 0){
+            return null;
+        }
+        
+        $oppgaver = array();
+        
+        for($i = 0; $i < $st->rowCount(); $i++){
+            
+            $oppgaver[] = self::init_ny($st);
+        }
+        
+    }
+    
 }
 
 ?>

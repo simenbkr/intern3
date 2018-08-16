@@ -49,7 +49,7 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                             $tittel = "[SING-INTERN] Du er satt opp på en ny regi-oppgave!";
                             $beskjed = "<html><body>Hei!<br/><br/>Du er satt opp på en ny regi-oppgave. Beskrivelse følger:<br/>";
                             $beskjed .= "<h3>$navn</h3><br/>$beskrivelse";
-                            $beskjed .= "<br/><br/>Med vennlig hilsen <br/>Robottene ved Internsidene";
+                            $beskjed .= "<br/><br/>Med vennlig hilsen <br/>Singsaker Internside";
                             $beskjed .= "<br/><br/>Hvis denne e-posten er sendt feil, vennligst ta kontakt med data@singsaker.no</body></html>";
                             
                             foreach ($tildelte as $beboer_id) {
