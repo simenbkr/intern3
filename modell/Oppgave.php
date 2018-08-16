@@ -16,26 +16,27 @@ class Oppgave
     private $tid_godkjent;
     private $godkjent_bruker_id;
     private $status;
-
+    private $tid_utfore;
+    
     private $db;
-
+    
     //latskapsinstansiering
     private $pameldte;
     private $arbeidListe; //arbeidListe er flertallsformen av arbeid
     private $arbeidListeBrukerId;
-
+    
     public function __construct()
     {
         $this->db = DB::getDB();
     }
-
+    
     private function init($pdo_statement)
     {
         $st = $pdo_statement;
         $st->execute();
         if ($st->rowCount() > 0) {
             $rad = $st->fetch();
-
+            
             $this->id = $rad['id'];
             $this->tid_oppretta = $rad['tid_oppretta'];
             $this->anslag_timer = $rad['anslag_timer'];
@@ -49,122 +50,163 @@ class Oppgave
             $this->godkjent_bruker_id = $rad['godkjent_bruker_id'];
             $this->pameldte = $rad['paameldte'];
             $this->status = $rad['status'];
-
+            $this->tid_utfore = $rad['tid_utfore'];
+            
             $this->brukere = null;
         }
     }
-
+    
+    private static function init_ny(\PDOStatement $st)
+    {
+        $st->execute();
+        $rad = $st->fetch();
+        
+        if ($rad === null) {
+            return null;
+        }
+        $instance = new self();
+        
+        $instance->id = $rad['id'];
+        $instance->tid_oppretta = $rad['tid_oppretta'];
+        $instance->anslag_timer = $rad['anslag_timer'];
+        $instance->ansvarsomrade_id = $rad['ansvarsomrade_id'];
+        $instance->anslag_personer = $rad['anslag_personer'];
+        $instance->prioritet_id = $rad['prioritet_id'];
+        $instance->navn = $rad['navn'];
+        $instance->beskrivelse = $rad['beskrivelse'];
+        $instance->godkjent = $rad['godkjent'];
+        $instance->tid_godkjent = $rad['tid_godkjent'];
+        $instance->godkjent_bruker_id = $rad['godkjent_bruker_id'];
+        $instance->pameldte = $rad['paameldte'];
+        $instance->status = $rad['status'];
+        $instance->tid_utfore = $rad['tid_utfore'];
+        
+        $instance->brukere = null;
+        
+        return $instance;
+    }
+    
+    
     public static function medId($id)
     {
         $instans = new self();
         $st = $instans->db->prepare('SELECT * FROM oppgave WHERE id = :id');
         $st->bindParam(":id", $id);
-
+        
         $instans->init($st);
         return $instans;
     }
-
+    
     public function getId()
     {
         return $this->id;
     }
-
-    public function getStatus(){
+    
+    public function getStatus()
+    {
         return $this->status;
     }
-
-    public function erFryst(){
+    
+    public function erFryst()
+    {
         return $this->status == 1;
     }
-
+    
     public function setFryst()
     {
         $this->status = 1;
         $this->setStatus(1);
     }
-
-    public function unFrys(){
+    
+    public function unFrys()
+    {
         $this->status = 0;
         $this->setStatus(0);
     }
-
+    
     public function getTidOppretta()
     {
         return $this->tid_oppretta;
     }
-
+    
     public function getAnslagTimer()
     {
         return $this->anslag_timer;
     }
-
+    
     public function getAnsvarsomradeId()
     {
         return $this->ansvarsomrade_id;
     }
-
+    
     public function getAnslagPersoner()
     {
         return $this->anslag_personer;
     }
-
+    
     public function getNavn()
     {
         return $this->navn;
     }
-
+    
     public function getBeskrivelse()
     {
         return $this->beskrivelse;
     }
-
+    
     public function getGodkjent()
     {
         return $this->godkjent;
     }
-
+    
     public function getTidGodkjent()
     {
         return $this->tid_godkjent;
     }
-
+    
     public function getGodkjentBrukerId()
     {
         return $this->godkjent_bruker_id;
     }
-
+    
     public function getGodkjentBruker()
     {
-        if($this->godkjent_bruker_id != null){
+        if ($this->godkjent_bruker_id != null) {
             return Bruker::medId($this->godkjent_bruker_id);
         }
         return null;
     }
-
+    
     public function getPrioritet()
     {
         return Prioritet::medId($this->getPrioritetId());
     }
-
-    public function setStatus($status){
+    
+    public function setStatus($status)
+    {
         $this->status = $status;
         DB::getDB()->query('UPDATE oppgave SET status=' . $status . ' WHERE id=' . $this->id);
     }
-
+    
+    public function getTidUtfore()
+    {
+        return $this->tid_utfore;
+    }
+    
     public static function setGodkjent($oppgaver_id, $godkjent)
     {
         $instans = new self(); //BUG: Får ikke tak i $this->db, så hva skal vi med $this->db ?
         foreach ($oppgaver_id as $oppgave_id) {
             $st = $instans->db->prepare('UPDATE oppgave SET godkjent=:godkjent,tid_godkjent=NOW(),godkjent_bruker_id=:bruker_id WHERE godkjent=' . (1 ^ $godkjent) . ' AND id = :rapport_id;');
             //Faen ta PDO: Kan ikke skrive "WHERE godkjent=:motsatt".
-
+            
             $st->bindParam(':godkjent', $godkjent);
             $st->bindParam(':rapport_id', $rapport_id);
             $st->bindParam(":bruker_id", $_SESSION['bruker_id']);
             $st->execute();
         }
     }
-
+    
     public function setBrukerPameldt($bruker_id, $pameldt)
     {
         $instans = new self();
@@ -177,35 +219,38 @@ class Oppgave
         $st->bindParam(':oppg', $this->id);
         $st->execute();
     }
-
-    public static function endreGodkjent($oppgaveId, $status){
-        if($status == 0){
+    
+    public static function endreGodkjent($oppgaveId, $status)
+    {
+        if ($status == 0) {
             $st = DB::getDB()->prepare('UPDATE oppgave SET godkjent=0,tid_godkjent=NULL,godkjent_bruker_id=NULL WHERE id=:id');
-            $st->bindParam(':id',$oppgaveId);
+            $st->bindParam(':id', $oppgaveId);
             $st->execute();
-        }
-        elseif($status == 1) {
+        } elseif ($status == 1) {
             $st = DB::getDB()->prepare('UPDATE oppgave SET godkjent=1,tid_godkjent=NOW(),godkjent_bruker_id=:brukerId WHERE id=:id');
-            $st->bindParam(':id',$oppgaveId);
+            $st->bindParam(':id', $oppgaveId);
             $aktivbrukerId = LogginnCtrl::getAktivBruker()->getId();
-            $st->bindParam(':brukerId',$aktivbrukerId);
+            $st->bindParam(':brukerId', $aktivbrukerId);
             $st->execute();
         }
     }
-
-    public static function AddOppgave($navn,$pri,$anslagtid,$anslagpers,$beskrivelse){
+    
+    public static function AddOppgave($navn, $pri, $anslagtid, $anslagpers, $beskrivelse, $tid_utfore = null)
+    {
         $st = DB::getDB()->prepare('INSERT INTO oppgave 
-(tid_oppretta,anslag_timer,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id, status) 
-        VALUES(NOW(),:anslagtimer,:anslagpersoner,:pri,:navn,:beskrivelse,0,NULL,NULL,0)');
-        $st->bindParam(':anslagtimer',$anslagtid);
-        $st->bindParam(':anslagpersoner',$anslagpers);
-        $st->bindParam(':pri',$pri);
-        $st->bindParam(':navn',$navn);
-        $st->bindParam(':beskrivelse',$beskrivelse);
+(tid_oppretta,anslag_timer,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id, status, tid_utfore)
+        VALUES(NOW(),:anslagtimer,:anslagpersoner,:pri,:navn,:beskrivelse,0,NULL,NULL,0, :tid_utfore)');
+        
+        $st->bindParam(':anslagtimer', $anslagtid);
+        $st->bindParam(':anslagpersoner', $anslagpers);
+        $st->bindParam(':pri', $pri);
+        $st->bindParam(':navn', $navn);
+        $st->bindParam(':beskrivelse', $beskrivelse);
+        $st->bindParam(':tid_utfore', $tid_utfore);
         $st->execute();
     }
-
-
+    
+    
     /*
      * Funksjonene nedenfor instansierer variabler ved behov.
      */
@@ -213,17 +258,18 @@ class Oppgave
     {
         return json_decode($this->pameldte, true);
     }
-
-    public function getPameldteBeboere(){
+    
+    public function getPameldteBeboere()
+    {
         $beboerne = array();
-        if($this->getPameldteId() != null){
-            foreach($this->getPameldteId() as $id){
+        if ($this->getPameldteId() != null) {
+            foreach ($this->getPameldteId() as $id) {
                 $beboerne[] = Beboer::medId($id);
             }
         }
         return $beboerne;
     }
-
+    
     public function getArbeidListe()
     {
         if (!$this->arbeidListe) {
@@ -232,7 +278,7 @@ class Oppgave
         }
         return $this->arbeidListe;
     }
-
+    
     public function getArbeidListeBrukerId($bruker_id)
     {
         if (!$this->arbeidListeBrukerId) {
@@ -241,7 +287,7 @@ class Oppgave
         }
         return $this->arbeidListeBrukerId;
     }
-
+    
     public function erBrukerPameldt($bruker_id)
     {
         $this->getPameldte();
@@ -252,7 +298,7 @@ class Oppgave
         }
         return false;
     }
-
+    
     public function getPrioritetId()
     {
         /*if (!$this->prioritet_id) {
@@ -268,12 +314,13 @@ class Oppgave
         return $this->prioritet_id;*/
         return $this->prioritet_id == null || $this->prioritet_id == 0 ? 1 : $this->prioritet_id;
     }
-
-    public function fjernPerson($beboer_id){
+    
+    public function fjernPerson($beboer_id)
+    {
         $nye_paameldte = array();
-
-        foreach($this->getPameldteId() as $id){
-            if($id != $beboer_id){
+        
+        foreach ($this->getPameldteId() as $id) {
+            if ($id != $beboer_id) {
                 $nye_paameldte[] = $id;
             }
         }
@@ -283,7 +330,44 @@ class Oppgave
         $st->bindParam(':id', $this->id);
         $st->execute();
     }
-
+    
+    public function meldPa($beboer_id)
+    {
+        $pameldte = $this->getPameldteId();
+        
+        if($pameldte === null || count($pameldte) < 1){
+            $pameldte = array();
+        }
+        
+        if (in_array($beboer_id, $pameldte)) {
+            return;
+        }
+        
+        $pameldte[] = $beboer_id;
+        $nypameldte = json_encode($pameldte, true);
+        
+        $st = DB::getDB()->prepare('UPDATE oppgave SET paameldte=:paameldte WHERE id=:id');
+        $st->bindParam(':paameldte', $nypameldte);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+    }
+    
+    public function settLag($beboer_id_liste){
+        $pameldte = json_encode($beboer_id_liste);
+        $st = DB::getDB()->prepare('UPDATE oppgave SET paameldte=:paameldte WHERE id=:id');
+        $st->bindParam(':paameldte', $pameldte);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+        
+    }
+    
+    public static function getSiste()
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM oppgave ORDER BY id DESC LIMIT 1');
+        $st->execute();
+        return self::init_ny($st);
+    }
+    
 }
 
 ?>

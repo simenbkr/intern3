@@ -110,7 +110,24 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
             case 'oppgave':
                 $valgtCtrl = new UtvalgRegisjefOppgaveCtrl($this->cd->skiftArg());
                 break;
-
+            case 'beboermodal':
+                $dok = new Visning($this->cd);
+                $beboerListe = BeboerListe::aktiveMedRegi();
+                if(($oppgaven = Oppgave::medId($_POST['oppgaven'])) !== null){
+                    $nybeboerliste = array();
+                    foreach($beboerListe as $beboer){
+                        if(!in_array($beboer->getId(), $oppgaven->getPameldteId())){
+                            $nybeboerliste[] = $beboer;
+                        }
+                    }
+                    $dok->set('beboerListe', $nybeboerliste);
+                } else {
+                    $dok->set('beboerListe', $beboerListe);
+                }
+                
+                
+                $dok->vis('utvalg/regisjef/utvalg_regisjef_beboermodal.php');
+                return;
             default:
                 $dok = new Visning($this->cd);
                 $dok->vis('utvalg/regisjef/utvalg_regisjef.php');
