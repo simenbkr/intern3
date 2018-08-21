@@ -65,6 +65,13 @@ class RegiOppgaveCtrl extends AbstraktCtrl
                     $st->bindParam(':paameldte', $ny_paameldt_json);
                     $st->bindParam(':id', $id);
                     $st->execute();
+                    
+                    $tittel = "[SING-INTERN] En beboer har meldt seg av en oppgave.";
+                    $beskjed = $beboeren->getFulltNavn() . " har meldt seg av oppgaven " . $oppgaven->getNavn() . '.';
+                    if ($oppgaven->getTidUtfore() !== null){
+                        $beskjed .= ' Oppgaven skulle utføres ' . $oppgaven->getTidUtfore();
+                    }
+                    Epost::sendEpost('regisjef@singsaker.no', $tittel, $beskjed);
                 }
 
             }
