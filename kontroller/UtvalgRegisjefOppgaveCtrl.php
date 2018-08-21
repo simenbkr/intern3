@@ -94,7 +94,35 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
             $dok->set('oppgaveListe', $oppgaveListe);
             $dok->vis('utvalg/regisjef/utvalg_regisjef_oppgave.php');
             $dok->set('feilSubmit', null);
-        } elseif (is_numeric($sisteArg) && ($oppgaven = Oppgave::medId($sisteArg)) !== null) {
+        } elseif($sisteArg === 'forslag' && $_SERVER['REQUEST_METHOD'] === 'POST'){
+        
+            $antall = $post['antall'];
+            $kandidater = BeboerListe::aktiveMedRegiTilDisp();
+            
+            if(empty($antall) || $antall === null || !is_numeric($antall) || $antall < 1){
+                $antall = 1;
+            }
+            
+            $keys = array_rand($kandidater, $antall);
+            
+            if ($antall === 1){
+                $keys = array($keys);
+            }
+            
+            $forslag = array();
+            foreach($keys as $key){
+                $beboer = $kandidater[$key];
+                
+                $forslag[] = array(
+                    'id' => $beboer->getId(),
+                    'navn' => $beboer->getFulltNavn()
+                );
+            };
+            
+            print json_encode($forslag, true);
+        
+        }
+        elseif (is_numeric($sisteArg) && ($oppgaven = Oppgave::medId($sisteArg)) !== null) {
             
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 

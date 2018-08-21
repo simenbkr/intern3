@@ -20,6 +20,57 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 </div>
 
 <script>
+    
+    var i = 0;
+    
+    function forslag(){
+        
+        var antall = document.getElementById("anslag-pers").value;
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/oppgave/forslag',
+            data: 'antall=' + antall,
+            method: 'POST',
+            success: function (html) {
+                var obj = jQuery.parseJSON(html);
+                
+                var select = $('#selecten');
+                
+                jQuery.each(obj, function(i, val){
+                    console.log(val.navn);
+                    if(i === 0) {
+                        selectChosenOptions(select, val.id);
+                    } else {
+                        selectAdditionalChosenOptions(select, val.id);
+                    }
+                    i++;
+                })
+                
+            },
+            error: function (req, stat, err) {
+                alert(err);
+            }
+        });
+        
+    }
+
+    function selectChosenOptions($select, values) {
+        $select.val(null);                                  //delete current options
+        $select.val(values);                                //add new options
+        $select.trigger('chosen:updated');
+    }
+
+    function selectAdditionalChosenOptions($select, values) {
+        var selected = $select.val() || [];                 //get current options
+        selected = selected.concat(values);                 //merge with new options
+        selected = $.grep(selected, function(el, index) {
+            return index === $.inArray(el, selected);       //make options unique
+        });
+        $select.val(null);                                  //delete current options
+        $select.val(selected);                              //add new options
+        $select.trigger('chosen:updated');
+    }
+    
 
     function fjern(id) {
         $.ajax({
@@ -195,13 +246,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                 <tr>
                     <th>Anslag timer</th>
-                    <td><input name="timer" class="form-control"
+                    <td><input name="timer" class="form-control" id="anslag-timer"
                                placeholder="0:00"<?php echo isset($_POST['timer']) ? ' value="' . $_POST['timer'] . '"' : ''; ?>>
                     </td>
                 </tr>
                 <tr>
                     <th>Anslag personer</th>
-                    <td><input
+                    <td><input type="number" id="anslag-pers"
                                 name="personer"
                                 class="form-control" <?php echo isset($_POST['personer']) ? ' value="' . $_POST['personer'] . '"' : ''; ?>>
                     </td>
@@ -209,7 +260,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <tr>
                     <th>Meld på personer</th>
                     <td>
-                        <select class="chosen" multiple="multiple" name="tildelte[]">
+                        <select class="chosen" multiple="multiple" name="tildelte[]" id="selecten">
                             <?php
                             
                             foreach ($beboerListe as $beboer) {
@@ -219,6 +270,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <?php }
                             ?>
                         </select>
+                        
+                        <input type="button" class="btn btn-danger btn-sm" onclick="forslag()" value="Forslag">
 
                     </td>
                 </tr>

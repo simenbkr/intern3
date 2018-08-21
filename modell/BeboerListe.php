@@ -70,6 +70,31 @@ and id in
         }
         return $lista;
     }
+    
+    public static function aktiveMedRegiTilDisp(){
+        $lista = array();
+        foreach(self::aktiveMedRegi() as $beboer){
+            /* @var Beboer $beboer */
+            if($beboer->harUtvalgVerv()){
+                $lista[] = $beboer;
+            }
+        }
+        return $lista;
+    }
+    
+    public static function aktiveMedRegitimer($regitimer){
+        $lista = array();
+        $semester = Funk::generateSemesterString(date('Y-m-d'));
+        foreach(self::aktiveMedRegi() as $beboer){
+            /* @var \intern3\Beboer $beboer */
+            $antallSek = $beboer->getRolle()->getRegitimer() * 3600;
+            if($antallSek - $beboer->getBruker()->getRegisekunderMedSemester($semester) < $regitimer * 3600){
+                $lista[] = $beboer;
+            }
+        }
+        
+        return $lista;
+    }
 
     public static function medBursdag($dato)
     {
