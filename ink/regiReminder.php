@@ -11,6 +11,11 @@ $imorgen = strtotime("+1 day");
 $dato = date('Y-m-d', $imorgen);
 
 $oppgaver_i_morgen = Oppgave::getOppgaverByUtforelseDato($dato);
+
+if($oppgaver_i_morgen === null || empty($oppgaver_i_morgen)){
+    exit();
+}
+
 $sendt_til = array();
 
 foreach($oppgaver_i_morgen as $oppgave){

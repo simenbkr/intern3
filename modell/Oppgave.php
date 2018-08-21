@@ -384,6 +384,8 @@ class Oppgave
             $oppgaver[] = self::init_ny($st);
         }
         
+        return $oppgaver;
+        
     }
     
 }
