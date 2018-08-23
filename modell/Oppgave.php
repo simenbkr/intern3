@@ -86,6 +86,20 @@ class Oppgave
         return $instance;
     }
     
+    private function oppdater(){
+        
+        $st = DB::getDB()->prepare('UPDATE oppgave SET navn=:navn, tid_utfore=:tidutfore, anslag_timer=:timer,
+                                            anslag_personer=:personer, beskrivelse=:besk WHERE id=:id');
+        $st->bindParam(':navn', $this->navn);
+        $st->bindParam(':tidutfore',$this->tid_utfore);
+        $st->bindParam(':timer', $this->anslag_timer);
+        $st->bindParam(':personer', $this->anslag_personer);
+        $st->bindParam(':besk', $this->beskrivelse);
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+        
+    }
+    
     
     public static function medId($id)
     {
@@ -191,6 +205,31 @@ class Oppgave
     public function getTidUtfore()
     {
         return $this->tid_utfore;
+    }
+    
+    public function setNavn($navn){
+        $this->navn = $navn;
+        $this->oppdater();
+    }
+    
+    public function setBeskrivelse($beskrivelse){
+        $this->beskrivelse = $beskrivelse;
+        $this->oppdater();
+    }
+    
+    public function setTidutfore($tid_utfore){
+        $this->tid_utfore = $tid_utfore;
+        $this->oppdater();
+    }
+    
+    public function setAnslagTimer($anslag_timer){
+        $this->anslag_timer = $anslag_timer;
+        $this->oppdater();
+    }
+    
+    public function setAnslagPersoner($anslag_personer){
+        $this->anslag_personer = $anslag_personer;
+        $this->oppdater();
     }
     
     public static function setGodkjent($oppgaver_id, $godkjent)

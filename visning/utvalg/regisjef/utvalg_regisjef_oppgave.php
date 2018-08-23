@@ -247,13 +247,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                class="form-control" <?php echo isset($_POST['navn']) ? ' value="' . $_POST['navn'] . '"' : ''; ?>>
                     </td>
                 </tr>
-                <tr>
-                    <th>Prioritet</th>
-                    <td><input
-                                name="prioritet"
-                                class="form-control" <?php echo isset($_POST['prioritet']) ? ' value="' . $_POST['prioritet'] . '"' : ''; ?>>
-                    </td>
-                </tr>
 
                 <tr>
                     <th>Utførelsesdato</th>
@@ -304,7 +297,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </tr>
 
                 <tr>
-                    <th>Sende ut e-post til de tildelte?</th>
+                    <th>Huk av for å ikke sende e-post.</th>
                     <td><input type="checkbox" name="epost" value="1"/></td>
                 </tr>
                 <tr>

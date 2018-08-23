@@ -25,11 +25,11 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                 } elseif (isset($post['afrys'])) {
                     Oppgave::medId($post['afrys'])->unFrys();
                 } elseif (isset($post['registrer'])) {
-                    if (isset($post['navn']) && isset($post['prioritet']) && isset($post['timer']) && isset($post['personer']) && isset($post['beskrivelse'])
-                        && $post['navn'] != null && $post['prioritet'] != null && $post['timer'] != null && $post['personer'] != null && $post['beskrivelse'] != null
+                    if (isset($post['navn'])  && isset($post['timer']) && isset($post['personer']) && isset($post['beskrivelse'])
+                        && $post['navn'] != null && $post['timer'] != null && $post['personer'] != null && $post['beskrivelse'] != null
                     ) {
                         $navn = $post['navn'];
-                        $pri = $post['prioritet'];
+                        $pri = 1;
                         $anslagtid = $post['timer'];
                         $anslagpers = $post['personer'];
                         $beskrivelse = $post['beskrivelse'];
@@ -45,7 +45,7 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                         $aktuellOppgave = Oppgave::getSiste();
                         $aktuellOppgave->settLag($tildelte);
                         
-                        if ($post['epost'] == 1) {
+                        if ($post['epost'] !== 1) {
                             $tittel = "[SING-INTERN] Du er satt opp på en ny regi-oppgave!";
                             $beskjed = "<html><body>Hei!<br/><br/>Du er satt opp på en ny regi-oppgave. Beskrivelse følger:<br/>";
                             $beskjed .= "<h3>$navn</h3><br/>$beskrivelse";
@@ -131,6 +131,22 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                     Funk::setSuccess("La til " . $beboer->getFulltNavn() . " til oppgaven.");
                     header("Location: " . $_SERVER['REQUEST_URI']);
                     exit();
+                } elseif( isset($post['navn']) && isset($post['beskrivelse']) && isset($post['dato'])
+                    && isset($post['anslag_timer']) && isset($post['anslag_personer'])){
+                    
+                    $oppgaven->setNavn($post['navn']);
+                    $oppgaven->setTidutfore($post['dato']);
+                    $oppgaven->setAnslagTimer($post['anslag_timer']);
+                    $oppgaven->setAnslagPersoner($post['anslag_personer']);
+                    
+                    if(strlen($post['beskrivelse']) > 1){
+                        $oppgaven->setBeskrivelse($post['beskrivelse']);
+                    }
+                    
+                    Funk::setSuccess("Endra oppgaven!");
+                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                    exit();
+                    
                 }
                 
             }
