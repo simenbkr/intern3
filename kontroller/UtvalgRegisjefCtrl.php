@@ -99,7 +99,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                     $dok->vis('utvalg/regisjef/utvalg_regisjef_leggetil_arbeid_beboer.php');
                     return;
                 }
-                $har_regi = BeboerListe::aktiveMedRegi();
+                $har_regi = BeboerListe::aktive();
 
                 $dok->set('beboerliste', $har_regi);
                 $dok->vis('utvalg/regisjef/utvalg_regisjef_leggetil_arbeid.php');
