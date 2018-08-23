@@ -237,6 +237,9 @@ class Oppgave
     
     public static function AddOppgave($navn, $pri, $anslagtid, $anslagpers, $beskrivelse, $tid_utfore = null)
     {
+        //Formatér til DATETIME-format som DBen krever.
+        $tid_utfore = date('Y-m-d H:i:s', strtotime($tid_utfore));
+        
         $st = DB::getDB()->prepare('INSERT INTO oppgave 
 (tid_oppretta,anslag_timer,anslag_personer,prioritet_id,navn,beskrivelse,godkjent,tid_godkjent,godkjent_bruker_id, status, tid_utfore)
         VALUES(NOW(),:anslagtimer,:anslagpersoner,:pri,:navn,:beskrivelse,0,NULL,NULL,0, :tid_utfore)');
