@@ -266,7 +266,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $dok = new Visning($this->cd);
                     $dok->set('beboer', $beboer);
                     $dok->set('beboersKrysseliste', $beboersKrysseliste);
-                    $dok->vis('utvalg_vaktsjef_detaljkryss.php');
+                    $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_detaljkryss.php');
                 }
                 break;
             case 'krysserapport':
