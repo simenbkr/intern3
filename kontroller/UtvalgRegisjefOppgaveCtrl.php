@@ -147,6 +147,28 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                     header('Location: ' . $_SERVER['REQUEST_URI']);
                     exit();
                     
+                } elseif( isset($post['send_epost']) && $post['send_epost'] === 1){
+
+                    $navn = $oppgaven->getNavn();
+                    $beskrivelse = $oppgaven->getBeskrivelse();
+                    $dato = $oppgaven->getTidUtfore();
+
+                    $tittel = "[SING-INTERN] Du er satt opp på en ny regi-oppgave!";
+                    $beskjed = "<html><body>Hei!<br/><br/>Du er satt opp på en ny regi-oppgave. Beskrivelse følger:<br/>";
+                    $beskjed .= "<h3>$navn</h3><br/>$beskrivelse";
+
+                    if(!empty($dato) && $dato !== null){
+                        $beskjed .= "<br/>Oppgaven skal utføres " . $dato . ".";
+                    }
+
+                    $beskjed .= "<br/><br/>Med vennlig hilsen <br/>Singsaker Internside";
+                    $beskjed .= "<br/><br/>Hvis denne e-posten er sendt feil, vennligst ta kontakt med data@singsaker.no</body></html>";
+
+                    foreach ($oppgaven->getPameldteBeboere() as $beboer) {
+                        Epost::sendEpost($beboer->getEpost(), $tittel, $beskjed);
+                    }
+
+
                 }
                 
             }

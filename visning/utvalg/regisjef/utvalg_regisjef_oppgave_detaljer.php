@@ -45,8 +45,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </tr>
         <tr>
             <th>Beskrivelse</th>
-            <td><textarea class="form-control" rows="10" cols="50" name="beskrivelse"
-                          placeholder="<?php echo $oppgaven->getBeskrivelse(); ?>"></textarea></td>
+            <td><textarea class="form-control" rows="10" cols="50" name="beskrivelse"><?php echo $oppgaven->getBeskrivelse(); ?></textarea></td>
         </tr>
         <tr>
             <th>Påmeldte</th>
@@ -127,6 +126,14 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <input class="btn btn-primary" type="submit" value="Endre" name="endre">
             </td>
         </tr>
+
+        <tr>
+            <th>
+            </th>
+            <td>
+                <button class="btn btn-warning" onclick="resendEpost()">Send e-post.</button>
+            </td>
+        </tr>
         
     </table>
         </form>
@@ -154,6 +161,23 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 },
             });
         });
+
+
+        function resendEpost() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/regisjef/oppgave/<?php echo $oppgaven->getId();?>',
+                data: 'send_epost=1,
+                method: 'POST',
+                success: function (html) {
+                    location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
         
         
         function fjern(id) {
