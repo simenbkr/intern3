@@ -107,6 +107,9 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
             case 'arbeid':
                 $valgtCtrl = new UtvalgRegisjefArbeidCtrl($this->cd->skiftArg());
                 break;
+            case 'regiliste':
+                $valgtCtrl = new UtvalgRegisjefListeCtrl($this->cd->skiftArg());
+                break;
             case 'oppgave':
                 $valgtCtrl = new UtvalgRegisjefOppgaveCtrl($this->cd->skiftArg());
                 break;
