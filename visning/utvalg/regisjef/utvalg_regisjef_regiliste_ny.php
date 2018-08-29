@@ -129,7 +129,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             data: 'navn=' + navn + '&valgte=' + JSON.stringify(valgte),
             method: 'POST',
             success: function (data) {
-                alert("wooo")
                 window.location.replace("?a=utvalg/regisjef/regiliste/");
             },
             error: function (req, stat, err) {
