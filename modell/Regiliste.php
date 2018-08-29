@@ -9,11 +9,13 @@ class Regiliste
     private $id;
     private $navn;
     private $beboerliste;
+    private $idliste;
 
-    private static function init(\PDOStatement $st){
+    private static function init(\PDOStatement $st)
+    {
 
         $rad = $st->fetch();
-        if($rad === null){
+        if ($rad === null) {
             return null;
         }
 
@@ -22,6 +24,7 @@ class Regiliste
         $instans->navn = $rad['navn'];
 
         $instans->beboerliste = array();
+        $instans->idliste = array();
 
         $st = DB::getDB()->prepare('SELECT beboer_id AS bebid FROM regiliste_beboer WHERE regiliste_id = :id');
         //TODO Endre slik at den kun velger aktive beboere.
@@ -29,46 +32,140 @@ class Regiliste
         $st->bindParam(':id', $instans->id);
         $st->execute();
 
-        for($i = 0; $i < $st->rowCount(); $i++){
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $rad = $st->fetch();
             $instans->beboerliste[] = Beboer::medId($rad['bebid']);
+            $instans->idliste[] = $rad['bebid'];
         }
 
         return $instans;
     }
 
-    public static function getAlleLister(){
+    public static function getAlleLister()
+    {
 
         $st = DB::getDB()->prepare('SELECT * FROM regiliste');
         $st->execute();
         $lister = array();
 
-        for($i = 0; $i < $st->rowCount(); $i++){
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $lister[] = self::init($st);
         }
 
         return $lister;
     }
 
-    public static function medId($id){
+    public static function medId($id)
+    {
         $st = DB::getDB()->prepare('SELECT * FROM regiliste WHERE id=:id');
         $st->bindParam(':id', $id);
+        $st->execute();
         return self::init($st);
     }
 
 
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function getNavn(){
+    public function getNavn()
+    {
         return $this->navn;
     }
 
-    public function getBeboerliste(){
+    public function getBeboerliste()
+    {
         return $this->beboerliste;
     }
 
+    public function getIdliste()
+    {
+        return $this->idliste;
+    }
+
+    public static function opprett($navn, $idliste = null)
+    {
+
+        $st = DB::getDB()->prepare('INSERT INTO regiliste (navn) VALUES(:navn)');
+        $st->bindParam(':navn', $navn);
+        $st->execute();
+
+        if ($idliste === null || count($idliste) < 1) {
+            return;
+        }
+
+        $st = DB::getDB()->prepare('SELECT * FROM regiliste WHERE navn=:navn ORDER BY ID DESC LIMIT 1');
+        $st->bindParam(':navn', $navn);
+        $st->execute();
+
+        $instans = self::init($st);
+
+        $gyldige_ider = array();
+
+        foreach ($idliste as $id) {
+            if (($beboer = Beboer::medId($id)) !== null && $beboer->erAktiv()) {
+                $gyldige_ider[] = $id;
+            }
+        }
+
+        foreach ($gyldige_ider as $id) {
+            $st = DB::getDB()->prepare('INSERT INTO regiliste_beboer (regiliste_id, beboer_id) VALUES(:regi_id,:beboer_id)');
+            $st->bindParam(':regi_id', $instans->getId());
+            $st->bindParam(':beboer_id', $id);
+            $st->execute();
+        }
+
+    }
+
+    public function endreNavn($navn)
+    {
+
+        if ($navn !== $this->navn) {
+
+            $st = DB::getDB()->prepare('UPDATE regiliste SET navn=:navn WHERE id=:id');
+            $st->bindParam(':navn', $navn);
+            $st->bindParam(':id', $this->id);
+            $st->execute();
+        }
+    }
+
+    public function endreValgte($valgte){
+
+        //TODO fiks mysteribug.
+
+        $st = DB::getDB()->prepare('DELETE FROM regiliste_beboer WHERE regiliste_id=:id');
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+
+        foreach($valgte as $id) {
+            $st = DB::getDB()->prepare('INSERT INTO regiliste_beboer (regiliste_id, beboer_id) VALUES(:regi, :beboer)');
+            $st->bindParam(':regi', $this->id);
+            $st->bindParam(':beboer', $id);
+            $st->execute();
+        }
+
+    }
+
+    public function meldPa($beboer_id)
+    {
+        if(false && in_array($beboer_id, $this->idliste)){
+            return;
+        }
+
+        $st = DB::getDB()->prepare('INSERT INTO regiliste_beboer (regiliste_id, beboer_id) VALUES(:regi_id,:beboer_id)');
+        $st->bindParam(':regi_id', $this->getId());
+        $st->bindParam(':beboer_id', $beboer_id);
+        $st->execute();
+    }
+
+    public function meldAv($beboer_id)
+    {
+        $st = DB::getDB()->prepare('DELETE FROM regiliste_beboer WHERE (regiliste_id=:regi_id AND beboer_id=:bebid)');
+        $st->bindParam(':regi_id', $this->getId());
+        $st->bindParam(':bebid', $beboer_id);
+        $st->execute();
+    }
 
 
 }
