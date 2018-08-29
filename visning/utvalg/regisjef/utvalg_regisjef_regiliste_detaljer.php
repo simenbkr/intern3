@@ -104,7 +104,25 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             valgte.push(id);
             oppdaterKnapp(id, "fjern");
 
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/regisjef/regiliste/endre/<?php echo $regiliste->getId(); ?>',
+                data: 'add=' + id,
+                method: 'POST',
+                success: function (data) {
+                    console.log(data)
+                    //window.location.replace("?a=utvalg/regisjef/regiliste/");
+                    //location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert("Noe gikk galt!");
+                }
+            });
+
         }
+
+
+
 
         function fjern(id) {
             var index = valgte.indexOf(id);
@@ -112,6 +130,22 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 valgte.splice(index, 1);
             }
             oppdaterKnapp(id, "velg");
+
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/regisjef/regiliste/endre/<?php echo $regiliste->getId(); ?>',
+                data: 'del=' + id,
+                method: 'POST',
+                success: function (data) {
+                    console.log(data)
+                    //window.location.replace("?a=utvalg/regisjef/regiliste/");
+                    //location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert("Noe gikk galt!");
+                }
+            })
+
         }
 
         $(document).ready(function() {
@@ -131,7 +165,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             $.ajax({
                 type: 'POST',
                 url: '?a=utvalg/regisjef/regiliste/endre/<?php echo $regiliste->getId(); ?>',
-                data: 'navn=' + navn + '&valgte=' + JSON.stringify(valgte),
+                data: 'navn=' + navn, // + '&valgte=' + JSON.stringify(valgte),
                 method: 'POST',
                 success: function (data) {
                     console.log(data)

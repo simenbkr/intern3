@@ -197,6 +197,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/arbeid">Arbeid</a></li>
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/oppgave">Oppgave</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/registatus">Registatus</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/regiliste">Regilister</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/leggtilarbeid">Legg til arbeid</a></li>
                 </ul>
               </li>

@@ -32,10 +32,17 @@ class UtvalgRegisjefListeCtrl extends AbstraktCtrl
                     break;
                 case 'endre':
                     if(($regiliste = Regiliste::medId($sisteArg)) !== null){
-                        $regiliste->endreNavn($post['navn']);
 
-                        $valgte = json_decode($post['valgte']);
-                        $regiliste->endreValgte($valgte);
+                        if(strlen($post['navn']) > 0) {
+                            $regiliste->endreNavn($post['navn']);
+                        }
+
+                        if(isset($post['add']) && ($beboer = Beboer::medId($post['add'])) !== null){
+                            Regiliste::addBeboerToListe($sisteArg, $post['add']);
+                        } elseif(isset($post['del']) && ($beboer = Beboer::medId($post['del'])) !== null) {
+                            Regiliste::removeBeboerFromListe($sisteArg, $post['del']);
+                        }
+
                     }
                     break;
             }
