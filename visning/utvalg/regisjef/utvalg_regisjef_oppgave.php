@@ -40,17 +40,19 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             },
         });
     });
-    
+
+
     
     var i = 0;
     
     function forslag(){
         
         var antall = document.getElementById("anslag-pers").value;
+        var regiliste_id = $('#regiliste option:selected').attr('id');
         $.ajax({
             type: 'POST',
             url: '?a=utvalg/regisjef/oppgave/forslag',
-            data: 'antall=' + antall,
+            data: 'antall=' + antall + '&regiliste_id=' + regiliste_id,
             method: 'POST',
             success: function (html) {
                 var obj = jQuery.parseJSON(html);
@@ -271,6 +273,24 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                 class="form-control" <?php echo isset($_POST['personer']) ? ' value="' . $_POST['personer'] . '"' : ''; ?>>
                     </td>
                 </tr>
+
+                <tr>
+                    <th>Velg Regilisten forslag skal komme fra</th>
+                    <td>
+                        <select id="regiliste" class="form-control">
+
+                            <?php foreach($regilister as $regiliste) { ?>
+
+                            <option id="<?php echo $regiliste->getId(); ?>"><?php echo $regiliste->getNavn(); ?></option>
+
+                            <?php } ?>
+
+
+                        </select>
+
+                    </td>
+                </tr>
+
                 <tr>
                     <th>Meld på personer</th>
                     <td>

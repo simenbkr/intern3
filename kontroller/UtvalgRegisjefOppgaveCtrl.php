@@ -88,8 +88,10 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                     $oppgaven->fjernPerson($beboeren->getId());
                 }
             }
+            $regilister = Regiliste::getAlleLister();
             $oppgaveListe = OppgaveListe::alle();
             $beboerListe = BeboerListe::aktiveMedRegi();
+            $dok->set('regilister', $regilister);
             $dok->set('beboerListe', $beboerListe);
             $dok->set('oppgaveListe', $oppgaveListe);
             $dok->vis('utvalg/regisjef/utvalg_regisjef_oppgave.php');
@@ -98,9 +100,17 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
         
             $antall = $post['antall'];
             $kandidater = BeboerListe::aktiveMedRegiTilDisp();
+
+            if(($regilisten = Regiliste::medId($post['regiliste_id'])) !== null){
+                $kandidater = $regilisten->getBeboerliste();
+            }
             
             if(empty($antall) || $antall === null || !is_numeric($antall) || $antall < 1){
                 $antall = 1;
+            }
+
+            if($antall >= count($kandidater)){
+                $antall = count($kandidater);
             }
             
             $keys = array_rand($kandidater, $antall);
