@@ -45,6 +45,11 @@ class UtvalgRegisjefListeCtrl extends AbstraktCtrl
 
                     }
                     break;
+                case 'slett':
+                    if(($regiliste = Regiliste::medId($sisteArg)) !== null) {
+                        $regiliste->slett();
+                        Funk::setSuccess("Slettet regilista!");
+                    }
             }
 
 

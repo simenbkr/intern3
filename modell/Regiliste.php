@@ -176,5 +176,17 @@ class Regiliste
         $st->execute();
     }
 
+    public function slett(){
+
+        $st = DB::getDB()->prepare('DELETE FROM regiliste_beboer WHERE regiliste_id=:regi_id');
+        $st->bindParam(':regi_id', $this->id);
+        $st->execute();
+
+        $st = DB::getDB()->prepare('DELETE FROM regiliste WHERE id=:id');
+        $st->bindParam(':id', $this->id);
+        $st->execute();
+
+    }
+
 
 }

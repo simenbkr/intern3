@@ -14,6 +14,22 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <script>
 
 
+            function slett(id){
+                $.ajax({
+                    type: 'POST',
+                    url: '?a=utvalg/regisjef/regiliste/slett/' + id,
+                    data: '',
+                    method: 'POST',
+                    success: function (data) {
+                        //window.location.replace("?a=utvalg/regisjef/regiliste/");
+                        location.reload();
+                    },
+                    error: function (req, stat, err) {
+                        alert("Noe gikk galt!");
+                    }
+                })
+            }
+
         </script>
 
         <p>
@@ -39,6 +55,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <tr>
                     <th>Navn</th>
                     <th>Antall</th>
+                    <th>Slett</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -50,6 +67,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <tr>
                         <td><a href="?a=utvalg/regisjef/regiliste/<?php echo $regiliste->getId(); ?>"><?php echo $regiliste->getNavn(); ?></a></td>
                         <td><?php echo count($regiliste->getBeboerliste()); ?></td>
+                        <td><button class="btn btn-danger" onclick="slett(<?php echo $regiliste->getId(); ?>)">Slett</button></td>
                     </tr>
                     <?php
                 }
