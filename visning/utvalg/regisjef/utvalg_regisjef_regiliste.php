@@ -30,12 +30,30 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 })
             }
 
+            function defaultRegi(){
+                $.ajax({
+                    type: 'POST',
+                    url: '?a=utvalg/regisjef/regiliste/regi/',
+                    data: '',
+                    method: 'POST',
+                    success: function (data) {
+                        //window.location.replace("?a=utvalg/regisjef/regiliste/");
+                        location.reload();
+                    },
+                    error: function (req, stat, err) {
+                        alert("Noe gikk galt!");
+                    }
+                })
+            }
+
         </script>
 
         <p>
             <a href="?a=utvalg/regisjef/regiliste/opprett">
                 <button class="btn btn-primary">Opprett ny regiliste</button>
             </a>
+
+            <button class="btn btn-info" onclick="defaultRegi()">Generer regi-liste (tar med alle med regi uten utvalgsverv).</button>
         </p>
 
 

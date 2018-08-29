@@ -50,6 +50,22 @@ class UtvalgRegisjefListeCtrl extends AbstraktCtrl
                         $regiliste->slett();
                         Funk::setSuccess("Slettet regilista!");
                     }
+                    break;
+                case 'regi':
+
+                    $navn = "[GENERERT " . date('Y-m-d') . "] Alle med regi.";
+                    $idliste = array();
+
+                    foreach(BeboerListe::aktiveMedRegi() as $beboer){
+                        /* @var \intern3\Beboer $beboer */
+                        if($beboer->harUtvalgVerv()){
+                            continue;
+                        }
+
+                        $idliste[] = $beboer->getId();
+                    }
+
+                    Regiliste::opprett($navn, $idliste);
             }
 
 
