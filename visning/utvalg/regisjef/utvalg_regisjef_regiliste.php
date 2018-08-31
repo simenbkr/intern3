@@ -73,6 +73,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <tr>
                     <th>Navn</th>
                     <th>Antall</th>
+                    <th>Gjenværende timer</th>
                     <th>Slett</th>
                 </tr>
                 </thead>
@@ -85,6 +86,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <tr>
                         <td><a href="?a=utvalg/regisjef/regiliste/<?php echo $regiliste->getId(); ?>"><?php echo $regiliste->getNavn(); ?></a></td>
                         <td><?php echo count($regiliste->getBeboerliste()); ?></td>
+                        <td><?php echo round($regiliste->getTotaleTimerIgjen()); ?> timer</td>
                         <td><button class="btn btn-danger" onclick="slett(<?php echo $regiliste->getId(); ?>)">Slett</button></td>
                     </tr>
                     <?php

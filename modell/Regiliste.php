@@ -10,6 +10,7 @@ class Regiliste
     private $navn;
     private $beboerliste;
     private $idliste;
+    private $totale_timer;
 
     private static function init(\PDOStatement $st)
     {
@@ -28,7 +29,6 @@ class Regiliste
 
         $st = DB::getDB()->prepare('SELECT beboer_id AS bebid FROM regiliste_beboer WHERE (regiliste_id = :id
         AND regiliste_beboer.beboer_id IN (SELECT id FROM beboer WHERE romhistorikk LIKE :ikkeUtflyttet))');
-        //TODO Endre slik at den kun velger aktive beboere.
 
         $ikkeUtflyttet = '%"utflyttet":NULL%';
         $st->bindParam(':id', $instans->id);
@@ -39,6 +39,22 @@ class Regiliste
             $rad = $st->fetch();
             $instans->beboerliste[] = Beboer::medId($rad['bebid']);
             $instans->idliste[] = $rad['bebid'];
+        }
+
+        $instans->totale_timer = 0;
+        foreach ($instans->beboerliste as $beboer) {
+            /* @var \intern3\Beboer $beboer */
+
+            $instans->totale_timer += $beboer->getRolle()->getRegitimer() - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60);
+
+            /*
+            if($beboer->getRolle()->getRegitimer() > 18) {
+                $instans->totale_timer += 48 - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60);
+            } elseif($beboer->getRolle()->getRegitimer() === 18){
+                $instans->totale_timer += 18 - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60);
+            }
+            */
+
         }
 
         return $instans;
@@ -87,6 +103,11 @@ class Regiliste
         return $this->idliste;
     }
 
+    public function getTotaleTimerIgjen()
+    {
+        return $this->totale_timer;
+    }
+
     public static function opprett($navn, $idliste = null)
     {
 
@@ -131,7 +152,8 @@ class Regiliste
     }
 
 
-    public function endreValgte($valgte){
+    public function endreValgte($valgte)
+    {
 
         //TODO fiks mysteribug.
 
@@ -141,7 +163,8 @@ class Regiliste
 
     }
 
-    private function oppdater(){
+    private function oppdater()
+    {
 
         $st = DB::getDB()->prepare('UPDATE regiliste SET navn=:navn WHERE id=:id');
         $st->bindParam(':navn', $this->navn);
@@ -161,7 +184,8 @@ class Regiliste
 
     }
 
-    public static function addBeboerToListe($liste_id, $beboer_id){
+    public static function addBeboerToListe($liste_id, $beboer_id)
+    {
         $st = DB::getDB()->prepare('INSERT INTO regiliste_beboer (regiliste_id, beboer_id) VALUES(:regi_id,:beboer_id)');
         $st->bindParam(':regi_id', $liste_id);
         $st->bindParam(':beboer_id', $beboer_id);
@@ -169,14 +193,16 @@ class Regiliste
 
     }
 
-    public static function removeBeboerFromListe($liste_id, $beboer_id){
+    public static function removeBeboerFromListe($liste_id, $beboer_id)
+    {
         $st = DB::getDB()->prepare('DELETE FROM regiliste_beboer WHERE (regiliste_id=:regi_id AND beboer_id=:beboer_id)');
         $st->bindParam(':regi_id', $liste_id);
         $st->bindParam(':beboer_id', $beboer_id);
         $st->execute();
     }
 
-    public function slett(){
+    public function slett()
+    {
 
         $st = DB::getDB()->prepare('DELETE FROM regiliste_beboer WHERE regiliste_id=:regi_id');
         $st->bindParam(':regi_id', $this->id);

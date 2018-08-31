@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/../topp_utvalg.php');
+/* @var \intern3\Regiliste $regiliste */
 ?>
 
     <div class="col-lg-12">
@@ -7,6 +8,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     <h1>Utvalget » Regisjef » Regiliste » Detaljer for <?php echo $regiliste->getNavn(); ?></h1>
     <hr>
+
+    <p>
+        Denne regilisten har til sammen igjen <?php echo round($regiliste->getTotaleTimerIgjen(),2 ); ?> timer.
+    </p>
 
     <p>
         <input class="form-control" type="text" value="<?php echo $regiliste->getNavn(); ?>" id="navn">
