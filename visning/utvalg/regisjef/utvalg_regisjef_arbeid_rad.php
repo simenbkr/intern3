@@ -1,4 +1,7 @@
 <?php
+
+/* @var \intern3\Arbeid $arbeid */
+
 $godkjentNavn = "";
 if($arbeid->getGodkjent() == 0){
 	$godkjentNavn = "Ikke godkjent";
@@ -26,6 +29,13 @@ else {
 
 ?></td>
 				<td><?php echo $arbeid->getTidBrukt(); ?></td>
+                <td>
+                    <?php if(count($arbeid->getArbeidBilder()) > 0){  ?>
+                        <button class="btn btn-info" onclick="vis(<?php echo $arbeid->getId(); ?>)">Vis</button>
+                    <?php
+                    }
+                    ?>
+                </td>
 				<td><?php echo htmlspecialchars($arbeid->getKommentar()); ?></td>
 				<?php /*<td><?php echo $arbeid->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeid->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeid->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?>
 				<br/><br/><?php echo $arbeid->getGodkjent() == 0 ? "" : "Godkjent: " . $arbeid->getTidGodkjent() . ' av ' . $godkjentNavn; ?></td>*/?>

@@ -75,6 +75,13 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                 if(isset($done)){
                     break;
                 }
+            case 'bilde':
+                if(($arbeid = Arbeid::medId($this->cd->getSisteArg())) !== null) {
+                    $dok = new Visning($this->cd);
+                    $dok->set('arbeid', $arbeid);
+                    $dok->vis('utvalg/regisjef/regi_arbeid_bilde.php');
+                    break;
+                }
             default:
                 $timer_brukt = Arbeid::getTimerBruktPerSemester();
                 $sideinndeling = new SideinndelData();

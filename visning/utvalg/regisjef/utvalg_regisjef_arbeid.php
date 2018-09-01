@@ -35,6 +35,11 @@ function underkjenn(id){
     });
 }
 
+function vis(id){
+    $("#bilder").load("?a=utvalg/regisjef/arbeid/bilde/" + id);
+    $("#modal-bilde").modal("show");
+}
+
 </script>
 
 <div class="col-md-12">
@@ -80,6 +85,7 @@ echo implode(',' . PHP_EOL, $lenker);
 				<th>Utført</th>
 				<th>Kategori</th>
 				<th>Tid brukt</th>
+                <th>Bilde(r)</th>
 				<th>Kommentar</th>
 				<th>Status</th>
 				<th> </th>
@@ -99,6 +105,24 @@ foreach ($arbeidListe as $arbeid) {
 		</tbody>
 	</table>
 </div>
+
+<div class="modal fade" id="modal-bilde" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Bilder</h4>
+            </div>
+            <div class="modal-body" id="bilder">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <?php
 
