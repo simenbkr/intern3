@@ -147,6 +147,29 @@ class Bruker
         return $sum;
     }
 
+    public function getRegitimerigjen(){
+
+        return $this->getPerson()->getRolle()->getRegitimer() - ($this->getRegisekunderMedSemester() / 3600);
+    }
+
+    public function getOppgaveTimer(){
+        $sum = 0;
+        foreach(Oppgave::getOppgaverISemesterBeboerId($this->getPerson()->getId()) as $oppgave){
+            /* @var \intern3\Oppgave $oppgave */
+            if(!$oppgave->getGodkjent()) {
+                $sum += $oppgave->getAnslagTimer();
+            }
+        }
+
+        return $sum;
+
+    }
+
+    public function getDisponibelRegitid(){
+
+        return $this->getRegitimerigjen() - $this->getOppgaveTimer();
+    }
+
     public function endreSalt($salt)
     {
         $st = DB::getDB()->prepare('UPDATE bruker SET salt=:salt WHERE id=:id');

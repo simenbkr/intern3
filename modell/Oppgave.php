@@ -429,6 +429,56 @@ class Oppgave
         return $oppgaver;
         
     }
+
+    public static function getOppgaverISemester($dato = null){
+        $oppgaver = array();
+
+        if($dato === null){
+            $dato = date('Y-m-d');
+        }
+
+        $semester = Funk::generateSemesterString($dato);
+        $start = Funk::getSemesterStart($semester);
+        $slutt = Funk::getSemesterEnd($semester);
+
+        $st = DB::getDB()->prepare('SELECT * FROM oppgave WHERE (tid_oppretta>:start AND tid_oppretta<:slutt)');
+        $st->bindParam(':start', $start);
+        $st->bindParam(':slutt', $slutt);
+        $st->execute();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $oppgaver[] = self::init_ny($st);
+        }
+
+        return $oppgaver;
+
+    }
+
+    public static function getOppgaverISemesterBeboerId($beboer_id, $dato = null){
+        $oppgaver = array();
+
+        if($dato === null){
+            $dato = date('Y-m-d');
+        }
+
+        $semester = Funk::generateSemesterString($dato);
+        $start = Funk::getSemesterStart($semester);
+        $slutt = Funk::getSemesterEnd($semester);
+        $paameldte = '%' . $beboer_id . '%';
+
+        $st = DB::getDB()->prepare('SELECT * FROM oppgave WHERE (tid_oppretta>:start AND tid_oppretta<:slutt AND paameldte LIKE :paameldte)');
+        $st->bindParam(':start', $start);
+        $st->bindParam(':slutt', $slutt);
+        $st->bindParam(':paameldte', $paameldte);
+        $st->execute();
+
+        for($i = 0; $i < $st->rowCount(); $i++){
+            $oppgaver[] = self::init_ny($st);
+        }
+
+        return $oppgaver;
+
+    }
     
 }
 

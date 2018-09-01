@@ -131,6 +131,22 @@ class Funk {
 	    return (abs($a - $b) < $delta);
     }
 
+    public static function getSemesterStart($str){
+        $year = explode('-', $str)[1];
+	    if(strpos($str, 'host') !== false){
+	        return date('Y-m-d', strtotime("$year-08-01"));
+        }
+        return date('Y-m-d', strtotime("$year-01-01"));
+    }
+
+    public static function getSemesterEnd($str){
+        $year = explode('-', $str)[1];
+        if(strpos($str, 'host') !== false){
+            return date('Y-m-d', strtotime("$year-12-31"));
+        }
+        return date('Y-m-d', strtotime("$year-07-31"));
+    }
+
 }
 
 ?>

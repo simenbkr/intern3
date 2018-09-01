@@ -75,7 +75,7 @@ and id in
         $lista = array();
         foreach(self::aktiveMedRegi() as $beboer){
             /* @var Beboer $beboer */
-            if(!$beboer->harUtvalgVerv()){
+            if(!$beboer->harUtvalgVerv() && $beboer->getBruker()->getDisponibelRegitid() > 0){
                 $lista[] = $beboer;
             }
         }

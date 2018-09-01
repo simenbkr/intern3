@@ -102,7 +102,7 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
             $kandidater = BeboerListe::aktiveMedRegiTilDisp();
 
             if(($regilisten = Regiliste::medId($post['regiliste_id'])) !== null){
-                $kandidater = $regilisten->getBeboerliste();
+                $kandidater = $regilisten->getDisponibelBeboerliste();
             }
             
             if(empty($antall) || $antall === null || !is_numeric($antall) || $antall < 1){

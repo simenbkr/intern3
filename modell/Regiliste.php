@@ -45,15 +45,9 @@ class Regiliste
         foreach ($instans->beboerliste as $beboer) {
             /* @var \intern3\Beboer $beboer */
 
-            $instans->totale_timer += $beboer->getRolle()->getRegitimer() - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60);
-
-            /*
-            if($beboer->getRolle()->getRegitimer() > 18) {
-                $instans->totale_timer += 48 - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60);
-            } elseif($beboer->getRolle()->getRegitimer() === 18){
-                $instans->totale_timer += 18 - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60);
-            }
-            */
+            $instans->totale_timer += max(
+                $beboer->getRolle()->getRegitimer() - $beboer->getBruker()->getRegisekunderMedSemester() / (60 * 60),
+                0);
 
         }
 
@@ -96,6 +90,22 @@ class Regiliste
     public function getBeboerliste()
     {
         return $this->beboerliste;
+    }
+
+    public function getDisponibelBeboerliste(){
+        $liste = array();
+
+        foreach($this->beboerliste as $beboer){
+            /* @var \intern3\Beboer $beboer */
+
+            if($beboer->getBruker()->getDisponibelRegitid() > 0){
+                $liste[] = $beboer;
+            }
+
+        }
+
+        return $liste;
+
     }
 
     public function getIdliste()
