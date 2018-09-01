@@ -107,6 +107,15 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
 
         $token = $this->cd->getSisteArg();
         $bruker = Bruker::byGlemtToken($token);
+
+        if($bruker === null){
+            session_destroy();
+            session_start();
+            Funk::setError("Ser ut som du gjorde noe galt! Prøv gjerne på nytt.");
+            header('Location: ?a=logginn');
+            exit();
+        }
+
         $tiden = $bruker->getResettTid();
         if($bruker != null && $this->okTid($tiden)){
             $dok = new Visning($this->cd);
@@ -122,16 +131,12 @@ Vi anbefaler deg om å logge inn og bytte passord så fort som mulig. Hvis du lu
                     $hash = LogginnCtrl::genererHash($passord1, $bruker->getId());
                     $bruker->endrePassord($hash);
 
-                    $_SESSION['success'] = 1;
-                    $_SESSION['msg'] = "Ditt passord ble endret!";
-
                     //Fjerne gyldighet av link.
                     $st = DB::getDB()->prepare('UPDATE bruker SET dato=0 WHERE id=:id');
                     $st->bindParam(':id', $bruker->getId());
                     $st->execute();
 
-                    $_SESSION['success'] = 1;
-                    $_SESSION['msg'] = "Ditt passord ble endret!";
+                    Funk::setSuccess("Ditt passord ble endret!");
 
                     header('Location: ?a=diverse');
                     exit();
