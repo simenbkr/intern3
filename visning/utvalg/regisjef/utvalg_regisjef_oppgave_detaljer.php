@@ -47,6 +47,15 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <th>Beskrivelse</th>
             <td><textarea class="form-control" rows="10" cols="50" name="beskrivelse"><?php echo $oppgaven->getBeskrivelse(); ?></textarea></td>
         </tr>
+
+        <tr>
+            <th>
+            </th>
+            <td>
+                <input class="btn btn-primary" type="submit" value="Endre" name="endre">
+            </td>
+        </tr>
+        </form>
         <tr>
             <th>Påmeldte</th>
             <td>
@@ -118,14 +127,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </button>
             </td>
         </tr>
-        
-        <tr>
-            <th>
-            </th>
-            <td>
-                <input class="btn btn-primary" type="submit" value="Endre" name="endre">
-            </td>
-        </tr>
 
         <tr>
             <th>
@@ -136,7 +137,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </tr>
         
     </table>
-        </form>
     </div>
 
 
@@ -167,7 +167,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             $.ajax({
                 type: 'POST',
                 url: '?a=utvalg/regisjef/oppgave/<?php echo $oppgaven->getId();?>',
-                data: 'send_epost=1,
+                data: 'send_epost=1',
                 method: 'POST',
                 success: function (html) {
                     location.reload();
@@ -178,8 +178,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             });
         }
 
-        
-        
+
+
         function fjern(id) {
             $.ajax({
                 type: 'POST',
