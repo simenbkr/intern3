@@ -11,7 +11,7 @@ require_once(__DIR__ . '/../static/topp.php');
         
         <hr>
 
-            <table class="form table table-responsive table-bordered">
+            <table class="table table-responsive table-striped">
                 <tr>
                     <th>Utført av:</th>
                     <td><?php echo $arbeidet->getBruker()->getPerson()->getFulltNavn(); ?></td>
@@ -39,6 +39,11 @@ require_once(__DIR__ . '/../static/topp.php');
                 <tr>
                     <th>Status:</th>
                     <td><?php echo $arbeidet->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeidet->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeidet->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
+                </tr>
+
+                <tr>
+                    <th>Tilbakemelding:</th>
+                    <td><?php echo $arbeidet->getTilbakemelding(); ?></td>
                 </tr>
                 
                 <?php

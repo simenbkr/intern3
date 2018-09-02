@@ -16,8 +16,22 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
             
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
-                if (isset($post['godkjenn'])) {
+                if (isset($post['godkjenn']) && ($oppgaven = Oppgave::medId($post['godkjenn'])) !== null) {
                     Oppgave::endreGodkjent($post['godkjenn'], 1);
+
+                    $tittel = "[SING-INTERN] Din Oppgave ble godkjent!";
+                    $beskjed = "<html><body>Hei<br/><br/>Din oppgave med tittel " . $oppgaven->getNavn();
+                    $beskjed .= "har blitt godkjent. Husk å føre timene på Internsiden.<br/><br/>Med vennlig hilsen";
+                    $beskjed .= "<br/>Singsaker Internside</body></html>";
+
+                    foreach($oppgaven->getPameldteBeboere() as $beboer){
+                        /* @var \intern3\Beboer $beboer */
+                        if($beboer->vilHaVaktVarsler()){
+                            Epost::sendEpost($beboer->getEpost(), $tittel, $beskjed);
+                        }
+                    }
+
+
                 } elseif (isset($post['fjern'])) {
                     Oppgave::endreGodkjent($post['fjern'], 0);
                 } elseif (isset($post['frys'])) {

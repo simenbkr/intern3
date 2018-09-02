@@ -35,8 +35,16 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                             $st->bindParam(':id', $arbeidet->getId());
                             $st->execute();
 
-                            $_SESSION['success'] = 1;
-                            $_SESSION['msg'] = "Du la til en tilbakemelding!";
+                            $tittel = "[SING-INTERN] Du har fått tilbakemelding på regiarbeid.";
+                            $beskjed = "<html><body>Hei<br/><br/> Du har fått tilbakemelding på arbeid ført på internsida.";
+                            $beskjed .= "Logg inn på internsiden for å lese denne.<br/><br/>Med vennlig hilsen";
+                            $beskjed .= "<br/>Singsaker Internside</body></html>";
+
+                            Epost::sendEpost($arbeidet->getBruker()->getPerson()->getEpost(), $tittel, $beskjed);
+
+                            Funk::setSuccess("Du la til en tilbakemelding");
+                            header('Location: ' . $_SERVER['REQUEST_URI']);
+                            exit();
                         } elseif(isset($post['underkjenn'])){
                             $bid = LogginnCtrl::getAktivBruker()->getId();
                             $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=-1,tid_godkjent=CURRENT_TIMESTAMP,godkjent_bruker_id=:bid WHERE id=:id');
