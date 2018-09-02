@@ -115,7 +115,7 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
             
             $keys = array_rand($kandidater, $antall);
             
-            if ($antall === 1){
+            if ($antall == 1){
                 $keys = array($keys);
             }
             
