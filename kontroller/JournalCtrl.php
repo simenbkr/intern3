@@ -21,7 +21,7 @@ class JournalCtrl extends AbstraktCtrl
             $_SESSION['success'] = 1;
             $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på Journalen.";
 
-            if($aktueltArg == 'token'){
+            if ($aktueltArg == 'token') {
                 header('Location: ?a=journal/krysseliste');
                 exit();
             }
@@ -72,13 +72,67 @@ class JournalCtrl extends AbstraktCtrl
                 $dok->set('beboer', $beboer);
                 $dok->vis("pinkode.php");
                 break;
-                
+
             case 'multikryss':
-                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                $beboer = Beboer::medId($post['beboerId']);
-                $str = rtrim($post['summary'], ', ') . " på " . $beboer->getFulltNavn();
-                Funk::setSuccess($str);
-                unset($_SESSION[md5($beboer->getFulltNavn())]);
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $beboerId = $post['beboerId'];
+                    $beboer = Beboer::medId($beboerId);
+
+                    if ($beboer === null || !$beboer->harAlkoholdepositum()) {
+                        exit("Denne beboeren eksisterer ikke, eller har ikke betalt alkoholdepositum.");
+                    }
+
+                    if ($beboer->getPrefs()->harPinkode() && !isset($_SESSION[md5($beboer->getFulltNavn())])) {
+                        exit("Ikke gyldig pinkode!");
+                    }
+
+
+                    $data = json_decode($post['data']);
+
+                    foreach ($data as $values) {
+
+                        $drikkeid = $values[0];
+                        $antall = $values[1];
+
+                        $krysselista = Krysseliste::medBeboerDrikkeId($beboerId, $drikkeid);
+                        $krysselista->addKryss($antall);
+                        $krysselista->oppdater();
+
+                        $denne_vakta = AltJournal::getLatest();
+                        $aktuelt_krysseobjekt = $denne_vakta->getStatusByDrikkeId($drikkeid);
+
+                        if ($aktuelt_krysseobjekt == null) {
+                            $obj = array(
+                                'drikkeId' => $drikkeid,
+                                'mottatt' => 0,
+                                'avlevert' => 0,
+                                'pafyll' => 0,
+                                'utavskap' => $antall
+                            );
+                            $denne_vakta->updateObject($obj);
+                            $denne_vakta->calcAvlevert();
+                        } else {
+                            $aktuelt_krysseobjekt['utavskap'] += $antall;
+                            $denne_vakta->updateObject($aktuelt_krysseobjekt);
+                            $denne_vakta->calcAvlevert();
+                        }
+
+                    }
+
+                    $str = rtrim($post['summary'], ', ') . " på " . $beboer->getFulltNavn();
+                    Funk::setSuccess($str);
+                    unset($_SESSION[md5($beboer->getFulltNavn())]);
+
+                    $_SESSION['scroll'] = $beboerId;
+                } else {
+                    header('Location: ?a=journal/krysseliste');
+                    exit();
+                }
+
+                break;
             case 'kryssing':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $lastArg = $this->cd->getSisteArg();
@@ -90,10 +144,10 @@ class JournalCtrl extends AbstraktCtrl
                  * Derfor må vi sjekke begge slik at man ikke kan krysse på de med pinkode, uten deres pinkode.
                  */
 
-                if ( (is_numeric($lastArg) && ($beboer = Beboer::medId($lastArg)) != null
-                    && $beboer->getPrefs()->harPinkode())
+                if ((is_numeric($lastArg) && ($beboer = Beboer::medId($lastArg)) != null
+                        && $beboer->getPrefs()->harPinkode())
                     || (isset($post['beboerId']) && ($beboer = Beboer::medId($post['beboerId'])) != null
-                    && $beboer->getPrefs()->harPinkode())
+                        && $beboer->getPrefs()->harPinkode())
                 ) {
                     if (!isset($_SESSION[md5($beboer->getFulltNavn())])) {
                         //Har ikke kake. Ayyy, get out you shit.
@@ -135,20 +189,17 @@ class JournalCtrl extends AbstraktCtrl
                                 $denne_vakta->updateObject($aktuelt_krysseobjekt);
                                 $denne_vakta->calcAvlevert();
                             }
-                            
-                            if(!isset($post['nofeedback'])){
+
+                            if (!isset($post['nofeedback'])) {
                                 $_SESSION['success'] = 1;
                                 $_SESSION['msg'] = "Du krysset " . $post['antall'] . " " .
                                     Drikke::medId($drikkeid)->getNavn() . " på " .
                                     Beboer::medId($beboerId)->getFulltNavn();
                             }
-                            
-                            
 
-                            if($beboer->getPrefs()->harPinkode() && !isset($post['multikryss'])){
+
+                            if ($beboer->getPrefs()->harPinkode()) {
                                 unset($_SESSION[md5($beboer->getFulltNavn())]);
-                            } elseif(isset($post['multikryss']) && $beboer->getPrefs()->harPinkode()) {
-                                $_SESSION[md5($beboer->getFulltNavn())]++;
                             }
 
                             $_SESSION['scroll'] = $beboerId;
@@ -184,7 +235,7 @@ class JournalCtrl extends AbstraktCtrl
 
                     break;
                 }
-            
+
             case 'krysseliste':
                 $beboere = BeboerListe::reseppListe();
                 $dato = AltJournal::getLatest()->getDato();

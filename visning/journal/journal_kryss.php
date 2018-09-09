@@ -136,6 +136,7 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
     function cartkryss(beboerId) {
     
         var summaryStr = "Du krysset ";
+        var dataStr = [];
         
         for(var key in cart){
             
@@ -147,29 +148,22 @@ if ($beboer == null || !$beboer->harAlkoholdepositum()) {
             if(!isNumber(curr_id) || !isNumber(curr_count)){
                 alert("Noe gikk veldig galt. Alt ble ikke krysset ordentlig. Påkall vakt elns.");
             }
-            
-            $.ajax({
-                type: 'POST',
-                url: '?a=journal/kryssing/',
-                data: 'beboerId=' + beboerId + "&antall=" + curr_count + "&type=" + curr_id + "&nofeedback=1&multikryss=1",
-                method: 'POST',
-                success: function(data) {
-                    //window.location.replace("?a=journal/krysseliste");
-                },
-                error: function(req, stat, err){
-                    alert("Noe gikk galt! Prøv på nytt.");
-                    break;
-                }
-            });
-            
+
+            dataStr.push([cart[key][0],cart[key][1]])
         }
+
+        console.log(dataStr);
+
+        var jsonData = JSON.stringify(dataStr);
+        console.log(jsonData);
         
         $.ajax({
             type: 'POST',
             url: '?a=journal/multikryss/',
-            data: 'summary=' + summaryStr + "&beboerId=" + beboerId,
+            data: 'summary=' + summaryStr + "&beboerId=" + beboerId + "&data=" + jsonData,
             method: 'POST',
             success: function(data){
+                //console.log(data);
                 window.location.replace("?a=journal/krysseliste");
             },
             error: function(req, stat, err){
