@@ -150,6 +150,17 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
+                $st = DB::getDB()->prepare('SELECT epost FROM beboer WHERE epost=:epost');
+                $st->bindParam(':epost', $post['epost']);
+                $st->execute();
+
+                if ($st->rowCount() > 0){
+                    Funk::setError("En beboer har allerede denne epost-adressen! Sjekk 'Gamle beboere' før du oppretter ny beboer!");
+                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                    exit();
+                }
+
+
                 $values = array('fornavn' => 'fornavn', 'etternavn' => 'etternavn',
                     'fodselsdato' => 'fødselsdato', 'adresse' => 'adresse', 'postnummer' => 'postnummer',
                     'mobil' => 'mobil', 'studie_id' => 'studie', 'skole_id' => 'skole', 'klasse' => 'klasse',
@@ -158,7 +169,6 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 foreach ($values as $value => $key) {
 
                     if (!isset($post[$value])) {
-                        setcookie("Dank", $value);
                         Funk::setError("Oops! Det ser ut til at du mangler " . $values[$key]);
                         $dok->vis('utvalg/romsjef/utvalg_romsjef_nybeboer.php');
                         exit();
@@ -180,6 +190,17 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
             if ($aktueltArg == 'endrebeboer') {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                    $st = DB::getDB()->prepare('SELECT epost FROM beboer WHERE epost=:epost');
+                    $st->bindParam(':epost', $post['epost']);
+                    $st->execute();
+
+                    if ($st->rowCount() > 0){
+                        Funk::setError("En beboer har allerede denne epost-adressen! Sjekk 'Gamle beboere' før du oppretter ny beboer!");
+                        header('Location: ' . $_SERVER['REQUEST_URI']);
+                        exit();
+                    }
+
                     $beboer_id = $post['beboerid'];
                     $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
                     $st->bindParam(':id', $beboer_id);
@@ -190,6 +211,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                         $romhistorikk->addPeriode($post['rom_id'], date('Y-m-d'), null);
                         $raden = $romhistorikk->tilJson();
                     }
+
                     $st = DB::getDB()->prepare('UPDATE beboer SET fornavn=:fornavn,mellomnavn=:mellomnavn,etternavn=:etternavn,
 fodselsdato=:fodselsdato,adresse=:adresse,postnummer=:postnummer,telefon=:telefon,studie_id=:studie_id,skole_id=:skole_id,
 klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk WHERE id=:id');
@@ -240,6 +262,18 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
             } else if ($aktueltArg == 'endregammelbeboer') {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                    $st = DB::getDB()->prepare('SELECT epost FROM beboer WHERE epost=:epost');
+                    $st->bindParam(':epost', $post['epost']);
+                    $st->execute();
+
+                    if ($st->rowCount() > 0){
+                        Funk::setError("En beboer har allerede denne epost-adressen! Sjekk 'Gamle beboere' før du oppretter ny beboer!");
+                        header('Location: ' . $_SERVER['REQUEST_URI']);
+                        exit();
+                    }
+
+
                     $beboer_id = $post['beboerid'];
                     $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
                     $st->bindParam(':id', $beboer_id);
@@ -310,6 +344,17 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 if ($sisteArg != $aktueltArg && is_numeric($sisteArg)) {
                     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                        $st = DB::getDB()->prepare('SELECT epost FROM beboer WHERE epost=:epost');
+                        $st->bindParam(':epost', $post['epost']);
+                        $st->execute();
+
+                        if ($st->rowCount() > 0){
+                            Funk::setError("En beboer har allerede denne epost-adressen! Sjekk 'Gamle beboere' før du oppretter ny beboer!");
+                            header('Location: ' . $_SERVER['REQUEST_URI']);
+                            exit();
+                        }
+
                         $beboer_id = $post['beboerid'];
                         $st = DB::getDB()->prepare('SELECT romhistorikk FROM beboer WHERE id=:id');
                         $st->bindParam(':id', $beboer_id);
