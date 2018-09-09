@@ -22,6 +22,7 @@
         "aferrandini/phpqrcode": "1.0.1",
         "simenbkr/groupmanage": "^1.00",
         "ext-pdo": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-intl": "*"
     }
 }
