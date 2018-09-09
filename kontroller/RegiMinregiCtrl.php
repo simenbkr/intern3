@@ -141,13 +141,13 @@ class RegiMinregiCtrl extends AbstraktCtrl
             $file_ext = strtolower(end(explode('.', $_FILES['file']['name'][$key])));
             
             if(!in_array($file_ext, $gyldige_extensions)){
-                break;
+                continue;
             }
             
             $filnavn = md5($_FILES['file']['name'] . Funk::generatePassword()) . '.' . $file_ext;
             $bildesti = $regibilder_path . $filnavn;
             if(!move_uploaded_file($_FILES['file']['tmp_name'][$key], $bildesti)){
-                Throw new \RuntimeException("dafuqqers");
+                continue;
             }
             
             chmod($bildesti, 0644);
