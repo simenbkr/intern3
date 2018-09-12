@@ -56,6 +56,16 @@ class Rolle {
 		return $this->vakterV;
 	}
 
+	public function getVakterNow(){
+        $sem = Funk::generateSemesterString(date('Y-m-d'));
+
+        if(strpos($sem, "host")) {
+            return $this->vakterH;
+        }
+        return $this->vakterV;
+
+    }
+
 }
 
 ?>

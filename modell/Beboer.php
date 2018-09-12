@@ -727,6 +727,17 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         return $this->getRomhistorikk()->romHistorikk[count($this->getRomhistorikk()->romHistorikk) -1]->utflyttet === null;
     }
 
+    public function harVaktDato($dato){
+
+        $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE (bruker_id=:brukerid AND dato=:dato)');
+        $st->bindParam(':brukerid', $this->brukerId);
+        $st->bindParam(':dato', $dato);
+        $st->execute();
+
+        return $st->rowCount() > 0;
+
+    }
+
 }
 
 ?>

@@ -247,102 +247,107 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private function tildelVakter2()
     {
+        /*
+         * Funksjon for å tildele vakter på en rettferdig måte. Vakter som autogenereres står for ca 2/3 av vaktene.
+         * Funksjonen etterstreber å tildele førstevakter jevnt, og de andre vaktene tilfeldig. TODO tildel få helgevakter?
+         *
+         */
+
         $vanlige_vakter = VaktListe::autogenerertVanligVakt();
         $forstevakter = VaktListe::autogenerertForstevakt();
-        $beboere = BeboerListe::harVakt();
-        $maks_forstevakter = 0;
+        $fullvakt = BeboerListe::fullVakt();
+        $halvvakt = BeboerListe::halvVakt();
 
-        while(count($forstevakter) > 0) {
-
-            $tmp = $beboere;
-
-            while(count($tmp) > 0 ){
-
-                $beboer_indeks = array_rand($tmp);
-                $beboeren = $tmp[$beboer_indeks]; /* @var Beboer $beboeren */
-
-                $vakt_indeks = array_rand($forstevakter);
-                $vakta = $forstevakter[$vakt_indeks]; /* @var Vakt $vakta */
-
-                if(is_null($vakta)){
-                    break;
+        /*
+         * Sett opp fordeling til bruk i hovedloop senere.
+         */
+        $fordeling = array();
+        foreach(RolleListe::alle() as $rolle){
+            /* @var Rolle $rolle */
+            if($rolle->getVakterNow() > 0){
+                $antall = intval(floor($rolle->getVakterNow() * 2/3));
+                if($rolle->getNavn() === 'Full vakt'){
+                    $fordeling[$antall] = $fullvakt;
+                } else {
+                    $fordeling[$antall] = $halvvakt;
                 }
+            }
+        }
 
-                $vakta->setBruker($beboeren->getBrukerId());
+        /*
+         * Hovedloop. Vi deler først ut førstevakter, deretter de andre vaktene - i to "runder".
+         */
 
-                array_splice($tmp, $beboer_indeks, 1);
-                array_splice($forstevakter, $vakt_indeks, 1);
+        foreach(array($forstevakter, $vanlige_vakter) as $vakter){
 
+            while(count($vakter) > 0) {
+
+                foreach($fordeling as $antall => $beboere) {
+
+                    $tmp = $beboere;
+
+                    while (count($tmp) > 0) {
+
+                        /*
+                         * Velg én tilfeldig beboer.
+                         */
+
+                        $beboer_indeks = array_rand($tmp);
+                        $beboeren = $tmp[$beboer_indeks];
+                        /* @var Beboer $beboeren */
+
+                        /*
+                         * Sjekk at beboeren kan sitte denne vakta, hvis ikke fjern fra denne runden.
+                         */
+
+                        if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
+                            || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
+
+                            array_splice($beboere, $beboer_indeks, 1);
+                            array_splice($tmp, $beboer_indeks, 1);
+                            continue;
+                        }
+
+                        /*
+                         * Velg én tilfeldig vakt av de gjenværende vaktene.
+                         */
+
+                        $vakt_indeks = array_rand($vakter);
+                        $vakta = $vakter[$vakt_indeks];
+                        /* @var Vakt $vakta */
+
+                        /*
+                         * Dersom det ikke er noen flere vakter, vil array_rand returnere null. Derfor breaker vi om dette
+                         * skjer, fordi da er det på tide med neste omgang.
+                         * Hvis beboeren allerede har en vakt denne datoen, går vi videre, da dette er uheldig.
+                         */
+
+                        if (is_null($vakta)) {
+                            break;
+                        }
+
+                        if($beboeren->harVaktDato($vakta->getDato())){
+                            continue;
+                        }
+
+                        /*
+                         * Beboeren velges til denne vakta. Vakta fjernes fra lista, mens beboeren blir fjerna fra denne
+                         * runden.
+                         */
+
+                        $vakta->setBruker($beboeren->getBrukerId());
+
+                        array_splice($tmp, $beboer_indeks, 1);
+                        array_splice($vakter, $vakt_indeks, 1);
+
+
+                    }
+                }
 
             }
 
         }
 
-        while(count($vanlige_vakter) > 0) {
-
-            $tmp = $beboere;
-
-            while(count($tmp) > 0 ){
-
-                $beboer_indeks = array_rand($tmp);
-                $beboeren = $tmp[$beboer_indeks]; /* @var Beboer $beboeren */
-
-                $vakt_indeks = array_rand($vanlige_vakter);
-                $vakta = $vanlige_vakter[$vakt_indeks]; /* @var Vakt $vakta */
-
-                if(is_null($vakta)){
-                    break;
-                }
-
-                $vakta->setBruker($beboeren->getBrukerId());
-
-                array_splice($tmp, $beboer_indeks, 1);
-                array_splice($vanlige_vakter, $vakt_indeks, 1);
-
-
-            }
-
-        }
-
-
-
-
-
-
-        /*
-        while(count($vakter) > 0){
-            $temp_beboere = $beboere;
-
-            while(count($temp_beboere) > 0){
-
-                $beboer_indeks = array_rand($temp_beboere);
-                $beboeren = $temp_beboere[$beboer_indeks]; /* @var Beboer $beboeren */
-
-        /*
-                $forstevakter = $beboeren->getBruker()->antallForstevakter();
-
-                $vakt_indeks = array_rand($vakter);
-                $vakta =  $vakter[$vakt_indeks]; /* @var Vakt $vakta */
-
-         /*       if(is_null($vakta)){
-                    break;
-                }
-
-                if($vakta->getVakttype() == 1 && $forstevakter >= $maks_forstevakter){
-                    continue;
-                }
-
-
-                $vakta->setBruker($beboeren->getBrukerId());
-
-                array_splice($temp_beboere, $beboer_indeks, 1);
-                array_splice($vakter, $vakt_indeks, 1);
-            }
-
-            $maks_forstevakter++;
-
-
-        } */
 
         foreach(VaktListe::autogenerert() as $vakt){
             $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
