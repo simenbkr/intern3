@@ -115,7 +115,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                 break;
             case 'beboermodal':
                 $dok = new Visning($this->cd);
-                $beboerListe = BeboerListe::aktiveMedRegi();
+                $beboerListe = BeboerListe::aktiveMedRegiTilDisp();
                 if(($oppgaven = Oppgave::medId($_POST['oppgaven'])) !== null){
                     $nybeboerliste = array();
                     foreach($beboerListe as $beboer){
