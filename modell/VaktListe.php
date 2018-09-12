@@ -27,6 +27,16 @@ class VaktListe {
 		return $res;
 	}
 
+	public static function autogenerertForstevakt(){
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE (vakttype=1 AND autogenerert=1);');
+        return self::medPdoSt($st);
+	}
+
+	public static function autogenerertVanligVakt(){
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE (vakttype!=1 AND autogenerert=1);');
+        return self::medPdoSt($st);
+	}
+
 	public static function medBrukerIdEtter($brukerid, $dato){
         $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE (bruker_id=:brukerId AND dato>:dato) ORDER BY dato, vakttype;');
         $st->bindParam(':brukerId', $brukerid);
