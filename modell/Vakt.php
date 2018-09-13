@@ -114,7 +114,8 @@ class Vakt
         return $this->getVaktbytte() <> null;
     }
 
-    public function getVaktbytteDenneErMedI(){
+    public function getVaktbytteDenneErMedI()
+    {
         return $this->vaktbytteDenneErMedI;
     }
 
@@ -159,21 +160,22 @@ class Vakt
         return is_array($this->vaktbytteDenneErMedI) ? $this->vaktbytteDenneErMedI : array();
     }
 
-    public function slettVaktbytteIdFraInstans($vaktbytte_id){
-        if(in_array($vaktbytte_id, $this->getVaktbytteDenneErMedIId())){
+    public function slettVaktbytteIdFraInstans($vaktbytte_id)
+    {
+        if (in_array($vaktbytte_id, $this->getVaktbytteDenneErMedIId())) {
             $nytt_vaktbytte_med_i = array();
-            foreach($this->getVaktbytteDenneErMedIId() as $id){
-                if($id != $vaktbytte_id){
+            foreach ($this->getVaktbytteDenneErMedIId() as $id) {
+                if ($id != $vaktbytte_id) {
                     $nytt_vaktbytte_med_i[] = $id;
                 }
             }
-            if(count($nytt_vaktbytte_med_i) <= 0){
+            if (count($nytt_vaktbytte_med_i) <= 0) {
                 $nytt_vaktbytte_med_i = null;
             } else {
                 $nytt_vaktbytte_med_i = implode(',', array_filter($nytt_vaktbytte_med_i));
             }
 
-            if($nytt_vaktbytte_med_i) {
+            if ($nytt_vaktbytte_med_i) {
                 $st = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=:nytt_vaktbytte WHERE id=:id');
                 $st->bindParam(':nytt_vaktbytte', $nytt_vaktbytte_med_i);
                 $st->bindParam(':id', $this->id);
@@ -195,7 +197,8 @@ class Vakt
         return $this->getVakttype() . ". vakt " . $df->format(strtotime($this->getDato()));
     }
 
-    public function shortToString(){
+    public function shortToString()
+    {
         $df = new \IntlDateFormatter('nb_NO',
             \IntlDateFormatter::FULL, \IntlDateFormatter::NONE,
             'Europe/Oslo');
@@ -203,7 +206,8 @@ class Vakt
         return ucfirst($df->format(strtotime($this->getDato())));
     }
 
-    public function medToString(){
+    public function medToString()
+    {
         $df = new \IntlDateFormatter('nb_NO',
             \IntlDateFormatter::FULL, \IntlDateFormatter::NONE,
             'Europe/Oslo');
@@ -240,7 +244,7 @@ class Vakt
 
         $semester = Funk::generateSemesterString(date('Y-m-d'));
 
-        if(($vaktantall = VaktAntall::medIdSemester($brukerId, $semester)) != null){
+        if (($vaktantall = VaktAntall::medIdSemester($brukerId, $semester)) != null) {
             return $vaktantall->getAntall();
         }
 
@@ -280,14 +284,16 @@ class Vakt
         return $res['antall'];
     }
 
-    public static function antallStraffeVakter($brukerId){
+    public static function antallStraffeVakter($brukerId)
+    {
         $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE bruker_id=:bruker_id AND straffevakt=1');
         $st->bindParam(':bruker_id', $brukerId);
         $st->execute();
         return $st->rowCount();
     }
 
-    public static function antallDobbelVakter($brukerId){
+    public static function antallDobbelVakter($brukerId)
+    {
         $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE bruker_id=:bruker_id AND dobbelvakt=1');
         $st->bindParam(':bruker_id', $brukerId);
         $st->execute();
@@ -381,7 +387,7 @@ class Vakt
     public static function setStraffevakt($vaktId)
     {
         $aktuell_vakt = Vakt::medId($vaktId);
-        if($aktuell_vakt != null){
+        if ($aktuell_vakt != null) {
             $straffevakt = $aktuell_vakt->erStraffevakt() ? 0 : 1;
             $st = DB::getDB()->prepare('UPDATE vakt SET straffevakt=:straffevakt WHERE id=:id');
             $st->bindParam(':id', $vaktId);
@@ -397,55 +403,60 @@ class Vakt
         $st->execute();
     }
 
-    public static function getVakterByDato($dato){
+    public static function getVakterByDato($dato)
+    {
         $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE dato=:dato');
         $st->bindParam(':dato', $dato);
         $st->execute();
         $vakter = array();
-        for($i = 0; $i < $st->rowCount(); $i++){
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $vakter[] = self::init($st);
         }
         return $vakter;
     }
 
-    public static function alleVakterEtterDato($dato){
+    public static function alleVakterEtterDato($dato)
+    {
 
         $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE dato>:dato');
         $st->bindParam(':dato', $dato);
         $st->execute();
         $vakter = array();
 
-        for($i = 0; $i < $st->rowCount(); $i++){
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $vakter[] = self::init($st);
         }
         return $vakter;
     }
 
-    public static function alleVakterEtterDatoMedVaktbytte($dato){
+    public static function alleVakterEtterDatoMedVaktbytte($dato)
+    {
         $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE (dato>:dato AND vaktbytte_id IS NOT NULL AND bytte IS NOT NULL)');
         $st->bindParam(':dato', $dato);
         $st->execute();
         $vakter = array();
 
-        for($i = 0; $i < $st->rowCount(); $i++){
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $vakter[] = self::init($st);
         }
         return $vakter;
     }
 
-    public function fjernFraAlleBytter(){
+    public function fjernFraAlleBytter()
+    {
 
-        foreach(Vaktbytte::getAlle() as $vaktbytte){
+        foreach (Vaktbytte::getAlle() as $vaktbytte) {
             /* @var \intern3\Vaktbytte $vaktbytte */
-            if(in_array($this->id,$vaktbytte->getForslagIder())) {
+            if (in_array($this->id, $vaktbytte->getForslagIder())) {
                 $vaktbytte->slettForslag($this->id);
             }
         }
     }
 
-    public function setBruker($brukerId){
+    public function setBruker($brukerId)
+    {
 
-        if(($brukeren = Bruker::medId($brukerId)) != null) {
+        if (($brukeren = Bruker::medId($brukerId)) != null) {
 
             $this->brukerId = $brukerId;
             $this->bruker = $brukeren;
@@ -470,7 +481,8 @@ class Vakt
      */
 
 
-    private function oppdater(){
+    private function oppdater()
+    {
         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:bid, vakttype=:typen, dato=:dato, 
         bytte=:bytte, bekreftet=:bekreftet, autogenerert=:autogenerert, dobbelvakt=:dobbelvakt, straffevakt=:straffevakt, vaktbytte_id=:vaktbytte WHERE id=:id');
 
@@ -486,9 +498,47 @@ class Vakt
         $st->bindParam(':autogenerert', $this->autogenerert);
         $st->bindParam(':dobbelvakt', $this->dobbelvakt);
         $st->bindParam(':straffevakt', $this->straffevakt);
-        $st->bindParam(':vaktbytte', implode(',' , $this->vaktbytteDenneErMedI));
+        $st->bindParam(':vaktbytte', implode(',', $this->vaktbytteDenneErMedI));
 
         $st->execute();
+
+    }
+
+    public static function antallKjipeAutogenererte()
+    {
+
+        $st = DB::getDB()->prepare('SELECT count(id) AS sum FROM vakt WHERE ( 
+                                          (
+                                            (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
+                                            OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
+                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2,3))
+                                            OR vakttype = 1
+                                            )
+                                            AND autogenerert=0
+                                          )');
+
+        $st->execute();
+        return $st->fetch()["sum"];
+    }
+
+    public function erKjip()
+    {
+
+        if ($this->vakttype == 1) {
+            return true;
+        }
+
+        $dayNumber = date('N', strtotime($this->dato));
+
+        if (
+            $dayNumber == 6
+            || ($dayNumber == 7 && in_array($this->vakttype, array('2', '3')))
+            || ($dayNumber == 5 && in_array($this->vakttype, array('3', '4')))
+        ) {
+            return true;
+        }
+
+        return false;
 
     }
 

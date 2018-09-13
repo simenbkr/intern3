@@ -245,11 +245,16 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
     }
 
 
-    private function tildelVakter2()
+    private function tildelVakter()
     {
         /*
          * Funksjon for å tildele vakter på en rettferdig måte. Vakter som autogenereres står for ca 2/3 av vaktene.
-         * Funksjonen etterstreber å tildele førstevakter jevnt, og de andre vaktene tilfeldig. TODO tildel få helgevakter?
+         * Funksjonen etterstreber å tildele kjipe vakter jevnt, og de andre vaktene vilkårlig.
+         * Kjipe vakter er
+         * - Førstevakter,
+         * - Lørdagsvakter,
+         * - 3. og 4. vakt på fredager og
+         * - 2. og 3. vakt på søndager.
          *
          */
 
@@ -257,16 +262,19 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $forstevakter = VaktListe::autogenerertForstevakt();
         $fullvakt = BeboerListe::fullVakt();
         $halvvakt = BeboerListe::halvVakt();
+        $maks_kjipe = ceil(Vakt::antallKjipeAutogenererte() / (count($fullvakt) + count($halvvakt))) + 1;
+        $margin = $_POST['varighet_sikkerhetsmargin'];
+
 
         /*
          * Sett opp fordeling til bruk i hovedloop senere.
          */
         $fordeling = array();
-        foreach(RolleListe::alle() as $rolle){
+        foreach (RolleListe::alle() as $rolle) {
             /* @var Rolle $rolle */
-            if($rolle->getVakterNow() > 0){
-                $antall = intval(floor($rolle->getVakterNow() * 2/3));
-                if($rolle->getNavn() === 'Full vakt'){
+            if ($rolle->getVakterNow() > 0) {
+                $antall = intval(floor($rolle->getVakterNow() * 2 / 3));
+                if ($rolle->getNavn() === 'Full vakt') {
                     $fordeling[$antall] = $fullvakt;
                 } else {
                     $fordeling[$antall] = $halvvakt;
@@ -277,12 +285,11 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         /*
          * Hovedloop. Vi deler først ut førstevakter, deretter de andre vaktene - i to "runder".
          */
+        foreach (array($forstevakter, $vanlige_vakter) as $vakter) {
 
-        foreach(array($forstevakter, $vanlige_vakter) as $vakter){
+            while (count($vakter) > floor($margin / 2)) {
 
-            while(count($vakter) > 0) {
-
-                foreach($fordeling as $antall => $beboere) {
+                foreach ($fordeling as $antall => $beboere) {
 
                     $tmp = $beboere;
 
@@ -297,7 +304,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         /* @var Beboer $beboeren */
 
                         /*
-                         * Sjekk at beboeren kan sitte denne vakta, hvis ikke fjern fra denne runden.
+                         * Sjekk at beboeren kan sitte flere vakter. Hvis ikke fjernes den fra denne omgangen.
                          */
 
                         if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
@@ -319,15 +326,41 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         /*
                          * Dersom det ikke er noen flere vakter, vil array_rand returnere null. Derfor breaker vi om dette
                          * skjer, fordi da er det på tide med neste omgang.
-                         * Hvis beboeren allerede har en vakt denne datoen, går vi videre, da dette er uheldig.
+                         * Hvis beboeren allerede har en vakt denne datoen, hopper vi til neste runde.
                          */
 
                         if (is_null($vakta)) {
                             break;
                         }
 
-                        if($beboeren->harVaktDato($vakta->getDato())){
+                        /*
+                         * Hvis beboeren er satt opp på maks kjipe vakter, eller flere så går vi videre til neste runde.
+                         */
+
+                        if ($vakta->erKjip() && $beboeren->antallKjipeVakter() >= $maks_kjipe) {
                             continue;
+                        }
+
+                        if ($beboeren->harVaktDato($vakta->getDato())) {
+                            $vakt_indeks = array_rand($vakter);
+                            $vakta = $vakter[$vakt_indeks];
+                        }
+
+                        /*
+                         * Dette er en svært uheldig situasjon - nesten alle vaktene er kjipe. Prøver derfor å finne en
+                         * grei vakt for beboeren å sitte.
+                         */
+
+                        if($vakta->erKjip() && $beboeren->antallKjipeVakter() - $beboeren->getBruker()->antallVakterErOppsatt() <= 1){
+                            $i = 0;
+                            while($vakta->erKjip()){
+                                $vakt_indeks = array_rand($vakter);
+                                $vakta = $vakter[$vakt_indeks];
+                                $i++;
+                                if($i > 10){
+                                    break;
+                                }
+                            }
                         }
 
                         /*
@@ -340,16 +373,21 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         array_splice($tmp, $beboer_indeks, 1);
                         array_splice($vakter, $vakt_indeks, 1);
 
+                        /*
+                         * Sjekker om marginen er nådd. Vi deler på to fordi det er to runder -
+                         * en runde for førstevakt og en for vanlig vakt.
+                         */
 
+                        if(count($vakter) == floor($margin / 2)){
+                            break;
+                        }
                     }
                 }
-
             }
-
         }
 
 
-        foreach(VaktListe::autogenerert() as $vakt){
+        foreach (VaktListe::autogenerert() as $vakt) {
             $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
             $vaktId = $vakt->getId();
             $st->bindParam(':id', $vaktId);
@@ -359,7 +397,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
     }
 
 
-    private function tildelVakter()
+    private function tildelVakter2()
     {
         $brukere = array(0 => array(), 1 => array()); // Hvor mange flere vakter hver bruker har igjen under trekkinga
         foreach (BeboerListe::harVakt() as $beboer) {

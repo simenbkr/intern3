@@ -22,6 +22,7 @@ class Beboer implements Person
     private $romhistorikk;
     private $bilde;
     private $ansiennitet;
+    private $antall_kjipe;
 
     // Latskap
     private $studie;
@@ -81,6 +82,7 @@ class Beboer implements Person
         $instance->rom = null;
         $instance->romhistorikkObjekt = null;
         $instance->bruker = null;
+        $instance->antall_kjipe = -1;
         return $instance;
     }
 
@@ -735,6 +737,34 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $st->execute();
 
         return $st->rowCount() > 0;
+
+    }
+
+    /*
+     * Returnerer førstevakter + 3.-4. vakt fredag og 2.,3.,4. vakt lørdag og 2.,3. vakt søndag
+     */
+    public function antallKjipeVakter() : int {
+
+        if($this->antall_kjipe != -1){
+            return $this->antall_kjipe;
+        }
+
+        $st = DB::getDB()->prepare('SELECT count(id) AS sum FROM vakt WHERE 
+                                        (bruker_id=:brukerid  
+                                        AND(
+                                          (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
+                                          OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
+                                          OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2,3))
+                                          OR vakttype = 1)
+                                      )');
+
+        $st->bindParam(':brukerid', $this->brukerId);
+
+        $st->execute();
+
+        $this->antall_kjipe = $st->fetch()["sum"];
+
+        return $this->antall_kjipe;
 
     }
 
