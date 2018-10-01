@@ -53,7 +53,11 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                         if (empty($post['dato'])) {
                             Oppgave::AddOppgave($navn, $pri, $anslagtid, $anslagpers, $beskrivelse);
                         } else {
-                            Oppgave::AddOppgave($navn, $pri, $anslagtid, $anslagpers, $beskrivelse, $post['dato']);
+                            if(empty($post['dato2'])) {
+                                Oppgave::AddOppgave($navn, $pri, $anslagtid, $anslagpers, $beskrivelse, $post['dato']);
+                            } else {
+                                Oppgave::AddOppgave($navn, $pri, $anslagtid, $anslagpers, $beskrivelse, $post['dato'], $post['dato2']);
+                            }
                         }
                         
                         $aktuellOppgave = Oppgave::getSiste();
@@ -157,9 +161,11 @@ class UtvalgRegisjefOppgaveCtrl extends AbstraktCtrl
                     exit();
                 } elseif( isset($post['navn']) && isset($post['beskrivelse']) && isset($post['dato'])
                     && isset($post['anslag_timer']) && isset($post['anslag_personer'])){
-                    
+
+
                     $oppgaven->setNavn($post['navn']);
                     $oppgaven->setTidutfore($post['dato']);
+                    $oppgaven->setTidFerdig($post['dato2']);
                     $oppgaven->setAnslagTimer($post['anslag_timer']);
                     $oppgaven->setAnslagPersoner($post['anslag_personer']);
                     

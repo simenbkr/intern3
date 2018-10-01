@@ -7,54 +7,69 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
     <div class="col-md-12">
         <h1>Utvalget &raquo; Regisjef &raquo; Oppgave &raquo; Detaljert for <?php echo $oppgaven->getNavn(); ?></h1>
-    <hr>
+        <hr>
 
 
-<?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
+        <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
-        
-        <form action="" method="post" enctype="multipart/form-data" onsubmit="">
-        
-    <table class="form table table-responsive table-bordered">
-        <tr>
-            <th>Navn</th>
-            <td><input type="text" class="form-control" name="navn" value="<?php echo $oppgaven->getNavn(); ?>"></td>
-        </tr>
-        <tr>
-            <th>Opprettet</th>
-            <td><?php echo $oppgaven->getTidOppretta(); ?></td>
-        </tr>
-        
-        <?php if($oppgaven->getTidUtfore() !== null){ ?>
-        <tr>
-            <th>Utføringsdato</th>
-            <td> <div class="form-group">
-                    <input class="form-control" id="datepicker" name="dato" size="3" value="<?php echo $oppgaven->getTidUtfore(); ?>">
-                </div>
-                </td>
-        </tr>
-        <?php } ?>
-        
-        <tr>
-            <th>Anslag timer</th>
-            <td><input type="text" class="form-control" name="anslag_timer" value="<?php echo $oppgaven->getAnslagTimer(); ?>"></td>
-        </tr>
-        <tr>
-            <th>Anslag personer</th>
-            <td><input type="text" class="form-control" name="anslag_personer" value="<?php echo $oppgaven->getAnslagPersoner(); ?>"></td>
-        </tr>
-        <tr>
-            <th>Beskrivelse</th>
-            <td><textarea class="form-control" rows="10" cols="50" name="beskrivelse"><?php echo $oppgaven->getBeskrivelse(); ?></textarea></td>
-        </tr>
 
-        <tr>
-            <th>
-            </th>
-            <td>
-                <input class="btn btn-primary" type="submit" value="Endre" name="endre">
-            </td>
-        </tr>
+        <form action="" method="post" onsubmit="">
+
+            <table class="form table table-responsive table-bordered">
+                <tr>
+                    <th>Navn</th>
+                    <td><input type="text" class="form-control" name="navn" value="<?php echo $oppgaven->getNavn(); ?>">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Opprettet</th>
+                    <td><?php echo $oppgaven->getTidOppretta(); ?></td>
+                </tr>
+
+                <tr>
+                    <th>Utføringsdato (fra)</th>
+                    <td>
+                        <div class="form-group">
+                            <input class="form-control" id="datepicker" name="dato" size="3"
+                                   value="<?php echo $oppgaven->getTidUtfore(); ?>">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Tid ferdig (til)</th>
+                    <td>
+                        <div class="form-group">
+                            <input class="form-control" id="datepicker2" name="dato2" size="3"
+                                   value="<?php echo $oppgaven->getTidFerdig(); ?>">
+                        </div>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <th>Anslag timer</th>
+                    <td><input type="text" class="form-control" name="anslag_timer"
+                               value="<?php echo $oppgaven->getAnslagTimer(); ?>"></td>
+                </tr>
+                <tr>
+                    <th>Anslag personer</th>
+                    <td><input type="text" class="form-control" name="anslag_personer"
+                               value="<?php echo $oppgaven->getAnslagPersoner(); ?>"></td>
+                </tr>
+                <tr>
+                    <th>Beskrivelse</th>
+                    <td><textarea class="form-control" rows="10" cols="50"
+                                  name="beskrivelse"><?php echo $oppgaven->getBeskrivelse(); ?></textarea></td>
+                </tr>
+
+                <tr>
+                    <th>
+                    </th>
+                    <td>
+                        <input class="btn btn-primary" type="submit" value="Endre" name="endre">
+                    </td>
+                </tr>
         </form>
         <tr>
             <th>Påmeldte</th>
@@ -67,12 +82,12 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     }
                     $paameldte = rtrim($paameldte, ', ');
                 }
-                
+
                 echo $paameldte;
                 ?>
             </td>
         </tr>
-        
+
         <tr>
             <th>Legg til beboere</th>
             <td>
@@ -85,7 +100,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </div>
             </td>
         </tr>
-        
+
 
         <tr>
             <th>Godkjent</th>
@@ -108,7 +123,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <?php } ?>
 
                 <button class="btn btn-default" onclick="fjern(<?php echo $oppgaven->getId(); ?>)">Fjern</button>
-                
+
                 <?php if (!$oppgaven->erFryst()) { ?>
                     <button class="btn btn-default" onclick="frys(<?php echo $oppgaven->getId(); ?>)">Frys</button>
                 <?php } else { ?>
@@ -135,29 +150,49 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <button class="btn btn-warning" onclick="resendEpost()">Send e-post.</button>
             </td>
         </tr>
-        
-    </table>
+
+        </table>
     </div>
 
 
     <script>
 
-        $(function() {
+        $(function () {
             $('#datepicker').datepicker({
                 dateFormat: 'yy-mm-dd',
-                onSelect: function(datetext){
+                onSelect: function (datetext) {
                     var d = new Date(); // for now
                     var h = d.getHours();
-                    h = (h < 10) ? ("0" + h) : h ;
+                    h = (h < 10) ? ("0" + h) : h;
 
                     var m = d.getMinutes();
-                    m = (m < 10) ? ("0" + m) : m ;
+                    m = (m < 10) ? ("0" + m) : m;
 
                     var s = d.getSeconds();
-                    s = (s < 10) ? ("0" + s) : s ;
+                    s = (s < 10) ? ("0" + s) : s;
 
                     datetext = datetext + " " + h + ":" + m;
                     $('#datepicker').val(datetext);
+                },
+            });
+        });
+
+        $(function () {
+            $('#datepicker2').datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (datetext) {
+                    var d = new Date(); // for now
+                    var h = d.getHours();
+                    h = (h < 10) ? ("0" + h) : h;
+
+                    var m = d.getMinutes();
+                    m = (m < 10) ? ("0" + m) : m;
+
+                    var s = d.getSeconds();
+                    s = (s < 10) ? ("0" + s) : s;
+
+                    datetext = datetext + " " + h + ":" + m;
+                    $('#datepicker2').val(datetext);
                 },
             });
         });
@@ -177,7 +212,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 }
             });
         }
-
 
 
         function fjern(id) {
@@ -285,9 +319,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 }
             });
         }
-        
+
     </script>
-    
-    <?php
-    
-    require_once(__DIR__ . '/../../static/bunn.php');
+
+<?php
+
+require_once(__DIR__ . '/../../static/bunn.php');

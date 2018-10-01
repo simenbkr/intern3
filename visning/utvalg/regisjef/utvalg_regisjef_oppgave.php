@@ -5,19 +5,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
 <link rel="stylesheet" href="css/chosen.min.css">
 <script src="js/chosen.jquery.min.js"></script>
-<div class="col-md-12">
-    <h1>Utvalget &raquo; Regisjef &raquo; Oppgave</h1>
-    
-    <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
-    <?php if (isset($feilSubmit)) { ?>
-        <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <p>Oppgaven ble ikke lagt inn - du manglet et felt.</p>
-        </div>
-        <p></p>
-    <?php }
-    unset($feilSubmit); ?>
-</div>
 
 <script>
 
@@ -37,6 +24,26 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                 datetext = datetext + " " + h + ":" + m;
                 $('#datepicker').val(datetext);
+            },
+        });
+    });
+
+    $(function() {
+        $('#datepicker2').datepicker({
+            dateFormat: 'yy-mm-dd',
+            onSelect: function(datetext){
+                var d = new Date(); // for now
+                var h = d.getHours();
+                h = (h < 10) ? ("0" + h) : h ;
+
+                var m = d.getMinutes();
+                m = (m < 10) ? ("0" + m) : m ;
+
+                var s = d.getSeconds();
+                s = (s < 10) ? ("0" + s) : s ;
+
+                datetext = datetext + " " + h + ":" + m;
+                $('#datepicker2').val(datetext);
             },
         });
     });
@@ -216,6 +223,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     $(function () {
         $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
+        $("#datepicker2").datepicker({dateFormat: "yy-mm-dd"});
     });
 
     $(document).ready(function () {
@@ -229,6 +237,26 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 </script>
 
 <div class="container">
+
+    <div class="col-md-12">
+        <h1>Utvalget &raquo; Regisjef &raquo; Oppgave</h1>
+
+        <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+        <?php if (isset($feilSubmit)) { ?>
+            <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <p>Oppgaven ble ikke lagt inn - du manglet et felt.</p>
+            </div>
+            <p></p>
+        <?php }
+        unset($feilSubmit); ?>
+        <p>
+            Her kan du håndtere oppgaver som Regisjef. Legg merke til at enkelte felt kan være blanke. Obligatoriske felt er merket med (*).
+        </p>
+
+        <hr>
+    </div>
+
     <div class="tilbakemeldinger">
         <?php if (isset($slettet) && isset($melding)) { ?>
             <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
@@ -244,14 +272,14 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
             <table class="table table-bordered">
                 <tr>
-                    <th>Navn</th>
+                    <th>Navn (*)</th>
                     <td><input name="navn"
                                class="form-control" <?php echo isset($_POST['navn']) ? ' value="' . $_POST['navn'] . '"' : ''; ?>>
                     </td>
                 </tr>
 
                 <tr>
-                    <th>Utførelsesdato</th>
+                    <th>Utførelsesdato (fra)</th>
                     <td>
                         <div class="form-group">
                             <input class="form-control" id="datepicker" name="dato" size="3">
@@ -261,13 +289,22 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </tr>
 
                 <tr>
-                    <th>Anslag timer</th>
+                    <th>Tid ferdig (til)</th>
+                    <td>
+                        <div class="form-group">
+                            <input class="form-control" id="datepicker2" name="dato2" size="3">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Anslag timer (*)</th>
                     <td><input name="timer" class="form-control" id="anslag-timer"
                                placeholder="0:00"<?php echo isset($_POST['timer']) ? ' value="' . $_POST['timer'] . '"' : ''; ?>>
                     </td>
                 </tr>
                 <tr>
-                    <th>Anslag personer</th>
+                    <th>Anslag personer (*)</th>
                     <td><input type="number" id="anslag-pers"
                                 name="personer"
                                 class="form-control" <?php echo isset($_POST['personer']) ? ' value="' . $_POST['personer'] . '"' : ''; ?>>
@@ -275,7 +312,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </tr>
 
                 <tr>
-                    <th>Velg Regilisten forslag skal komme fra</th>
+                    <th>Velg Regilisten forslag skal komme fra (*)</th>
                     <td>
                         <select id="regiliste" class="form-control">
 
@@ -292,7 +329,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </tr>
 
                 <tr>
-                    <th>Meld på personer</th>
+                    <th>Meld på personer (*)</th>
                     <td>
                         <select class="chosen" multiple="multiple" name="tildelte[]" id="selecten">
                             <?php
@@ -310,7 +347,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     </td>
                 </tr>
                 <tr>
-                    <th>Beskrivelse</th>
+                    <th>Beskrivelse (*)</th>
                     <td><textarea name="beskrivelse" cols="50" class="form-control"
                                   rows="5"><?php echo isset($_POST['beskrivelse']) ? $_POST['beskrivelse'] : ''; ?></textarea>
                     </td>
@@ -382,7 +419,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <td><?php echo $paameldte; ?></td>
                     <td><?php echo $beskrivelse; ?></td>
                     <td><?php echo $oppretta; ?></td>
-                    <td><?php echo $oppgave->getTidUtfore() === null ? 'Ikke satt' : $oppgave->getTidUtfore(); ?></td>
+                    <td><?php echo $oppgave->getTidTekst(); ?></td>
                     <?php /*<td><?php echo $oppgave->getGodkjent () != 0 ? '<span title="Godkjent av ' . $godkjentav
                         . '" > ' . $oppgave->getTidGodkjent() . '</span>' : ''; ?></td>*/ ?>
                     <td><?php

@@ -47,7 +47,7 @@ require_once(__DIR__ . '/../static/topp.php');
         <thead>
         <tr>
             <th>Navn</th>
-            <th>Utførelsesfrist</th>
+            <th>Utførelsesdato</th>
             <th>Anslag timer</th>
             <th>Anslag personer</th>
             <th>Beskrivelse</th>
@@ -65,7 +65,7 @@ require_once(__DIR__ . '/../static/topp.php');
             ?>
             <tr>
                 <td><?php echo $oppgave->getNavn(); ?></td>
-                <td><?php echo $oppgave->getTidUtfore(); ?></td>
+                <td><?php echo $oppgave->getTidTekst(); ?></td>
                 <td><?php echo $oppgave->getPrioritetId(); ?></td>
                 <td><?php echo $oppgave->getAnslagTimer(); ?></td>
                 <td><?php echo $oppgave->getAnslagPersoner(); ?></td>
