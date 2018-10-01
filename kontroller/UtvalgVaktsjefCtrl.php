@@ -270,12 +270,30 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 }
                 break;
             case 'krysserapport':
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
                     Krysseliste::setPeriodeFakturert();
                     $_SESSION['success'] = 1;
                     $_SESSION['msg'] = "Perioden ble nullstilt!";
                     exit();
+                } elseif(isset($post['settfakturert']) && $post['settfakturert'] == 2 && isset($post['dato'])){
+                    $datoen = date('Y-m-d H:i:s', strtotime($post['dato']));
+                    $now = date('Y-m-d');
+                    if($datoen > $now){
+                        Funk::setError("Kan ikke fakturer i fremtiden!");
+                        header('Location: ' . $_SERVER['REQUEST_URI']);
+                        exit();
+                    }
+                    $forrigeFaktura = Krysseliste::getSistFakturert();
+
+                    if($forrigeFaktura > $forrigeFaktura){
+                        Funk::setError("Kan ikke fakturere over én eller flere perioder.");
+                        header('Location: ' . $_SERVER['REQUEST_URI']);
+                        exit();
+                    }
+
+                    Krysseliste::fakturerOppTil($datoen);
                 }
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();
