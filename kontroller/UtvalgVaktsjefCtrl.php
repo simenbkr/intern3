@@ -309,7 +309,15 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport_utskrift.php');
                 break;
             case 'kryss':
+
+                $alleKryss = array();
+
+                foreach(BeboerListe::aktive() as $beboer){
+                    $alleKryss[$beboer->getFulltNavn()] = Krysseliste::medBeboerId($beboer->getId());
+                }
+
                 $dok = new Visning($this->cd);
+                $dok->set('alleKryss', $alleKryss);
                 $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_kryss.php');
                 break;
             case 'endre_drikke':

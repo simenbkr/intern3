@@ -228,7 +228,7 @@ if (isset($visUtvalgMeny)) {
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/drikke">Drikke</a></li>
                     <li><a href="<?php echo $cd->getBase();?>utvalg/vaktsjef/vaktliste_utskrift">Vaktliste Utskriftsvennlig</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapport_historie">Krysserapport Historie</a></li>
-                   <!-- <li><a href="<?php //echo $cd->getBase();?>utvalg/vaktsjef/kryss">Kryss minutt for minutt</a></li>-->
+                   <li><a href="<?php //echo $cd->getBase();?>utvalg/vaktsjef/kryss">Kryss minutt for minutt</a></li>
                 </ul>
               </li>
             </ul>

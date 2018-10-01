@@ -197,8 +197,6 @@ class Krysseliste
     }
 
 
-
-
     public static function getAllIkkeFakturertBeboer($beboerId)
     {
         $Helekrysseliste = self::medBeboerId($beboerId);
@@ -347,6 +345,35 @@ class Krysseliste
         self::oppdaterFakturert();
     }
 
+    public static function fakturerOppTil($dato)
+    {
+
+        $beboerListe = BeboerListe::aktive();
+
+        foreach ($beboerListe as $beboer) {
+            if (!$beboer->harAlkoholdepositum()) {
+                continue;
+            }
+            $beboers_krysseliste = self::medBeboerId($beboer->getId());
+
+            foreach ($beboers_krysseliste as $drikke_kryss) {
+                /* @var Kryss $drikke_kryss */
+                $drikke_kryss->getKryssListe();
+                foreach ($drikke_kryss->kryssListe as $enkelt_kryss) {
+                    if (strtotime($enkelt_kryss->tid) <= strtotime($dato) && $enkelt_kryss->fakturert == 0) {
+                        $enkelt_kryss->fakturert = 1;
+                    }
+
+                }
+                $drikke_kryss->oppdater();
+            }
+
+        }
+
+
+        self::oppdaterFakturertDato($dato);
+    }
+
     public static function getSistFakturert()
     {
         $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY dato DESC LIMIT 1');
@@ -358,6 +385,14 @@ class Krysseliste
     private static function oppdaterFakturert()
     {
         $st = DB::getDB()->prepare('INSERT INTO fakturert (dato) VALUES (NOW())');
+        $st->execute();
+    }
+
+    private static function oppdaterFakturertDato($dato)
+    {
+        $datoen = date('Y-m-d H:i:s', strtotime($dato));
+        $st = DB::getDB()->prepare('INSERT INTO fakturert (dato) VALUES (:dato)');
+        $st->bindParam(':dato', $datoen);
         $st->execute();
     }
 
@@ -495,7 +530,8 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         return $krysseListeListe;
     }
 
-    public static function getKryssSistPeriode(){
+    public static function getKryssSistPeriode()
+    {
         $st = DB::getDB()->prepare('SELECT * from fakturert ORDER BY id DESC LIMIT 2');
         $start = $st->fetch()['dato'];
         $slutt = $st->fetch()['dato'];
