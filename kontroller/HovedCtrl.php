@@ -45,7 +45,7 @@ class HovedCtrl extends AbstraktCtrl
         $aktueltArg = $this->cd->getAktueltArg();
         if ($aktueltArg <> 'logginn' && $aktivBruker->getPerson()->erBeboer()) {
             $kvittering = Kvittering::detteSemesterMedRomId($aktivBruker->getPerson()->getRomId());
-            if ($kvittering == null || $kvittering->getId() == null) {
+            if (($kvittering == null || $kvittering->getId() == null) && false) {
                 $valgtCtrl = new RomskjemaCtrl($this->cd->skiftArg());
                 $valgtCtrl->tvungenRegistrering();
                 return;
