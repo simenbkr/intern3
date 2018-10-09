@@ -165,6 +165,20 @@ class Bruker
 
     }
 
+    public function getRegiTilBehandling(){
+
+        $unix = $_SERVER['REQUEST_TIME'];
+        $sum = 0;
+        foreach (ArbeidListe::medBrukerIdSemester($this->id, $unix) as $arbeid) {
+            /* @var Arbeid $arbeid */
+            if ($arbeid->getIntStatus() == 0) {
+                $sum += $arbeid->getSekunderBrukt();
+            }
+        }
+        return $sum / (60*60);
+
+    }
+
     public function getDisponibelRegitid(){
 
         return $this->getRegitimerigjen() - $this->getOppgaveTimer();

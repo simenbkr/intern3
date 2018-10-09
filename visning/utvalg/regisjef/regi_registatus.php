@@ -89,6 +89,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <th datatype="number" data-sortable="true">Regitimer</th>
                     <th datatype="number" data-sortable="true">Utført</th>
                     <th datatype="number" data-sortable="true">Igjen</th>
+                    <th datatype="number" data-sortable="true">Avventer godkjenning</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -114,6 +115,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <td datatype="number" data-sortable="true"
                             data-order="<?php echo $igjen; ?>">
                             <?php echo substr(intern3\Funk::timerTilTidForm($igjen),0, 1) == '-' ? 0 : intern3\Funk::timerTilTidForm($igjen); ?></td>
+                        <td>
+                            <?php echo $bruker->getRegiTilBehandling(); ?>
+                        </td>
                     </tr>
                     <?php
                 }
