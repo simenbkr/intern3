@@ -116,7 +116,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             data-order="<?php echo $igjen; ?>">
                             <?php echo substr(intern3\Funk::timerTilTidForm($igjen),0, 1) == '-' ? 0 : intern3\Funk::timerTilTidForm($igjen); ?></td>
                         <td>
-                            <?php echo $bruker->getRegiTilBehandling(); ?>
+                            <?php echo round($bruker->getRegiTilBehandling(), 2); ?>
                         </td>
                     </tr>
                     <?php
