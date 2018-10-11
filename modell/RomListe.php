@@ -37,7 +37,14 @@ class RomListe extends Liste
 
         }
 
-        return $romnummer;
+        $rom = array();
+
+        foreach($romnummer as $nr){
+            $rom[] = Rom::medNavn($nr);
+        }
+
+
+        return $rom;
     }
 }
 

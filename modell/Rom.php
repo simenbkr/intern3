@@ -42,7 +42,7 @@ class Rom {
 		return $this->navn;
 	}
 
-	public function getType() : string {
+	public function getType() : Romtype {
         return $this->type;
     }
 
