@@ -69,7 +69,7 @@ require_once(__DIR__ . '/../static/topp.php');
                 <td><?php echo $oppgave->getPrioritetId(); ?></td>
                 <td><?php echo $oppgave->getAnslagTimer(); ?></td>
                 <td><?php echo $oppgave->getAnslagPersoner(); ?></td>
-                <td><?php echo htmlspecialchars($oppgave->getBeskrivelse()); ?></td>
+                <td><?php echo $oppgave->getBeskrivelse(); ?></td>
                 <td><?php $tekst = "";
                     if(sizeof($oppgave->getPameldteBeboere()) > 0) {
                         foreach ($oppgave->getPameldteBeboere() as $beboer) {
