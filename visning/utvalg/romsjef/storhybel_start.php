@@ -9,6 +9,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         <hr>
 
+        <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+
         <p>Her kan du starte en ny storhybelliste.</p>
         <p>Husk å sjekke at ansienniteten er oppdatert og korrekt,
             og at alle beboere som (eventuelt) skal flytte ut har blitt flytta ut.</p>
@@ -21,7 +23,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             Beboerliste med ansiennitet</a>
                     </h4>
                 </div>
-                <div id="collapse1" class="panel-collapse collapse in">
+                <div id="collapse1" class="panel-collapse collapse">
                     <div class="panel-body">
 
                         <a href="?a=utvalg/romsjef/ansiennitet" class="btn btn-warning">Rediger ansiennitet her</a>
@@ -95,8 +97,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             </div>
         </div>
 
+        <form action="?a=utvalg/romsjef/storhybel/ny" method="post">
 
-        <button class="btn btn-danger">Start ny storhybelliste</button>
+            <button class="btn btn-danger">Start ny storhybelliste</button>
+
+        </form>
     </div>
 
 

@@ -46,6 +46,20 @@ class RomListe extends Liste
 
         return $rom;
     }
+
+    public static function fraStorhybelListe($id) {
+
+        $st = DB::getDB()->prepare('SELECT rom_id FROM storhybel_rom WHERE storhybel_id=:id');
+        $st->bindParam(':id', $id);
+
+        $st->execute();
+        $lista = array();
+        foreach($st->fetchAll(\PDO::FETCH_COLUMN) as $rom_id){
+            $lista[] = Rom::medId($rom_id);
+        }
+
+        return $lista;
+    }
 }
 
 ?>
