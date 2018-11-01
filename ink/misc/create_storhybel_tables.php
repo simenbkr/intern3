@@ -19,10 +19,12 @@ if (!in_array($confirmation, array('y', 'Y'))) {
 }
 
 
-$sql = "CREATE TABLE `storhybel` 
+$sql = "CREATE TABLE IF NOT EXISTS `storhybel`
 ( `id` INT NOT NULL AUTO_INCREMENT ,
  `semester` VARCHAR(128) NOT NULL ,
   `navn` VARCHAR(128) NOT NULL ,
+  `aktiv` TINYINT(1) NOT NULL DEFAULT 0,
+  `velger` INT NOT NULL DEFAULT 0,
    PRIMARY KEY (`id`))";
 
 

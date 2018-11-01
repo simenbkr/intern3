@@ -7,9 +7,12 @@ class Storhybelliste
 {
     private $id;
     private $navn;
+    private $aktiv;
     private $semester;
     private $ledige_rom;
     private $rekkefolge;
+    private $velgerNr;
+    private $velger;
     private $neste;
 
     private static function init(\PDOStatement $st): Storhybelliste
@@ -25,10 +28,24 @@ class Storhybelliste
         $instans->id = $rad['id'];
         $instans->semester = $rad['semester'];
         $instans->navn = $rad['navn'];
+        $instans->aktiv = $rad['aktiv'] != 0;
         $instans->ledige_rom = RomListe::fraStorhybelListe($instans->id);
         $instans->rekkefolge = BeboerListe::fraStorhybelliste($instans->id);
+        $instans->velgerNr = $rad['velger'];
+        $instans->velger = $instans->beboerFraNr($rad['velger']);
+        $instans->neste = $instans->beboerFraNr($instans->velgerNr + 1);
 
         return $instans;
+    }
+
+    public static function medId($id) : Storhybelliste {
+
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE id=:id');
+        $st->bindParam(':id', $id);
+        $st->execute();
+
+        return self::init($st);
+
     }
 
     public static function latest(): Storhybelliste
@@ -42,9 +59,19 @@ class Storhybelliste
         return $this->id;
     }
 
+    public function erAktiv(): bool
+    {
+        return $this->aktiv;
+    }
+
     public function getSemester(): string
     {
         return $this->semester;
+    }
+
+    public function getNavn(): string
+    {
+        return $this->navn;
     }
 
     public function getLedigeRom(): array
@@ -52,9 +79,19 @@ class Storhybelliste
         return $this->ledige_rom;
     }
 
-    public function getNeste(): Beboer
+    public function getNeste() //Return type ?Beboer.
     {
         return $this->neste;
+    }
+
+    public function getVelger() //Return type ?Beboer.
+    {
+        return $this->velger;
+    }
+
+    public function getVelgerNr(): int
+    {
+        return $this->velgerNr;
     }
 
     public function setNavn(string $navn)
@@ -75,6 +112,19 @@ class Storhybelliste
     public function setNeste(Beboer $beboer)
     {
         $this->neste = $beboer;
+    }
+
+    public function aktiver()
+    {
+        $this->velger++;
+        $this->aktiv = 1;
+        $this->lagreIntern();
+    }
+
+    public function neste()
+    {
+        $this->velger++;
+        $this->lagreIntern();
     }
 
     private function lagre()
@@ -130,9 +180,11 @@ class Storhybelliste
 
     private function lagreIntern()
     {
-        $st = DB::getDB()->prepare('UPDATE storhybel SET navn=:navn,semester=:semester WHERE id=:id');
+        $st = DB::getDB()->prepare('UPDATE storhybel SET navn=:navn,semester=:semester,aktiv=:aktiv,velger=:velger WHERE id=:id');
         $st->bindParam(':navn', $this->navn);
         $st->bindParam(':semester', $this->semester);
+        $st->bindParam(':aktiv', $this->aktiv);
+        $st->bindParam(':velger', $this->velger);
         $st->bindParam(':id', $this->id);
         $st->execute();
     }
@@ -181,6 +233,19 @@ class Storhybelliste
         }
     }
 
+    private function beboerFraNr($nr) //Legg til return type ?Beboer når php7.1
+    {
+
+        $st = DB::getDB()->prepare('SELECT beboer_id FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND nummer=:nr)');
+        $st->bindParam(':sid', $this->id);
+        $st->bindParam(':nr', $nr);
+        $st->execute();
+
+        $id = $st->fetch()['beboer_id'];
+
+        return Beboer::medId($id);
+    }
+
     public function fjernRom(Rom $rom)
     {
 
@@ -201,7 +266,7 @@ class Storhybelliste
     {
         $index = array_search($rom, $this->ledige_rom);
 
-        if(!$index) {
+        if (!$index) {
 
             $this->ledige_rom[] = $rom;
 
@@ -212,7 +277,21 @@ class Storhybelliste
         }
     }
 
-    public function flyttBeboer(Beboer $beboer, int $nummer) {
+    public function flyttBeboer(Beboer $beboer, int $nummer)
+    {
+
+        $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer + 1 WHERE (nummer >= :nr AND storhybel_id=:sid
+        AND nummer < (SELECT nummer FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND beboer_id=:bid)))');
+        $st->bindParam(':nr', $nummer);
+        $st->bindParam(':sid', $this->id);
+        $st->bindParam(':bid', $beboer->getId());
+        $st->execute();
+
+        $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=:nummer WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+        $st->bindParam(':sid', $this->id);
+        $st->bindParam(':bid', $beboer->getId());
+        $st->execute();
+
 
     }
 
@@ -221,6 +300,7 @@ class Storhybelliste
 
         $instans = new Storhybelliste();
         $instans->navn = self::genererNavn();
+        $instans->aktiv = 0;
         $instans->semester = $semester = Funk::generateSemesterString(date('Y-m-d'));
         $instans->ledige_rom = $ledige_rom;
         $instans->rekkefolge = $rekkefolge;
@@ -241,6 +321,21 @@ class Storhybelliste
         $nummer = $st->rowCount() + 1;
 
         return "{$semester_readable} - Nr. {$nummer}";
+
+    }
+
+    public static function alle()
+    {
+        $arr = array();
+
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel');
+        $st->execute();
+
+        for ($i = 0; $i < $st->rowCount(); $i++) {
+            $arr[] = Storhybelliste::init($st);
+        }
+
+        return $arr;
 
     }
 

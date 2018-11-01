@@ -34,6 +34,24 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
             switch ($aktueltArg) {
 
 
+                case 'liste':
+
+                    if($sisteArg !== $aktueltArg && is_numeric($sisteArg) &&
+                        ($lista = Storhybelliste::medId($sisteArg)) !== null) {
+
+                        $dok = new Visning($this->cd);
+                        $dok->set('lista', $lista);
+                        $dok->vis('utvalg/romsjef/storhybel_liste_detaljer.php');
+                        break;
+                    }
+
+                    $lista = Storhybelliste::alle();
+
+                    $dok = new Visning($this->cd);
+
+                    $dok->set('lista', $lista);
+                    $dok->vis('utvalg/romsjef/storhybel_liste.php');
+                    break;
                 case '':
                 default:
 
