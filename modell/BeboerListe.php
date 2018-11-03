@@ -184,8 +184,9 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
         $st->execute();
 
         $lista = array();
-        foreach($st->fetchAll(\PDO::FETCH_ASSOC) as $rad){
-            $lista[] = Beboer::medId($rad['id']);
+        $i = 1;
+        foreach($st->fetchAll() as $rad){
+            $lista[$i++] = Beboer::medId($rad['beboer_id']);
         }
 
         return $lista;

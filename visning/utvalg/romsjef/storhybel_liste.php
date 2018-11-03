@@ -10,12 +10,12 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
             <hr>
 
-            <table class="table table-responsive">
+            <table class="table table-responsive table-hover">
 
                 <thead>
                 <tr>
                     <th>Navn</th>
-                    <th>Status (1=aktiv, 0=inaktiv)</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
 
@@ -31,7 +31,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     if ($liste->getVelgerNr() > 0) {
 
                         ?>
-                        <tr>
+                        <tr onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                             <td><?php echo $liste->getVelger()->getFulltNavn(); ?>
@@ -40,7 +40,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         </tr>
 
                     <?php } else { ?>
-                        <tr>
+                        <tr onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                             <td></td>

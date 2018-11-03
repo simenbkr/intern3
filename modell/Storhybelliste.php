@@ -38,7 +38,8 @@ class Storhybelliste
         return $instans;
     }
 
-    public static function medId($id) : Storhybelliste {
+    public static function medId($id): Storhybelliste
+    {
 
         $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE id=:id');
         $st->bindParam(':id', $id);
@@ -112,6 +113,11 @@ class Storhybelliste
     public function setNeste(Beboer $beboer)
     {
         $this->neste = $beboer;
+    }
+
+    public function getRekkefolge(): array
+    {
+        return $this->rekkefolge;
     }
 
     public function aktiver()
@@ -233,6 +239,18 @@ class Storhybelliste
         }
     }
 
+    public function nummerBeboer(int $beboer_id): int
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+        $st->bindParam(':sid', $this->id);
+        $st->bindParam(':bid', $beboer_id);
+        $st->execute();
+
+        $rad = $st->fetch();
+        return $rad['nummer'];
+
+    }
+
     private function beboerFraNr($nr) //Legg til return type ?Beboer når php7.1
     {
 
@@ -277,17 +295,37 @@ class Storhybelliste
         }
     }
 
-    public function flyttBeboer(Beboer $beboer, int $nummer)
+    public function flyttBeboer(Beboer $beboer, int $nyNr)
     {
+        $fraNr = $this->nummerBeboer($beboer->getId());
 
-        $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer + 1 WHERE (nummer >= :nr AND storhybel_id=:sid
-        AND nummer < (SELECT nummer FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND beboer_id=:bid)))');
-        $st->bindParam(':nr', $nummer);
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND beboer_id=:bid)');
         $st->bindParam(':sid', $this->id);
         $st->bindParam(':bid', $beboer->getId());
         $st->execute();
 
-        $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=:nummer WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+
+
+        //Feks fra 3 til 10
+        if ($fraNr - $nyNr < 0) {
+            $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer-1 WHERE (storhybel_id=:sid AND nummer > :fra AND nummer <= :ny)');
+            $st->bindParam(':sid', $this->id);
+            $st->bindParam(':ny', $nyNr);
+            $st->bindParam(':fra', $fraNr);
+            $st->execute();
+
+        }
+        //Feks fra 10 til 3
+        else {
+            $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer+1 WHERE (storhybel_id=:sid AND nummer >= :ny AND nummer < :fra)');
+            $st->bindParam(':sid', $this->id);
+            $st->bindParam(':ny', $nyNr);
+            $st->bindParam(':fra', $fraNr);
+            $st->execute();
+        }
+
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id, beboer_id, nummer) VALUES(:sid,:bid,:nummer)');
+        $st->bindParam(':nummer', $nyNr);
         $st->bindParam(':sid', $this->id);
         $st->bindParam(':bid', $beboer->getId());
         $st->execute();

@@ -10,11 +10,18 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
         $aktueltArg = $this->cd->getAktueltArg();
         $sisteArg = $this->cd->getSisteArg();
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             switch ($aktueltArg) {
 
+                case 'liste':
+                    $nesteArg = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
+                    if(($lista = Storhybelliste::medId($sisteArg)) !== null) {
+                        $this->handleListe($lista, $nesteArg);
+                    }
+                    break;
                 case 'ny':
 
                     $ledige_rom = RomListe::alleLedige();
@@ -36,13 +43,13 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                 case 'liste':
 
-                    if($sisteArg !== $aktueltArg && is_numeric($sisteArg) &&
+                    if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) &&
                         ($lista = Storhybelliste::medId($sisteArg)) !== null) {
 
                         $dok = new Visning($this->cd);
                         $dok->set('lista', $lista);
                         $dok->vis('utvalg/romsjef/storhybel_liste_detaljer.php');
-                        break;
+                        exit();
                     }
 
                     $lista = Storhybelliste::alle();
@@ -68,5 +75,25 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
         }
     }
 
+
+    private function handleListe(Storhybelliste $lista, $aktueltArg)
+    {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        switch($aktueltArg) {
+
+            case 'oppdater':
+
+                if(($beboer = Beboer::medId($post['beboer_id'])) !== null && is_numeric($post['nummer'])) {
+                    $lista->flyttBeboer($beboer, $post['nummer']);
+                    print "Flyttet " . $beboer->getFulltNavn() . " til posisjon $post[nummer]";
+                    exit();
+                }
+
+
+
+        }
+
+
+    }
 
 }
