@@ -211,6 +211,10 @@ require_once(__DIR__ . '/../static/topp.php');
             <td><?php echo intern3\Funk::timerTilTidForm($regitimer[-1]); ?></td>
         </tr>
         <tr>
+            <th>Timer igjen:</th>
+            <td><?php echo max(\intern3\LogginnCtrl::getAktivBruker()->getPerson()->getRolle()->getRegitimer() - intern3\Funk::timerTilTidForm($regitimer[1]), 0); ?></td>
+        </tr>
+        <tr>
             <th>Antall regitimer du skal gjøre:</th>
             <td><?php echo \intern3\LogginnCtrl::getAktivBruker()->getPerson()->getRolle()->getRegitimer();?></td>
         </tr>
