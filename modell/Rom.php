@@ -46,6 +46,10 @@ class Rom {
         return $this->type;
     }
 
+    public function erLedig() : bool {
+	    return in_array($this, RomListe::alleLedige());
+    }
+
 }
 
 ?>

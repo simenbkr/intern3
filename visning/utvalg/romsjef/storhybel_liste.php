@@ -10,13 +10,18 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
             <hr>
 
-            <table class="table table-responsive table-hover">
+            [ Liste ] | [ <a href="?a=utvalg/romsjef/storhybel">Ny</a> ]
+
+
+            <p>(Listen er klikkbar)</p>
+            <table class="table table-responsive table-hover ui-selectable">
 
                 <thead>
                 <tr>
                     <th>Navn</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>Nåværende velger</th>
+                    <th>Neste</th>
                 </tr>
 
                 </thead>
@@ -26,8 +31,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <?php foreach ($lista as $liste) {
                     /* @var \intern3\Storhybelliste $liste */
 
-                    var_dump($liste->getVelgerNr());
-
                     if ($liste->getVelgerNr() > 0) {
 
                         ?>
@@ -35,7 +38,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                             <td><?php echo $liste->getVelger()->getFulltNavn(); ?>
-                                (nr. <?php echo $liste->getVelgerNr(); ?></td>
+                                (nr. <?php echo $liste->getVelgerNr(); ?>)</td>
                             <td><?php echo $liste->getNeste()->getFulltNavn(); ?></td>
                         </tr>
 
@@ -43,9 +46,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <tr onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
-                            <td></td>
-                            <td></td>
-
                         </tr>
 
                     <?php }

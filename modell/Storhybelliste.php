@@ -127,6 +127,11 @@ class Storhybelliste
         $this->lagreIntern();
     }
 
+    public function deaktiver() {
+        $this->aktiv = 0;
+        $this->lagreIntern();
+    }
+
     public function neste()
     {
         $this->velger++;
@@ -247,7 +252,7 @@ class Storhybelliste
         $st->execute();
 
         $rad = $st->fetch();
-        return $rad['nummer'];
+        return $st->rowCount() > 0 ? $rad['nummer'] : -1;
 
     }
 
@@ -293,6 +298,24 @@ class Storhybelliste
             $st->bindParam(':rid', $rom->getId());
             $st->execute();
         }
+    }
+
+    public function fjernBeboer(int $beboer_id) {
+
+        if($this->nummerBeboer($beboer_id))
+
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE beboer_id=:bid');
+        $st->bindParam(':bid', $beboer_id);
+        $st->execute();
+    }
+
+    public function leggTilBeboer(int $beboer_id) {
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge storhybel_id,beboer_id,nummer VALUES(:sid,:bid,:nr)');
+        $st->bindParam(':sid', $this->id);
+        $st->bindParam(':bid', $beboer_id);
+        $nr = count($this->rekkefolge) + 1;
+        $st->bindParam(':nr', $nr);
+        $st->execute();
     }
 
     public function flyttBeboer(Beboer $beboer, int $nyNr)
@@ -375,6 +398,23 @@ class Storhybelliste
 
         return $arr;
 
+    }
+
+    public function slett() {
+
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE storhybel_id=:sid');
+        $st->bindParam(':sid', $this->id);
+        $st->execute();
+
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_rom WHERE storhybel_id=:sid');
+        $st->bindParam(':sid', $this->id);
+        $st->execute();
+
+        $st = DB::getDB()->prepare('DELETE FROM storhybel WHERE id=:sid');
+        $st->bindParam(':sid', $this->id);
+        $st->execute();
+
+        unset($this);
     }
 
 }

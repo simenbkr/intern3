@@ -185,7 +185,7 @@ if (isset($visUtvalgMeny)) {
                   <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/nybeboer">Legg til ny beboer</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/epost">E-postlister</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/ansiennitet">Ansiennitet</a></li>
-                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/storhybel">Storhybelliste</a></li>
+                    <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/storhybel/liste">Storhybelliste</a></li>
                   <?php /*<li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endrebeboer">Endre beboer</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/endregammelbeboer">Endre Gammel beboer</a></li>*/ ?>
                 </ul>
