@@ -16,6 +16,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <p>Husk å sjekke at ansienniteten er oppdatert og korrekt,
             og at alle beboere som (eventuelt) skal flytte ut har blitt flytta ut.</p>
 
+        <p>Du kan endre på dette før storhybellista aktiveres.</p>
+
         <div class="panel-group" id="accordion">
             <div class="panel panel-default">
                 <div class="panel-heading">

@@ -57,6 +57,9 @@ if (!isset($skjulMeny)) {
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
+                            <?php if(Storhybelliste::finnesAktive()) { ?>
+                            <li><a href="<?php echo $cd->getBase(); ?>storhybel">Storhybel</a></li>
+                            <?php } ?>
 							<li><a href="<?php echo $cd->getBase(); ?>beboer">Beboer</a></li>
 							<li><a href="<?php echo $cd->getBase(); ?>vakt">Vakt</a></li>
 							<li class="dropdown">

@@ -14,6 +14,7 @@ class Storhybelliste
     private $velgerNr;
     private $velger;
     private $neste;
+    private $fordeling;
 
     private static function init(\PDOStatement $st): Storhybelliste
     {
@@ -34,6 +35,7 @@ class Storhybelliste
         $instans->velgerNr = $rad['velger'];
         $instans->velger = $instans->beboerFraNr($rad['velger']);
         $instans->neste = $instans->beboerFraNr($instans->velgerNr + 1);
+        $instans->fordeling = StorhybelFordeling::medStorhybelId($instans->id);
 
         return $instans;
     }
@@ -120,6 +122,10 @@ class Storhybelliste
         return $this->rekkefolge;
     }
 
+    public function getFordeling() {
+        return $this->fordeling;
+    }
+
     public function aktiver()
     {
         $this->velgerNr = 1;
@@ -194,6 +200,15 @@ class Storhybelliste
             $this->lagreRomliste();
             $this->lagreRekkefolge();
 
+            $st = DB::getDB()->prepare('INSERT INTO storhybel_fordeling (storhybel_id,beboer_id,gammel_rom_id) VALUES(:sid,:bid,:rid)');
+            $st->bindParam(':sid', $this->id);
+
+            foreach($this->rekkefolge as $beboer) {
+                /* @var Beboer $beboer */
+                $st->bindParam(':bid', $beboer->getId());
+                $st->bindParam(':rid', $beboer->getRom()->getId());
+                $st->execute();
+            }
         }
 
         return $this;
@@ -416,6 +431,25 @@ class Storhybelliste
 
         return $arr;
 
+    }
+
+    /*
+     * Returnerer true om det finnes en aktiv storhybelliste.
+     * False ellers.
+     */
+    public static function finnesAktive() : bool {
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
+        $st->execute();
+
+        return $st->rowCount() > 0;
+    }
+
+    public static function aktiv() : Storhybelliste {
+        // Det skal bare være én aktiv. Henter ut denne.
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
+        $st->execute();
+
+        return self::init($st);
     }
 
     public function slett()

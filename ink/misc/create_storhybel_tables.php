@@ -43,6 +43,15 @@ $sql = "CREATE TABLE IF NOT EXISTS `storhybel_rekkefolge`
 
 DB::getDB()->query($sql);
 
+$sql = "CREATE TABLE IF NOT EXISTS `storhybel_fordeling`
+(`storhybel_id` INT NOT NULL,
+`beboer_id` INT NOT NULL,
+`gammel_rom_id` INT,
+`ny_rom_id` INT)";
+
+DB::getDB()->query($sql);
+
+
 echo "FIN\n";
 $slutt = time();
 $tid = $slutt - $start;
