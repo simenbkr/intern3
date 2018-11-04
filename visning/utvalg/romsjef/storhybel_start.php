@@ -7,6 +7,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <div class="col-lg-12">
         <h1>Utvalget &raquo; Romsjef &raquo; Storhybelliste</h1>
 
+        [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ Ny]
         <hr>
 
         <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>

@@ -82,7 +82,7 @@ class Storhybelliste
 
     public function getNeste() //Return type ?Beboer.
     {
-        return $this->neste;
+         return $this->neste;
     }
 
     public function getVelger() //Return type ?Beboer.
@@ -122,19 +122,30 @@ class Storhybelliste
 
     public function aktiver()
     {
-        $this->velger++;
+        $this->velgerNr = 1;
         $this->aktiv = 1;
         $this->lagreIntern();
     }
 
-    public function deaktiver() {
+    public function deaktiver()
+    {
         $this->aktiv = 0;
         $this->lagreIntern();
     }
 
     public function neste()
     {
-        $this->velger++;
+        $this->velgerNr = ($this->velgerNr + 1) % count($this->rekkefolge);
+        $this->velger   = $this->beboerFraNr($this->velgerNr);
+        $this->neste    = $this->beboerFraNr($this->velgerNr + 1);
+        $this->lagreIntern();
+    }
+
+    public function forrige()
+    {
+        $this->velgerNr = ($this->velgerNr - 1) % count($this->rekkefolge);
+        $this->velger   = $this->beboerFraNr($this->velgerNr);
+        $this->neste    = $this->beboerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
     }
 
@@ -195,7 +206,7 @@ class Storhybelliste
         $st->bindParam(':navn', $this->navn);
         $st->bindParam(':semester', $this->semester);
         $st->bindParam(':aktiv', $this->aktiv);
-        $st->bindParam(':velger', $this->velger);
+        $st->bindParam(':velger', $this->velgerNr);
         $st->bindParam(':id', $this->id);
         $st->execute();
     }
@@ -300,17 +311,26 @@ class Storhybelliste
         }
     }
 
-    public function fjernBeboer(int $beboer_id) {
+    public function fjernBeboer(int $beboer_id)
+    {
 
-        if($this->nummerBeboer($beboer_id))
+        if (($nr = $this->nummerBeboer($beboer_id)) > 0) {
+            // Slett personen fra rekkefølgen.
+            $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE beboer_id=:bid');
+            $st->bindParam(':bid', $beboer_id);
+            $st->execute();
 
-        $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE beboer_id=:bid');
-        $st->bindParam(':bid', $beboer_id);
-        $st->execute();
+            // Flytt alle beboere under opp én plass.
+            $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer-1 WHERE (storhybel_id=:sid AND nummer > :nr)');
+            $st->bindParam(':sid', $this->id);
+            $st->bindParam(':nr', $nr);
+            $st->execute();
+        }
     }
 
-    public function leggTilBeboer(int $beboer_id) {
-        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge storhybel_id,beboer_id,nummer VALUES(:sid,:bid,:nr)');
+    public function leggTilBeboer(int $beboer_id)
+    {
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id,beboer_id,nummer) VALUES(:sid,:bid,:nr)');
         $st->bindParam(':sid', $this->id);
         $st->bindParam(':bid', $beboer_id);
         $nr = count($this->rekkefolge) + 1;
@@ -328,7 +348,6 @@ class Storhybelliste
         $st->execute();
 
 
-
         //Feks fra 3 til 10
         if ($fraNr - $nyNr < 0) {
             $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer-1 WHERE (storhybel_id=:sid AND nummer > :fra AND nummer <= :ny)');
@@ -337,8 +356,7 @@ class Storhybelliste
             $st->bindParam(':fra', $fraNr);
             $st->execute();
 
-        }
-        //Feks fra 10 til 3
+        } //Feks fra 10 til 3
         else {
             $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer+1 WHERE (storhybel_id=:sid AND nummer >= :ny AND nummer < :fra)');
             $st->bindParam(':sid', $this->id);
@@ -400,7 +418,8 @@ class Storhybelliste
 
     }
 
-    public function slett() {
+    public function slett()
+    {
 
         $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE storhybel_id=:sid');
         $st->bindParam(':sid', $this->id);

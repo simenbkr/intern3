@@ -7,9 +7,18 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
     <div class="container">
         <div class="col-lg-12">
-            <h1>Utvalget &raquo; Romsjef &raquo; StorhybellisteLISTE &raquo; <?php echo $lista->getNavn(); ?></h1>
+            <h1>Utvalget &raquo; Romsjef &raquo; Storhybel administrasjon for &raquo; <?php echo $lista->getNavn(); ?></h1>
 
+            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel">Ny</a> ]
             <hr>
+
+            <div class="alert alert-success fade in" id="success"
+                 style="margin: auto; margin-top: 5%; display:none">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <p id="tilbakemelding-text"></p>
+            </div>
+
+
 
             <div class="col-lg-6">
 
@@ -23,6 +32,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <?php } ?>
 
                     <button class="btn btn-danger" onclick="slett()">Slett</button>
+
+                    <button class="btn btn-info" onclick="neste()">Neste person</button>
+                    <button class="btn btn-default" onclick="forrige()">Forrige person</button>
                 </p>
 
             </div>
@@ -32,21 +44,23 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <h3>Ledige rom</h3>
 
                 <p><select class="form-control" onchange="leggtilrom(this)">
-                    <?php foreach ($alle_rom as $rom) {
+                        <option>Velg</option>
+                        <?php foreach ($alle_rom as $rom) {
 
-                        if (in_array($rom, $ledige_rom)) {
-                            ?>
+                            if (in_array($rom, $ledige_rom)) {
+                                ?>
 
-                            <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)</option>
-                        <?php } else { ?>
+                                <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?>(LEDIG)
+                                </option>
+                            <?php } else { ?>
 
-                            <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></option>
-                            <?php
+                                <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></option>
+                                <?php
+                            }
                         }
-                    }
-                    ?>
+                        ?>
 
-                </select></p>
+                    </select></p>
 
 
                 <table class="table table-responsive">
@@ -80,15 +94,32 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
             <div class="col-lg-12">
 
-                <h3>Rekkefølge</h3>
-                <p>(drag-and-drop for å endre, når lista er inaktiv.)</p>
-
-                <div class="alert alert-success fade in" id="success"
-                     style="margin: auto; margin-top: 5%; display:none">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <p id="tilbakemelding-text"></p>
+                <div class="col-lg-6">
+                    <h3>Rekkefølge</h3>
+                    <p>(drag-and-drop for å endre, når lista er inaktiv.)</p>
                 </div>
 
+                <div class="col-lg-6">
+                    <h3>Legg til beboere</h3>
+                    <p>Disse blir lagt til nederst. Kan bare legge til de som ikke er på lista fra før.</p>
+
+                    <p>
+                        <select class="form-control" onchange="leggtilbeboer(this)">
+                            <option>Velg</option>
+
+                            <?php foreach($beboerliste as $beboer) {
+                                /* @var $beboer \intern3\Beboer */ ?>
+
+                                <option value="<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></option>
+
+                            <?php } ?>
+                        </select>
+
+                    </p>
+
+
+
+                </div>
 
                 <?php if ($lista->erAktiv()) { ?>
                 <table class="table table-responsive table-hover grid">
@@ -103,6 +134,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <th>Rom</th>
                             <th>Ansiennitet</th>
                             <th>Klassetrinn</th>
+                            <th></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -129,6 +161,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                             onclick="fjernbeboer(<?php echo $beboer->getId(); ?>)">Fjern
                                     </button>
                                 </td>
+                                <td><?php echo $lista->nummerBeboer($beboer->getId()); ?></td>
                             </tr>
 
                             <?php
@@ -280,6 +313,54 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         }
 
+        function neste() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/storhybel/liste/neste/<?php echo $lista->getId(); ?>',
+                data: '',
+                method: 'POST',
+                success: function (data) {
+                    tilbakemelding(data);
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+
+        }
+
+        function forrige() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/storhybel/liste/forrige/<?php echo $lista->getId(); ?>',
+                data: '',
+                method: 'POST',
+                success: function (data) {
+                    tilbakemelding(data);
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
+        function leggtilbeboer(selected) {
+            console.log(selected.value);
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/storhybel/liste/leggtilbeboer/<?php echo $lista->getId(); ?>',
+                data: 'beboer_id=' + selected.value,
+                method: 'POST',
+                success: function (data) {
+                    tilbakemelding(data);
+                    selected.selectedIndex = 0;
+
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
 
         var fixHelperModified = function (e, tr) {
                 var $originals = tr.children();

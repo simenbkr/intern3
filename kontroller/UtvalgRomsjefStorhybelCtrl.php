@@ -51,8 +51,15 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                             function(Rom $a, Rom $b) {
                                 return $a->getId() - $b->getId();
                             });
+
+                        $beboerliste = array_udiff(BeboerListe::aktive(), $lista->getRekkefolge(),
+                            function(Beboer $a, Beboer $b) {
+                                return $a->getId() - $b->getId();
+                            });
+
                         $ledige_rom = RomListe::alleLedige();
                         $dok = new Visning($this->cd);
+                        $dok->set('beboerliste', $beboerliste);
                         $dok->set('lista', $lista);
                         $dok->set('alle_rom', $alle_rom);
                         $dok->set('ledige_rom', $ledige_rom);
@@ -120,7 +127,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
             case 'deaktiver':
                 $lista->deaktiver();
                 print "Deaktiverte denne storhybellista!";
-
+                break;
             case 'fjernbeboer':
                 if (($beboer = Beboer::medId($post['beboer_id'])) !== null) {
                     $lista->fjernBeboer($post['beboer_id']);
@@ -134,12 +141,25 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 }
                 break;
             case 'leggtilrom':
-                if(($rom = Rom::medId($post['rom_id'])) !== null){
+                if(($rom = Rom::medId($post['rom_id'])) !== null) {
                     $lista->leggtilRom($rom);
                     print "La til romnummer " . $rom->getNavn() . " til lista.";
                 }
                 break;
-
+            case 'leggtilbeboer':
+                if(($beboer = Beboer::medId($post['beboer_id'])) !== null) {
+                    $lista->leggTilBeboer($post['beboer_id']);
+                    print "La til beboeren " . $beboer->getFulltNavn() . ' til lista.';
+                }
+                break;
+            case 'neste':
+                $lista->neste();
+                print "Det er nå " . $lista->getVelger()->getFulltNavn() . ' sin tur!';
+                break;
+            case 'forrige':
+                $lista->forrige();
+                print "Det er nå " . $lista->getVelger()->getFulltNavn() . ' sin tur!';
+                break;
         }
 
 

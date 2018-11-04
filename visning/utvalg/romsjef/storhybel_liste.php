@@ -8,10 +8,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <div class="col-lg-12">
             <h1>Utvalget &raquo; Romsjef &raquo; StorhybellisteLISTE</h1>
 
-            <hr>
-
             [ Liste ] | [ <a href="?a=utvalg/romsjef/storhybel">Ny</a> ]
 
+            <hr>
 
             <p>(Listen er klikkbar)</p>
             <table class="table table-responsive table-hover ui-selectable">
@@ -46,6 +45,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <tr onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
+                            <td></td>
+                            <td></td>
                         </tr>
 
                     <?php }
