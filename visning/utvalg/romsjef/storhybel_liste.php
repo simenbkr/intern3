@@ -12,6 +12,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
             <hr>
 
+            <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+
             <p>(Listen er klikkbar)</p>
             <table class="table table-responsive table-hover ui-selectable">
 
@@ -30,10 +32,15 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <?php foreach ($lista as $liste) {
                     /* @var \intern3\Storhybelliste $liste */
 
+                    $klassen = '';
+                    if($liste->erAktiv()) {
+                        $klassen = 'success';
+                    }
+
                     if ($liste->getVelgerNr() > 0) {
 
                         ?>
-                        <tr onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
+                        <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                             <td><?php echo $liste->getVelger()->getFulltNavn(); ?>
@@ -42,7 +49,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         </tr>
 
                     <?php } else { ?>
-                        <tr onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
+                        <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                             <td></td>

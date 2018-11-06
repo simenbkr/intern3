@@ -92,7 +92,7 @@ class Storhybelliste
         return $this->velger;
     }
 
-    public function getVelgerNr(): int
+    public function getVelgerNr()
     {
         return $this->velgerNr;
     }
@@ -141,7 +141,12 @@ class Storhybelliste
 
     public function neste()
     {
-        $this->velgerNr = ($this->velgerNr + 1) % count($this->rekkefolge);
+        $this->velgerNr++;
+
+        if($this->velgerNr > count($this->rekkefolge)) {
+            $this->velgerNr = 1;
+        }
+
         $this->velger   = $this->beboerFraNr($this->velgerNr);
         $this->neste    = $this->beboerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
@@ -149,7 +154,12 @@ class Storhybelliste
 
     public function forrige()
     {
-        $this->velgerNr = ($this->velgerNr - 1) % count($this->rekkefolge);
+        $this->velgerNr--;
+
+        if($this->velgerNr < 1) {
+            $this->velgerNr = count($this->rekkefolge);
+        }
+
         $this->velger   = $this->beboerFraNr($this->velgerNr);
         $this->neste    = $this->beboerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
@@ -313,9 +323,8 @@ class Storhybelliste
 
     public function leggtilRom(Rom $rom)
     {
-        $index = array_search($rom, $this->ledige_rom);
 
-        if (!$index) {
+        if (!isset($this->ledige_rom[$rom->getId()])) {
 
             $this->ledige_rom[] = $rom;
 
@@ -399,7 +408,9 @@ class Storhybelliste
         $instans->ledige_rom = $ledige_rom;
         $instans->rekkefolge = $rekkefolge;
 
-        return $instans->lagre();
+        $instans->lagre();
+
+        return $instans;
     }
 
     public static function genererNavn(): string
@@ -467,7 +478,33 @@ class Storhybelliste
         $st->bindParam(':sid', $this->id);
         $st->execute();
 
-        unset($this);
+    }
+
+    public function velgRom(Beboer $beboer, Rom $rom) {
+
+        $gammelt_rom = $beboer->getRom();
+
+        $st = DB::getDB()->prepare('UPDATE storhybel_fordeling SET ny_rom_id=:nri WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+        $st->bindParam(':nri', $rom->getId());
+        $st->bindParam(':sid', $this->id);
+        $st->bindParam(':bid', $beboer->getId());
+        $st->execute();
+
+        $this->fjernRom($rom);
+        $this->leggtilRom($gammelt_rom);
+
+        $this->neste();
+    }
+
+    /*
+     * Denne funksjonen kan bare kalles én gang per storhybelliste.
+     * Når det commites, vil alle beboere 'flyttes' til de valgte rommene.
+     */
+
+    public function commit() {
+
+
+
     }
 
 }

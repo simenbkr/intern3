@@ -55,7 +55,7 @@ class RomListe extends Liste
         $st->execute();
         $lista = array();
         foreach($st->fetchAll(\PDO::FETCH_COLUMN) as $rom_id){
-            $lista[] = Rom::medId($rom_id);
+            $lista[$rom_id] = Rom::medId($rom_id);
         }
 
         return $lista;

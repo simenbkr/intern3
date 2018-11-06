@@ -22,7 +22,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
             <div class="col-lg-6">
 
-                <p id="status">Status: <?php echo $lista->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></p>
+                <h2 id="status">Status: <?php echo $lista->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></h2>
 
                 <p>
                     <?php if ($lista->erAktiv()) { ?>
@@ -231,7 +231,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 success: function (data) {
                     tilbakemelding(data);
                     $("#status").text("Status: Aktiv");
-                    //window.location.reload();
                 },
                 error: function (req, stat, err) {
                     alert(err);

@@ -28,11 +28,10 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     $beboerliste = BeboerListe::aktive();
                     usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));
 
-                    Storhybelliste::nyListe($ledige_rom, $beboerliste);
+                    $lista = Storhybelliste::nyListe($ledige_rom, $beboerliste);
+                    $id = $lista->getId();
 
-                    Funk::setSuccess("Opprettet en ny Storhybelliste!");
-
-                    header('Location: ?a=utvalg/romsjef/storhybel');
+                    header("Location: ?a=utvalg/romsjef/storhybel/liste/$id");
                     exit();
 
             }
