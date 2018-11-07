@@ -18,8 +18,10 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                 case 'liste':
                     $nesteArg = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
-                    if (($lista = Storhybelliste::medId($sisteArg)) !== null) {
+                    if (($lista = Storhybelliste::medId($sisteArg)) !== null && !$lista->erFerdig()) {
                         $this->handleListe($lista, $nesteArg);
+                    } else {
+                        print "Lista er ferdig, og kan derfor ikke endres.";
                     }
                     break;
                 case 'ny':
@@ -115,7 +117,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 break;
             case 'aktiver':
                 foreach (Storhybelliste::alle() as $liste) {
-                    $liste->deaktiver();
+                    if($liste->erAktiv()) {
+                        $liste->deaktiver();
+                    }
                 }
 
                 $lista->aktiver();
@@ -158,6 +162,10 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
             case 'forrige':
                 $lista->forrige();
                 print "Det er nå " . $lista->getVelger()->getFulltNavn() . ' sin tur!';
+                break;
+            case 'commit':
+                $lista->commit();
+                print "Lista ble lagret, og rom fordelt.";
                 break;
         }
 

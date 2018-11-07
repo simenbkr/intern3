@@ -37,12 +37,12 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         $klassen = 'success';
                     }
 
-                    if ($liste->getVelgerNr() > 0) {
+                    if ($liste->getVelgerNr() > 0 && !$liste->erFerdig()) {
 
                         ?>
                         <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
-                            <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
+                            <td><?php echo $liste->getStatusTekst(); ?></td>
                             <td><?php echo $liste->getVelger()->getFulltNavn(); ?>
                                 (nr. <?php echo $liste->getVelgerNr(); ?>)</td>
                             <td><?php echo $liste->getNeste()->getFulltNavn(); ?></td>
@@ -51,7 +51,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <?php } else { ?>
                         <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
-                            <td><?php echo $liste->erAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
+                            <td><?php echo $liste->getStatusTekst(); ?></td>
                             <td></td>
                             <td></td>
                         </tr>

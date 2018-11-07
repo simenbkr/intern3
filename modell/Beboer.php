@@ -785,6 +785,16 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         return 1;
     }
 
-}
+    /*
+     * Jesus fuck jeg hater denne datastrukturen.
+     */
+    public function byttRom(Rom $nyttRom) {
+        $this->getRomhistorikk();
+        $this->romhistorikkObjekt->addPeriode($nyttRom->getId(), date('Y-m-d'), null);
+        $this->romhistorikk = $this->romhistorikkObjekt->tilJson();
+        $this->oppdater();
 
+    }
+
+}
 ?>

@@ -29,7 +29,7 @@ class Storhybelliste
         $instans->id = $rad['id'];
         $instans->semester = $rad['semester'];
         $instans->navn = $rad['navn'];
-        $instans->aktiv = $rad['aktiv'] != 0;
+        $instans->aktiv = $rad['aktiv'];
         $instans->ledige_rom = RomListe::fraStorhybelListe($instans->id);
         $instans->rekkefolge = BeboerListe::fraStorhybelliste($instans->id);
         $instans->velgerNr = $rad['velger'];
@@ -64,7 +64,30 @@ class Storhybelliste
 
     public function erAktiv(): bool
     {
-        return $this->aktiv;
+        return $this->aktiv === '1';
+    }
+
+    public function erFerdig(): bool
+    {
+        return $this->aktiv === '-1';
+    }
+
+    public function erInaktiv(): bool
+    {
+        return $this->aktiv === '0';
+    }
+
+    public function getStatusTekst(): string
+    {
+        if ($this->aktiv === '1') {
+            return "Aktiv";
+        }
+
+        if ($this->aktiv === '0') {
+            return "Inaktiv";
+        }
+
+        return "Ferdig";
     }
 
     public function getSemester(): string
@@ -84,7 +107,7 @@ class Storhybelliste
 
     public function getNeste() //Return type ?Beboer.
     {
-         return $this->neste;
+        return $this->neste;
     }
 
     public function getVelger() //Return type ?Beboer.
@@ -122,7 +145,8 @@ class Storhybelliste
         return $this->rekkefolge;
     }
 
-    public function getFordeling() {
+    public function getFordeling()
+    {
         return $this->fordeling;
     }
 
@@ -143,12 +167,12 @@ class Storhybelliste
     {
         $this->velgerNr++;
 
-        if($this->velgerNr > count($this->rekkefolge)) {
+        if ($this->velgerNr > count($this->rekkefolge)) {
             $this->velgerNr = 1;
         }
 
-        $this->velger   = $this->beboerFraNr($this->velgerNr);
-        $this->neste    = $this->beboerFraNr($this->velgerNr + 1);
+        $this->velger = $this->beboerFraNr($this->velgerNr);
+        $this->neste = $this->beboerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
     }
 
@@ -156,12 +180,12 @@ class Storhybelliste
     {
         $this->velgerNr--;
 
-        if($this->velgerNr < 1) {
+        if ($this->velgerNr < 1) {
             $this->velgerNr = count($this->rekkefolge);
         }
 
-        $this->velger   = $this->beboerFraNr($this->velgerNr);
-        $this->neste    = $this->beboerFraNr($this->velgerNr + 1);
+        $this->velger = $this->beboerFraNr($this->velgerNr);
+        $this->neste = $this->beboerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
     }
 
@@ -213,7 +237,7 @@ class Storhybelliste
             $st = DB::getDB()->prepare('INSERT INTO storhybel_fordeling (storhybel_id,beboer_id,gammel_rom_id) VALUES(:sid,:bid,:rid)');
             $st->bindParam(':sid', $this->id);
 
-            foreach($this->rekkefolge as $beboer) {
+            foreach ($this->rekkefolge as $beboer) {
                 /* @var Beboer $beboer */
                 $st->bindParam(':bid', $beboer->getId());
                 $st->bindParam(':rid', $beboer->getRom()->getId());
@@ -448,14 +472,16 @@ class Storhybelliste
      * Returnerer true om det finnes en aktiv storhybelliste.
      * False ellers.
      */
-    public static function finnesAktive() : bool {
+    public static function finnesAktive(): bool
+    {
         $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
         $st->execute();
 
         return $st->rowCount() > 0;
     }
 
-    public static function aktiv() : Storhybelliste {
+    public static function aktiv(): Storhybelliste
+    {
         // Det skal bare være én aktiv. Henter ut denne.
         $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
         $st->execute();
@@ -480,7 +506,8 @@ class Storhybelliste
 
     }
 
-    public function velgRom(Beboer $beboer, Rom $rom) {
+    public function velgRom(Beboer $beboer, Rom $rom)
+    {
 
         $gammelt_rom = $beboer->getRom();
 
@@ -499,12 +526,23 @@ class Storhybelliste
     /*
      * Denne funksjonen kan bare kalles én gang per storhybelliste.
      * Når det commites, vil alle beboere 'flyttes' til de valgte rommene.
+     * Deretter settes Storhybellisten til 'Ferdig', og kan ikke lenger
+     * interageres med.
      */
+    public function commit()
+    {
+        foreach ($this->fordeling as $fordeling) {
+            /* @var $fordeling \intern3\StorhybelFordeling */
+            $beboer = Beboer::medId($fordeling->getBeboerId());
 
-    public function commit() {
+            if ($fordeling->getNyttRomId() !== null && $fordeling->getNyttRom() !== null) {
+                $beboer->byttRom($fordeling->getNyttRom());
+            }
+        }
 
-
-
+        $st = DB::getDB()->prepare('UPDATE storhybel SET aktiv=-1 WHERE id=:sid');
+        $st->bindParam(':sid', $this->id);
+        $st->execute();
     }
 
 }
