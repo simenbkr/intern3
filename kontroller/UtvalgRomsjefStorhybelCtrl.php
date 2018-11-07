@@ -53,11 +53,13 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                                 return $a->getId() - $b->getId();
                             });
 
+                        /*
                         $beboerliste = array_udiff(BeboerListe::aktive(), $lista->getRekkefolge(),
                             function(Beboer $a, Beboer $b) {
                                 return $a->getId() - $b->getId();
                             });
-
+                        */
+                        $beboerliste = BeboerListe::aktive();
                         $ledige_rom = RomListe::alleLedige();
                         $dok = new Visning($this->cd);
                         $dok->set('beboerliste', $beboerliste);
@@ -104,9 +106,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     exit();
                 }
 
-                if (($beboer = Beboer::medId($post['beboer_id'])) !== null && is_numeric($post['nummer'])) {
-                    $lista->flyttBeboer($beboer, $post['nummer']);
-                    print "Flyttet " . $beboer->getFulltNavn() . " til posisjon $post[nummer]";
+                if (($velger = StorhybelVelger::medVelgerId($post['velger_id'])) !== null && is_numeric($post['nummer'])) {
+                    $lista->flyttVelger($velger, $post['nummer']);
+                    print "Flyttet " . $velger->getNavn() . " til posisjon $post[nummer]";
                     exit();
                 }
                 break;
@@ -131,10 +133,10 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 $lista->deaktiver();
                 print "Deaktiverte denne storhybellista!";
                 break;
-            case 'fjernbeboer':
-                if (($beboer = Beboer::medId($post['beboer_id'])) !== null) {
-                    $lista->fjernBeboer($post['beboer_id']);
-                    print "Fjerna beboeren " . $beboer->getFulltNavn() . " fra lista.";
+            case 'fjernvelger':
+                if (($velger = StorhybelVelger::medVelgerId($post['velger_id'])) !== null) {
+                    $lista->fjernVelger($post['velger_id']);
+                    print "Fjerna velgeren " . $velger->getNavn() . " fra lista.";
                 }
                 break;
             case 'fjernrom':
@@ -149,19 +151,16 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     print "La til romnummer " . $rom->getNavn() . " til lista.";
                 }
                 break;
-            case 'leggtilbeboer':
-                if(($beboer = Beboer::medId($post['beboer_id'])) !== null) {
-                    $lista->leggTilBeboer($post['beboer_id']);
-                    print "La til beboeren " . $beboer->getFulltNavn() . ' til lista.';
-                }
+            case 'leggtilvelger':
+                // TODO må reworkes slik at man kan legge til n antall beboere på et velger-objekt, som igjen blir adda.
                 break;
             case 'neste':
                 $lista->neste();
-                print "Det er nå " . $lista->getVelger()->getFulltNavn() . ' sin tur!';
+                print "Det er nå " . $lista->getVelger()->getNavn() . ' sin tur!';
                 break;
             case 'forrige':
                 $lista->forrige();
-                print "Det er nå " . $lista->getVelger()->getFulltNavn() . ' sin tur!';
+                print "Det er nå " . $lista->getVelger()->getNavn() . ' sin tur!';
                 break;
             case 'commit':
                 $lista->commit();

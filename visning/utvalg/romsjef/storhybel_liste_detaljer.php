@@ -147,13 +147,15 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <th>Ansiennitet</th>
                             <th>Klassetrinn</th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
 
                         <tbody>
 
-                        <?php foreach ($lista->getRekkefolge() as $nummer => $beboer) {
-                            /* @var $beboer \intern3\Beboer */
+                        <?php foreach ($lista->getRekkefolge() as $velger) {
+                            /* @var $velger \intern3\StorhybelVelger */
+                            $nummer = $velger->getNummer();
                             $klassen = '';
                             if ($nummer == $lista->getVelgerNr()) {
                                 $klassen = 'danger';
@@ -161,20 +163,21 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                             ?>
 
-                            <tr id="<?php echo $beboer->getId(); ?>" class="<?php echo $klassen; ?>">
+                            <tr id="<?php echo $velger->getVelgerId(); ?>" class="<?php echo $klassen; ?>">
                                 <td class="index"><?php echo $nummer; ?></td>
-                                <td><?php echo $beboer->getFulltNavn(); ?></td>
-                                <td><?php echo $lista->getFordeling()[$beboer->getId()]->getGammeltRom()->getNavn(); ?></td>
-                                <td><?php echo $lista->getFordeling()[$beboer->getId()]->getNyttRomId() !== null ? $lista->getFordeling()[$beboer->getId()]->getNyttRom()->getNavn() : ''; ?></td>
-                                <td><?php echo $beboer->getAnsiennitet(); ?></td>
-                                <td><?php echo $beboer->getKlassetrinn(); ?></td>
+                                <td><?php echo $velger->getNavn(); ?></td>
+                                <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammeltRom()->getNavn(); ?></td>
+                                <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn() : ''; ?></td>
+                                <td><?php echo $velger->getAnsiennitet(); ?></td>
+                                <td><?php echo $velger->getKlassetrinn(); ?></td>
                                 <td>
                                     <?php if (!$lista->erFerdig()) { ?>
                                         <button class="btn btn-danger"
-                                                onclick="fjernbeboer(<?php echo $beboer->getId(); ?>)">Fjern
+                                                onclick="fjernvelger(<?php echo $velger->getVelgerId(); ?>)">Fjern
                                         </button>
                                     <?php } ?>
                                 </td>
+                                <td><?php echo $nummer; ?></td>
                             </tr>
 
                             <?php
@@ -237,7 +240,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             $.ajax({
                 type: 'POST',
                 url: '?a=utvalg/romsjef/storhybel/liste/oppdater/<?php echo $lista->getId(); ?>',
-                data: 'beboer_id=' + beboer_id + '&nummer=' + nummer,
+                data: 'velger_id=' + beboer_id + '&nummer=' + nummer,
                 method: 'POST',
                 success: function (data) {
                     tilbakemelding(data);
@@ -303,15 +306,15 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         }
 
-        function fjernbeboer(beboer_id) {
+        function fjernvelger(velger_id) {
 
             $.ajax({
                 type: 'POST',
-                url: '?a=utvalg/romsjef/storhybel/liste/fjernbeboer/<?php echo $lista->getId(); ?>',
-                data: 'beboer_id=' + beboer_id,
+                url: '?a=utvalg/romsjef/storhybel/liste/fjernvelger/<?php echo $lista->getId(); ?>',
+                data: 'velger_id=' + velger_id,
                 method: 'POST',
                 success: function (data) {
-                    $("#" + beboer_id).hide();
+                    $("#" + velger_id).hide();
                     tilbakemelding(data);
                 },
                 error: function (req, stat, err) {

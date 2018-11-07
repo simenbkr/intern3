@@ -43,9 +43,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->getStatusTekst(); ?></td>
-                            <td><?php echo $liste->getVelger()->getFulltNavn(); ?>
+                            <td><?php echo $liste->getVelger()->getNavn(); ?>
                                 (nr. <?php echo $liste->getVelgerNr(); ?>)</td>
-                            <td><?php echo $liste->getNeste()->getFulltNavn(); ?></td>
+                            <td><?php echo $liste->getNeste()->getNavn(); ?></td>
                         </tr>
 
                     <?php } else { ?>

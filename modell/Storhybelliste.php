@@ -31,10 +31,10 @@ class Storhybelliste
         $instans->navn = $rad['navn'];
         $instans->aktiv = $rad['aktiv'];
         $instans->ledige_rom = RomListe::fraStorhybelListe($instans->id);
-        $instans->rekkefolge = BeboerListe::fraStorhybelliste($instans->id);
+        $instans->rekkefolge = StorhybelVelger::medStorhybel($instans->id);
         $instans->velgerNr = $rad['velger'];
-        $instans->velger = $instans->beboerFraNr($rad['velger']);
-        $instans->neste = $instans->beboerFraNr($instans->velgerNr + 1);
+        $instans->velger = $instans->velgerFraNr($rad['velger']);
+        $instans->neste = $instans->velgerFraNr($instans->velgerNr + 1);
         $instans->fordeling = StorhybelFordeling::medStorhybelId($instans->id);
 
         return $instans;
@@ -171,8 +171,8 @@ class Storhybelliste
             $this->velgerNr = 1;
         }
 
-        $this->velger = $this->beboerFraNr($this->velgerNr);
-        $this->neste = $this->beboerFraNr($this->velgerNr + 1);
+        $this->velger = $this->velgerFraNr($this->velgerNr);
+        $this->neste = $this->velgerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
     }
 
@@ -184,8 +184,8 @@ class Storhybelliste
             $this->velgerNr = count($this->rekkefolge);
         }
 
-        $this->velger = $this->beboerFraNr($this->velgerNr);
-        $this->neste = $this->beboerFraNr($this->velgerNr + 1);
+        $this->velger = $this->velgerFraNr($this->velgerNr);
+        $this->neste = $this->velgerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
     }
 
@@ -224,7 +224,7 @@ class Storhybelliste
              * Her må vi opprette en ny database entry.
              */
 
-            $st = DB::getDB()->prepare('INSERT INTO storhybel (navn, semester) VALUES(:navn, :semester)');
+            $st = DB::getDB()->prepare('INSERT INTO storhybel (navn, semester, velger) VALUES(:navn, :semester,1)');
             $st->bindParam(':navn', $this->navn);
             $st->bindParam(':semester', $this->semester);
             $st->execute();
@@ -234,15 +234,23 @@ class Storhybelliste
             $this->lagreRomliste();
             $this->lagreRekkefolge();
 
-            $st = DB::getDB()->prepare('INSERT INTO storhybel_fordeling (storhybel_id,beboer_id,gammel_rom_id) VALUES(:sid,:bid,:rid)');
+            $st = DB::getDB()->prepare('INSERT INTO storhybel_fordeling (storhybel_id,velger_id,gammel_rom_id) VALUES(:sid,:vid,:rid)');
             $st->bindParam(':sid', $this->id);
 
-            foreach ($this->rekkefolge as $beboer) {
-                /* @var Beboer $beboer */
-                $st->bindParam(':bid', $beboer->getId());
-                $st->bindParam(':rid', $beboer->getRom()->getId());
-                $st->execute();
+            foreach ($this->rekkefolge as $velger) {
+                /* @var StorhybelVelger $velger */
+
+                foreach($velger->getBeboere() as $beboer) {
+                    /* @var Beboer $beboer */
+                    $st->bindParam(':vid', $velger->getVelgerId());
+                    $st->bindParam(':rid', $beboer->getRom()->getId());
+                    $st->execute();
+                }
+
+                $velger->setStorhybel($this->id);
+
             }
+
         }
 
         return $this;
@@ -289,13 +297,13 @@ class Storhybelliste
     private function lagreRekkefolge()
     {
         $nummer = 1;
-        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id, beboer_id, nummer) VALUES (:sid, :bid, :nr)');
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id, velger_id, nummer) VALUES (:sid, :vid, :nr)');
         $st->bindParam(':sid', $this->id);
 
-        foreach ($this->rekkefolge as $beboer) {
-            /* @var Beboer $beboer */
+        foreach ($this->rekkefolge as $velger) {
+            /* @var StorhybelVelger $velger */
 
-            $st->bindParam(':bid', $beboer->getId());
+            $st->bindParam(':vid', $velger->getVelgerId());
             $st->bindParam(':nr', $nummer);
             $st->execute();
 
@@ -304,11 +312,11 @@ class Storhybelliste
         }
     }
 
-    public function nummerBeboer(int $beboer_id): int
+    public function nummerVelger(int $velger_id): int
     {
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND velger_id=:vid)');
         $st->bindParam(':sid', $this->id);
-        $st->bindParam(':bid', $beboer_id);
+        $st->bindParam(':vid', $velger_id);
         $st->execute();
 
         $rad = $st->fetch();
@@ -316,17 +324,29 @@ class Storhybelliste
 
     }
 
-    private function beboerFraNr($nr) //Legg til return type ?Beboer når php7.1
+    public static function staticNummerVelger($velger_id, $storhybel_id): int
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND velger_id=:vid)');
+        $st->bindParam(':sid', $storhybel_id);
+        $st->bindParam(':vid', $velger_id);
+        $st->execute();
+
+        $rad = $st->fetch();
+        return $st->rowCount() > 0 ? $rad['nummer'] : -1;
+
+    }
+
+    private function velgerFraNr($nr)
     {
 
-        $st = DB::getDB()->prepare('SELECT beboer_id FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND nummer=:nr)');
+        $st = DB::getDB()->prepare('SELECT velger_id FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND nummer=:nr)');
         $st->bindParam(':sid', $this->id);
         $st->bindParam(':nr', $nr);
         $st->execute();
 
-        $id = $st->fetch()['beboer_id'];
+        $id = $st->fetch()['velger_id'];
 
-        return Beboer::medId($id);
+        return StorhybelVelger::medVelgerId($id);
     }
 
     public function fjernRom(Rom $rom)
@@ -359,13 +379,17 @@ class Storhybelliste
         }
     }
 
-    public function fjernBeboer(int $beboer_id)
+    public function fjernVelger(int $velger_id)
     {
 
-        if (($nr = $this->nummerBeboer($beboer_id)) > 0) {
+        if (($nr = $this->nummerVelger($velger_id)) > 0) {
             // Slett personen fra rekkefølgen.
-            $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE beboer_id=:bid');
-            $st->bindParam(':bid', $beboer_id);
+            $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE velger_id=:vid');
+            $st->bindParam(':vid', $velger_id);
+            $st->execute();
+
+            $st = DB::getDB()->prepare('DELETE FROM storhybel_velger WHERE velger_id=:vid');
+            $st->bindParam(':vid', $velger_id);
             $st->execute();
 
             // Flytt alle beboere under opp én plass.
@@ -376,23 +400,23 @@ class Storhybelliste
         }
     }
 
-    public function leggTilBeboer(int $beboer_id)
+    public function leggTilVelger(int $velger_id)
     {
-        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id,beboer_id,nummer) VALUES(:sid,:bid,:nr)');
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id,velger_id,nummer) VALUES(:sid,:vid,:nr)');
         $st->bindParam(':sid', $this->id);
-        $st->bindParam(':bid', $beboer_id);
+        $st->bindParam(':vid', $velger_id);
         $nr = count($this->rekkefolge) + 1;
         $st->bindParam(':nr', $nr);
         $st->execute();
     }
 
-    public function flyttBeboer(Beboer $beboer, int $nyNr)
+    public function flyttVelger(StorhybelVelger $velger, int $nyNr)
     {
-        $fraNr = $this->nummerBeboer($beboer->getId());
+        $fraNr = $this->nummerVelger($velger->getVelgerId());
 
-        $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE (storhybel_id=:sid AND velger_id=:vid)');
         $st->bindParam(':sid', $this->id);
-        $st->bindParam(':bid', $beboer->getId());
+        $st->bindParam(':vid', $velger->getVelgerId());
         $st->execute();
 
 
@@ -413,10 +437,10 @@ class Storhybelliste
             $st->execute();
         }
 
-        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id, beboer_id, nummer) VALUES(:sid,:bid,:nummer)');
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id, velger_id, nummer) VALUES(:sid,:vid,:nummer)');
         $st->bindParam(':nummer', $nyNr);
         $st->bindParam(':sid', $this->id);
-        $st->bindParam(':bid', $beboer->getId());
+        $st->bindParam(':vid', $velger->getVelgerId());
         $st->execute();
 
 
@@ -430,11 +454,23 @@ class Storhybelliste
         $instans->aktiv = 0;
         $instans->semester = $semester = Funk::generateSemesterString(date('Y-m-d'));
         $instans->ledige_rom = $ledige_rom;
-        $instans->rekkefolge = $rekkefolge;
+        $instans->rekkefolge = self::beboerTilVelgerListe($rekkefolge);
 
         $instans->lagre();
 
         return $instans;
+    }
+
+    public static function beboerTilVelgerListe(array $rekkefolge) : array {
+
+        $velger_rekkefolge = array();
+
+        foreach($rekkefolge as $beboer) {
+            $velger_rekkefolge[] = StorhybelVelger::nyVelger(array($beboer));
+        }
+
+        return $velger_rekkefolge;
+
     }
 
     public static function genererNavn(): string
@@ -492,7 +528,15 @@ class Storhybelliste
     public function slett()
     {
 
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_velger WHERE storhybel_id=:sid');
+        $st->bindParam(':sid', $this->id);
+        $st->execute();
+
         $st = DB::getDB()->prepare('DELETE FROM storhybel_rekkefolge WHERE storhybel_id=:sid');
+        $st->bindParam(':sid', $this->id);
+        $st->execute();
+
+        $st = DB::getDB()->prepare('DELETE FROM storhybel_fordeling WHERE storhybel_id=:sid');
         $st->bindParam(':sid', $this->id);
         $st->execute();
 
@@ -506,19 +550,27 @@ class Storhybelliste
 
     }
 
-    public function velgRom(Beboer $beboer, Rom $rom)
+    public function velgRom(StorhybelVelger $velger, Rom $rom)
     {
 
-        $gammelt_rom = $beboer->getRom();
+        $gamle_rom = array();
 
-        $st = DB::getDB()->prepare('UPDATE storhybel_fordeling SET ny_rom_id=:nri WHERE (storhybel_id=:sid AND beboer_id=:bid)');
+        foreach($velger->getBeboere() as $beboer) {
+            $gamle_rom[] = $beboer->getRom();
+        }
+
+
+        $st = DB::getDB()->prepare('UPDATE storhybel_fordeling SET ny_rom_id=:nri WHERE (storhybel_id=:sid AND velger_id=:vid)');
         $st->bindParam(':nri', $rom->getId());
         $st->bindParam(':sid', $this->id);
-        $st->bindParam(':bid', $beboer->getId());
+        $st->bindParam(':vid', $velger->getVelgerId());
         $st->execute();
 
         $this->fjernRom($rom);
-        $this->leggtilRom($gammelt_rom);
+
+        foreach($gamle_rom as $gammelt_rom) {
+            $this->leggtilRom($gammelt_rom);
+        }
 
         $this->neste();
     }
@@ -533,10 +585,14 @@ class Storhybelliste
     {
         foreach ($this->fordeling as $fordeling) {
             /* @var $fordeling \intern3\StorhybelFordeling */
-            $beboer = Beboer::medId($fordeling->getBeboerId());
+            //$beboer = Beboer::medId($fordeling->getBeboerId());
+            $velger = StorhybelVelger::medVelgerId($fordeling->getVelgerId());
 
-            if ($fordeling->getNyttRomId() !== null && $fordeling->getNyttRom() !== null) {
-                $beboer->byttRom($fordeling->getNyttRom());
+            foreach($velger->getBeboere() as $beboer) {
+                /* @var $beboer \intern3\Beboer */
+                if ($fordeling->getNyttRomId() !== null && $fordeling->getNyttRom() !== null) {
+                    $beboer->byttRom($fordeling->getNyttRom());
+                }
             }
         }
 

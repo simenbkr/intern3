@@ -41,7 +41,7 @@ require_once(__DIR__ . '/../static/topp.php');
 
                 <p><b>Det er din tur!</b></p>
                 <p>Du har 24t på å velge rom. Kontakt nestemann når du er ferdig. Nestemann
-                    er <?php echo $lista->getNeste()->getFulltNavn(); ?>.</p>
+                    er <?php echo $lista->getNeste()->getNavn(); ?>.</p>
 
                 <table class="table table-responsive table-condensed">
 
@@ -144,8 +144,9 @@ require_once(__DIR__ . '/../static/topp.php');
 
                 <tbody>
 
-                <?php foreach ($lista->getRekkefolge() as $nummer => $beboer) {
-                    /* @var $beboer \intern3\Beboer */
+                <?php foreach ($lista->getRekkefolge() as $velger) {
+                    /* @var $velger \intern3\StorhybelVelger */
+                    $nummer = $velger->getNummer();
                     $klassen = '';
                     if ($nummer == $lista->getVelgerNr()) {
                         $klassen = 'danger';
@@ -164,13 +165,13 @@ require_once(__DIR__ . '/../static/topp.php');
                     }
 
                     ?>
-                    <tr id="<?php echo $beboer->getId(); ?>" class="<?php echo $klassen; ?>">
+                    <tr id="<?php echo $velger->getVelgerId(); ?>" class="<?php echo $klassen; ?>">
                         <td class="index"><?php echo $nummer; ?></td>
-                        <td><?php echo $beboer->getFulltNavn(); ?></td>
-                        <td><?php echo $beboer->getAnsiennitet(); ?></td>
-                        <td><?php echo $beboer->getKlassetrinn(); ?></td>
-                        <td><?php echo $lista->getFordeling()[$beboer->getId()]->getGammeltRom()->getNavn(); ?></td>
-                        <td><?php echo $lista->getFordeling()[$beboer->getId()]->getNyttRomId() !== null ? $lista->getFordeling()[$beboer->getId()]->getNyttRom()->getNavn() : ''; ?></td>
+                        <td><?php echo $velger->getNavn(); ?></td>
+                        <td><?php echo $velger->getAnsiennitet(); ?></td>
+                        <td><?php echo $velger->getKlassetrinn(); ?></td>
+                        <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammeltRom()->getNavn(); ?></td>
+                        <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn() : ''; ?></td>
                     </tr>
 
                     <?php

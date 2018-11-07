@@ -20,9 +20,10 @@ class StorhybelCtrl extends AbstraktCtrl
 
         $lista = Storhybelliste::aktiv();
         $aktiv_beboer = $this->cd->getAktivBruker()->getPerson();
-        $nummer = $lista->nummerBeboer($aktiv_beboer->getId());
+        $aktiv_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
+        $nummer = $aktiv_velger->getNummer();
         $beboers_rom = $aktiv_beboer->getRom();
-        $min_tur = ($lista->getVelger()->getId() === $aktiv_beboer->getId());
+        $min_tur = ($lista->getVelgerNr() == $aktiv_velger->getNummer());
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -44,7 +45,7 @@ class StorhybelCtrl extends AbstraktCtrl
                         ($rom->getId() === $beboers_rom->getId() || isset($lista->getLedigeRom()[$rom->getId()]))
                     ) {
 
-                        $lista->velgRom($aktiv_beboer, $rom);
+                        $lista->velgRom($aktiv_velger, $rom);
                         print 'Du har valgt rommet ' . $rom->getNavn() . ' som er av type '. $rom->getType()->getNavn() . '.';
                     }
 

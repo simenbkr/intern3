@@ -38,16 +38,23 @@ DB::getDB()->query($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS `storhybel_rekkefolge` 
 ( `storhybel_id` INT NOT NULL ,
- `beboer_id` INT NOT NULL ,
+ `velger_id` INT NOT NULL ,
   `nummer` INT NOT NULL ) ";
 
 DB::getDB()->query($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS `storhybel_fordeling`
 (`storhybel_id` INT NOT NULL,
-`beboer_id` INT NOT NULL,
+`velger_id` INT NOT NULL,
 `gammel_rom_id` INT,
 `ny_rom_id` INT)";
+
+DB::getDB()->query($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS `storhybel_velger`
+(`velger_id` INT NOT NULL,
+`storhybel_id` INT NOT NULL,
+`beboer_id` INT NOT NULL)";
 
 DB::getDB()->query($sql);
 
