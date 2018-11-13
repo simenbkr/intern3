@@ -218,7 +218,8 @@ class Storhybelliste
 
 
             $this->lagreRekkefolge();
-        } else {
+        }
+        else {
 
             /*
              * Her må vi opprette en ny database entry.

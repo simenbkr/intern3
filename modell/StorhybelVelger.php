@@ -66,13 +66,14 @@ class StorhybelVelger
         return $velgere;
     }
 
-    public static function velgerSort(StorhybelVelger $a, StorhybelVelger $b) {
+    public static function velgerSort(StorhybelVelger $a, StorhybelVelger $b)
+    {
 
-        if($a->getNummer() > $b->getNummer()) {
+        if ($a->getNummer() > $b->getNummer()) {
             return 1;
         }
 
-        if($a->getNummer() === $b->getNummer()) {
+        if ($a->getNummer() === $b->getNummer()) {
             return 0;
         }
 
@@ -103,22 +104,30 @@ class StorhybelVelger
     {
         return $this->nummer;
     }
-
-
+    
     public static function nyVelger(array $beboere)
     {
 
         $velger_id = self::getNextId();
 
+        $instans = new self();
+        $instans->velger_id = $velger_id;
+        $instans->beboere = $beboere;
+        $instans->beboer_ids = array();
+
+        foreach ($beboere as $beboer) {
+            $instans->beboer_ids[] = $beboer->getId();
+        }
+
         $st = DB::getDB()->prepare('INSERT INTO storhybel_velger (velger_id,beboer_id) VALUES(:vid,:bid)');
         $st->bindParam(':vid', $velger_id);
 
-        foreach ($beboere as $beboer) {
-            $st->bindParam(':bid', $beboer->getId());
+        foreach ($instans->beboer_ids as $id) {
+            $st->bindParam(':bid', $id);
             $st->execute();
         }
 
-        return self::medVelgerId($velger_id);
+        return $instans;
     }
 
     public function setStorhybel(int $storhybel_id)
@@ -143,6 +152,7 @@ class StorhybelVelger
         $navn = array();
 
         foreach ($this->beboere as $beboer) {
+
             $navn[] = $beboer->getFulltNavn();
         }
 

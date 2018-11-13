@@ -9,6 +9,7 @@ class StorhybelFordeling
     private $velger_id;
     private $gammel_rom_id;
     private $ny_rom_id;
+    private $romstr;
 
     private static function init(\PDOStatement $st)
     {
@@ -22,7 +23,7 @@ class StorhybelFordeling
 
         $instans->velger_id = $rad['velger_id'];
         $instans->storhybel_id = $rad['storhybel_id'];
-        $instans->gammel_rom_id = $rad['gammel_rom_id'];
+        $instans->gammel_rom_id = array($rad['gammel_rom_id']);
         $instans->ny_rom_id = $rad['ny_rom_id'];
 
         return $instans;
@@ -35,7 +36,7 @@ class StorhybelFordeling
 
         $instans->velger_id = $rad['velger_id'];
         $instans->storhybel_id = $rad['storhybel_id'];
-        $instans->gammel_rom_id = $rad['gammel_rom_id'];
+        $instans->gammel_rom_id = array($rad['gammel_rom_id']);
         $instans->ny_rom_id = $rad['ny_rom_id'];
 
         return $instans;
@@ -61,7 +62,13 @@ class StorhybelFordeling
         $arr = array();
 
         while ($rad = $st->fetch()) {
-            $arr[$rad['velger_id']] = self::init_by_row($rad);
+
+            if(isset($arr[$rad['velger_id']])) {
+                $arr[$rad['velger_id']]->gammel_rom_id[] = $rad['gammel_rom_id'];
+
+            } else {
+                $arr[$rad['velger_id']] = self::init_by_row($rad);
+            }
         }
 
         return $arr;
@@ -77,17 +84,36 @@ class StorhybelFordeling
         return $this->storhybel_id;
     }
 
-    public function getGammeltRomId(): int
+    public function getGammeltRomId(): array
     {
         return $this->gammel_rom_id;
     }
 
-    public function getGammeltRom(): Rom
+    public function getGammeltRom(): array
     {
-        return Rom::medId($this->gammel_rom_id);
+        $arr = array();
+        foreach($this->gammel_rom_id as $id) {
+            $arr[] = Rom::medId($id);
+        }
+
+        return $arr;
     }
 
-    public function getNyttRomId()
+    public function getGammleRomAsString(): string {
+
+        if(!is_null($this->romstr)) {
+            return $this->romstr;
+        } else {
+            foreach($this->getGammeltRom() as $rom) {
+                $ret[] = $rom->getNavn();
+            }
+
+            $this->romstr = implode(', ', $ret);
+            return $this->romstr;
+        }
+    }
+
+    public function getNyttRomId() //?int
     {
         return $this->ny_rom_id;
     }
@@ -97,5 +123,13 @@ class StorhybelFordeling
         return Rom::medId($this->ny_rom_id);
     }
 
+    public static function leggTilRom(int $storhybel_id, int $velger_id, int $rom_id) {
+
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_fordeling (storhybel_id,velger_id,gammel_rom_id) VALUES(:sid,:vid,:grid)');
+        $st->bindParam(':sid', $storhybel_id);
+        $st->bindParam(':vid', $velger_id);
+        $st->bindParam(':grid', $rom_id);
+        $st->execute();
+    }
 
 }

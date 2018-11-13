@@ -19,6 +19,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <p id="tilbakemelding-text"></p>
             </div>
 
+            <?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
+
 
             <div class="col-lg-6">
 
@@ -113,19 +115,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <h3>Legg til beboere</h3>
                         <p>Disse blir lagt til nederst. Kan bare legge til de som ikke er på lista fra før.</p>
 
-                        <p>
-                            <select class="form-control" onchange="leggtilbeboer(this)">
-                                <option>Velg</option>
-
-                                <?php foreach ($beboerliste as $beboer) {
-                                    /* @var $beboer \intern3\Beboer */ ?>
-
-                                    <option value="<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></option>
-
-                                <?php } ?>
-                            </select>
-
-                        </p>
+                            <button class="btn btn-primary" onclick="vis_beboerlisten()">Velg Beboer(e)</button>
 
 
                     </div>
@@ -166,8 +156,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <tr id="<?php echo $velger->getVelgerId(); ?>" class="<?php echo $klassen; ?>">
                                 <td class="index"><?php echo $nummer; ?></td>
                                 <td><?php echo $velger->getNavn(); ?></td>
-                                <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammeltRom()->getNavn(); ?></td>
-                                <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn() : ''; ?></td>
+                                <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammleRomAsString(); ?></td>
+                                <td>
+                                    <?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null
+                                        ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn()
+                                        : ''; ?></td>
                                 <td><?php echo $velger->getAnsiennitet(); ?></td>
                                 <td><?php echo $velger->getKlassetrinn(); ?></td>
                                 <td>
@@ -216,11 +209,28 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             LAGRE
                         </button>
                     </p>
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="beboer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body" id="beboer">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -452,6 +462,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     alert(err);
                 }
             });
+        }
+
+        function vis_beboerlisten() {
+            $("#beboer").load('?a=utvalg/romsjef/storhybel/beboerliste/<?php echo $lista->getId(); ?>');
+            $("#beboer-modal").modal("show");
         }
 
     </script>
