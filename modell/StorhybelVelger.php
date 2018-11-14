@@ -46,10 +46,17 @@ class StorhybelVelger
         $st->bindParam(':sid', $storhybel_id);
         $st->execute();
 
-        return self::medVelgerId($st->fetch()['velger_id']);
+        $arr = array();
+
+        while($rad = $st->fetch()) {
+            $arr[] = self::medVelgerId($rad['velger_id']);
+        }
+
+        return $arr;
+
     }
 
-    public static function medStorhybel(int $storhybel_id): array
+    public static function medStorhybel($storhybel_id): array
     {
 
         $st = DB::getDB()->prepare('SELECT DISTINCT velger_id FROM storhybel_velger WHERE storhybel_id=:sid ORDER BY velger_id ASC');

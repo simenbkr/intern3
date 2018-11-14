@@ -13,8 +13,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
             case 'oppdater':
 
-                if ($lista->erAktiv()) {
-                    print "Kan ikke flytte på rekkefølgen mens lista er aktiv!";
+                if($lista->erFerdig()) {
+                    Funk::setError("Du kan ikke flytte på rekkefølgen når lista er ferdig.");
+                    header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
                     exit();
                 }
 
@@ -74,7 +75,8 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                 if(count($beboere) < 1) {
                     Funk::setError("Det ser ut til at du har valgt null beboere. Kan dette stemme?");
-                    exit("Det ser ut til at du har valgt null beboere. Kan dette stemme?");
+                    header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
+                    exit();
                 }
 
                 // Opprett velger, legg til velgeren på lista.
@@ -150,8 +152,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                 case 'liste':
 
-                    if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) &&
-                        ($lista = Storhybelliste::medId($sisteArg)) !== null) {
+                    if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) && !is_null($sisteArg) &&
+                        ($lista = Storhybelliste::medId($sisteArg))) {
+
 
                         $alle_rom = array_udiff(RomListe::alle(), $lista->getLedigeRom(),
                             function (Rom $a, Rom $b) {
@@ -191,22 +194,21 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                                 return $a->getId() - $b->getId();
                             });
                         */
-                        $beboerliste = array_udiff(BeboerListe::aktive(), BeboerListe::singleStorhybelliste($lista->getId()),
+
+                        $beboerliste_alle = BeboerListe::aktive();
+                        $ikke_reg_beboerliste = array_udiff($beboerliste_alle, BeboerListe::singleStorhybelliste($lista->getId()),
                             function(Beboer $a, Beboer $b) {
                                 return $a->getId() - $b->getId();
                             });
 
-                        $ut = "<form action=\"?a=utvalg/romsjef/storhybel/liste/leggtilvelger/{$lista->getId()}\" method='post'>";
-                        foreach ($beboerliste as $beboer) {
-                            /* @var \intern3\Beboer $beboer */
-                            $ut .= '<div class="checkbox"><label>';
-                            $ut .= "<input name='beboere[]' type='checkbox' value=\"{$beboer->getId()}\"/>{$beboer->getFulltNavn()}<br/>";
-                            $ut .= '</label></div>';
-                        }
-                        $ut .= "<button class=\"btn btn-default\">Velg</button>";
-                        $ut .= '</form>';
-                        print $ut;
+
+                        $dok = new Visning($this->cd);
+                        $dok->set('lista', $lista);
+                        $dok->set('ikke_reg_beboerliste', $ikke_reg_beboerliste);
+                        $dok->set('beboerliste_alle', $beboerliste_alle);
+                        $dok->vis('utvalg/romsjef/velg_modal.php');
                         break;
+
                     }
 
                 case '':

@@ -393,6 +393,10 @@ class Storhybelliste
             $st->bindParam(':vid', $velger_id);
             $st->execute();
 
+            $st = DB::getDB()->prepare('DELETE FROM storhybel_fordeling WHERE velger_id=:vid');
+            $st->bindParam(':vid', $velger_id);
+            $st->execute();
+
             // Flytt alle beboere under opp én plass.
             $st = DB::getDB()->prepare('UPDATE storhybel_rekkefolge SET nummer=nummer-1 WHERE (storhybel_id=:sid AND nummer > :nr)');
             $st->bindParam(':sid', $this->id);
@@ -574,6 +578,33 @@ class Storhybelliste
         }
 
         $this->neste();
+    }
+
+    /*
+     * Dersom en beboer er på flere velger-objekter, er det mulig å passe på den første.
+     */
+    public function kanPasse(Beboer $beboer, StorhybelVelger $aktuell_velger) : bool {
+
+        $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM storhybel_velger AS sv WHERE (sv.storhybel_id = :sid AND sv.beboer_id= :bid)');
+        $st->execute(['sid' => $this->id, 'bid' => $beboer->getId()]);
+        $count = $st->fetch()['cnt'];
+
+        if($count < 2) {
+            return false;
+        }
+
+        $velgere = StorhybelVelger::medBeboerIdStorhybelId($beboer->getId(), $this->id);
+        $minsteNr = $aktuell_velger->getNummer();
+        foreach ($velgere as $velger) {
+
+            if($velger->getNummer() < $minsteNr) {
+                $minsteNr = $velger->getNummer();
+            }
+
+        }
+
+        return $minsteNr === $aktuell_velger->getNummer();
+
     }
 
     /*

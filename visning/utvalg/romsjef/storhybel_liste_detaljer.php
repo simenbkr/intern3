@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <p id="tilbakemelding-text"></p>
             </div>
 
-            <?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
+            <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
 
             <div class="col-lg-6">
@@ -29,16 +29,17 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <?php if (!$lista->erFerdig()) { ?>
                     <p>
                         <?php if ($lista->erAktiv()) { ?>
-                            <button class="btn btn-warning" onclick="deaktiver()">Deaktiver</button>
+                            <button class="btn btn-warning" onclick="deaktiver()" id="aktiveringsknapp">Deaktiver
+                            </button>
                         <?php } else { ?>
-                            <button class="btn btn-warning" onclick="aktiver()">Aktivér</button>
+                            <button class="btn btn-warning" onclick="aktiver()" id="aktiveringsknapp">Aktivér</button>
                         <?php } ?>
 
-                        <button class="btn btn-danger" onclick="slett()">Slett</button>
+                        <button class="btn btn-danger" onclick="vis_slett()" id="slett">Slett</button>
 
-                        <button class="btn btn-info" onclick="neste()">Neste person</button>
-                        <button class="btn btn-default" onclick="forrige()">Forrige person</button>
-                        <button class="btn btn-primary" onclick="vis()">Lagre resultat</button>
+                        <button class="btn btn-info" onclick="neste()" id="neste">Neste person</button>
+                        <button class="btn btn-default" onclick="forrige()" id="forrige">Forrige person</button>
+                        <button class="btn btn-primary" onclick="vis()" id="commit-res">Lagre resultat</button>
                     </p>
 
                 <?php } ?>
@@ -57,7 +58,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                 if (in_array($rom, $ledige_rom)) {
                                     ?>
 
-                                    <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?>(LEDIG)
+                                    <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)
                                     </option>
                                 <?php } else { ?>
 
@@ -115,70 +116,67 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <h3>Legg til beboere</h3>
                         <p>Disse blir lagt til nederst. Kan bare legge til de som ikke er på lista fra før.</p>
 
-                            <button class="btn btn-primary" onclick="vis_beboerlisten()">Velg Beboer(e)</button>
+                        <button class="btn btn-primary" onclick="vis_beboerlisten()">Velg Beboer(e)</button>
 
 
                     </div>
 
                 <?php } ?>
 
-                <?php if ($lista->erAktiv() || $lista->erFerdig()) { ?>
-                <table class="table table-responsive table-hover grid">
-                    <?php } else { ?>
-                    <table class="table table-responsive table-hover grid" id="sort">
-                        <?php } ?>
 
-                        <thead>
-                        <tr>
-                            <th class="index">Nr.</th>
-                            <th>Navn</th>
-                            <th>Gammelt Rom</th>
-                            <th>Nytt Rom</th>
-                            <th>Ansiennitet</th>
-                            <th>Klassetrinn</th>
-                            <th></th>
-                            <th></th>
+                <table class="table table-responsive table-hover grid" id="sort">
+
+                    <thead>
+                    <tr>
+                        <th class="index">Nr.</th>
+                        <th>Navn</th>
+                        <th>Gammelt Rom</th>
+                        <th>Nytt Rom</th>
+                        <th>Ansiennitet</th>
+                        <th>Klassetrinn</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <?php foreach ($lista->getRekkefolge() as $velger) {
+                        /* @var $velger \intern3\StorhybelVelger */
+                        $nummer = $velger->getNummer();
+                        $klassen = '';
+                        if ($nummer == $lista->getVelgerNr()) {
+                            $klassen = 'danger';
+                        }
+
+                        ?>
+
+                        <tr id="<?php echo $velger->getVelgerId(); ?>" class="<?php echo $klassen; ?>">
+                            <td class="index"><?php echo $nummer; ?></td>
+                            <td><?php echo $velger->getNavn(); ?></td>
+                            <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammleRomAsString(); ?></td>
+                            <td>
+                                <?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null
+                                    ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn()
+                                    : ''; ?></td>
+                            <td><?php echo $velger->getAnsiennitet(); ?></td>
+                            <td><?php echo $velger->getKlassetrinn(); ?></td>
+                            <td>
+                                <?php if (!$lista->erFerdig()) { ?>
+                                    <button class="btn btn-danger"
+                                            onclick="fjernvelger(<?php echo $velger->getVelgerId(); ?>)">Fjern
+                                    </button>
+                                <?php } ?>
+                            </td>
+                            <td><?php echo $nummer; ?></td>
                         </tr>
-                        </thead>
 
-                        <tbody>
-
-                        <?php foreach ($lista->getRekkefolge() as $velger) {
-                            /* @var $velger \intern3\StorhybelVelger */
-                            $nummer = $velger->getNummer();
-                            $klassen = '';
-                            if ($nummer == $lista->getVelgerNr()) {
-                                $klassen = 'danger';
-                            }
-
-                            ?>
-
-                            <tr id="<?php echo $velger->getVelgerId(); ?>" class="<?php echo $klassen; ?>">
-                                <td class="index"><?php echo $nummer; ?></td>
-                                <td><?php echo $velger->getNavn(); ?></td>
-                                <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammleRomAsString(); ?></td>
-                                <td>
-                                    <?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null
-                                        ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn()
-                                        : ''; ?></td>
-                                <td><?php echo $velger->getAnsiennitet(); ?></td>
-                                <td><?php echo $velger->getKlassetrinn(); ?></td>
-                                <td>
-                                    <?php if (!$lista->erFerdig()) { ?>
-                                        <button class="btn btn-danger"
-                                                onclick="fjernvelger(<?php echo $velger->getVelgerId(); ?>)">Fjern
-                                        </button>
-                                    <?php } ?>
-                                </td>
-                                <td><?php echo $nummer; ?></td>
-                            </tr>
-
-                            <?php
-                        } ?>
-                        </tbody>
+                        <?php
+                    } ?>
+                    </tbody>
 
 
-                    </table>
+                </table>
 
 
             </div>
@@ -187,61 +185,112 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </div>
     </div>
 
-    <div class="modal fade" id="commit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Lagre</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="rom">
-                    <p>
-                        Når du trykker på knappen under, vil rommene fordeles til beboerene, og storhybellista
-                        deaktiveres. Trykk kun på denne når lista er helt ferdig.
-                        Det er ingen vei tilbake.
-                    </p>
-
-                    <p>
-                        <button class="btn btn-danger" onclick="commit()">
-                            LAGRE
+    <div id="modaler">
+        <div class="modal fade" id="commit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Lagre</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
                         </button>
-                    </p>
+                    </div>
+                    <div class="modal-body" id="rom">
+                        <p>
+                            Når du trykker på knappen under, vil rommene fordeles til beboerene, og storhybellista
+                            deaktiveres. Trykk kun på denne når lista er helt ferdig.
+                            Det er ingen vei tilbake.
+                        </p>
+
+                        <p>
+                            <button class="btn btn-danger" onclick="commit()">
+                                LAGRE
+                            </button>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+            </div>
+        </div>
+
+        <div class="modal fade" id="slett-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Slette Storhybellisten</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="rom">
+                        <p>
+                            Når du trykker på knappen under, vil hele lista slettes for godt. Permanent.
+                            Det er ingen vei tilbake. Er du sikker?
+                        </p>
+
+                        <p>
+                            <button class="btn btn-danger" onclick="slett()">
+                                SLETT
+                            </button>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="beboer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Velg beboer(e)</h4>
+                    </div>
+                    <div class="modal-body" id="beboer">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <div class="modal fade" id="beboer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-                </div>
-                <div class="modal-body" id="beboer">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
+
+        var markert = <?php echo $lista->getVelgerNr(); ?>;
+        var tabellen = document.getElementById("sort");
+
+        function updateMarkert(ny) {
+            tabellen.rows[markert].classList.remove('danger');
+            var length = tabellen.rows.length;
+            if(ny === 0 || ny % length === 0) {
+                if(markert - ny < 0) {
+                    markert = ny % length + 1;
+                } else {
+                    markert = length - 1;
+                }
+            } else {
+                markert = ny % length;
+            }
+
+            tabellen.rows[markert].classList.add('danger');
+        }
+
 
         function tilbakemelding(beskjed) {
             document.getElementById("success").style.display = "table";
             document.getElementById("tilbakemelding-text").innerHTML = beskjed;
-        }
+        };
 
         var beboer_id;
 
@@ -289,6 +338,12 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 success: function (data) {
                     tilbakemelding(data);
                     $("#status").text("Status: Aktiv");
+                    document.getElementById('aktiveringsknapp').onclick = function () {
+                        deaktiver();
+                    };
+                    document.getElementById('aktiveringsknapp').innerText = 'Deaktiver';
+                    updateMarkert(1);
+
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -307,13 +362,15 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 success: function (data) {
                     tilbakemelding(data);
                     $("#status").text("Status: Inaktiv");
-                    //window.location.reload();
+                    document.getElementById('aktiveringsknapp').onclick = function () {
+                        aktiver();
+                    };
+                    document.getElementById('aktiveringsknapp').innerText = 'Aktiver';
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
-
         }
 
         function fjernvelger(velger_id) {
@@ -378,11 +435,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 method: 'POST',
                 success: function (data) {
                     tilbakemelding(data);
+                    updateMarkert(markert + 1);
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
+
 
         }
 
@@ -394,11 +453,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 method: 'POST',
                 success: function (data) {
                     tilbakemelding(data);
+                    updateMarkert(markert - 1);
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
+
         }
 
         function leggtilbeboer(selected) {
@@ -446,6 +507,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         function vis() {
             $("#commit-modal").modal("show");
+        }
+
+        function vis_slett() {
+            $("#slett-modal").modal("show");
         }
 
         function commit() {

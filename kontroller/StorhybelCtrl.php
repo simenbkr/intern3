@@ -20,12 +20,30 @@ class StorhybelCtrl extends AbstraktCtrl
 
         $lista = Storhybelliste::aktiv();
         $aktiv_beboer = $this->cd->getAktivBruker()->getPerson();
-        $aktiv_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
-        $nummer = $aktiv_velger->getNummer();
-        $beboers_rom = $aktiv_beboer->getRom();
-        $min_tur = ($lista->getVelgerNr() == $aktiv_velger->getNummer());
+        $aktuell_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $persnummer = array();
+        $aktiv_velger = null;
+        $min_tur = false;
+        $kan_passe = false;
+        foreach($aktuell_velger as $velger) {
+
+            /* @var StorhybelVelger $velger */
+
+            // Sjekk om det er den aktive brukerens tur
+            if($lista->getVelgerNr() == $velger->getNummer()) {
+                $min_tur = true;
+                $aktiv_velger = $velger;
+                $velgers_rom = $lista->getFordeling()[$aktiv_velger->getVelgerId()]->getGammeltRomId();
+                $kan_passe = $lista->kanPasse($aktiv_beboer, $aktiv_velger);
+            }
+
+            $persnummer[] = $velger->getNummer();
+        }
+
+        $persnummer = implode('., ', $persnummer);
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST' && $min_tur) {
 
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
@@ -40,13 +58,20 @@ class StorhybelCtrl extends AbstraktCtrl
                      *      - Er 'up for grabs'.
                      */
                     if(  is_numeric($post['rom_id']) &&
-                        ($rom = Rom::medId($post['rom_id'])) !== null &&
-                         $min_tur &&
-                        ($rom->getId() === $beboers_rom->getId() || isset($lista->getLedigeRom()[$rom->getId()]))
+                        ($rom = Rom::medId($post['rom_id'])) !== null
+                        && (in_array($rom->getId(), $velgers_rom) || isset($lista->getLedigeRom()[$rom->getId()]))
                     ) {
 
                         $lista->velgRom($aktiv_velger, $rom);
                         print 'Du har valgt rommet ' . $rom->getNavn() . ' som er av type '. $rom->getType()->getNavn() . '.';
+                    }
+
+                case 'pass':
+                    if($kan_passe && isset($post['sid']) && $post['sid'] == $lista->getId()) {
+                        $lista->neste();
+                        Funk::setSuccess("Passet til nestemann!");
+                    } else {
+                        Funk::setError("Kan ikke passe!");
                     }
 
 
@@ -81,9 +106,11 @@ class StorhybelCtrl extends AbstraktCtrl
 
                     $dok = new Visning($this->cd);
                     $dok->set('lista', $lista);
-                    $dok->set('persnummer', $nummer);
                     $dok->set('min_tur', $min_tur);
-                    $dok->set('beboers_rom', $beboers_rom);
+                    $dok->set('kan_passe', $kan_passe);
+                    $dok->set('persnummer', $persnummer);
+                    $dok->set('aktiv_velger', $aktiv_velger);
+                    $dok->set('aktiv_beboer', $aktiv_beboer);
                     $dok->vis('storhybel/storhybel.php');
                     break;
             }

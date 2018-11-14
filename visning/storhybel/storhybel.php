@@ -6,6 +6,8 @@ require_once(__DIR__ . '/../static/topp.php');
 /* @var $min_tur bool */
 /* @var $persnummer int */
 /* @var $beboers_rom \intern3\Rom */
+/* @var $aktiv_velger \intern3\StorhybelVelger */
+
 
 ?>
     <style>
@@ -22,6 +24,24 @@ require_once(__DIR__ . '/../static/topp.php');
             $("#velg-modal").modal("show");
         }
 
+        <?php if($kan_passe) { ?>
+        function pass() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=storhybel/pass',
+                data: 'sid=' + '<?php echo $lista->getId(); ?>',
+                method: 'POST',
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
+        <?php } ?>
+
 
     </script>
 
@@ -36,15 +56,28 @@ require_once(__DIR__ . '/../static/topp.php');
             <p id="tilbakemelding-text"></p>
         </div>
 
+        <?php require_once (__DIR__ . '/../static/tilbakemelding.php'); ?>
+
         <?php if ($min_tur) { ?>
             <div class="col-lg-6">
 
-                <p><b>Det er din tur!</b></p>
+                <h3><b>Det er din tur!</b></h3>
                 <p>Du har 24t på å velge rom. Kontakt nestemann når du er ferdig. Nestemann
                     er <?php echo $lista->getNeste()->getNavn(); ?>.</p>
 
-                <table class="table table-responsive table-condensed">
 
+                <?php if ($kan_passe) { ?>
+                    <p>
+                        Du kan passe, dersom du ønsker å benytte din neste anledning til å velge rom.
+                    </p>
+                    <p>
+                        <b>Merk: det er ingen vei tilbake etter at du trykker på knappen under.</b>
+                    </p>
+                    <p>
+                        <button class="btn btn-danger" onclick="pass()">PASS</button>
+                    </p>
+                <?php } ?>
+                <table class="table table-responsive table-condensed">
                     <thead>
                     <tr>
                         <th>Romnummer</th>
@@ -54,17 +87,23 @@ require_once(__DIR__ . '/../static/topp.php');
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td><?php echo $beboers_rom->getNavn(); ?></td>
-                        <td><?php echo $beboers_rom->getType()->getNavn(); ?></td>
-                        <td>
-                            <button class="btn btn-warning"
-                                    onclick="vis(<?php echo $beboers_rom->getId(); ?>)">
-                                Velg
-                            </button>
-                        </td>
+                    <?php foreach ($aktiv_velger->getBeboere() as $beboer) {
+                        /* @var \intern3\Beboer $beboer */
+                        ?>
 
-                    </tr>
+                        <tr>
+                            <td><?php echo $beboer->getRom()->getNavn(); ?></td>
+                            <td><?php echo $beboer->getRom()->getType()->getNavn(); ?></td>
+                            <td>
+                                <button class="btn btn-warning"
+                                        onclick="vis(<?php echo $beboer->getRom()->getId(); ?>)">
+                                    Velg
+                                </button>
+                            </td>
+
+                        </tr>
+                    <?php }
+                      ?>
 
 
                     <?php foreach ($lista->getLedigeRom() as $rom) {
@@ -170,7 +209,7 @@ require_once(__DIR__ . '/../static/topp.php');
                         <td><?php echo $velger->getNavn(); ?></td>
                         <td><?php echo $velger->getAnsiennitet(); ?></td>
                         <td><?php echo $velger->getKlassetrinn(); ?></td>
-                        <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammeltRom()->getNavn(); ?></td>
+                        <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammleRomAsString(); ?></td>
                         <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn() : ''; ?></td>
                     </tr>
 
