@@ -9,28 +9,56 @@
 
     var knappen = document.getElementById('knapp');
 
-    $('#collapse1').on('show.bs.collapse', function() {
+    $('#collapse1').on('shown.bs.collapse', function() {
         knappen.onclick = function () {
             document.getElementById('form1').submit();
         }
     });
 
-    $('#collapse1').on('hidden.bs.collapse', function() {
+    $('#collapse1').on('hide.bs.collapse', function() {
         knappen.onclick = function(){};
     })
 
-    $('#collapse2').on('show.bs.collapse', function() {
+    $('#collapse2').on('shown.bs.collapse', function() {
         knappen.onclick = function () {
             document.getElementById('form2').submit();
         }
     });
 
-    $('#collapse2').on('hidden.bs.collapse', function() {
+    $('#collapse2').on('hide.bs.collapse', function() {
         knappen.onclick = function(){};
     })
 
+    function setSingel() {
+        mode = 'singel';
+        var lista = document.getElementsByClassName('mode');
+        for(var i = 0; i < lista.length; i++) {
+            var item = lista[i];
+            item.value = 'singel';
+        }
+    }
+
+    function setDobbel(){
+        mode = 'dobbel';
+        var lista = document.getElementsByClassName('mode');
+        for(var i = 0; i < lista.length; i++) {
+            var item = lista[i];
+            item.value = 'dobbel';
+        }
+    }
+
 </script>
 
+<p>Velg modus. Fler gjør at alle du velger blir én og samme velger. Singel legger til alle valgte som individuelle velgere.</p>
+<div class="btn-group" data-toggle="buttons">
+    <label class="btn btn-primary active">
+        <input type="radio" onchange="setSingel()" name="options" id="option1" checked> Singel
+    </label>
+    <label class="btn btn-primary">
+        <input type="radio" onchange="setDobbel()" name="options" id="option2"> Fler
+    </label>
+</div>
+<hr>
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -44,6 +72,7 @@
 
                 <form id="form1" action="?a=utvalg/romsjef/storhybel/liste/leggtilvelger/<?php echo $lista->getId(); ?>"
                       method='post'>
+                    <input type="hidden" name="mode" class="mode" value="singel">
                     <table class="table table-condensed">
                         <thead>
                         <tr>
@@ -71,7 +100,7 @@
             </div>
         </div>
     </div>
-
+<?php if(!$bare_manglende) { ?>
     <div class="panel panel-default" style="height:100px overflow:auto">
         <div class="panel-heading">
             <h4 class="panel-title">
@@ -84,6 +113,7 @@
 
                 <form id="form2" action="?a=utvalg/romsjef/storhybel/liste/leggtilvelger/<?php echo $lista->getId(); ?>"
                       method='post'>
+                    <input type="hidden" name="mode" class="mode" value="singel">
                     <table class="table table-condensed">
                         <thead>
                         <tr>
@@ -113,6 +143,7 @@
             </div>
         </div>
     </div>
+    <?php } ?>
 </div>
 
 <button class="btn btn-default btn-block" id="knapp">Velg</button>
