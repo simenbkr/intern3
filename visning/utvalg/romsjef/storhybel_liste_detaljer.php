@@ -7,10 +7,12 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
     <div class="container">
         <div class="col-lg-12">
-            <h1>Utvalget &raquo; Romsjef &raquo; Storhybel administrasjon for
+            <h1>Utvalget &raquo; Romsjef &raquo; Administrasjon for
                 &raquo; <?php echo $lista->getNavn(); ?></h1>
 
-            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel">Ny</a> ]
+            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
+                Storhybelliste</a> ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
+            [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
             <hr>
 
             <div class="alert alert-success fade in" id="success"
@@ -248,7 +250,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         <div class="modal fade" id="beboer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span

@@ -13,7 +13,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
             case 'oppdater':
 
-                if($lista->erFerdig()) {
+                if ($lista->erFerdig()) {
                     Funk::setError("Du kan ikke flytte på rekkefølgen når lista er ferdig.");
                     header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
                     exit();
@@ -66,37 +66,56 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 break;
             case 'leggtilvelger':
                 $beboere = array();
-                foreach($post['beboere'] as $beboer_id) {
-                    if(($beboer = Beboer::medId($beboer_id)) !== null) {
+                foreach ($post['beboere'] as $beboer_id) {
+                    if (($beboer = Beboer::medId($beboer_id)) !== null) {
                         $beboere[] = $beboer;
 
                     }
                 }
 
-                if(count($beboere) < 1) {
+                if (count($beboere) < 1) {
                     Funk::setError("Det ser ut til at du har valgt null beboere. Kan dette stemme?");
                     header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
                     exit();
                 }
 
-                // Opprett velger, legg til velgeren på lista.
-                $velger = StorhybelVelger::nyVelger($beboere);
-                $lista->leggTilVelger($velger->getVelgerId());
-                $velger->setStorhybel($lista->getId());
+                if ($post['mode'] == 'dobbel') {
 
-                // Legg til velgernes rom på fordelinga
+                    // Opprett velger, legg til velgeren på lista.
+                    $velger = StorhybelVelger::nyVelger($beboere);
+                    $lista->leggTilVelger($velger->getVelgerId());
+                    $velger->setStorhybel($lista->getId());
 
-                foreach($beboere as $beboer) {
-                    /* @var $beboer Beboer */
-                    StorhybelFordeling::leggTilRom($lista->getId(), $velger->getVelgerId(), $beboer->getRomId());
+                    // Legg til velgernes rom på fordelinga
+
+                    foreach ($beboere as $beboer) {
+                        /* @var $beboer Beboer */
+                        StorhybelFordeling::leggTilRom($lista->getId(), $velger->getVelgerId(), $beboer->getRomId());
+                    }
+
+
+                    $success = "La til {$velger->getNavn()} som en velger med {$velger->getAnsiennitet()} ansiennitetspoeng.";
+                    Funk::setSuccess($success);
+                    header('Location: ?a=utvalg/romsjef/storhybel/liste/' . $lista->getId());
+                    exit($success);
+                    break;
+                } elseif ($post['mode'] == 'singel') {
+                    $success = '';
+                    foreach ($beboere as $beboer) {
+
+                        $velger = StorhybelVelger::nyVelger(array($beboer));
+                        $lista->leggTilVelger($velger->getVelgerId());
+                        $velger->setStorhybel($lista->getId());
+
+                        // Legg til velgernes rom på fordelinga
+                        StorhybelFordeling::leggTilRom($lista->getId(), $velger->getVelgerId(), $beboer->getRomId());
+                        $success .= "La til {$velger->getNavn()} som en velger med {$velger->getAnsiennitet()} ansiennitetspoeng.<br/>";
+                    }
+                    Funk::setSuccess($success);
+                    header('Location: ?a=utvalg/romsjef/storhybel/liste/' . $lista->getId());
+                    exit($success);
+                    break;
                 }
-
-
-                $success = "La til {$velger->getNavn()} som en velger med {$velger->getAnsiennitet()} ansiennitetspoeng.";
-                Funk::setSuccess($success);
-                header('Location: ?a=utvalg/romsjef/storhybel/liste/' . $lista->getId());
-                exit($success);
-
                 break;
             case 'neste':
                 $lista->neste();
@@ -120,6 +139,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
         $sisteArg = $this->cd->getSisteArg();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             switch ($aktueltArg) {
 
@@ -133,7 +153,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     break;
                 case 'ny':
 
-                    $ledige_rom = RomListe::alleLedige();
+                    $ledige_rom = RomListe::ledigeStorhybelRom();
                     $beboerliste = BeboerListe::aktive();
                     usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));
 
@@ -143,12 +163,25 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     header("Location: ?a=utvalg/romsjef/storhybel/liste/$id");
                     exit();
 
+                case 'korr':
+                    $ledige_rom = RomListe::ledigeKorrhybler();
+                    $beboerliste = array();
+
+                    foreach (filter_var_array(json_decode($_POST['beboer_ids'])) as $id) {
+                        $beboerliste[] = Beboer::medId($id);
+                    }
+
+                    usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));
+                    $lista = Storhybelliste::nyListe($ledige_rom, $beboerliste, 'Korrhybelliste');
+                    $id = $lista->getId();
+
+                    print $id;
+                    exit();
             }
 
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             switch ($aktueltArg) {
-
 
                 case 'liste':
 
@@ -163,11 +196,11 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
 
                         $beboerliste = array_udiff(BeboerListe::aktive(), BeboerListe::singleStorhybelliste($lista->getId()),
-                            function(Beboer $a, Beboer $b) {
+                            function (Beboer $a, Beboer $b) {
                                 return $a->getId() - $b->getId();
                             });
 
-                        $ledige_rom = RomListe::alleLedige();
+                        $ledige_rom = RomListe::ledigeStorhybelRom();
                         $dok = new Visning($this->cd);
                         $dok->set('beboerliste', $beboerliste);
                         $dok->set('lista', $lista);
@@ -185,6 +218,17 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     $dok->vis('utvalg/romsjef/storhybel_liste.php');
                     break;
 
+                case 'korr':
+                    $ledige_rom = RomListe::ledigeKorrhybler();
+                    $beboerliste = BeboerListe::aktive();
+
+                    usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));
+                    $dok = new Visning($this->cd);
+                    $dok->set('ledige_rom', $ledige_rom);
+                    $dok->set('beboerliste', $beboerliste);
+                    $dok->vis('utvalg/romsjef/storhybel_korrhybel.php');
+                    break;
+
                 case 'beboerliste':
                     if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) &&
                         ($lista = Storhybelliste::medId($sisteArg)) !== null) {
@@ -197,13 +241,15 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                         $beboerliste_alle = BeboerListe::aktive();
                         $ikke_reg_beboerliste = array_udiff($beboerliste_alle, BeboerListe::singleStorhybelliste($lista->getId()),
-                            function(Beboer $a, Beboer $b) {
+                            function (Beboer $a, Beboer $b) {
                                 return $a->getId() - $b->getId();
                             });
 
+                        $bare_manglende = (strpos($lista->getNavn(), 'Korr') !== false);
 
                         $dok = new Visning($this->cd);
                         $dok->set('lista', $lista);
+                        $dok->set('bare_manglende', $bare_manglende);
                         $dok->set('ikke_reg_beboerliste', $ikke_reg_beboerliste);
                         $dok->set('beboerliste_alle', $beboerliste_alle);
                         $dok->vis('utvalg/romsjef/velg_modal.php');
@@ -215,7 +261,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 default:
 
 
-                    $ledige_rom = RomListe::alleLedige();
+                    $ledige_rom = RomListe::ledigeStorhybelRom();
                     $beboerliste = BeboerListe::aktive();
 
                     usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));

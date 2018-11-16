@@ -451,11 +451,16 @@ class Storhybelliste
 
     }
 
-    public static function nyListe($ledige_rom, $rekkefolge): Storhybelliste
+    public static function nyListe($ledige_rom, $rekkefolge, $navn = null): Storhybelliste
     {
 
         $instans = new Storhybelliste();
-        $instans->navn = self::genererNavn();
+
+        if(!is_null($navn)) {
+            $instans->navn = self::genererNavn($navn);
+        } else {
+            $instans->navn = self::genererNavn();
+        }
         $instans->aktiv = 0;
         $instans->semester = $semester = Funk::generateSemesterString(date('Y-m-d'));
         $instans->ledige_rom = $ledige_rom;
@@ -478,20 +483,52 @@ class Storhybelliste
 
     }
 
-    public static function genererNavn(): string
+    public static function genererNavn($type = null): string
     {
+        if(!is_null($type)) {
+            $typen = $type;
+        } else {
+            $typen = 'Storhybelliste';
+        }
 
         $semester_readable = Funk::genReadableSemStr(date('Y-m-d'));
         $semester = Funk::generateSemesterString(date('Y-m-d'));
 
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE semester=:semester');
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (semester=:semester AND navn LIKE "%:type"');
+        $st->bindParam(':semester', $semester);
+        $st->bindParam(':type', $typen);
+        $st->execute();
+
+        $nummer = $st->rowCount() + 1;
+
+        return "{$typen} {$semester_readable} - Nr. {$nummer}";
+
+    }
+
+    public static function genererKorrNavn() : string {
+        $semester_readable = Funk::genReadableSemStr(date('Y-m-d'));
+        $semester = Funk::generateSemesterString(date('Y-m-d'));
+
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (semester=:semester AND navn LIKE "%Korrhybelliste%" ');
         $st->bindParam(':semester', $semester);
         $st->execute();
 
         $nummer = $st->rowCount() + 1;
 
-        return "{$semester_readable} - Nr. {$nummer}";
+        return "Korrhybelliste {$semester_readable} - Nr. {$nummer}";
+    }
 
+    public static function genererSPNavn() : string {
+        $semester_readable = Funk::genReadableSemStr(date('Y-m-d'));
+        $semester = Funk::generateSemesterString(date('Y-m-d'));
+
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (semester=:semester AND navn LIKE "%Stor Parhybelliste%" ');
+        $st->bindParam(':semester', $semester);
+        $st->execute();
+
+        $nummer = $st->rowCount() + 1;
+
+        return "Stor Parhybelliste {$semester_readable} - Nr. {$nummer}";
     }
 
     public static function alle()
