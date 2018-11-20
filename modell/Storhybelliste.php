@@ -135,6 +135,11 @@ class Storhybelliste
         $this->ledige_rom = $ledige_rom;
     }
 
+    public function setRekkefolge(array $rekkefolge)
+    {
+        $this->rekkefolge = $rekkefolge;
+    }
+
     public function setNeste(Beboer $beboer)
     {
         $this->neste = $beboer;
@@ -218,8 +223,7 @@ class Storhybelliste
 
 
             $this->lagreRekkefolge();
-        }
-        else {
+        } else {
 
             /*
              * Her må vi opprette en ny database entry.
@@ -241,7 +245,7 @@ class Storhybelliste
             foreach ($this->rekkefolge as $velger) {
                 /* @var StorhybelVelger $velger */
 
-                foreach($velger->getBeboere() as $beboer) {
+                foreach ($velger->getBeboere() as $beboer) {
                     /* @var Beboer $beboer */
                     $st->bindParam(':vid', $velger->getVelgerId());
                     $st->bindParam(':rid', $beboer->getRom()->getId());
@@ -405,12 +409,14 @@ class Storhybelliste
         }
     }
 
-    public function leggTilVelger(int $velger_id)
+    public function leggTilVelger(int $velger_id, int $nr = null)
     {
         $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id,velger_id,nummer) VALUES(:sid,:vid,:nr)');
         $st->bindParam(':sid', $this->id);
         $st->bindParam(':vid', $velger_id);
-        $nr = count($this->rekkefolge) + 1;
+        if(is_null($nr)) {
+            $nr = count($this->rekkefolge) + 1;
+        }
         $st->bindParam(':nr', $nr);
         $st->execute();
     }
@@ -456,7 +462,7 @@ class Storhybelliste
 
         $instans = new Storhybelliste();
 
-        if(!is_null($navn)) {
+        if (!is_null($navn)) {
             $instans->navn = self::genererNavn($navn);
         } else {
             $instans->navn = self::genererNavn();
@@ -471,11 +477,33 @@ class Storhybelliste
         return $instans;
     }
 
-    public static function beboerTilVelgerListe(array $rekkefolge) : array {
+    public static function nyTomListe($navn = null)
+    {
+
+        $instans = new Storhybelliste();
+
+        if (!is_null($navn)) {
+            $instans->navn = self::genererNavn($navn);
+        } else {
+            $instans->navn = self::genererNavn();
+        }
+        $instans->aktiv = 0;
+        $instans->semester = $semester = Funk::generateSemesterString(date('Y-m-d'));
+        $instans->ledige_rom = null;
+        $instans->rekkefolge = null;
+
+        $instans->lagre();
+
+        return $instans;
+
+    }
+
+    public static function beboerTilVelgerListe(array $rekkefolge): array
+    {
 
         $velger_rekkefolge = array();
 
-        foreach($rekkefolge as $beboer) {
+        foreach ($rekkefolge as $beboer) {
             $velger_rekkefolge[] = StorhybelVelger::nyVelger(array($beboer));
         }
 
@@ -485,7 +513,7 @@ class Storhybelliste
 
     public static function genererNavn($type = null): string
     {
-        if(!is_null($type)) {
+        if (!is_null($type)) {
             $typen = $type;
         } else {
             $typen = 'Storhybelliste';
@@ -505,7 +533,8 @@ class Storhybelliste
 
     }
 
-    public static function genererKorrNavn() : string {
+    public static function genererKorrNavn(): string
+    {
         $semester_readable = Funk::genReadableSemStr(date('Y-m-d'));
         $semester = Funk::generateSemesterString(date('Y-m-d'));
 
@@ -518,7 +547,8 @@ class Storhybelliste
         return "Korrhybelliste {$semester_readable} - Nr. {$nummer}";
     }
 
-    public static function genererSPNavn() : string {
+    public static function genererSPNavn(): string
+    {
         $semester_readable = Funk::genReadableSemStr(date('Y-m-d'));
         $semester = Funk::generateSemesterString(date('Y-m-d'));
 
@@ -597,7 +627,7 @@ class Storhybelliste
 
         $gamle_rom = array();
 
-        foreach($velger->getBeboere() as $beboer) {
+        foreach ($velger->getBeboere() as $beboer) {
             $gamle_rom[] = $beboer->getRom();
         }
 
@@ -610,7 +640,7 @@ class Storhybelliste
 
         $this->fjernRom($rom);
 
-        foreach($gamle_rom as $gammelt_rom) {
+        foreach ($gamle_rom as $gammelt_rom) {
             $this->leggtilRom($gammelt_rom);
         }
 
@@ -620,13 +650,14 @@ class Storhybelliste
     /*
      * Dersom en beboer er på flere velger-objekter, er det mulig å passe på den første.
      */
-    public function kanPasse(Beboer $beboer, StorhybelVelger $aktuell_velger) : bool {
+    public function kanPasse(Beboer $beboer, StorhybelVelger $aktuell_velger): bool
+    {
 
         $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM storhybel_velger AS sv WHERE (sv.storhybel_id = :sid AND sv.beboer_id= :bid)');
         $st->execute(['sid' => $this->id, 'bid' => $beboer->getId()]);
         $count = $st->fetch()['cnt'];
 
-        if($count < 2) {
+        if ($count < 2) {
             return false;
         }
 
@@ -634,7 +665,7 @@ class Storhybelliste
         $minsteNr = $aktuell_velger->getNummer();
         foreach ($velgere as $velger) {
 
-            if($velger->getNummer() < $minsteNr) {
+            if ($velger->getNummer() < $minsteNr) {
                 $minsteNr = $velger->getNummer();
             }
 
@@ -657,7 +688,7 @@ class Storhybelliste
             //$beboer = Beboer::medId($fordeling->getBeboerId());
             $velger = StorhybelVelger::medVelgerId($fordeling->getVelgerId());
 
-            foreach($velger->getBeboere() as $beboer) {
+            foreach ($velger->getBeboere() as $beboer) {
                 /* @var $beboer \intern3\Beboer */
                 if ($fordeling->getNyttRomId() !== null && $fordeling->getNyttRom() !== null) {
                     $beboer->byttRom($fordeling->getNyttRom());

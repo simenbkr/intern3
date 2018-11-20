@@ -158,7 +158,15 @@ class StorhybelVelger
     {
         $navn = array();
 
+        if(count($this->beboere) < 1) {
+            return '';
+        }
+
         foreach ($this->beboere as $beboer) {
+
+            if(is_null($beboer)) {
+                continue;
+            }
 
             $navn[] = $beboer->getFulltNavn();
         }
@@ -188,6 +196,19 @@ class StorhybelVelger
         }
 
         return implode(', ', $klassetrinn);
+    }
+
+    public function getMaxKlassetrinn() {
+
+        $klassetrinn = array();
+
+        foreach ($this->beboere as $beboer) {
+            /* @var $beboer \intern3\Beboer */
+            $klassetrinn[] = $beboer->getKlassetrinn();
+        }
+
+        return max($klassetrinn);
+
     }
 
 }

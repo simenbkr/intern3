@@ -81,7 +81,13 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                 if ($post['mode'] == 'dobbel') {
 
-                    // Opprett velger, legg til velgeren på lista.
+                    if(strpos($lista->getNavn(), 'Korr' !== false)) {
+                        Funk::setError("Du kan ikke ha dobbel modus når du legger til velgere på Korrhybellista!");
+                        header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
+                        exit();
+                    }
+
+                        // Opprett velger, legg til velgeren på lista.
                     $velger = StorhybelVelger::nyVelger($beboere);
                     $lista->leggTilVelger($velger->getVelgerId());
                     $velger->setStorhybel($lista->getId());
@@ -100,6 +106,13 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     exit($success);
                     break;
                 } elseif ($post['mode'] == 'singel') {
+
+                    if((strpos($lista->getNavn(), 'Storparhybel') !== false)) {
+                        Funk::setError("Du kan ikke ha singel modus når du legger til velgere på Storparhybelliste!");
+                        header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
+                        exit();
+                    }
+
                     $success = '';
                     foreach ($beboere as $beboer) {
 
@@ -130,6 +143,21 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 print "Lista ble lagret, og rom fordelt.";
                 break;
         }
+    }
+
+    private function validerParListe($liste)
+    {
+        $flattened = array();
+        foreach($liste as $sublist) {
+            $flattened = array_merge($flattened, $sublist);
+        }
+
+        $unique = array_unique($flattened);
+
+        if(count($unique) < count($flattened)) {
+            exit("Duplikat!");
+        }
+
     }
 
     public function bestemHandling()
@@ -177,6 +205,66 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                     print $id;
                     exit();
+                case 'sp':
+
+                    /*
+                     * Sett opp velgerne først slik at det er i orden.
+                     */
+                    $parliste = filter_var_array(json_decode($_POST['parliste']), FILTER_VALIDATE_INT);
+                    $this->validerParListe($parliste);
+                    $velgere = array();
+                    $beboere = array();
+
+                    foreach ($parliste as $par) {
+
+                        $tmp = array();
+                        foreach ($par as $id) {
+                            $tmp[] = ($beb = Beboer::medId($id));
+                            $beboere[] = $beb;
+                        }
+
+                        $velger = StorhybelVelger::nyVelger($tmp);
+                        $velgere[] = $velger;
+                    }
+
+                    /*
+                     * Opprett tom liste, sleng inn ledige store parhybler.
+                     */
+                    $lista = Storhybelliste::nyTomListe('Storparhybelliste');
+                    $lista->setLedigeRom(RomListe::ledigeStoreParhybler());
+
+                    /*
+                     * Sorter velgere. Likner på StorhybelSort i Beboer-modellen.
+                     */
+                    usort($velgere, function (StorhybelVelger $a, StorhybelVelger $b) {
+                        if ($a->getAnsiennitet() > $b->getAnsiennitet()) {
+                            return -1;
+                        }
+
+                        if ($a->getAnsiennitet() == $b->getAnsiennitet() && $a->getMaxKlassetrinn() > $b->getMaxKlassetrinn()) {
+                            return -1;
+                        }
+
+                        if ($a->getAnsiennitet() == $b->getAnsiennitet() && $a->getMaxKlassetrinn() == $b->getMaxKlassetrinn()) {
+                            return 0;
+                        }
+
+                        return 1;
+                    });
+
+                    $lista->setRekkefolge($velgere);
+
+                    foreach ($velgere as $nr => $velger) {
+                        /* @var $velger StorhybelVelger */
+
+                        $lista->leggTilVelger($velger->getVelgerId(), $nr + 1);
+                        $velger->setStorhybel($lista->getId());
+
+                        foreach ($velger->getBeboere() as $beboer) {
+                            /* @var $beboer Beboer */
+                            StorhybelFordeling::leggTilRom($lista->getId(), $velger->getVelgerId(), $beboer->getRomId());
+                        }
+                    }
             }
 
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -193,7 +281,6 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                             function (Rom $a, Rom $b) {
                                 return $a->getId() - $b->getId();
                             });
-
 
                         $beboerliste = array_udiff(BeboerListe::aktive(), BeboerListe::singleStorhybelliste($lista->getId()),
                             function (Beboer $a, Beboer $b) {
@@ -229,23 +316,39 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     $dok->vis('utvalg/romsjef/storhybel_korrhybel.php');
                     break;
 
+                case 'storparhybel';
+                    $ledige_rom = RomListe::ledigeStoreParhybler();
+                    $beboerliste = BeboerListe::aktive();
+
+                    usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));
+                    $dok = new Visning($this->cd);
+                    $dok->set('ledige_rom', $ledige_rom);
+                    $dok->set('beboerliste', $beboerliste);
+                    $dok->vis('utvalg/romsjef/storhybel_storparhybel.php');
+                    break;
+
+                case 'storparhybel_select':
+
+                    $beboerliste = BeboerListe::aktive();
+                    usort($beboerliste, array('\intern3\Beboer', 'storhybelSort'));
+                    $dok = new Visning($this->cd);
+                    $dok->set('beboerliste', $beboerliste);
+                    $dok->vis('utvalg/romsjef/storhybel_parhybel_select.php');
+                    break;
+
                 case 'beboerliste':
                     if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) &&
                         ($lista = Storhybelliste::medId($sisteArg)) !== null) {
 
-                        /*$beboerliste = array_udiff(BeboerListe::aktive(), BeboerListe::fraStorhybelliste($lista->getId()),
-                            function (Beboer $a, Beboer $b) {
-                                return $a->getId() - $b->getId();
-                            });
-                        */
-
                         $beboerliste_alle = BeboerListe::aktive();
+
                         $ikke_reg_beboerliste = array_udiff($beboerliste_alle, BeboerListe::singleStorhybelliste($lista->getId()),
                             function (Beboer $a, Beboer $b) {
                                 return $a->getId() - $b->getId();
                             });
 
                         $bare_manglende = (strpos($lista->getNavn(), 'Korr') !== false);
+                        $bare_manglende = $bare_manglende || (strpos($lista->getNavn(), 'Storparhybel') !== false);
 
                         $dok = new Visning($this->cd);
                         $dok->set('lista', $lista);
@@ -260,7 +363,6 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 case '':
                 default:
 
-
                     $ledige_rom = RomListe::ledigeStorhybelRom();
                     $beboerliste = BeboerListe::aktive();
 
@@ -272,6 +374,4 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
             }
         }
     }
-
-
 }
