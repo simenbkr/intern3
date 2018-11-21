@@ -8,21 +8,24 @@ class Rom {
 	private $navn;
 	private $type;
 
-	public static function medId($id) : Rom {
+	public static function medId($id) //: Rom
+    {
 		$st = DB::getDB()->prepare('SELECT * FROM rom WHERE id=:id;');
 		$st->bindParam(':id', $id);
 		$st->execute();
 		return self::init($st);
 	}
 
-	public static function medNavn($navn) : Rom {
+	public static function medNavn($navn)// : Rom
+    {
 		$st = DB::getDB()->prepare('SELECT * FROM rom WHERE navn=:navn;');
 		$st->bindParam(':navn', $navn);
 		$st->execute();
 		return self::init($st);
 	}
 
-	private static function init(\PDOStatement $st) : Rom {
+	private static function init(\PDOStatement $st)// : Rom
+    {
 		$rad = $st->fetch();
 		if ($rad == null) {
 			return null;

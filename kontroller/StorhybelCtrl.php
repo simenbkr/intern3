@@ -18,7 +18,7 @@ class StorhybelCtrl extends AbstraktCtrl
         $aktueltArg = $this->cd->getAktueltArg();
         $sisteArg = $this->cd->getSisteArg();
 
-        $lista = Storhybelliste::aktiv();
+        $lista = Storhybelliste::aktive();
         $aktiv_beboer = $this->cd->getAktivBruker()->getPerson();
         $aktuell_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
 

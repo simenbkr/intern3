@@ -522,12 +522,11 @@ class Storhybelliste
         $semester_readable = Funk::genReadableSemStr(date('Y-m-d'));
         $semester = Funk::generateSemesterString(date('Y-m-d'));
 
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (semester=:semester AND navn LIKE "%:type"');
-        $st->bindParam(':semester', $semester);
-        $st->bindParam(':type', $typen);
-        $st->execute();
+        $temp = "%{$typen}%";
+        $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM storhybel WHERE (semester=:semester AND navn LIKE :typen)');
+        $st->execute(['semester' => $semester, 'typen' => $temp]);
 
-        $nummer = $st->rowCount() + 1;
+        $nummer = $st->fetch()['cnt'] + 1;
 
         return "{$typen} {$semester_readable} - Nr. {$nummer}";
 
@@ -582,19 +581,26 @@ class Storhybelliste
      */
     public static function finnesAktive(): bool
     {
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
+        $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
         $st->execute();
 
-        return $st->rowCount() > 0;
+        $antall = $st->fetch()['cnt'];
+        return $antall > 0;
     }
 
-    public static function aktiv(): Storhybelliste
+    public static function aktive(): array
     {
         // Det skal bare være én aktiv. Henter ut denne.
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1 ORDER BY id DESC LIMIT 1');
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE aktiv=1');
         $st->execute();
 
-        return self::init($st);
+        $results = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++) {
+            $results[] = self::init($st);
+        }
+
+        return $results;
     }
 
     public function slett()

@@ -2,17 +2,17 @@
 
 require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
-    <link rel="stylesheet" href="css/chosen.min.css">
-    <script src="js/chosen.jquery.min.js"></script>
-
     <script>
 
-        var ids = ['1'];
+        var ids = [];
 
         function addRow() {
-
-            var nyId = parseInt(ids[ids.length - 1]) + 1;
-            var html = "<tr><th>Velg</th><td><div id='" + nyId + "'></div></td></tr>";
+            if (ids.length === 0) {
+                nyId = 1;
+            } else {
+                var nyId = parseInt(ids[ids.length - 1]) + 1;
+            }
+            var html = "<tr><th>Par " + nyId + "</th><td><div id='" + nyId + "'></div></td><td><button class='btn btn-danger' type='button' onclick='removeRow($(this).parent())'>-</button></td></tr>";
 
             $("#tabellen").append(html);
             $("#" + nyId).load('?a=utvalg/romsjef/storhybel/storparhybel_select');
@@ -21,11 +21,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         function sendInn() {
 
-            //e1.preventDefault();
-
             var parliste = [];
-            for(var i = 0; i < ids.length; i++) {
-                parliste.push($("#" + ids[i] + " option:selected").map(function(){ return this.value }).get());
+            for (var i = 0; i < ids.length; i++) {
+                parliste.push($("#" + ids[i] + " option:selected").map(function () {
+                    return this.value
+                }).get());
             }
 
             $.ajax({
@@ -34,19 +34,37 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 data: 'parliste=' + JSON.stringify(parliste),
                 method: 'POST',
                 success: function (data) {
-                    console.log(data);
+                    window.location = '?a=utvalg/romsjef/storhybel/liste/' + data;
                 },
                 error: function (req, stat, err) {
                     alert(err);
                 }
             });
+        }
 
+        function removeRow(obj) {
+            var row = obj.parent();
+
+            var id = row.children("td").children("div").attr('id');
+            var index = ids.indexOf(id);
+
+            if (index > -1) {
+                ids.splice(index, 1);
+            }
+            row.remove();
         }
 
 
         $(document).ready(function () {
-            $("#1").load('?a=utvalg/romsjef/storhybel/storparhybel_select');
+            addRow();
         });
+
+        function onchangeFunc(){
+
+            console.log("asdasdtasyt")
+
+        }
+
     </script>
 
     <div class="container">
@@ -63,20 +81,50 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
 
-            <form method="post" action="">
+            <p>Velg alle par som skal stå på lista (protip: Legg til alle bokser før du velger noen).
+            </p>
+            <p>
+                Parene blir automagisk sortert etter ansiennitet og klassetrinn (her teller maks klassetrinn).
+                Du kan endre rekkefølgen, legge til og fjerne rom etter opprettelse.
+            </p>
 
-                <table class="table table-responsive" id="tabellen">
+            <div class="col-lg-6">
+                <h3>Velg par</h3>
+                <form method="post" action="">
 
+                    <table class="table table-responsive" id="tabellen">
+
+                    </table>
+
+                </form>
+                <button class="btn btn-primary" onclick="sendInn()">Opprett liste</button>
+                <button class="btn btn-info pull-right" onclick="addRow()">+</button>
+            </div>
+
+            <div class="col-lg-6">
+
+                <h3>Oppsatte rom</h3>
+
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Rom</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+
+                <?php foreach($ledige_rom as $rom) {
+                    /* @var \intern3\Rom $rom */
+                    ?>
                     <tr>
-                        <th>Velg</th>
-                        <td><div id="1"></div></td>
+                        <td><?php echo $rom->getNavn(); ?></td>
+                        <td><?php echo $rom->getType()->getNavn(); ?></td>
                     </tr>
-
+                <?php
+                }
+                ?>
                 </table>
-
-            </form>
-            <button onclick="sendInn()">Klikk</button>
-            <button onclick="addRow()">test</button>
+            </div>
 
         </div>
     </div>

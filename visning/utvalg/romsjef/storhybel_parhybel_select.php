@@ -2,16 +2,8 @@
 <script src="js/chosen.jquery.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $(".chosen").chosen({
-            max_selected_options: 2
-        });
-
-
-    });
+    $(".chosen").chosen({max_selected_options: 2});
 </script>
-
-
 
 <select class="chosen" multiple="true" name="select[]">
 

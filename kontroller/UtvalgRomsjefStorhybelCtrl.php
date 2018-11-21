@@ -31,8 +31,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 Funk::setSuccess($out);
                 break;
             case 'aktiver':
+                $common = explode(' ', $lista->getNavn())[0];
                 foreach (Storhybelliste::alle() as $liste) {
-                    if ($liste->erAktiv()) {
+                    if ($liste->erAktiv() && strpos($liste->getNavn(), $common) !== false) {
                         $liste->deaktiver();
                     }
                 }
@@ -155,7 +156,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
         $unique = array_unique($flattened);
 
         if(count($unique) < count($flattened)) {
-            exit("Duplikat!");
+            die("Duplikat!");
         }
 
     }
@@ -265,6 +266,8 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                             StorhybelFordeling::leggTilRom($lista->getId(), $velger->getVelgerId(), $beboer->getRomId());
                         }
                     }
+                    Funk::setSuccess("En Storparhybelliste ble oppretta!");
+                    print "{$lista->getId()}";
             }
 
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
