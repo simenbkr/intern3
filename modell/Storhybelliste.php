@@ -40,7 +40,7 @@ class Storhybelliste
         return $instans;
     }
 
-    public static function medId($id): Storhybelliste
+    public static function medId($id)
     {
 
         $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE id=:id');
@@ -679,6 +679,27 @@ class Storhybelliste
 
         return $minsteNr === $aktuell_velger->getNummer();
 
+    }
+
+    /*
+     * Returnerer en liste med Storhybellister der beboeren med $beboer_id inngår.
+     */
+    public static function listerMedBeboer(int $beboer_id) : array {
+
+        $st = DB::getDB()->prepare(
+            'SELECT * FROM storhybel AS sh WHERE 
+                                     (sh.aktiv = 1 
+                                        AND sh.id IN 
+                                            (SELECT storhybel_id FROM storhybel_velger WHERE beboer_id=:bid))');
+        $st->execute(['bid' => $beboer_id]);
+
+        $arr = array();
+
+        for($i = 0; $i < $st->rowCount(); $i++) {
+            $arr[] = self::init($st);
+        }
+
+        return $arr;
     }
 
     /*

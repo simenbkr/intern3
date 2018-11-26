@@ -59,9 +59,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         </tr>
 
                     <?php }
-                      ?>
+                     ?>
                 <?php }
-                  ?>
+                 ?>
                 </tbody>
 
 

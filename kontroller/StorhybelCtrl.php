@@ -8,111 +8,132 @@ class StorhybelCtrl extends AbstraktCtrl
 
     public function bestemHandling()
     {
+        /*
+         * Hent ut relevant data fra Database før vi kan gjøre noe.
+         */
+        $aktueltArg = $this->cd->getAktueltArg();
+        $sisteArg = $this->cd->getSisteArg();
+        $aktiv_beboer = $this->cd->getAktivBruker()->getPerson(); /* @var Beboer $aktiv_beboer */
 
-        if(!Storhybelliste::finnesAktive()) {
+        /*
+         * Henter ut alle Storhybellister som er aktive OG der den aktive beboeren er registrert.
+         */
+        $lister_med_beboer = Storhybelliste::listerMedBeboer($aktiv_beboer->getId());
+
+
+        if (!Storhybelliste::finnesAktive() || count($lister_med_beboer) < 1) {
             // Easter egg.
             exit('<img style="height:100%;width:100%" src="beboerkart/loading.gif">');
         }
 
-
-        $aktueltArg = $this->cd->getAktueltArg();
-        $sisteArg = $this->cd->getSisteArg();
-
-        $lista = Storhybelliste::aktive();
-        $aktiv_beboer = $this->cd->getAktivBruker()->getPerson();
-        $aktuell_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
-
-        $persnummer = array();
-        $aktiv_velger = null;
-        $min_tur = false;
-        $kan_passe = false;
-        foreach($aktuell_velger as $velger) {
-
-            /* @var StorhybelVelger $velger */
-
-            // Sjekk om det er den aktive brukerens tur
-            if($lista->getVelgerNr() == $velger->getNummer()) {
-                $min_tur = true;
-                $aktiv_velger = $velger;
-                $velgers_rom = $lista->getFordeling()[$aktiv_velger->getVelgerId()]->getGammeltRomId();
-                $kan_passe = $lista->kanPasse($aktiv_beboer, $aktiv_velger);
-            }
-
-            $persnummer[] = $velger->getNummer();
+        /*
+         * Hvis beboeren bare står på én aktiv liste, send beboeren dit.
+         */
+        if (empty($aktueltArg) && count($lister_med_beboer) == 1) {
+            header('Location: ?a=storhybel/' . $lister_med_beboer[0]->getId());
+            exit();
         }
 
-        $persnummer = implode('., ', $persnummer);
+        /*
+         * Hvis beboeren står på flere aktive lister, lar vi beboeren
+         * velger blant disse.
+         */
+        if (empty($aktueltArg)) {
+            $dok = new Visning($this->cd);
+            $dok->set('listene', $lister_med_beboer);
+            $dok->vis('storhybel/storhybel_lister.php');
+            exit();
+        } elseif (is_numeric($aktueltArg) && ($lista = Storhybelliste::medId($aktueltArg)) !== null) {
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST' && $min_tur) {
+            $aktuell_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
+            $persnummer = array();
+            $aktiv_velger = null;
+            $min_tur = false;
+            $kan_passe = false;
+            foreach ($aktuell_velger as $velger) {
 
-            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                /* @var StorhybelVelger $velger */
 
-            switch($aktueltArg) {
+                // Sjekk om det er den aktive brukerens tur
+                if ($lista->getVelgerNr() == $velger->getNummer()) {
+                    $min_tur = true;
+                    $aktiv_velger = $velger;
+                    $velgers_rom = $lista->getFordeling()[$aktiv_velger->getVelgerId()]->getGammeltRomId();
+                    $kan_passe = $lista->kanPasse($aktiv_beboer, $aktiv_velger);
+                }
 
-                case 'velg':
-
-                    /*
-                     * Et rom kan kun velges dersom det:
-                     *      - Eksisterer
-                     *      - Det er beboerens tur
-                     *      - Er 'up for grabs'.
-                     */
-                    if(  is_numeric($post['rom_id']) &&
-                        ($rom = Rom::medId($post['rom_id'])) !== null
-                        && (in_array($rom->getId(), $velgers_rom) || isset($lista->getLedigeRom()[$rom->getId()]))
-                    ) {
-
-                        $lista->velgRom($aktiv_velger, $rom);
-                        print 'Du har valgt rommet ' . $rom->getNavn() . ' som er av type '. $rom->getType()->getNavn() . '.';
-                    }
-
-                case 'pass':
-                    if($kan_passe && isset($post['sid']) && $post['sid'] == $lista->getId()) {
-                        $lista->neste();
-                        Funk::setSuccess("Passet til nestemann!");
-                    } else {
-                        Funk::setError("Kan ikke passe!");
-                    }
-
-
-                case '':
-                default:
-
+                $persnummer[] = $velger->getNummer();
             }
-        }
 
-        elseif($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $persnummer = implode('., ', $persnummer);
 
-            switch ($aktueltArg) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && $min_tur) {
 
-                case 'modal':
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-                    if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) && ($rom = Rom::medId($sisteArg)) !== null) {
+                switch ($aktueltArg) {
 
-                        $ekstratekst = '';
-                        if($rom->getId() === $aktiv_beboer->getRom()->getId()) {
-                            $ekstratekst = 'Dette er ditt nåværende rom.';
+                    case 'velg':
+
+                        /*
+                         * Et rom kan kun velges dersom det:
+                         *      - Eksisterer
+                         *      - Det er beboerens tur
+                         *      - Er 'up for grabs'.
+                         */
+                        if (is_numeric($post['rom_id']) &&
+                            ($rom = Rom::medId($post['rom_id'])) !== null
+                            && (in_array($rom->getId(), $velgers_rom) || isset($lista->getLedigeRom()[$rom->getId()]))
+                        ) {
+
+                            $lista->velgRom($aktiv_velger, $rom);
+                            print 'Du har valgt rommet ' . $rom->getNavn() . ' som er av type ' . $rom->getType()->getNavn() . '.';
                         }
 
-                        $dok = new Visning($this->cd);
-                        $dok->set('rom', $rom);
-                        $dok->set('ekstratekst', $ekstratekst);
-                        $dok->vis('storhybel/velg_modal.php');
-                        exit();
-                    }
-                    break;
-                case '':
-                default:
+                    case 'pass':
+                        if ($kan_passe && isset($post['sid']) && $post['sid'] == $lista->getId()) {
+                            $lista->neste();
+                            Funk::setSuccess("Passet til nestemann!");
+                        } else {
+                            Funk::setError("Kan ikke passe!");
+                        }
+                    case '':
+                    default:
 
-                    $dok = new Visning($this->cd);
-                    $dok->set('lista', $lista);
-                    $dok->set('min_tur', $min_tur);
-                    $dok->set('kan_passe', $kan_passe);
-                    $dok->set('persnummer', $persnummer);
-                    $dok->set('aktiv_velger', $aktiv_velger);
-                    $dok->set('aktiv_beboer', $aktiv_beboer);
-                    $dok->vis('storhybel/storhybel.php');
-                    break;
+                }
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+                switch ($aktueltArg) {
+
+                    case 'modal':
+
+                        if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) && ($rom = Rom::medId($sisteArg)) !== null) {
+
+                            $ekstratekst = '';
+                            if ($rom->getId() === $aktiv_beboer->getRom()->getId()) {
+                                $ekstratekst = 'Dette er ditt nåværende rom.';
+                            }
+
+                            $dok = new Visning($this->cd);
+                            $dok->set('rom', $rom);
+                            $dok->set('ekstratekst', $ekstratekst);
+                            $dok->vis('storhybel/velg_modal.php');
+                            exit();
+                        }
+                        break;
+                    case '':
+                    default:
+
+                        $dok = new Visning($this->cd);
+                        $dok->set('lista', $lista);
+                        $dok->set('min_tur', $min_tur);
+                        $dok->set('kan_passe', $kan_passe);
+                        $dok->set('persnummer', $persnummer);
+                        $dok->set('aktiv_velger', $aktiv_velger);
+                        $dok->set('aktiv_beboer', $aktiv_beboer);
+                        $dok->vis('storhybel/storhybel.php');
+                        break;
+                }
             }
         }
     }
