@@ -20,7 +20,7 @@ require_once(__DIR__ . '/../static/topp.php');
     <script>
 
         function vis(id) {
-            $("#rom").load("?a=storhybel/modal/" + id);
+            $("#rom").load("?a=storhybel/<?php echo $lista->getId(); ?>/modal/" + id);
             $("#velg-modal").modal("show");
         }
 
@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../static/topp.php');
         function pass() {
             $.ajax({
                 type: 'POST',
-                url: '?a=storhybel/pass',
+                url: '?a=storhybel/<?php echo $lista->getId(); ?>/pass',
                 data: 'sid=' + '<?php echo $lista->getId(); ?>',
                 method: 'POST',
                 success: function (data) {

@@ -50,6 +50,16 @@ class StorhybelCtrl extends AbstraktCtrl
             $aktiv_velger = null;
             $min_tur = false;
             $kan_passe = false;
+
+            /*
+             * Fordi forfatteren var lite gjennomtenkt i utformingen av denne kontrolleren,
+             * må vi skifte argument etter at vi har konstatert at det faktisk er snakk om
+             * en spesifikk storhybelliste.
+             * Noterer at en URI hit er på formatet: ?a=storhybel/<id>[/<request>/<arg1>/<arg2>/../<argN>]
+             * Hvor det i klammeparantes er optional.
+             */
+            $aktueltArg = $this->cd->skiftArg()->getAktueltArg();
+
             foreach ($aktuell_velger as $velger) {
 
                 /* @var StorhybelVelger $velger */
@@ -89,7 +99,7 @@ class StorhybelCtrl extends AbstraktCtrl
                             $lista->velgRom($aktiv_velger, $rom);
                             print 'Du har valgt rommet ' . $rom->getNavn() . ' som er av type ' . $rom->getType()->getNavn() . '.';
                         }
-
+                        break;
                     case 'pass':
                         if ($kan_passe && isset($post['sid']) && $post['sid'] == $lista->getId()) {
                             $lista->neste();
@@ -102,6 +112,7 @@ class StorhybelCtrl extends AbstraktCtrl
 
                 }
             } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
 
                 switch ($aktueltArg) {
 
@@ -117,6 +128,7 @@ class StorhybelCtrl extends AbstraktCtrl
                             $dok = new Visning($this->cd);
                             $dok->set('rom', $rom);
                             $dok->set('ekstratekst', $ekstratekst);
+                            $dok->set('id', $lista->getId());
                             $dok->vis('storhybel/velg_modal.php');
                             exit();
                         }
