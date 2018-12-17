@@ -647,7 +647,9 @@ class Storhybelliste
         $this->fjernRom($rom);
 
         foreach ($gamle_rom as $gammelt_rom) {
-            $this->leggtilRom($gammelt_rom);
+            if(!($gammelt_rom->getId() == $rom->getId())) {
+                $this->leggtilRom($gammelt_rom);
+            }
         }
 
         $this->neste();
