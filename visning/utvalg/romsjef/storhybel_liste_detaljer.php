@@ -549,9 +549,3 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 <?php
 
 require_once(__DIR__ . '/../../static/bunn.php');
-
-echo microtime(true);
-echo "<br/>";
-echo $_SERVER['REQUEST_TIME_FLOAT'];
-echo "<br/>";
-echo microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
