@@ -16,11 +16,11 @@ class Storhybelliste
     private $neste;
     private $fordeling;
 
-    private static function init(\PDOStatement $st): Storhybelliste
+    private static function init(\PDOStatement $st)
     {
 
         $rad = $st->fetch();
-        if ($rad === null) {
+        if (!$rad) {
             return null;
         }
 

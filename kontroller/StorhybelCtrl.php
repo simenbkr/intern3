@@ -45,6 +45,7 @@ class StorhybelCtrl extends AbstraktCtrl
             exit();
         } elseif (is_numeric($aktueltArg) && ($lista = Storhybelliste::medId($aktueltArg)) !== null) {
 
+
             $aktuell_velger = StorhybelVelger::medBeboerIdStorhybelId($aktiv_beboer->getId(), $lista->getId());
             $persnummer = array();
             $aktiv_velger = null;
@@ -147,6 +148,9 @@ class StorhybelCtrl extends AbstraktCtrl
                         break;
                 }
             }
+        } else {
+            //TODO fiks noe shizzle her kanskje
+            print "Noe gikk galt. Denne listen eksisterer ikke, eller er ikke tilgjengelig.";
         }
     }
 }

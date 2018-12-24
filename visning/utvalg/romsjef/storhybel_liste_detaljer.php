@@ -56,8 +56,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <p><select class="form-control" onchange="leggtilrom(this)">
                             <option>Velg</option>
                             <?php foreach ($alle_rom as $rom) {
+                                /* @var \intern3\Rom $rom */
 
-                                if (in_array($rom, $ledige_rom)) {
+                                if ($rom->erLedig()) {
                                     ?>
 
                                     <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)
@@ -163,6 +164,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                     : ''; ?></td>
                             <td><?php echo $velger->getAnsiennitet(); ?></td>
                             <td><?php echo $velger->getKlassetrinn(); ?></td>
+                            <td>
+                                <?php if (!$lista->erFerdig()) { ?>
+                                    <button class="btn btn-warning"
+                                            onclick="omgjor(<?php echo $velger->getVelgerId(); ?>)">Omgjør
+                                    </button>
+                                <?php } ?>
+                            </td>
                             <td>
                                 <?php if (!$lista->erFerdig()) { ?>
                                     <button class="btn btn-danger"
@@ -275,8 +283,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         function updateMarkert(ny) {
             tabellen.rows[markert].classList.remove('danger');
             var length = tabellen.rows.length;
-            if(ny === 0 || ny % length === 0) {
-                if(markert - ny < 0) {
+            if (ny === 0 || ny % length === 0) {
+                if (markert - ny < 0) {
                     markert = ny % length + 1;
                 } else {
                     markert = length - 1;
@@ -542,3 +550,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 require_once(__DIR__ . '/../../static/bunn.php');
 
+echo microtime(true);
+echo "<br/>";
+echo $_SERVER['REQUEST_TIME_FLOAT'];
+echo "<br/>";
+echo microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
