@@ -31,6 +31,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 Funk::setSuccess($out);
                 break;
             case 'aktiver':
+                /*
+                 * Deaktiver alle andre lister av samme type.
+                 */
                 $common = explode(' ', $lista->getNavn())[0];
                 foreach (Storhybelliste::alle() as $liste) {
                     if ($liste->erAktiv() && strpos($liste->getNavn(), $common) !== false) {
@@ -129,6 +132,12 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     header('Location: ?a=utvalg/romsjef/storhybel/liste/' . $lista->getId());
                     exit($success);
                     break;
+                }
+                break;
+            case 'omgjor':
+                if (($velger = StorhybelVelger::medVelgerId($post['velger_id'])) !== null) {
+                    $lista->omgjor($post['velger_id']);
+                    print "Omgjorde " . $velger->getNavn() . " sitt valg. Denne skal nå velge på nytt.";
                 }
                 break;
             case 'neste':
@@ -279,11 +288,12 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     if ($sisteArg !== $aktueltArg && is_numeric($sisteArg) && !is_null($sisteArg) &&
                         ($lista = Storhybelliste::medId($sisteArg))) {
 
-                        $base = RomListe::alle();
                         if (strpos($lista->getNavn(), 'Korrhybelliste') !== false) {
                             $base = RomListe::alleKorrhybler();
                         } elseif (strpos($lista->getNavn(), 'Storparhybelliste') !== false) {
                             $base = RomListe::alleStoreParhybler();
+                        } else {
+                            $base = RomListe::alle();
                         }
 
 
@@ -298,13 +308,12 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                             });
 
 
-                        $ledige_rom = RomListe::ledigeStorhybelRom();
                         $dok = new Visning($this->cd);
                         $dok->set('beboerliste', $beboerliste);
                         $dok->set('lista', $lista);
                         $dok->set('alle_rom', $alle_rom);
-                        $dok->set('ledige_rom', $ledige_rom);
                         $dok->vis('utvalg/romsjef/storhybel_liste_detaljer.php');
+                        //$dok->vis('404.php');
                         exit();
                     }
 

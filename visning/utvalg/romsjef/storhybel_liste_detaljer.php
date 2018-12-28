@@ -144,11 +144,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                     <tbody>
 
-                    <?php foreach ($lista->getRekkefolge() as $velger) {
+                    <?php
+                    $velgerNr = $lista->getVelgerNr();
+                    foreach ($lista->getRekkefolge() as $velger) {
                         /* @var $velger \intern3\StorhybelVelger */
                         $nummer = $velger->getNummer();
                         $klassen = '';
-                        if ($nummer == $lista->getVelgerNr()) {
+                        if ($nummer == $velgerNr) {
                             $klassen = 'danger';
                         }
 
@@ -165,9 +167,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <td><?php echo $velger->getAnsiennitet(); ?></td>
                             <td><?php echo $velger->getKlassetrinn(); ?></td>
                             <td>
-                                <?php if (!$lista->erFerdig()) { ?>
+                                <?php if (!$lista->erFerdig() && $nummer < $velgerNr) { ?>
                                     <button class="btn btn-warning"
-                                            onclick="omgjor(<?php echo $velger->getVelgerId(); ?>)">Omgjør
+                                            onclick="omgjor(<?php echo $velger->getVelgerId(); ?>, <?php echo $velger->getNummer(); ?>)">Omgjør
                                     </button>
                                 <?php } ?>
                             </td>
@@ -400,6 +402,25 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             });
 
         }
+
+        function omgjor(velger_id, nr) {
+
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/storhybel/liste/omgjor/<?php echo $lista->getId(); ?>',
+                data: 'velger_id=' + velger_id,
+                method: 'POST',
+                success: function (data) {
+                    updateMarkert(nr);
+                    tilbakemelding(data);
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+
+        }
+
 
         function fjernrom(rom_id) {
 

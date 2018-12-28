@@ -194,6 +194,22 @@ class Storhybelliste
         $this->lagreIntern();
     }
 
+    public function omgjor($velger_id) {
+
+        $fordeling = StorhybelFordeling::medVelgerIdStorhybelId($velger_id, $this->id);
+        $velger = StorhybelVelger::medVelgerId($velger_id);
+
+        $rommet = $fordeling->getNyttRom();
+        if(!is_null($rommet)) {
+            $this->leggtilRom($rommet);
+            $fordeling->setNyttRomId(null);
+        }
+        $this->velger = $velger;
+        $this->velgerNr = $velger->getNummer();
+        $this->neste = $this->velgerFraNr($velger->getNummer() + 1);
+        $this->lagreIntern();
+    }
+
     private function lagre()
     {
 

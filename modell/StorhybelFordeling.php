@@ -118,7 +118,18 @@ class StorhybelFordeling
         return $this->ny_rom_id;
     }
 
-    public function getNyttRom(): Rom
+    public function setNyttRomId($id) {
+
+        $this->ny_rom_id = $id;
+
+        $st = DB::getDB()->prepare('UPDATE storhybel_fordeling SET ny_rom_id=:id WHERE (storhybel_id=:sid AND velger_id=:vid)');
+        $st->bindParam(':sid', $this->storhybel_id);
+        $st->bindParam(':vid', $this->velger_id);
+        $st->bindParam(':id', $id);
+        $st->execute();
+    }
+
+    public function getNyttRom()
     {
         return Rom::medId($this->ny_rom_id);
     }
