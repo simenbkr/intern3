@@ -180,7 +180,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                     </button>
                                 <?php } ?>
                             </td>
-                            <td><?php echo $nummer; ?></td>
                         </tr>
 
                         <?php

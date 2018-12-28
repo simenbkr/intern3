@@ -296,24 +296,16 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                             $base = RomListe::alle();
                         }
 
-
                         $alle_rom = array_udiff($base, $lista->getLedigeRom(),
                             function (Rom $a, Rom $b) {
                                 return $a->getId() - $b->getId();
                             });
 
-                        $beboerliste = array_udiff(BeboerListe::aktive(), BeboerListe::singleStorhybelliste($lista->getId()),
-                            function (Beboer $a, Beboer $b) {
-                                return $a->getId() - $b->getId();
-                            });
-
-
                         $dok = new Visning($this->cd);
-                        $dok->set('beboerliste', $beboerliste);
+                        $dok->set('beboerliste', BeboerListe::aktive());
                         $dok->set('lista', $lista);
                         $dok->set('alle_rom', $alle_rom);
                         $dok->vis('utvalg/romsjef/storhybel_liste_detaljer.php');
-                        //$dok->vis('404.php');
                         exit();
                     }
 
