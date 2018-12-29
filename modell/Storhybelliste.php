@@ -210,6 +210,23 @@ class Storhybelliste
         $this->lagreIntern();
     }
 
+    /*
+     * Sjekker om input-rom er et gyldig rom å ha på lista.
+     * Storhybellista kan bare ha bøttekott, storhybler og LPer.
+     * SP-lister kan bare ha SPer, og
+     * Korrhybellista kan bare ha korrhybler.
+     */
+    public function gyldigRom(Rom $rom){
+
+        $rel_navn = explode(' ', $this->navn)[0];
+        if(strpos($rel_navn, str_replace(' ','', $rom->getType()->getNavn())) !== false){
+            return true;
+        } elseif ($rel_navn == 'Storhybelliste' && in_array($rom->getType()->getNavn(), array('Bøttekott', 'Storhybel', 'Liten Parhybel'))) {
+            return true;
+        }
+        return false;
+    }
+
     private function lagre()
     {
 
@@ -647,12 +664,13 @@ class Storhybelliste
     public function velgRom(StorhybelVelger $velger, Rom $rom)
     {
 
+        /*
+         * Mellomlagre aktuelle rom da disse kan bli endret av funksjoner på $this. #laziness
+         */
         $gamle_rom = array();
-
         foreach ($velger->getBeboere() as $beboer) {
             $gamle_rom[] = $beboer->getRom();
         }
-
 
         $st = DB::getDB()->prepare('UPDATE storhybel_fordeling SET ny_rom_id=:nri WHERE (storhybel_id=:sid AND velger_id=:vid)');
         $st->bindParam(':nri', $rom->getId());
@@ -660,14 +678,50 @@ class Storhybelliste
         $st->bindParam(':vid', $velger->getVelgerId());
         $st->execute();
 
+
+        /*
+         * Fjern det rommet som ble valgt fra lista.
+         */
         $this->fjernRom($rom);
 
+        /*
+         * De gamle rommene tilhørende velgeren blir lagt ut på lista.
+         */
         foreach ($gamle_rom as $gammelt_rom) {
-            if(!($gammelt_rom->getId() == $rom->getId())) {
+            /* @var Rom $gammelt_rom */
+            if(!($gammelt_rom->getId() == $rom->getId())
+               && $this->gyldigRom($gammelt_rom)) {
                 $this->leggtilRom($gammelt_rom);
             }
         }
 
+        /*
+         * Beboerene i velger-objektet blir fjerna fra andre aktive lister. De har allerede valgt en hybel, og
+         * trenger følgelig ikke flere for det kommende/inneværende semesteret.
+         */
+        foreach($velger->getBeboere() as $beboer) {
+            /* @var Beboer $beboer */
+            $lister = self::listerMedBeboer($beboer->getId());
+
+            if(count($lister) > 1) {
+                foreach($lister as $lista) {
+                    /* @var Storhybelliste $lista */
+
+                    if($lista->getId() == $this->id) {
+                        continue;
+                    }
+
+                    $velgeren = StorhybelVelger::medBeboerIdStorhybelId($beboer->getId(), $lista->getId());
+                    /* @var StorhybelVelger $velgeren */
+                    $lista->fjernVelger($velgeren->getVelgerId());
+                }
+            }
+
+        }
+
+        /*
+         * Og så blir det automagisk nestemanns tur.
+         */
         $this->neste();
     }
 
@@ -700,7 +754,7 @@ class Storhybelliste
     }
 
     /*
-     * Returnerer en liste med Storhybellister der beboeren med $beboer_id inngår.
+     * Returnerer en liste med AKTIVE Storhybellister der beboeren med $beboer_id inngår.
      */
     public static function listerMedBeboer(int $beboer_id) : array {
 

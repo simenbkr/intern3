@@ -76,6 +76,10 @@ class StorhybelCtrl extends AbstraktCtrl
                 $persnummer[] = $velger->getNummer();
             }
 
+            if(count(Storhybelliste::listerMedBeboer($aktiv_beboer->getId())) > 1) {
+                $kan_passe = true;
+            }
+
             $persnummer = implode('., ', $persnummer);
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && $min_tur) {

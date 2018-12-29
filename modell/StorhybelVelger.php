@@ -46,6 +46,11 @@ class StorhybelVelger
         $st->bindParam(':sid', $storhybel_id);
         $st->execute();
 
+        /*
+         * Returnerer Array med StrohybelVelgere fordi en beboer kan stå flere ganger
+         * på lista dersom det f.eks. er en storhybelliste der par er tillatt på LPer (edge-case, woo).
+         */
+
         $arr = array();
 
         while($rad = $st->fetch()) {
