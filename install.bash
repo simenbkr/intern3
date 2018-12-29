@@ -1,8 +1,7 @@
 #!/bin/bash
 
-#phpmyadmin-pakka inneholder alle php-relaterte dependencies, og er et ganske greit verktøy for debugging.
 echo "Installerer nødvendige pakker."
-sudo apt install phpmyadmin php-intl
+sudo apt install php7.2 php7.2-intl php7.2-gd libapache2-mod-php7.2 php7.2-mysql
 echo "Installerer Composer"
 curl -sS https://getcomposer.org/installer | php && php composer.phar install
 
