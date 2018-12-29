@@ -8,7 +8,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <div class="col-lg-12">
             <h1>Utvalget &raquo; Romsjef &raquo; StorhybellisteLISTE</h1>
 
-            [ Liste ] | [ <a href="?a=utvalg/romsjef/storhybel">Ny</a> ]
+            [ Liste ] | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
+                Storhybelliste</a> ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
+            [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
 
             <hr>
 
@@ -43,9 +45,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->getStatusTekst(); ?></td>
-                            <td><?php echo $liste->getVelger()->getFulltNavn(); ?>
+                            <td><?php echo $liste->getVelger()->getNavn(); ?>
                                 (nr. <?php echo $liste->getVelgerNr(); ?>)</td>
-                            <td><?php echo $liste->getNeste()->getFulltNavn(); ?></td>
+                            <td><?php echo $liste->getNeste()->getNavn(); ?></td>
                         </tr>
 
                     <?php } else { ?>
@@ -57,9 +59,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         </tr>
 
                     <?php }
-                      ?>
+                     ?>
                 <?php }
-                  ?>
+                 ?>
                 </tbody>
 
 

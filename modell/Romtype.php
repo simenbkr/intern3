@@ -13,6 +13,14 @@ class Romtype {
 		$st->execute();
 		return self::init($st);
 	}
+
+	public static function medNavn($navn) {
+        $st = DB::getDB()->prepare('SELECT * FROM romtype WHERE navn=:navn;');
+        $st->bindParam(':navn', $navn);
+        $st->execute();
+        return self::init($st);
+    }
+
 	private static function init(\PDOStatement $st) {
 		$row = $st->fetch();
 		if ($row == null) {

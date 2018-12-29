@@ -15,7 +15,7 @@ Type: <b><?php echo $rom->getType()->getNavn(); ?></b>.</p>
     function velgRom() {
         $.ajax({
             type: 'POST',
-            url: '?a=storhybel/velg',
+            url: '?a=storhybel/<?php echo $id; ?>/velg',
             data: 'rom_id=' + '<?php echo $rom->getId(); ?>',
             method: 'POST',
             success: function (data) {
@@ -23,7 +23,7 @@ Type: <b><?php echo $rom->getType()->getNavn(); ?></b>.</p>
                 tilbakemelding(data);
                 setTimeout(function(){
                     window.location.reload(1);
-                }, 5000);
+                }, 3000);
             },
             error: function (req, stat, err) {
                 alert(err);

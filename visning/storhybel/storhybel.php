@@ -6,6 +6,8 @@ require_once(__DIR__ . '/../static/topp.php');
 /* @var $min_tur bool */
 /* @var $persnummer int */
 /* @var $beboers_rom \intern3\Rom */
+/* @var $aktiv_velger \intern3\StorhybelVelger */
+
 
 ?>
     <style>
@@ -18,9 +20,27 @@ require_once(__DIR__ . '/../static/topp.php');
     <script>
 
         function vis(id) {
-            $("#rom").load("?a=storhybel/modal/" + id);
+            $("#rom").load("?a=storhybel/<?php echo $lista->getId(); ?>/modal/" + id);
             $("#velg-modal").modal("show");
         }
+
+        <?php if($kan_passe) { ?>
+        function pass() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=storhybel/<?php echo $lista->getId(); ?>/pass',
+                data: 'sid=' + '<?php echo $lista->getId(); ?>',
+                method: 'POST',
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
+        <?php } ?>
 
 
     </script>
@@ -36,15 +56,28 @@ require_once(__DIR__ . '/../static/topp.php');
             <p id="tilbakemelding-text"></p>
         </div>
 
+        <?php require_once (__DIR__ . '/../static/tilbakemelding.php'); ?>
+
         <?php if ($min_tur) { ?>
             <div class="col-lg-6">
 
-                <p><b>Det er din tur!</b></p>
+                <h3><b>Det er din tur!</b></h3>
                 <p>Du har 24t på å velge rom. Kontakt nestemann når du er ferdig. Nestemann
-                    er <?php echo $lista->getNeste()->getFulltNavn(); ?>.</p>
+                    er <?php echo $lista->getNeste()->getNavn(); ?>.</p>
 
+
+                <?php if ($kan_passe) { ?>
+                    <p>
+                        Du kan passe, dersom du ønsker å benytte din neste anledning til å velge rom.
+                    </p>
+                    <p>
+                        <b>Merk: det er ingen vei tilbake etter at du trykker på knappen under.</b>
+                    </p>
+                    <p>
+                        <button class="btn btn-danger" onclick="pass()">PASS</button>
+                    </p>
+                <?php } ?>
                 <table class="table table-responsive table-condensed">
-
                     <thead>
                     <tr>
                         <th>Romnummer</th>
@@ -54,17 +87,23 @@ require_once(__DIR__ . '/../static/topp.php');
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td><?php echo $beboers_rom->getNavn(); ?></td>
-                        <td><?php echo $beboers_rom->getType()->getNavn(); ?></td>
-                        <td>
-                            <button class="btn btn-warning"
-                                    onclick="vis(<?php echo $beboers_rom->getId(); ?>)">
-                                Velg
-                            </button>
-                        </td>
+                    <?php foreach ($aktiv_velger->getBeboere() as $beboer) {
+                        /* @var \intern3\Beboer $beboer */
+                        ?>
 
-                    </tr>
+                        <tr>
+                            <td><?php echo $beboer->getRom()->getNavn(); ?></td>
+                            <td><?php echo $beboer->getRom()->getType()->getNavn(); ?></td>
+                            <td>
+                                <button class="btn btn-warning"
+                                        onclick="vis(<?php echo $beboer->getRom()->getId(); ?>)">
+                                    Velg
+                                </button>
+                            </td>
+
+                        </tr>
+                    <?php }
+                      ?>
 
 
                     <?php foreach ($lista->getLedigeRom() as $rom) {
@@ -144,8 +183,9 @@ require_once(__DIR__ . '/../static/topp.php');
 
                 <tbody>
 
-                <?php foreach ($lista->getRekkefolge() as $nummer => $beboer) {
-                    /* @var $beboer \intern3\Beboer */
+                <?php foreach ($lista->getRekkefolge() as $velger) {
+                    /* @var $velger \intern3\StorhybelVelger */
+                    $nummer = $velger->getNummer();
                     $klassen = '';
                     if ($nummer == $lista->getVelgerNr()) {
                         $klassen = 'danger';
@@ -164,13 +204,13 @@ require_once(__DIR__ . '/../static/topp.php');
                     }
 
                     ?>
-                    <tr id="<?php echo $beboer->getId(); ?>" class="<?php echo $klassen; ?>">
+                    <tr id="<?php echo $velger->getVelgerId(); ?>" class="<?php echo $klassen; ?>">
                         <td class="index"><?php echo $nummer; ?></td>
-                        <td><?php echo $beboer->getFulltNavn(); ?></td>
-                        <td><?php echo $beboer->getAnsiennitet(); ?></td>
-                        <td><?php echo $beboer->getKlassetrinn(); ?></td>
-                        <td><?php echo $lista->getFordeling()[$beboer->getId()]->getGammeltRom()->getNavn(); ?></td>
-                        <td><?php echo $lista->getFordeling()[$beboer->getId()]->getNyttRomId() !== null ? $lista->getFordeling()[$beboer->getId()]->getNyttRom()->getNavn() : ''; ?></td>
+                        <td><?php echo $velger->getNavn(); ?></td>
+                        <td><?php echo $velger->getAnsiennitet(); ?></td>
+                        <td><?php echo $velger->getKlassetrinn(); ?></td>
+                        <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getGammleRomAsString(); ?></td>
+                        <td><?php echo $lista->getFordeling()[$velger->getVelgerId()]->getNyttRomId() !== null ? $lista->getFordeling()[$velger->getVelgerId()]->getNyttRom()->getNavn() : ''; ?></td>
                     </tr>
 
                     <?php

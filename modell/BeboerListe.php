@@ -179,18 +179,44 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
     }
 
     public static function fraStorhybelliste($storhybel_id){
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel_rekkefolge WHERE storhybel_id=:id ORDER BY nummer ASC');
+        $st = DB::getDB()->prepare('SELECT beboer_id FROM storhybel_velger WHERE storhybel_id=:id');
         $st->bindParam(':id', $storhybel_id);
         $st->execute();
 
         $lista = array();
-        $i = 1;
         foreach($st->fetchAll() as $rad){
-            $lista[$i++] = Beboer::medId($rad['beboer_id']);
+            $lista[$rad['beboer_id']] = Beboer::medId($rad['beboer_id']);
         }
 
         return $lista;
 
+    }
+
+    public static function singleStorhybelliste($storhybel_id) {
+
+        /*
+         * Det følger en litt kompleks SQL-spørring. Denne henter ut folk som ikke er oppført alene
+         * på storhybellista med id $storhybel_id.
+         *
+         */
+
+        $st = DB::getDB()->prepare('
+        SELECT beboer_id FROM storhybel_velger WHERE 
+        (velger_id NOT IN 
+        (SELECT velger_id FROM storhybel_velger AS sv WHERE 
+            (sv.storhybel_id = :id) 
+            GROUP BY velger_id HAVING count(*) > 1)    
+        AND storhybel_id=:id)
+        ');
+        $st->bindParam(':id', $storhybel_id);
+        $st->execute();
+
+        $lista = array();
+        foreach($st->fetchAll() as $rad){
+            $lista[$rad['beboer_id']] = Beboer::medId($rad['beboer_id']);
+        }
+
+        return $lista;
     }
 }
 
