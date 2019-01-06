@@ -198,8 +198,8 @@ if (isset($visUtvalgMeny)) {
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regisjef <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/arbeid">Arbeid</a></li>
-                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/oppgave">Oppgave</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/arbeid">Loggført Arbeid</a></li>
+                  <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/oppgave">Tildelig av Oppgaver</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/registatus">Registatus</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/regiliste">Regilister</a></li>
                     <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/leggtilarbeid">Legg til arbeid</a></li>
