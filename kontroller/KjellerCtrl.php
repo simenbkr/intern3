@@ -123,6 +123,16 @@ class KjellerCtrl extends AbstraktCtrl
                                 if (!move_uploaded_file($_FILES['image']['tmp_name'], $vinbilder_path . $bildets_navn)) {
                                     Throw new \RuntimeException("dafuq");
                                 }
+
+                                $bildeManager = new BildeManager($vinbilder_path . $bildets_navn);
+
+                                if ($bildeManager->getHoyde() > 2000) {
+                                    $bildeManager->resizeTilHoyde(2000);
+                                } elseif ($bildeManager->getBredde() > 2000) {
+                                    $bildeManager->resizeTilBredde(2000);
+                                }
+                                $bildeManager->lagre();
+
                                 chmod($vinbilder_path . $bildets_navn, 0644);
 
                                 $this->updateVinMedBilde($vinen->getId(), $bildets_navn);
