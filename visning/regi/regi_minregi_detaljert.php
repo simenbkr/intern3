@@ -70,36 +70,37 @@ require_once(__DIR__ . '/../static/topp.php');
         <?php }
         ?>
 
-        <p>
-            <a class="btn btn-primary" data-toggle="collapse" href="#bilder" role="button" aria-expanded="false"
-               aria-controls="collapseExample">
-                Vis bilder
-            </a>
-        </p>
-        <div class="collapse" id="bilder" data-toggle="collapse" href="#">
-            <table class="table table-responsive">
-                <?php
-
-                foreach ($arbeidet->getArbeidBilder() as $arbeidbilde) {
-                    /* @var \intern3\ArbeidBilde $arbeidbilde */
-                    ?>
-                    <tr>
-                        <th>Bilde:</th>
-                        <td>
-                            <a href="<?php echo $arbeidbilde->getPath(); ?>">
-                                <img class="img-responsive" alt="bilde elns"
-                                     src="<?php echo $arbeidbilde->getPath(); ?>">
-                            </a>
-                        </td>
-                    </tr>
+        <?php if (count($arbeidet->getArbeidBilder()) > 0) { ?>
+            <p>
+                <a class="btn btn-primary" data-toggle="collapse" href="#bilder" role="button" aria-expanded="false"
+                   aria-controls="collapseExample">
+                    Vis bilder
+                </a>
+            </p>
+            <div class="collapse" id="bilder" data-toggle="collapse" href="#">
+                <table class="table table-responsive">
                     <?php
-                }
+
+                    foreach ($arbeidet->getArbeidBilder() as $arbeidbilde) {
+                        /* @var \intern3\ArbeidBilde $arbeidbilde */
+                        ?>
+                        <tr>
+                            <th>Bilde:</th>
+                            <td>
+                                <a href="<?php echo $arbeidbilde->getPath(); ?>">
+                                    <img class="img-responsive" alt="bilde elns"
+                                         src="<?php echo $arbeidbilde->getPath(); ?>">
+                                </a>
+                            </td>
+                        </tr>
+                        <?php
+                    }
 
 
-                ?>
-            </table>
-        </div>
-
+                    ?>
+                </table>
+            </div>
+        <?php } ?>
 
     </div>
 
