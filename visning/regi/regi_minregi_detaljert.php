@@ -38,7 +38,7 @@ require_once(__DIR__ . '/../static/topp.php');
             </tr>
             <tr>
                 <th>Status:</th>
-                <td><?php echo $arbeidet->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeidet->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeidet->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
+                <td><?php echo $arbeidet->getStatus(); ?></td>
             </tr>
 
             <tr>
@@ -48,21 +48,27 @@ require_once(__DIR__ . '/../static/topp.php');
 
         </table>
 
-        <h3>Last opp (flere) bilder:</h3>
-        <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype='multipart/form-data'>
-            <table class="table table-bordered">
-                <tr>
-                    <th>Bilder</th>
-                    <td>
-                        <input type="file" name="file[]" multiple id="file">
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><input type="submit" class="btn btn-primary" name="registrer" value="Registrer"></td>
-                </tr>
-            </table>
-        </form>
+
+        <?php if ($arbeidet->getIntStatus() == 0) { ?>
+
+            <h3>Last opp (flere) bilder:</h3>
+            <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype='multipart/form-data'>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Bilder</th>
+                        <td>
+                            <input type="file" name="file[]" multiple id="file">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" class="btn btn-primary" name="registrer" value="Registrer"></td>
+                    </tr>
+                </table>
+            </form>
+
+        <?php }
+        ?>
 
         <p>
             <a class="btn btn-primary" data-toggle="collapse" href="#bilder" role="button" aria-expanded="false"

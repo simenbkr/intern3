@@ -16,8 +16,8 @@ class RegiMinregiCtrl extends AbstraktCtrl
             if($this->cd->getAktivBruker() === $arbeid->getBruker() ||
                 LogginnCtrl::getAktivBruker()->getPerson()->harUtvalgVerv()) {
 
-                // Legge til (flere) bilder
-                if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Legge til (flere) bilder, dersom arbeidet er i "Ubehandla" tilstand
+                if($_SERVER['REQUEST_METHOD'] === 'POST' && $arbeid->getIntStatus() == 0) {
                     $this->lastOppBilder($aktueltArg);
                     exit();
                 }
