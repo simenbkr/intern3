@@ -23,6 +23,7 @@
         "simenbkr/groupmanage": "^1.00",
         "ext-pdo": "*",
         "ext-json": "*",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "ext-gd": "*"
     }
 }
