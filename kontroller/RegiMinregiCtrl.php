@@ -15,10 +15,18 @@ class RegiMinregiCtrl extends AbstraktCtrl
             
             if($this->cd->getAktivBruker() === $arbeid->getBruker() ||
                 LogginnCtrl::getAktivBruker()->getPerson()->harUtvalgVerv()) {
-    
-                $dok = new Visning($this->cd);
-                $dok->set('arbeidet', $arbeid);
-                $dok->vis('regi/regi_minregi_detaljert.php');
+
+                // Legge til (flere) bilder
+                if($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $this->lastOppBilder($aktueltArg);
+                    exit();
+                }
+                elseif($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+                    $dok = new Visning($this->cd);
+                    $dok->set('arbeidet', $arbeid);
+                    $dok->vis('regi/regi_minregi_detaljert.php');
+                }
             } else {
                 Funk::setError("Du har ikke tilgang til dette objektet!");
                 header('Location: ?a=regi/minregi');

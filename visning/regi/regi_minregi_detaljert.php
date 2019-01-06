@@ -8,69 +8,94 @@ require_once(__DIR__ . '/../static/topp.php');
 
     <div class="col-md-12">
         <h1>Regi &raquo; Min regi &raquo; Detaljert</h1>
-        
+
         <hr>
 
-            <table class="table table-responsive table-striped">
-                <tr>
-                    <th>Utført av:</th>
-                    <td><?php echo $arbeidet->getBruker()->getPerson()->getFulltNavn(); ?></td>
-                </tr>
-                <tr>
-                    <th>Dato utført:</th>
-                    <td><?php echo $arbeidet->getTidUtfort(); ?></td>
-                </tr>
-                <tr>
-                    <th>Dato registrert:</th>
-                    <td><?php echo $arbeidet->getTidRegistrert (); ?></td>
-                </tr>
-                <tr>
-                    <th>Kategori:</th>
-                    <td><?php echo $arbeidet->getPolymorfKategori()->getNavn(); ?></td>
-                </tr>
-                <tr>
-                    <th>Tid brukt:</th>
-                    <td><?php echo $arbeidet->getTidBrukt (); ?></td>
-                </tr>
-                <tr>
-                    <th>Kommentar:</th>
-                    <td><?php echo $arbeidet->getKommentar(); ?></td>
-                </tr>
-                <tr>
-                    <th>Status:</th>
-                    <td><?php echo $arbeidet->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeidet->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeidet->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
-                </tr>
+        <table class="table table-responsive table-striped">
+            <tr>
+                <th>Utført av:</th>
+                <td><?php echo $arbeidet->getBruker()->getPerson()->getFulltNavn(); ?></td>
+            </tr>
+            <tr>
+                <th>Dato utført:</th>
+                <td><?php echo $arbeidet->getTidUtfort(); ?></td>
+            </tr>
+            <tr>
+                <th>Dato registrert:</th>
+                <td><?php echo $arbeidet->getTidRegistrert(); ?></td>
+            </tr>
+            <tr>
+                <th>Kategori:</th>
+                <td><?php echo $arbeidet->getPolymorfKategori()->getNavn(); ?></td>
+            </tr>
+            <tr>
+                <th>Tid brukt:</th>
+                <td><?php echo $arbeidet->getTidBrukt(); ?></td>
+            </tr>
+            <tr>
+                <th>Kommentar:</th>
+                <td><?php echo $arbeidet->getKommentar(); ?></td>
+            </tr>
+            <tr>
+                <th>Status:</th>
+                <td><?php echo $arbeidet->getGodkjent() > 0 ? '<span title="Godkjent ' . substr($arbeidet->getTidGodkjent(), 0, 10) . ' av ' . intern3\Bruker::medId($arbeidet->getGodkjentBrukerId())->getPerson()->getFulltNavn() . '">Godkjent</span>' : 'Ubehandla'; ?></td>
+            </tr>
 
+            <tr>
+                <th>Tilbakemelding:</th>
+                <td><?php echo $arbeidet->getTilbakemelding(); ?></td>
+            </tr>
+
+        </table>
+
+        <h3>Last opp (flere) bilder:</h3>
+        <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype='multipart/form-data'>
+            <table class="table table-bordered">
                 <tr>
-                    <th>Tilbakemelding:</th>
-                    <td><?php echo $arbeidet->getTilbakemelding(); ?></td>
+                    <th>Bilder</th>
+                    <td>
+                        <input type="file" name="file[]" multiple id="file">
+                    </td>
                 </tr>
-                
+                <tr>
+                    <td></td>
+                    <td><input type="submit" class="btn btn-primary" name="registrer" value="Registrer"></td>
+                </tr>
+            </table>
+        </form>
+
+        <p>
+            <a class="btn btn-primary" data-toggle="collapse" href="#bilder" role="button" aria-expanded="false"
+               aria-controls="collapseExample">
+                Vis bilder
+            </a>
+        </p>
+        <div class="collapse" id="bilder" data-toggle="collapse" href="#">
+            <table class="table table-responsive">
                 <?php
-                
-                foreach($arbeidet->getArbeidBilder() as $arbeidbilde){
+
+                foreach ($arbeidet->getArbeidBilder() as $arbeidbilde) {
                     /* @var \intern3\ArbeidBilde $arbeidbilde */
                     ?>
                     <tr>
                         <th>Bilde:</th>
                         <td>
                             <a href="<?php echo $arbeidbilde->getPath(); ?>">
-                                <img class="img-responsive" src="<?php echo $arbeidbilde->getPath(); ?>">
+                                <img class="img-responsive" alt="bilde elns"
+                                     src="<?php echo $arbeidbilde->getPath(); ?>">
                             </a>
                         </td>
-                        
                     </tr>
-                    
-                    
                     <?php
                 }
-                
-                
-                ?>
-                
-            </table>
-    </div>
 
+
+                ?>
+            </table>
+        </div>
+
+
+    </div>
 
 
 <?php
