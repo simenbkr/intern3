@@ -216,7 +216,11 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private function nullstillTabell()
     {
-        DB::getDB()->query('TRUNCATE TABLE vakt;TRUNCATE TABLE vaktbytte;');
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $start = date('Y-m-d', strtotime($post['varighet_dato_start']));
+        $slutt = date('Y-m-d', strtotime($post['varighet_dato_slutt']));
+        $st = DB::getDB()->prepare('DELETE FROM vakt WHERE (dato >= :start AND dato <= :slutt)');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
     }
 
     private function opprettVakter()
@@ -333,14 +337,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             break;
                         }
 
-                        /*
-                         * Hvis beboeren er satt opp på maks kjipe vakter, eller flere så går vi videre til neste runde.
-                         */
-
-                        if ($vakta->erKjip() && $beboeren->antallKjipeVakter() >= $maks_kjipe) {
-                            continue;
-                        }
-
                         if ($beboeren->harVaktDato($vakta->getDato())) {
                             $vakt_indeks = array_rand($vakter);
                             $vakta = $vakter[$vakt_indeks];
@@ -351,13 +347,12 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * grei vakt for beboeren å sitte.
                          */
 
-                        if($vakta->erKjip() && $beboeren->antallKjipeVakter() - $beboeren->getBruker()->antallVakterErOppsatt() <= 1){
+                        if($vakta->erKjip() && $beboeren->getBruker()->antallVakterErOppsatt() - $beboeren->antallKjipeVakter() <= 1){
                             $i = 0;
                             while($vakta->erKjip()){
                                 $vakt_indeks = array_rand($vakter);
                                 $vakta = $vakter[$vakt_indeks];
-                                $i++;
-                                if($i > 10){
+                                if($i++ > 10){
                                     break;
                                 }
                             }
