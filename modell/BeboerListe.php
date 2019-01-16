@@ -163,7 +163,7 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
     public static function halvVakt()
     {
         $ikkeUtflyttet = '%"utflyttet":NULL%';
-        $st = DB::getDB()->prepare('SELECT b.id AS id FROM beboer AS b, rolle AS r WHERE b.rolle_id=r.id AND r.regitimer > 0 AND b.romhistorikk LIKE :ikkeUtflyttet ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
+        $st = DB::getDB()->prepare('SELECT b.id AS id FROM beboer AS b, rolle AS r WHERE (b.rolle_id=r.id AND r.regitimer = 18 AND b.romhistorikk LIKE :ikkeUtflyttet) ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
         $st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);
         return self::medPdoSt($st);
     }
