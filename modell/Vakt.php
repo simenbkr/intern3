@@ -487,7 +487,7 @@ class Vakt
         bytte=:bytte, bekreftet=:bekreftet, autogenerert=:autogenerert, dobbelvakt=:dobbelvakt, straffevakt=:straffevakt, vaktbytte_id=:vaktbytte WHERE id=:id');
 
         $bytte = $this->bytte ? 1 : 0;
-
+        $vaktbytter = implode(',', $this->vaktbytteDenneErMedI);
 
         $st->bindParam(':id', $this->id);
         $st->bindParam(':bid', $this->brukerId);
@@ -498,7 +498,7 @@ class Vakt
         $st->bindParam(':autogenerert', $this->autogenerert);
         $st->bindParam(':dobbelvakt', $this->dobbelvakt);
         $st->bindParam(':straffevakt', $this->straffevakt);
-        $st->bindParam(':vaktbytte', implode(',', $this->vaktbytteDenneErMedI));
+        $st->bindParam(':vaktbytte', $vaktbytter);
 
         $st->execute();
 
