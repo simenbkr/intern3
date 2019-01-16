@@ -10,9 +10,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     <?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
-    <p>Dette skjemaet brukes for å lage ny vaktliste. Den gamle vil dermed forsvinne helt. Man oppgir varighet for
-        vaktlista, samt enkeltvakter og perioder hvor man vil tildele manuelt. Deretter vil de resterende vaktene bli
-        fordelt tilfeldig mellom beboerne.</p>
+    <p>Denne siden brukes for å generere vaktlister. Ved starten av hvert skoleår (august), burde tabellen tømmes ved å benytte
+    knappen under. Deretter burde vaktene genereres. Vaktene genereres så rettferdig som mulig.</p>
+
 </div>
 
 <div class="col-lg-12">
