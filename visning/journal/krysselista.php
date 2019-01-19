@@ -27,8 +27,11 @@ foreach ($beboere as $beboer) {
             "paging": false,
             "searching": false,
             "scrollY": "500px",
-            "scrollCollapse": true
+            "scrollCollapse": true,
+            "autoWidth": false,
+            "autoHeight": false
         });
+        $('#dataTable').resize();
         if (rad != undefined && rad != 0) {
             var $scrollBody = $(table.table().node()).parent();
 
