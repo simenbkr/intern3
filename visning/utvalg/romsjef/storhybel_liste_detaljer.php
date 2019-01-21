@@ -2,16 +2,7 @@
 
 namespace intern3;
 require_once(__DIR__ . '/../topp_utvalg.php');
-
-
 /* @var $lista \intern3\Storhybelliste */
-function rutime($ru, $rus, $index)
-{
-    return ($ru["ru_$index.tv_sec"] * 1000 + intval($ru["ru_$index.tv_usec"] / 1000))
-        - ($rus["ru_$index.tv_sec"] * 1000 + intval($rus["ru_$index.tv_usec"] / 1000));
-}
-
-$rustart = getrusage();
 
 ?>
     <div class="container">
@@ -596,10 +587,10 @@ $rustart = getrusage();
             $("#beboer-modal").modal("show");
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             function sortSelect(selElem) {
                 var tmpAry = new Array();
-                for (var i=0;i<selElem.options.length;i++) {
+                for (var i = 0; i < selElem.options.length; i++) {
                     tmpAry[i] = new Array();
                     tmpAry[i][0] = selElem.options[i].text;
                     tmpAry[i][1] = selElem.options[i].value;
@@ -608,7 +599,7 @@ $rustart = getrusage();
                 while (selElem.options.length > 0) {
                     selElem.options[0] = null;
                 }
-                for (var i=0;i<tmpAry.length;i++) {
+                for (var i = 0; i < tmpAry.length; i++) {
                     var op = new Option(tmpAry[i][0], tmpAry[i][1]);
                     selElem.options[i] = op;
                 }
@@ -620,11 +611,5 @@ $rustart = getrusage();
 
     </script>
 
-    <?php
-$ru = getrusage();
-
-echo "This process used " . rutime($ru, $rustart, "utime") .
-    " ms for its computations<br/>";
-echo "It spent " . rutime($ru, $rustart, "stime") .
-    " ms in system calls<br/>";
+<?php
 require_once(__DIR__ . '/../../static/bunn.php');
