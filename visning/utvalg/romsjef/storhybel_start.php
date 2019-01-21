@@ -7,8 +7,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <h1>Utvalget &raquo; Romsjef &raquo; Ny Storhybelliste</h1>
 
         <p>
-            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ Ny
-                Storhybelliste ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
+            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel/arkiv">Arkiv</a>
+            ] | [ Ny Storhybelliste ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
             [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
         </p>
         <hr>

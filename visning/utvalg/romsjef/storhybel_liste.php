@@ -8,7 +8,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <div class="col-lg-12">
             <h1>Utvalget &raquo; Romsjef &raquo; StorhybellisteLISTE</h1>
 
-            [ Liste ] | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
+
+            <?php if ($arkiv) { ?>
+                [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ Arkiv ]
+            <?php } else { ?>
+                [ Liste ] | [ <a href="?a=utvalg/romsjef/storhybel/arkiv">Arkiv</a> ]
+            <?php } ?>
+            | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
                 Storhybelliste</a> ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
             [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
 
@@ -35,23 +41,26 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     /* @var \intern3\Storhybelliste $liste */
 
                     $klassen = '';
-                    if($liste->erAktiv()) {
+                    if ($liste->erAktiv()) {
                         $klassen = 'success';
                     }
 
                     if ($liste->getVelgerNr() > 0 && !$liste->erFerdig()) {
 
                         ?>
-                        <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
+                        <tr class="<?php echo $klassen; ?>"
+                            onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->getStatusTekst(); ?></td>
                             <td><?php echo $liste->getVelger()->getNavn(); ?>
-                                (nr. <?php echo $liste->getVelgerNr(); ?>)</td>
+                                (nr. <?php echo $liste->getVelgerNr(); ?>)
+                            </td>
                             <td><?php echo $liste->getNeste()->getNavn(); ?></td>
                         </tr>
 
                     <?php } else { ?>
-                        <tr class="<?php echo $klassen;?>" onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
+                        <tr class="<?php echo $klassen; ?>"
+                            onclick="window.location='?a=utvalg/romsjef/storhybel/liste/<?php echo $liste->getId(); ?>'">
                             <td><?php echo $liste->getNavn(); ?></td>
                             <td><?php echo $liste->getStatusTekst(); ?></td>
                             <td></td>
@@ -59,9 +68,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         </tr>
 
                     <?php }
-                     ?>
+                    ?>
                 <?php }
-                 ?>
+                ?>
                 </tbody>
 
 

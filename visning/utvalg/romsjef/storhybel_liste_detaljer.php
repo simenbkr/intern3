@@ -10,7 +10,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <h1>Utvalget &raquo; Romsjef &raquo; Administrasjon for
                 &raquo; <?php echo $lista->getNavn(); ?></h1>
 
-            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
+            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel/arkiv">Arkiv</a>
+            ] |
+            [ <a href="?a=utvalg/romsjef/storhybel"> Ny
                 Storhybelliste</a> ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
             [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
             <hr>
@@ -28,7 +30,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                 <h2 id="status">Status: <?php echo $lista->getStatusTekst(); ?></h2>
 
-                <?php if (!$lista->erFerdig()) { ?>
+                <?php if (!$lista->erArkivert()) { ?>
+                    <p>
+                        <button class="btn btn-danger" onclick="arkiver()">Arkiver</button>
+                    </p>
+                    <?php
+                }
+                if (!$lista->erFerdig() && $lista->getStatusTekst() !== 'Arkivert') { ?>
                     <p>
                         <?php if ($lista->erAktiv()) { ?>
                             <button class="btn btn-warning" onclick="deaktiver()" id="aktiveringsknapp">Deaktiver
@@ -48,7 +56,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
             </div>
 
-            <?php if (!$lista->erFerdig()) { ?>
+            <?php if (!$lista->erFerdig() && !$lista->erArkivert()) { ?>
                 <div class="col-lg-6">
 
                     <h3>Ledige rom</h3>
@@ -110,11 +118,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                 <div class="col-lg-6">
                     <h3>Rekkefølge</h3>
-                    <p>(drag-and-drop for å endre, når lista er inaktiv.)</p>
                 </div>
 
 
-                <?php if (!$lista->erFerdig()) { ?>
+                <?php if (!$lista->erFerdig() && !$lista->erArkivert()) { ?>
                     <div class="col-lg-6">
                         <h3>Legg til beboere</h3>
                         <p>Disse blir lagt til nederst. Kan bare legge til de som ikke er på lista fra før.</p>
@@ -167,9 +174,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <td><?php echo $velger->getAnsiennitet(); ?></td>
                             <td><?php echo $velger->getKlassetrinn(); ?></td>
                             <td>
-                                <?php if (!$lista->erFerdig() && $nummer < $velgerNr) { ?>
+                                <?php if ((in_array($lista->getStatusTekst(), array('Inaktiv', 'Aktiv'))) && $nummer < $velgerNr) { ?>
                                     <button class="btn btn-warning"
-                                            onclick="omgjor(<?php echo $velger->getVelgerId(); ?>, <?php echo $velger->getNummer(); ?>)">Omgjør
+                                            onclick="omgjor(<?php echo $velger->getVelgerId(); ?>, <?php echo $velger->getNummer(); ?>)">
+                                        Omgjør
                                     </button>
                                 <?php } ?>
                             </td>
@@ -552,6 +560,21 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 success: function (data) {
                     tilbakemelding(data);
                     $("#commit-modal").modal("hide");
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
+        function arkiver() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/storhybel/liste/arkiver/<?php echo $lista->getId(); ?>',
+                data: '',
+                method: 'POST',
+                success: function (data) {
+                    tilbakemelding(data);
                 },
                 error: function (req, stat, err) {
                     alert(err);

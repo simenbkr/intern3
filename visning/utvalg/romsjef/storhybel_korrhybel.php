@@ -56,7 +56,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <h1>Utvalget &raquo; Romsjef &raquo; Ny Korrhybelliste</h1>
 
             <p>
-                [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
+                [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel/arkiv">Arkiv</a>
+                ] | [ <a href="?a=utvalg/romsjef/storhybel"> Ny
                     Storhybelliste</a> ] [ Ny Korrhybelliste ]
                 [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
             </p>

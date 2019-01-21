@@ -87,6 +87,10 @@ class Storhybelliste
             return "Inaktiv";
         }
 
+        if($this->aktiv === '2') {
+            return "Arkivert";
+        }
+
         return "Ferdig";
     }
 
@@ -597,7 +601,7 @@ class Storhybelliste
     {
         $arr = array();
 
-        $st = DB::getDB()->prepare('SELECT * FROM storhybel');
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (aktiv != 2)');
         $st->execute();
 
         for ($i = 0; $i < $st->rowCount(); $i++) {
@@ -606,6 +610,28 @@ class Storhybelliste
 
         return $arr;
 
+    }
+
+    public static function arkiverte() {
+        $arr = array();
+
+        $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (aktiv = 2)');
+        $st->execute();
+
+        for ($i = 0; $i < $st->rowCount(); $i++) {
+            $arr[] = Storhybelliste::init($st);
+        }
+
+        return $arr;
+    }
+
+    public function arkiver() {
+        $this->aktiv = 2;
+        $this->lagreIntern();
+    }
+
+    public function erArkivert() {
+        return $this->aktiv === '2';
     }
 
     /*

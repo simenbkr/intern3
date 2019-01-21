@@ -13,9 +13,9 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
             case 'oppdater':
 
-                if ($lista->erFerdig()) {
-                    Funk::setError("Du kan ikke flytte på rekkefølgen når lista er ferdig.");
-                    header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
+                if ($lista->erFerdig() || $lista->erArkivert()) {
+                    print ("Du kan ikke flytte på rekkefølgen når lista er ferdig.");
+                    //header("Location: ?a=utvalg/romsjef/storhybel/liste/{$lista->getId()}");
                     exit();
                 }
 
@@ -61,6 +61,10 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     $lista->fjernRom($rom);
                     print "Fjerna romnummer " . $rom->getNavn() . " fra lista.";
                 }
+                break;
+            case 'arkiver':
+                $lista->arkiver();
+                print "Arkiverte " . $lista->getNavn() . '.';
                 break;
             case 'leggtilrom':
                 if (($rom = Rom::medId($post['rom_id'])) !== null) {
@@ -183,7 +187,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
 
                 case 'liste':
                     $nesteArg = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
-                    if (($lista = Storhybelliste::medId($sisteArg)) !== null && !$lista->erFerdig()) {
+                    if (($lista = Storhybelliste::medId($sisteArg)) !== null && (!$lista->erFerdig() || $nesteArg === 'arkiver')) {
                         $this->handleListe($lista, $nesteArg);
                     } else {
                         print "Lista er ferdig, og kan derfor ikke endres.";
@@ -314,6 +318,15 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                     $dok = new Visning($this->cd);
 
                     $dok->set('lista', $lista);
+                    $dok->vis('utvalg/romsjef/storhybel_liste.php');
+                    break;
+
+                case 'arkiv':
+                    $lista = Storhybelliste::arkiverte();
+                    $dok = new Visning($this->cd);
+
+                    $dok->set('lista', $lista);
+                    $dok->set('arkiv', 1);
                     $dok->vis('utvalg/romsjef/storhybel_liste.php');
                     break;
 
