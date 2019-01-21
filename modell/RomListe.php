@@ -30,7 +30,8 @@ class RomListe extends Liste
     public static function alleStorhybelRom()
     {
         $st = DB::getDB()->prepare('SELECT id FROM rom WHERE rom.romtype_id IN 
-                    (SELECT id as tid FROM romtype WHERE (navn NOT LIKE "%Stor Parhybel%" AND navn NOT LIKE "%Korr%") )');
+                    (SELECT id as tid FROM romtype WHERE (navn NOT LIKE "%Stor Parhybel%" AND navn NOT LIKE "%Korr%") )
+                    AND rom.navn != "060"');
         $st->execute();
 
         $arr = array();

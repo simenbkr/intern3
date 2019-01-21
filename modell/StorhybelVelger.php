@@ -53,7 +53,7 @@ class StorhybelVelger
 
         $arr = array();
 
-        while($rad = $st->fetch()) {
+        while ($rad = $st->fetch()) {
             $arr[] = self::medVelgerId($rad['velger_id']);
         }
 
@@ -116,7 +116,7 @@ class StorhybelVelger
     {
         return $this->nummer;
     }
-    
+
     public static function nyVelger(array $beboere)
     {
 
@@ -163,13 +163,13 @@ class StorhybelVelger
     {
         $navn = array();
 
-        if(count($this->beboere) < 1) {
+        if (count($this->beboere) < 1) {
             return '';
         }
 
         foreach ($this->beboere as $beboer) {
 
-            if(is_null($beboer)) {
+            if (is_null($beboer)) {
                 continue;
             }
 
@@ -203,7 +203,8 @@ class StorhybelVelger
         return implode(', ', $klassetrinn);
     }
 
-    public function getMaxKlassetrinn() {
+    public function getMaxKlassetrinn()
+    {
 
         $klassetrinn = array();
 

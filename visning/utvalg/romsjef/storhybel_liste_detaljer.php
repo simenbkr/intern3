@@ -1,8 +1,17 @@
 <?php
 
+namespace intern3;
 require_once(__DIR__ . '/../topp_utvalg.php');
 
+
 /* @var $lista \intern3\Storhybelliste */
+function rutime($ru, $rus, $index)
+{
+    return ($ru["ru_$index.tv_sec"] * 1000 + intval($ru["ru_$index.tv_usec"] / 1000))
+        - ($rus["ru_$index.tv_sec"] * 1000 + intval($rus["ru_$index.tv_usec"] / 1000));
+}
+
+$rustart = getrusage();
 
 ?>
     <div class="container">
@@ -61,21 +70,20 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                     <h3>Ledige rom</h3>
 
-                    <p><select class="form-control" onchange="leggtilrom(this)">
-                            <option>Velg</option>
+                    <p><select class="form-control" onchange="leggtilrom(this)" id="rom">
+                            <option>- Velg -</option>
+                            <?php foreach ($ledige_rom as $rom) { ?>
+                                <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)
+                                </option>
+                            <?php } ?>
+
                             <?php foreach ($alle_rom as $rom) {
                                 /* @var \intern3\Rom $rom */
+                                ?>
 
-                                if ($rom->erLedig()) {
-                                    ?>
-
-                                    <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)
-                                    </option>
-                                <?php } else { ?>
-
-                                    <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?></option>
-                                    <?php
-                                }
+                                <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?>
+                                </option>
+                                <?php
                             }
                             ?>
 
@@ -152,6 +160,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <tbody>
 
                     <?php
+
                     $velgerNr = $lista->getVelgerNr();
                     foreach ($lista->getRekkefolge() as $velger) {
                         /* @var $velger \intern3\StorhybelVelger */
@@ -587,8 +596,35 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             $("#beboer-modal").modal("show");
         }
 
+        $(document).ready(function() {
+            function sortSelect(selElem) {
+                var tmpAry = new Array();
+                for (var i=0;i<selElem.options.length;i++) {
+                    tmpAry[i] = new Array();
+                    tmpAry[i][0] = selElem.options[i].text;
+                    tmpAry[i][1] = selElem.options[i].value;
+                }
+                tmpAry.sort();
+                while (selElem.options.length > 0) {
+                    selElem.options[0] = null;
+                }
+                for (var i=0;i<tmpAry.length;i++) {
+                    var op = new Option(tmpAry[i][0], tmpAry[i][1]);
+                    selElem.options[i] = op;
+                }
+                return;
+            }
+
+            sortSelect(document.getElementById('rom'));
+        })
+
     </script>
 
-<?php
+    <?php
+$ru = getrusage();
 
+echo "This process used " . rutime($ru, $rustart, "utime") .
+    " ms for its computations<br/>";
+echo "It spent " . rutime($ru, $rustart, "stime") .
+    " ms in system calls<br/>";
 require_once(__DIR__ . '/../../static/bunn.php');
