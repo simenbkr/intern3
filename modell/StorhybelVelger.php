@@ -152,13 +152,25 @@ class StorhybelVelger
         $base = self::getNextId();
         $start = $base;
 
-        $st = DB::getDB()->prepare('INSERT INTO storhybel_velger (velger_id, beboer_id) VALUES(:vid, :bid)');
+        $db = DB::getDB();
+        $db->beginTransaction();
+
+        $query = 'INSERT INTO storhybel_velger (velger_id, beboer_id) VALUES ';
+
+        //$st = $db->prepare('INSERT INTO storhybel_velger (velger_id, beboer_id) VALUES(:vid, :bid)');
+        $datalist = array();
         foreach($beboere as $beboer) {
-            $st->bindParam(':vid', $base);
-            $st->bindParam(':bid', $beboer->getId());
-            $st->execute();
+            //$st->bindParam(':vid', $base);
+            //$st->bindParam(':bid', $beboer->getId());
+            //$st->execute();
+            $datalist[] = "({$base}, {$beboer->getId()})";
             $base++;
         }
+
+        $query .= implode(',', $datalist);
+        $st = $db->prepare($query);
+        $st->execute();
+        $db->commit();
 
         $velgere = array();
         $st = DB::getDB()->prepare('SELECT * from storhybel_velger WHERE (velger_id >= :start AND velger_id <= :slutt)');
