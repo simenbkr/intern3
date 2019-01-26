@@ -10,6 +10,7 @@ class StorhybelVelger
     private $beboere;
     private $storhybel_id;
     private $nummer;
+    private $i;
 
 
     public static function medVelgerId($velger_id): StorhybelVelger
@@ -22,6 +23,7 @@ class StorhybelVelger
         $instans->velger_id = $velger_id;
         $instans->beboer_ids = array();
         $instans->beboere = array();
+        $instans->i = 0;
 
         $rad = $st->fetch();
         $instans->beboer_ids[] = $rad['beboer_id'];
@@ -35,6 +37,23 @@ class StorhybelVelger
             $instans->nummer = Storhybelliste::staticNummerVelger($instans->velger_id, $instans->storhybel_id);
             $instans->beboere[] = Beboer::medId($rad['beboer_id']);
         }
+
+        return $instans;
+    }
+
+    private static function medRad($rad) {
+
+        if($rad == null) {
+            return null;
+        }
+
+        $instans = new self();
+        $instans->velger_id = $rad['velger_id'];
+        $instans->beboer_ids = array($rad['beboer_id']);
+        $instans->beboere = array();
+        $instans->storhybel_id = $rad['storhybel_id'];
+        $instans->nummer = -1;
+        $instans->i = 0;
 
         return $instans;
     }
@@ -107,14 +126,52 @@ class StorhybelVelger
         return $this->storhybel_id;
     }
 
+    private function createBeboere() {
+        $tmp = array();
+        foreach($this->beboer_ids as $bid) {
+            $tmp[] = Beboer::medId($bid);
+        }
+        $this->beboere = $tmp;
+    }
+
     public function getBeboere(): array
     {
+        if($this->i === 0) {
+            $this->createBeboere();
+        }
         return $this->beboere;
     }
 
     public function getNummer(): int
     {
         return $this->nummer;
+    }
+
+    public static function nyVelgerListe(array $beboere) {
+
+        $base = self::getNextId();
+        $start = $base;
+
+        $st = DB::getDB()->prepare('INSERT INTO storhybel_velger (velger_id, beboer_id) VALUES(:vid, :bid)');
+        foreach($beboere as $beboer) {
+            $st->bindParam(':vid', $base);
+            $st->bindParam(':bid', $beboer->getId());
+            $st->execute();
+            $base++;
+        }
+
+        $velgere = array();
+        $st = DB::getDB()->prepare('SELECT * from storhybel_velger WHERE (velger_id >= :start AND velger_id <= :slutt)');
+        $st->bindParam(':start', $start);
+        $st->bindParam(':slutt', $base);
+        $st->execute();
+
+        while(($rad = $st->fetch())) {
+            $velgere[] = self::medRad($rad);
+        }
+
+
+        return $velgere;
     }
 
     public static function nyVelger(array $beboere)

@@ -507,7 +507,8 @@ class Storhybelliste
         $instans->aktiv = 0;
         $instans->semester = $semester = Funk::generateSemesterString(date('Y-m-d'));
         $instans->ledige_rom = $ledige_rom;
-        $instans->rekkefolge = self::beboerTilVelgerListe($rekkefolge);
+        //$instans->rekkefolge = self::beboerTilVelgerListe($rekkefolge);
+        $instans->rekkefolge = StorhybelVelger::nyVelgerListe($rekkefolge);
 
         $instans->lagre();
 
