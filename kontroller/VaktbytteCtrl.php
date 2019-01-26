@@ -76,6 +76,9 @@ class VaktbytteCtrl extends AbstraktCtrl
                         if (!$vaktbyttet->harPassord() ||
                             ($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord']))) {
 
+                            //Bortgiver = beboer som gir bort vakta.
+                            $bortgiver = $vaktbyttet->getVakt()->getBruker()->getPerson();
+
                             $vakta = $vaktbyttet->getVakt();
                             $vakta->fjernFraAlleBytter();
 
@@ -83,6 +86,10 @@ class VaktbytteCtrl extends AbstraktCtrl
                             $vaktbyttet->slett();
 
                             Funk::setSuccess("Du tok vakta " . $vakta->toString());
+
+                            $innhold = "<html><body>Hei, <br/><br/>Vakten din, {$vakta->toString()} har blitt tatt av {$bruker->getPerson()->getFulltNavn()}.
+                                        <br/>Logg inn på internsida for å se mer<br/><br/>Stor klem fra<br/>Internsiden</body></html>";
+                            Epost::sendEpost($bortgiver, '[SING-VAKT] Vakten din har blitt tatt!', $innhold);
                             $this->redirect();
                         } else {
                             Funk::setError("Feil passord!");
@@ -107,6 +114,11 @@ class VaktbytteCtrl extends AbstraktCtrl
 
                         $vaktbyttet->leggTilForslag($forslag_vakt->getId());
                         Funk::setSuccess("Vakta " . $forslag_vakt->toString() . " ble lagt til som forslag!");
+
+                        $innhold = "<html><body>Hei, <br/><br/>Vaktbyttet ditt på vakta, {$vaktbyttet->getVakt()->toString()} har fått et nytt forslag, {$forslag_vakt->toString()}.
+                                        <br/>Logg inn på internsida for å se mer<br/><br/>Stor klem fra<br/>Internsiden</body></html>";
+                        Epost::sendEpost($vaktbyttet->getVakt()->getBruker()->getPerson()->getEpost(), '[SING-VAKT] Nytt forslag på vaktbyttet ditt', $innhold);
+
                         $this->redirect();
                     } else {
                         Funk::setError("Noe gikk galt! Du fikk ikke foreslått vakt. Feil passord?");
@@ -140,6 +152,13 @@ class VaktbytteCtrl extends AbstraktCtrl
                         $vaktbyttet->slett();
 
                         Funk::setSuccess("Vaktbyttet ble gjennomført!");
+                        $innhold = "<html><body>Hei, <br/><br/>Et vaktbytte har blitt gjennomført! Du har mottatt vakten {$forslag_vakt->toString()}, og gitt bort {$bytte_vakt->toString()}.
+                                        <br/>Logg inn på internsida for å se mer<br/><br/>Stor klem fra<br/>Internsiden</body></html>";
+                        Epost::sendEpost($bytte_vakt->getBruker()->getPerson()->getEpost(), '[SING-VAKT] Vaktbytte gjennomført', $innhold);
+
+                        $innhold = "<html><body>Hei, <br/><br/>Et vaktbytte har blitt gjennomført! Du har mottatt vakten {$bytte_vakt->toString()}, og gitt bort {$forslag_vakt->toString()}.
+                                        <br/>Logg inn på internsida for å se mer<br/><br/>Stor klem fra<br/>Internsiden</body></html>";
+                        Epost::sendEpost($forslag_vakt->getBruker()->getPerson()->getEpost(), '[SING-VAKT] Vaktbytte gjennomført', $innhold);
 
                         $this->redirect();
 

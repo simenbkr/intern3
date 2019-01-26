@@ -20,29 +20,32 @@ class BeboerListe
         return self::medPdoSt($st);
     }
 
-    public static function ikkeAktive(){
+    public static function ikkeAktive()
+    {
         $aktive = self::aktive();
         $alle = self::alle();
         $ikke_aktive = array();
-        foreach($alle as $beboer){
-            if (!in_array($beboer, $aktive)){
+        foreach ($alle as $beboer) {
+            if (!in_array($beboer, $aktive)) {
                 $ikke_aktive[] = $beboer;
             }
         }
         return $ikke_aktive;
     }
 
-    public static function aktiveMedAlko(){
+    public static function aktiveMedAlko()
+    {
         $lista = array();
-        foreach(self::aktive() as $beboer){
-            if ($beboer->harAlkoholdepositum()){
+        foreach (self::aktive() as $beboer) {
+            if ($beboer->harAlkoholdepositum()) {
                 $lista[] = $beboer;
             }
         }
         return $lista;
     }
 
-    public static function reseppListe(){
+    public static function reseppListe()
+    {
         $ikkeUtflyttet = '%"utflyttet":NULL%';
         $st = DB::getDB()->prepare("select id from beboer where (alkoholdepositum=1 and romhistorikk LIKE :ikkeUtflyttet) 
 and id in 
@@ -51,7 +54,8 @@ and id in
         return self::medPdoSt($st);
     }
 
-    public static function vinkjellerListe(){
+    public static function vinkjellerListe()
+    {
         //SQL-ninja shit yo
         $ikkeUtflyttet = '%"utflyttet":NULL%';
         $st = DB::getDB()->prepare("select id from beboer where (alkoholdepositum=1 and romhistorikk LIKE :ikkeUtflyttet) 
@@ -61,38 +65,41 @@ and id in
         return self::medPdoSt($st);
     }
 
-    public static function aktiveMedRegi(){
+    public static function aktiveMedRegi()
+    {
         $lista = array();
-        foreach(self::aktive() as $beboer){
-            if($beboer->getRolle()->getRegitimer() > 0){
+        foreach (self::aktive() as $beboer) {
+            if ($beboer->getRolle()->getRegitimer() > 0) {
                 $lista[] = $beboer;
             }
         }
         return $lista;
     }
-    
-    public static function aktiveMedRegiTilDisp(){
+
+    public static function aktiveMedRegiTilDisp()
+    {
         $lista = array();
-        foreach(self::aktiveMedRegi() as $beboer){
+        foreach (self::aktiveMedRegi() as $beboer) {
             /* @var Beboer $beboer */
-            if(!$beboer->harUtvalgVerv() && $beboer->getBruker()->getDisponibelRegitid() > 0){
+            if (!$beboer->harUtvalgVerv() && $beboer->getBruker()->getDisponibelRegitid() > 0) {
                 $lista[] = $beboer;
             }
         }
         return $lista;
     }
-    
-    public static function aktiveMedRegitimer($regitimer){
+
+    public static function aktiveMedRegitimer($regitimer)
+    {
         $lista = array();
         $semester = Funk::generateSemesterString(date('Y-m-d'));
-        foreach(self::aktiveMedRegi() as $beboer){
+        foreach (self::aktiveMedRegi() as $beboer) {
             /* @var \intern3\Beboer $beboer */
             $antallSek = $beboer->getRolle()->getRegitimer() * 3600;
-            if($antallSek - $beboer->getBruker()->getRegisekunderMedSemester($semester) < $regitimer * 3600){
+            if ($antallSek - $beboer->getBruker()->getRegisekunderMedSemester($semester) < $regitimer * 3600) {
                 $lista[] = $beboer;
             }
         }
-        
+
         return $lista;
     }
 
@@ -145,16 +152,18 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
         return self::medPdoSt($st);
     }
 
-    public static function fullVakt(){
+    public static function fullVakt()
+    {
         $ikkeUtflyttet = '%"utflyttet":NULL%';
         $st = DB::getDB()->prepare('SELECT b.id AS id FROM beboer AS b, rolle AS r WHERE b.rolle_id=r.id AND r.regitimer = 0 AND b.romhistorikk LIKE :ikkeUtflyttet ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
         $st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);
         return self::medPdoSt($st);
     }
 
-    public static function halvVakt(){
+    public static function halvVakt()
+    {
         $ikkeUtflyttet = '%"utflyttet":NULL%';
-        $st = DB::getDB()->prepare('SELECT b.id AS id FROM beboer AS b, rolle AS r WHERE b.rolle_id=r.id AND r.regitimer > 0 AND b.romhistorikk LIKE :ikkeUtflyttet ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
+        $st = DB::getDB()->prepare('SELECT b.id AS id FROM beboer AS b, rolle AS r WHERE (b.rolle_id=r.id AND r.regitimer = 18 AND b.romhistorikk LIKE :ikkeUtflyttet) ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
         $st->bindParam(':ikkeUtflyttet', $ikkeUtflyttet);
         return self::medPdoSt($st);
     }
@@ -167,6 +176,47 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
             $res[] = Beboer::medId($rad['id']);
         }
         return $res;
+    }
+
+    public static function fraStorhybelliste($storhybel_id){
+        $st = DB::getDB()->prepare('SELECT beboer_id FROM storhybel_velger WHERE storhybel_id=:id');
+        $st->bindParam(':id', $storhybel_id);
+        $st->execute();
+
+        $lista = array();
+        foreach($st->fetchAll() as $rad){
+            $lista[$rad['beboer_id']] = Beboer::medId($rad['beboer_id']);
+        }
+
+        return $lista;
+
+    }
+
+    public static function singleStorhybelliste($storhybel_id) {
+
+        /*
+         * Det følger en litt kompleks SQL-spørring. Denne henter ut folk som ikke er oppført alene
+         * på storhybellista med id $storhybel_id.
+         *
+         */
+
+        $st = DB::getDB()->prepare('
+        SELECT beboer_id FROM storhybel_velger WHERE 
+        (velger_id NOT IN 
+        (SELECT velger_id FROM storhybel_velger AS sv WHERE 
+            (sv.storhybel_id = :id) 
+            GROUP BY velger_id HAVING count(*) > 1)    
+        AND storhybel_id=:id)
+        ');
+        $st->bindParam(':id', $storhybel_id);
+        $st->execute();
+
+        $lista = array();
+        foreach($st->fetchAll() as $rad){
+            $lista[$rad['beboer_id']] = Beboer::medId($rad['beboer_id']);
+        }
+
+        return $lista;
     }
 }
 

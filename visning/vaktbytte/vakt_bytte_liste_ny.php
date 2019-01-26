@@ -8,7 +8,22 @@ require_once(__DIR__ . '/../static/topp.php');
 
 
 ?>
+<script>
 
+    $(document).ready(function () {
+        for(var i=1; i < 5; i++) {
+
+            var table = $('#tabellen-'+i).DataTable({
+                "paging": false,
+                "searching": false,
+                "bInfo": false
+            });
+        }
+    });
+</script>
+
+<link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+<script type="text/javascript" src="js/dataTables.js"></script>
 <div class="container">
 
     <div class="col-md-12">
@@ -20,7 +35,7 @@ require_once(__DIR__ . '/../static/topp.php');
 
     <div class="col-md-3 col-sm-6 col-sx-12">
         <table class="table table-bordered">
-            
+
             <tr>
                 <th>Dine vakter</th>
             </tr>
@@ -79,11 +94,15 @@ require_once(__DIR__ . '/../static/topp.php');
         foreach (range(1, 4) as $type) { ?>
 
             <div class="col-md-3 col-sm-6 col-sx-12">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="tabellen-<?php echo $type; ?>">
+
+                    <thead>
                     <tr>
                         <th><?php echo $type; ?>. vakt</th>
                     </tr>
+                    </thead>
 
+                    <tbody>
                     <?php foreach ($vaktbytter as $vaktbytte) {
                         /* @var \intern3\Vaktbytte $vaktbytte */
 
@@ -94,7 +113,7 @@ require_once(__DIR__ . '/../static/topp.php');
                         ?>
 
                         <tr>
-                            <td>
+                            <td data-order="<?php echo strtotime($vaktbytte->getVakt()->getDato()); ?>">
 
                                 <?php
 
@@ -150,6 +169,7 @@ require_once(__DIR__ . '/../static/topp.php');
                         </tr>
                     <?php }
                       ?>
+                    </tbody>
                 </table>
             </div>
         <?php }

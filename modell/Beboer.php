@@ -768,6 +768,33 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
 
     }
 
-}
+    static function storhybelSort(Beboer $beboer1, Beboer $beboer2) {
 
+        if($beboer1->getAnsiennitet() > $beboer2->getAnsiennitet()){
+            return -1;
+        }
+
+        if($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() > $beboer2->getKlassetrinn()){
+            return -1;
+        }
+
+        if($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() == $beboer2->getKlassetrinn()){
+            return 0;
+        }
+
+        return 1;
+    }
+
+    /*
+     * Jesus fuck jeg hater denne datastrukturen.
+     */
+    public function byttRom(Rom $nyttRom) {
+        $this->getRomhistorikk();
+        $this->romhistorikkObjekt->addPeriode($nyttRom->getId(), date('Y-m-d'), null);
+        $this->romhistorikk = $this->romhistorikkObjekt->tilJson();
+        $this->oppdater();
+
+    }
+
+}
 ?>

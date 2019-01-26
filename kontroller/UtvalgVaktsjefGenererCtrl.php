@@ -6,6 +6,14 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if(strlen($post['tabell']) > 0){
+            $this->tomVaktTabell();
+            Funk::setSuccess("Vaktlista ble tømt!");
+            header('Location: ' . $_SERVER['REQUEST_URI']);
+            exit();
+        }
+
         list($feilVarighet, $feilEnkelt, $feilPeriode) = array(array(), array(), array());
         do {
             if (!isset($_POST['generer'])) {
@@ -24,6 +32,10 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $dok->set('feilEnkelt', $feilEnkelt);
         $dok->set('feilPeriode', $feilPeriode);
         $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_generer.php');
+    }
+
+    private function tomVaktTabell() {
+        DB::getDB()->query('TRUNCATE TABLE vakt;TRUNCATE TABLE vaktbytte;');
     }
 
     private function sendEpostTilVakter()
@@ -50,6 +62,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             /* Obs: Ikke noe feilhåndtering på disse stegene ennå. */
             $this->nullstillTabell();
             $this->opprettVakter();
+            error_log("Starter å tildele vakter");
             $this->tildelVakter();
             //$this->opprettOgTildelAnsattVakter();
             /* Ved feil, ->rollback() istedet for ->commit(). */
@@ -216,7 +229,21 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private function nullstillTabell()
     {
-        DB::getDB()->query('TRUNCATE TABLE vakt;TRUNCATE TABLE vaktbytte;');
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $start = date('Y-m-d', strtotime($post['varighet_dato_start']));
+        $slutt = date('Y-m-d', strtotime($post['varighet_dato_slutt']));
+        $st = DB::getDB()->prepare('DELETE FROM vakt WHERE (dato >= :start AND dato <= :slutt)');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
+
+        $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE vakt_id IN (SELECT id FROM vakt WHERE (dato >= :start AND dato <= :slutt))');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
+
+        foreach (VaktListe::autogenerert() as $vakt) {
+            $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
+            $vaktId = $vakt->getId();
+            $st->bindParam(':id', $vaktId);
+            $st->execute();
+        }
     }
 
     private function opprettVakter()
@@ -285,6 +312,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         /*
          * Hovedloop. Vi deler først ut førstevakter, deretter de andre vaktene - i to "runder".
          */
+
         foreach (array($forstevakter, $vanlige_vakter) as $vakter) {
 
             while (count($vakter) > floor($margin / 2)) {
@@ -310,9 +338,11 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
                             || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
 
-                            array_splice($beboere, $beboer_indeks, 1);
-                            array_splice($tmp, $beboer_indeks, 1);
-                            continue;
+                            if($beboeren->getBruker()->antallVakterErOppsatt() >= $antall++) {
+                                array_splice($beboere, $beboer_indeks, 1);
+                                array_splice($tmp, $beboer_indeks, 1);
+                                continue;
+                            }
                         }
 
                         /*
@@ -333,14 +363,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             break;
                         }
 
-                        /*
-                         * Hvis beboeren er satt opp på maks kjipe vakter, eller flere så går vi videre til neste runde.
-                         */
-
-                        if ($vakta->erKjip() && $beboeren->antallKjipeVakter() >= $maks_kjipe) {
-                            continue;
-                        }
-
                         if ($beboeren->harVaktDato($vakta->getDato())) {
                             $vakt_indeks = array_rand($vakter);
                             $vakta = $vakter[$vakt_indeks];
@@ -351,13 +373,13 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * grei vakt for beboeren å sitte.
                          */
 
-                        if($vakta->erKjip() && $beboeren->antallKjipeVakter() - $beboeren->getBruker()->antallVakterErOppsatt() <= 1){
+
+                        if($vakta->erKjip() && $beboeren->getBruker()->antallVakterErOppsatt() - $beboeren->antallKjipeVakter() <= 1){
                             $i = 0;
                             while($vakta->erKjip()){
                                 $vakt_indeks = array_rand($vakter);
                                 $vakta = $vakter[$vakt_indeks];
-                                $i++;
-                                if($i > 10){
+                                if($i++ > 10){
                                     break;
                                 }
                             }

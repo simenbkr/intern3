@@ -26,6 +26,8 @@ class VaktCtrl extends AbstraktCtrl
             return;
         }
         $dok = new Visning($this->cd);
+        $egne_vakter = VaktListe::medBrukerIdEtter(LogginnCtrl::getAktivBruker()->getid(), date('Y-m-d'));
+        $dok->set('egne_vakter', $egne_vakter);
         $dok->vis('vakt_vaktliste.php');
         return;
     }

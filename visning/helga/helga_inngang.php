@@ -25,30 +25,34 @@ switch ($dag_tall) {
         function registrer(id, verdi) {
 
             var elem = document.getElementById(id);
-
+            var navn = document.getElementById(id + "-navn");
             if (verdi == 1) {
 
                 elem.classList.remove('bg-warning');
                 elem.classList.add('bg-success');
-                document.getElementById(id + "-knapp").checked = true;
+                document.getElementById(id + "-knapp").classList.add('btn-info');
+                document.getElementById(id + "-knapp").classList.remove('btn-danger');
 
-                elem.onclick = function () {
+                navn.onclick = function () {
                     registrer(id, 0);
                 };
                 document.getElementById(id + "-knapp").onclick = function () {
                     registrer(id, 0);
                 };
+                document.getElementById(id + "-knapp").innerText = "Fjern";
 
             } else {
                 elem.classList.remove('bg-success');
                 elem.classList.add('bg-warning');
-                document.getElementById(id + "-knapp").checked = false;
-                elem.onclick = function () {
+                document.getElementById(id + "-knapp").classList.add('btn-danger');
+                document.getElementById(id + "-knapp").classList.remove('btn-info');
+                navn.onclick = function () {
                     registrer(id, 1);
                 };
                 document.getElementById(id + "-knapp").onclick = function () {
                     registrer(id, 1);
                 };
+                document.getElementById(id + "-knapp").innerText = "Registrer";
             }
 
             $.ajax({
@@ -131,6 +135,8 @@ switch ($dag_tall) {
         function reloadAvkryss() {
             $("#gjestavkryss").load("?a=helga/gjestavkryss/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
         }
+
+        function ost(){console.log("ost")}
 
         setInterval(function () {
             reloadAvkryss();
