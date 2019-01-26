@@ -138,6 +138,7 @@ class StorhybelVelger
     {
         if($this->i === 0) {
             $this->createBeboere();
+            $this->i = 1;
         }
         return $this->beboere;
     }
@@ -156,13 +157,8 @@ class StorhybelVelger
         $db->beginTransaction();
 
         $query = 'INSERT INTO storhybel_velger (velger_id, beboer_id) VALUES ';
-
-        //$st = $db->prepare('INSERT INTO storhybel_velger (velger_id, beboer_id) VALUES(:vid, :bid)');
         $datalist = array();
         foreach($beboere as $beboer) {
-            //$st->bindParam(':vid', $base);
-            //$st->bindParam(':bid', $beboer->getId());
-            //$st->execute();
             $datalist[] = "({$base}, {$beboer->getId()})";
             $base++;
         }
