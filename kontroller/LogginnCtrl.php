@@ -43,7 +43,7 @@ class LogginnCtrl extends AbstraktCtrl
         session_start();
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $brukeren = Bruker::medEpost($post['brukernavn']);
-        if ($brukeren != null) {
+        if ($brukeren != null && $brukeren->getPerson()->erAktiv()) {
             $_SESSION['brukernavn'] = $post['brukernavn'];
             $_SESSION['passord'] = self::genererHash($post['passord'], $brukeren->getId());
         }
