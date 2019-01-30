@@ -123,11 +123,14 @@ switch ($dag_tall) {
         unset($epostSendt);
     }
     ?>
-    <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
 
     <div class="row">
         <h1><?php echo $side_tittel; ?></h1>
         <h3><?php echo $undertittel; ?></h3>
+        <hr>
+
+        <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
+
         <p>Her kan du invitere dine venner til Helga!</p>
         <div class="col-lg-6">
             <button class="btn btn-default" onclick="add_all()">Legg til alle</button>

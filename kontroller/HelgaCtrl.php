@@ -342,13 +342,24 @@ class HelgaCtrl extends AbstraktCtrl
                 case 'helga':
                 default:
                     $dok = new Visning($this->cd);
-                    if (isset($_POST)) {
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
                             //Legg til gjest.
                             //getGjesteCountDagBeboer($dag, $beboerid,$aar){
                             if (Funk::isValidEmail($post['epost'])) {
-                                if (HelgaGjesteListe::getGjesteCountDagBeboer($post['add'], LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar()) < $denne_helga->getMaxGjester()) {
+
+                                $dager = array('torsdag', 'fredag', 'lordag');
+                                $dagstr = $dager[$post['add']];
+                                if($denne_helga->erSameMax()) {
+                                    $max_gjester = $denne_helga->getMaxAlle();
+                                } else {
+                                    $max_gjester = $denne_helga->getMaxGjester()[$dagstr];
+                                }
+
+                                $num_gjester_aktuell_dag = HelgaGjesteListe::getGjesteCountDagBeboer($post['add'], LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar());
+
+                                if ($num_gjester_aktuell_dag < $max_gjester) {
                                     //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
                                     $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
                                 VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
@@ -371,14 +382,18 @@ class HelgaCtrl extends AbstraktCtrl
                                         2);
 
                                 } else {
-                                    $_SESSION['error'] = 1;
-                                    $_SESSION['msg'] = "Du har nådd maks gjestekapasitet!";
+                                    Funk::setError("Du har nådd maks gjestekapasitet for denne dagen!");
+                                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                                    exit();
                                 }
 
                             } else {
                                 $_SESSION['error'] = 1;
                                 $_SESSION['msg'] = "Ikke en gyldig epost-adresse!";
+
                                 $dok->set('epostError', 1);
+                                header('Location: ' . $_SERVER['REQUEST_URI']);
+                                exit();
                             }
                         }
                         if (isset($post['fjern']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
