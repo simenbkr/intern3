@@ -31,26 +31,50 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if (isset($post['endre']) && isset($post['epost_tekst'])) {
-                                $denne_helga->setEpostTekst($post['epost_tekst']);
-                                $dok->set('oppdatert', 1);
-                            } elseif (isset($post['dato']) && isset($post['aar'])) {
-                                $klar = $post['klar'] == 'on' ? 1 : 0;
-                                $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
-                                $st->bindParam(':start', $post['dato']);
-                                $st->bindParam(':tema', $post['tema']);
-                                $st->bindParam(':aar', $post['aar']);
-                                $st->bindParam(':klar', $klar);
-                                $st->bindParam(':max_gjest', $post['max_gjest']);
-                                $st->execute();
-                                $dok->set('oppdatert', 1);
-                            } elseif(isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null){
-                                if(isset($post['fjern'])){
+
+                            /*
+                            $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
+                            $st->bindParam(':start', $post['dato']);
+                            $st->bindParam(':tema', $post['tema']);
+                            $st->bindParam(':aar', $post['aar']);
+                            $st->bindParam(':klar', $klar);
+                            $st->bindParam(':max_gjest', $post['max_gjest']);
+                            $st->execute();
+                            */
+
+                            $helga = Helga::medAar($post['aar']);
+
+                            if ($post['klar'] == 'on') {
+                                $helga->setKlar();
+                            }
+
+                            $same = false;
+                            foreach ($post as $key => $val) {
+
+                                if($key == 'SameMax') {
+                                    $same = true;
+                                }
+
+                                $tmp = 'set' . $key;
+                                if (is_string($tmp)) {
+                                    if (is_callable(array($helga, $tmp))) {// method_exists($helga, $tmp)) {
+                                        $helga->$tmp($val);
+                                    }
+                                }
+                            }
+
+                            if(!$same) {
+                                $helga->setSameMax('off');
+                            }
+
+
+                            if (isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null) {
+                                if (isset($post['fjern'])) {
                                     $vervet->fjern($post['fjern']);
                                     $_SESSION['success'] = 1;
                                     $_SESSION['msg'] = "Fjerna beboeren!";
                                 }
-                            } elseif(isset($post['vervet'])){
+                            } elseif (isset($post['vervet'])) {
                                 $postet = explode('&', $post['vervet']);
                                 $beboerId = $postet[0];
                                 $vervId = $postet[1];
@@ -64,7 +88,7 @@ class HelgaCtrl extends AbstraktCtrl
                                     header('Location: ?a=helga/general');
                                     exit();
                                 }
-                            } elseif(isset($post['form']) == 'addverv'){
+                            } elseif (isset($post['form']) == 'addverv') {
                                 $st = DB::getDB()->prepare('INSERT INTO helgaverv (navn,tilgang) VALUES(:navn,:tilgang)');
                                 $st->bindParam(':navn', $post['navn']);
                                 $st->bindParam(':tilgang', $post['tilgang']);
@@ -75,7 +99,7 @@ class HelgaCtrl extends AbstraktCtrl
 
                                 header('Location: ?a=helga/general');
                                 exit();
-                            } elseif(isset($post['fjernverv'])){
+                            } elseif (isset($post['fjernverv'])) {
                                 $st = DB::getDB()->prepare('DELETE FROM helgaverv_beboer WHERE id=:id');
                                 $st->bindParam(':id', $post['fjernverv']);
                                 $st->execute();
@@ -86,8 +110,8 @@ class HelgaCtrl extends AbstraktCtrl
 
                                 $_SESSION['success'] = 1;
                                 $_SESSION['msg'] = "Sletta vervet!";
-                            } elseif(isset($post['endretilgang'])
-                                && ($vervet = Helgaverv::medId($post['endretilgang'])) != null){
+                            } elseif (isset($post['endretilgang'])
+                                && ($vervet = Helgaverv::medId($post['endretilgang'])) != null) {
 
                                 $nyval = $vervet->getTilgang() > 0 ? 0 : 1;
                                 $vervet->setTilgang($nyval);
@@ -96,13 +120,28 @@ class HelgaCtrl extends AbstraktCtrl
                                 $_SESSION['msg'] = "Endra tilgangen for dette vervet!";
 
                             }
+
+                            header('Location: ?a=helga/general');
+                            exit();
                         }
-                        $verv = Helgaverv::getAlle();
                         $denne_helga = Helga::getLatestHelga();
+                        $har_ulike_antall = false;
+                        $tmp = 3 * $denne_helga->getMaxGjester()['torsdag'];
+                        foreach ($denne_helga->getMaxGjester() as $value) {
+                            $tmp -= $value;
+                        }
+
+                        if($tmp != 0) {
+                            $har_ulike_antall = true;
+                        }
+
+                        $verv = Helgaverv::getAlle();
+
                         $alle_helga = Helga::getAlleHelga();
                         $dok->set('helgaverv', $verv);
                         $dok->set('alle_helga', $alle_helga);
                         $dok->set('helga', $denne_helga);
+                        //$dok->set('har_ulike_antall', $har_ulike_antall);
                         $dok->vis('helga/helga_general.php');
                         break;
                     }
@@ -111,7 +150,7 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok = new Visning($this->cd);
                         if (isset($_POST)) {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                            if (isset($post['registrer']) && isset($post['gjestid']) && isset($post['verdi'])){
+                            if (isset($post['registrer']) && isset($post['gjestid']) && isset($post['verdi'])) {
                                 $gjesten = HelgaGjest::byId($post['gjestid']);
                                 //data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
                                 if ($gjesten != null && $gjesten->getAar() == $denne_helga->getAar()) {
@@ -156,10 +195,10 @@ class HelgaCtrl extends AbstraktCtrl
                     }
 
                 case 'gjesteliste':
-                    if($beboer->harHelgaTilgang()){
+                    if ($beboer->harHelgaTilgang()) {
                         $dagen = $this->cd->getSisteArg();
 
-                        if(!in_array($dagen, array('fredag', 'lordag', 'torsdag'))){
+                        if (!in_array($dagen, array('fredag', 'lordag', 'torsdag'))) {
                             break;
                         }
 
@@ -187,10 +226,10 @@ class HelgaCtrl extends AbstraktCtrl
                         exit();
                     }
                 case 'gjestavkryss':
-                    if($beboer->harHelgaTilgang()){
+                    if ($beboer->harHelgaTilgang()) {
                         $dagen = $this->cd->getSisteArg();
 
-                        if(!in_array($dagen, array('fredag', 'lordag', 'torsdag'))){
+                        if (!in_array($dagen, array('fredag', 'lordag', 'torsdag'))) {
                             break;
                         }
 
@@ -217,20 +256,20 @@ class HelgaCtrl extends AbstraktCtrl
                         $dok->vis('helga/helga_gjestavkryss.php');
                         exit();
                     }
-                    
+
                 case 'gjest':
                     $sisteArg = $this->cd->getSisteArg();
-                    if($sisteArg != $aktueltArg && is_numeric($sisteArg) &&
+                    if ($sisteArg != $aktueltArg && is_numeric($sisteArg) &&
                         ($gjest = HelgaGjest::byId($sisteArg)) != null) {
-                    
+
                         $dok = new Visning($this->cd);
                         $dok->set('gjest', $gjest);
                         $dok->vis('helga/helga_gjest.php');
-                        
+
                     }
                     break;
                 case 'registrer':
-                    if($beboer->harHelgaTilgang()) {
+                    if ($beboer->harHelgaTilgang()) {
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                             if (($gjesten = HelgaGjest::byId($post['gjestid'])) != null) {
@@ -283,9 +322,9 @@ class HelgaCtrl extends AbstraktCtrl
                         $st->execute();
                         $success = 0;
                         $gjesten = null;
-                        if($st->rowCount() > 0){
+                        if ($st->rowCount() > 0) {
                             $gjesten = HelgaGjest::init($st);
-                            if($gjesten != null) {
+                            if ($gjesten != null) {
                                 $success = 1;
                                 $dok->set('gjesten', $gjesten);
                                 $dok->set('success', 1);
@@ -309,7 +348,7 @@ class HelgaCtrl extends AbstraktCtrl
                             //Legg til gjest.
                             //getGjesteCountDagBeboer($dag, $beboerid,$aar){
                             if (Funk::isValidEmail($post['epost'])) {
-                                if(HelgaGjesteListe::getGjesteCountDagBeboer($post['add'],LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar()) < $denne_helga->getMaxGjester()) {
+                                if (HelgaGjesteListe::getGjesteCountDagBeboer($post['add'], LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar()) < $denne_helga->getMaxGjester()) {
                                     //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
                                     $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
                                 VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
@@ -391,7 +430,12 @@ class HelgaCtrl extends AbstraktCtrl
                     }
                     $beboers_gjester = HelgaGjesteListe::getGjesteListeDagByBeboerAar($dag_tall, $beboer_id, $aar);
                     $gjeste_count = HelgaGjesteListe::getGjesteCountDagBeboer($dag_tall, $beboer_id, $aar);
-                    $max_gjeste_count = $denne_helga->getMaxGjester();
+                    if($denne_helga->erSameMax()) {
+                        $max_gjeste_count = $denne_helga->getMaxAlle();
+                    } else {
+                        $max_gjeste_count = $denne_helga->getMaxGjester();
+                    }
+                    //$max_gjeste_count = $denne_helga->getMaxGjester();
                     $dok->set('dag_tall', $dag_tall);
                     $dok->set('max_gjeste_count', $max_gjeste_count);
                     $dok->set('beboers_gjester', $beboers_gjester);

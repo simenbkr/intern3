@@ -8,7 +8,7 @@ date_default_timezone_set('Europe/Oslo');
 
 set_time_limit(999999999);
 $start = time();
-echo "Oppretter tabeller til Storhybellista " . date('Y-m-d H:i:s');
+echo "Fikser romtyper " . date('Y-m-d H:i:s');
 echo "\n";
 
 print "Er du sikker? [y/N]\n";

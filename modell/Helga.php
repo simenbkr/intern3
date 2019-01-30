@@ -11,28 +11,12 @@ class Helga
     private $aar;
     private $klar;
     private $max_gjester;
+    private $max_alle;
+    private $same;
     private $antall_gjester;
     private $gjestelista;
     private $epost_tekst;
 
-    /*public function __construct($aar, $start_dato, $slutt_dato = null, $generaler = null, $tema = null, $klar = null, $max_gjester = 15, $epost_tekst = null)
-    {
-        if ($start_dato != null) {
-            $this->start_dato = date('Y-m-d', strtotime($start_dato));
-            $this->slutt_dato = date('Y-m-d', strtotime($start_dato . ' + 2 days'));
-        } else {
-            $this->start_dato = null;
-            $this->slutt_dato = null;
-        }
-        $this->generaler = $generaler;
-        $this->tema = $tema;
-        $this->aar = $aar;
-        $this->klar = $klar;
-        $this->max_gjester = $max_gjester;
-        $this->epost_tekst = $epost_tekst;
-        $this->antall_gjester = HelgaGjesteListe::getGjesteCount($this->aar);
-        $this->gjestelista = HelgaGjesteListe::getAlleGjesterAar($this->aar);
-    }*/
 
     public static function init(\PDOStatement $st)
     {
@@ -57,16 +41,37 @@ class Helga
         }
         $instance->tema = $rad['tema'];
         $instance->klar = $rad['klar'];
-        $instance->max_gjester = $rad['max_gjest'];
+        $instance->max_alle = $rad['max_gjest'];
+        $instance->same = $rad['same'];
+        $instance->max_gjester = array(
+            'torsdag' => $rad['num_torsdag'],
+            'fredag' => $rad['num_fredag'],
+            'lordag' => $rad['num_lordag']
+        );
         $instance->epost_tekst = $rad['epost_text'];
         $instance->antall_gjester = HelgaGjesteListe::getGjesteCount($instance->aar);
         $instance->gjestelista = HelgaGjesteListe::getGjesteCount($instance->aar);
         return $instance;
     }
 
+    public static function medAar($aar) {
+
+        $st = DB::getDB()->prepare('SELECT * FROM helga WHERE aar=:aar ORDER BY aar DESC LIMIT 1');
+        $st->bindParam(':aar', $aar);
+        $st->execute();
+
+        return self::init($st);
+    }
+
     public function getStartDato()
     {
         return $this->start_dato;
+    }
+
+    public function setStartDato($start) {
+        $this->start_dato = date('Y-m-d', strtotime($start));
+        $this->slutt_dato = date('Y-m-d', strtotime($start . ' + 2 days'));
+        $this->oppdater();
     }
 
     public function getSluttDato()
@@ -166,6 +171,11 @@ class Helga
         return $this->klar != 0;
     }
 
+    public function setKlar() {
+        $this->klar = 1;
+        $this->oppdater();
+    }
+
     public function getMaxGjester()
     {
         return $this->max_gjester;
@@ -174,6 +184,11 @@ class Helga
     public function getEpostTekst()
     {
         return $this->epost_tekst;
+    }
+
+    public function setTema($tema) {
+        $this->tema = $tema;
+        $this->oppdater();
     }
 
     public function getGeneralerAsFornavn()
@@ -191,9 +206,46 @@ class Helga
         $this->oppdater();
     }
 
-    public function setMaxGjester($antall)
+    public function setMaxGjester(array $antall)
     {
         $this->max_gjester = $antall;
+        $this->oppdater();
+    }
+
+    public function setMaxTorsdag(int $antall) {
+        $this->max_gjester['torsdag'] = $antall;
+        $this->oppdater();
+    }
+
+    public function setMaxFredag(int $antall) {
+        $this->max_gjester['fredag'] = $antall;
+        $this->oppdater();
+    }
+
+    public function setMaxLordag(int $antall) {
+        $this->max_gjester['lordag'] = $antall;
+        $this->oppdater();
+    }
+
+    public function getMaxAlle(){
+        return $this->max_alle;
+    }
+
+    public function setMaxAlle(int $antall) {
+        $this->max_alle = $antall;
+        $this->oppdater();
+    }
+
+    public function erSameMax() {
+        return $this->same == 1;
+    }
+
+    public function setSameMax($value) {
+        if($value == 'on') {
+            $this->same = 1;
+        } else {
+            $this->same = 0;
+        }
         $this->oppdater();
     }
 
@@ -230,20 +282,34 @@ class Helga
 
     private function oppdater()
     {
-        /*$general_ider = array();
-
-        foreach ($this->generaler as $general) {
-            $general_ider[] = $general->getId();
-        }*/
         $general_ider = json_encode($this->generaler);
-        $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start_dato, slutt_dato=:slutt_dato, generaler=:generaler,tema=:tema, max_gjest=:max_gjest, epost_text=:epost_tekst WHERE aar=:aar');
+        $st = DB::getDB()->prepare('UPDATE helga SET 
+                                              start_dato=:start_dato,
+                                              slutt_dato=:slutt_dato, 
+                                              generaler=:generaler, 
+                                              tema=:tema, 
+                                              epost_text=:epost_tekst,
+                                              num_torsdag=:torsdag, 
+                                              num_fredag=:fredag,
+                                              num_lordag=:lordag,
+                                              klar=:klar,
+                                              same=:same,
+                                              max_gjest=:max_alle
+                                              WHERE aar=:aar');
         $st->bindParam(':start_dato', $this->start_dato);
         $st->bindParam(':slutt_dato', $this->slutt_dato);
         $st->bindParam(':generaler', $general_ider);
         $st->bindParam(':tema', $this->tema);
         $st->bindParam(':aar', $this->aar);
-        $st->bindParam(':max_gjest', $this->max_gjester);
         $st->bindParam(':epost_tekst', $this->epost_tekst);
+
+        $st->bindParam(':torsdag', $this->max_gjester['torsdag']);
+        $st->bindParam(':fredag', $this->max_gjester['fredag']);
+        $st->bindParam(':lordag', $this->max_gjester['lordag']);
+        $st->bindParam(':klar', $this->klar);
+        $st->bindParam(':max_alle', $this->max_alle);
+        $st->bindParam(':same', $this->same);
+
         $st->execute();
     }
 

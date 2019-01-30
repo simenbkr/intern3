@@ -5,6 +5,36 @@ require_once(__DIR__ . '/../static/topp.php');
 
 ?>
     <script>
+
+        var toggle = <?php echo $helga->erSameMax() ? 1 : 0;?>;
+
+        $(document).ready(function(){
+            var single = document.getElementById("single");
+            var multiple = document.getElementById("multiple");
+
+            if(toggle === 1) {
+                multiple.style = "display:none";
+            } else {
+                single.style = "display:none";
+            }
+
+        });
+
+        function same() {
+
+            if(toggle === 0) {
+                toggle = 1;
+
+                single.style = "display:block;";
+                multiple.style = "display:none;";
+
+            } else {
+                toggle = 0;
+                single.style = "display:none;";
+                multiple.style = "display:block;";
+            }
+        }
+
         $(function () {
             $('#datepicker').datepicker({
                 dateFormat: 'yy-mm-dd',
@@ -87,22 +117,41 @@ require_once(__DIR__ . '/../static/topp.php');
                             <input type="hidden" name="aar" value="<?php echo $helga->getAar(); ?>">
                             <tr>
                                 <td>Start-dato</td>
-                                <td><input type="text" name="dato" id="datepicker" class="datepicker"
+                                <td><input type="text" name="StartDato" id="datepicker" class="datepicker form-control"
                                            value="<?php echo $helga->getStartDato(); ?>"></td>
                             </tr>
                             <tr>
                                 <td>Tema:</td>
-                                <td><input type="text" name="tema" value="<?php echo $helga->getTema(); ?>"/></td>
+                                <td><input class="form-control" type="text" name="Tema" value="<?php echo $helga->getTema(); ?>"/></td>
                             </tr>
                             <td>Klar (dette gjør <br/>Helga-siden synlig for alle):</td>
                             <td><input type="checkbox"
                                        name="klar" <?php if (isset($helga) && $helga != null && $helga->getKlar()) {
                                     echo 'checked="checked"';
                                 } ?>></td>
-                            <tr>
+
+                           <?php /* <tr>
                                 <td>Antall gjester per beboer:</td>
                                 <td><input type="text" name="max_gjest" value="<?php echo $helga->getMaxGjester(); ?>"/>
                                 </td>
+                            </tr> */ ?>
+
+                            <tr>
+                                <td>Samme antall gjester hver dag?</td>
+                                <td><input type="checkbox" name="SameMax" id="samme" onclick="same()"
+                                           <?php if($helga->erSameMax()) {echo 'checked';} ?>></td>
+                            </tr>
+
+                            <tr id="single">
+                                <td>Maks antall gjester:</td>
+                                <td><input class="form-control" type="number" name="MaxAlle" value="<?php echo $helga->getMaxAlle(); ?>"></td>
+                            </tr>
+
+                            <tr id="multiple">
+                                <td>Maks antall gjester:</td>
+                                <td>Torsdag:<input class="form-control" type="number" name="MaxTorsdag" value="<?php echo $helga->getMaxGjester()['torsdag']; ?>">
+                                    Fredag:<input class="form-control" type="number" name="MaxFredag" value="<?php echo $helga->getMaxGjester()['fredag']; ?>">
+                                    Lørdag:<input class="form-control" type="number" name="MaxLordag" value="<?php echo $helga->getMaxGjester()['lordag']; ?>"></td>
                             </tr>
 
                             <tr>

@@ -1,12 +1,25 @@
 <?php
 require_once(__DIR__ . '/../static/topp.php');
-$ledige = $max_gjeste_count - $gjeste_count;
+//$ledige = $max_gjeste_count - $gjeste_count;
 $jeg_er_dum = array(0 => 'torsdag', 1 => 'fredag', '2' => 'lordag');
 $dag_array = array(
     0 => 'Torsdag',
     1 => 'Fredag',
     2 => 'Lørdag'
 );
+
+$dag_arrayv2 = array(
+    0 => 'torsdag',
+    1 => 'fredag',
+    2 => 'lordag'
+);
+
+if(is_array($max_gjeste_count)) {
+    $ledige = $max_gjeste_count[$dag_arrayv2[$dag_tall]] - $gjeste_count;
+} else {
+    $ledige = $max_gjeste_count - $gjeste_count;
+}
+
 $side_tittel = "Helga » $dag_array[$dag_tall]";
 switch ($dag_tall) {
     case 0:
