@@ -152,11 +152,11 @@ class VaktbytteCtrl extends AbstraktCtrl
                         $vaktbyttet->slett();
 
                         Funk::setSuccess("Vaktbyttet ble gjennomført!");
-                        $innhold = "<html><body>Hei, <br/><br/>Et vaktbytte har blitt gjennomført! Du har mottatt vakten {$forslag_vakt->toString()}, og gitt bort {$bytte_vakt->toString()}.
+                        $innhold = "<html><body>Hei, <br/><br/>Et vaktbytte har blitt gjennomført! Du har mottatt vakten {$bytte_vakt->toString()}, og gitt bort {$forslag_vakt->toString()}.
                                         <br/>Logg inn på internsida for å se mer<br/><br/>Stor klem fra<br/>Internsiden</body></html>";
                         Epost::sendEpost($bytte_vakt->getBruker()->getPerson()->getEpost(), '[SING-VAKT] Vaktbytte gjennomført', $innhold);
 
-                        $innhold = "<html><body>Hei, <br/><br/>Et vaktbytte har blitt gjennomført! Du har mottatt vakten {$bytte_vakt->toString()}, og gitt bort {$forslag_vakt->toString()}.
+                        $innhold = "<html><body>Hei, <br/><br/>Et vaktbytte har blitt gjennomført! Du har mottatt vakten {$forslag_vakt->toString()}, og gitt bort {$bytte_vakt->toString()}.
                                         <br/>Logg inn på internsida for å se mer<br/><br/>Stor klem fra<br/>Internsiden</body></html>";
                         Epost::sendEpost($forslag_vakt->getBruker()->getPerson()->getEpost(), '[SING-VAKT] Vaktbytte gjennomført', $innhold);
 
