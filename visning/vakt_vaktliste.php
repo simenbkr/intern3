@@ -70,7 +70,7 @@ $df = new IntlDateFormatter('nb_NO',
         <b>Du har sittet <?php echo $cd->getAktivBruker()->antallVakterHarSittet(); ?> vakt(er) og skal sitte
             totalt <?php echo $cd->getAktivBruker()->antallVakterSkalSitte(); ?> vakter. Du er satt opp på <?php echo count($egne_vakter); ?> fremtidige vakter.</b>
         <h3>Dine vakter:</h3>
-        <table class="table table-responsive table-bordered">
+        <table class="table table-responsive table-bordered table-condensed">
             <?php
             foreach ($egne_vakter as $vakt) {
                 $trclass = "";
@@ -85,7 +85,7 @@ $df = new IntlDateFormatter('nb_NO',
                 } else {
                     $knappen = "<button class=\"btn btn-disabled btn-sm\" disabled>Bekreft</button>";
                 }
-                echo "<tr $trclass><td>" . $vakt->getVakttype() . ". vakt " . $df->format(strtotime($vakt->getDato())) . "</td><td>$knappen</td></tr>";
+                echo "<tr $trclass><td>" . $vakt->getVakttype() . ". vakt " . $df->format(strtotime($vakt->getDato())) . "</td></tr>";
             }
             ?>
         </table>
