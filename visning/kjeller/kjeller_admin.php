@@ -56,7 +56,7 @@ require_once(__DIR__ . '/../static/topp.php');
             <?php
             foreach ($vinene as $vin) {
                 /* @var \intern3\Vin $vin */
-                if ($vin == null || !isset($vin) || $vin->erSlettet() || $vin->getType() == null || $vin->getAntall() < 1) {
+                if ($vin == null || !isset($vin) || $vin->erSlettet() || $vin->getType() == null) {
                     continue;
                 }
                 ?>
