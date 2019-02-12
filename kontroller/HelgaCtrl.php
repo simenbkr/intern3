@@ -32,16 +32,6 @@ class HelgaCtrl extends AbstraktCtrl
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-                            /*
-                            $st = DB::getDB()->prepare('UPDATE helga SET start_dato=:start, tema=:tema, klar=:klar, max_gjest=:max_gjest WHERE aar=:aar');
-                            $st->bindParam(':start', $post['dato']);
-                            $st->bindParam(':tema', $post['tema']);
-                            $st->bindParam(':aar', $post['aar']);
-                            $st->bindParam(':klar', $klar);
-                            $st->bindParam(':max_gjest', $post['max_gjest']);
-                            $st->execute();
-                            */
-
                             $helga = Helga::medAar($post['aar']);
                             if (isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null) {
                                 if (isset($post['fjern'])) {
