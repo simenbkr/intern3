@@ -16,7 +16,8 @@
         </tr>
         <?php
         foreach($vinene as $vin) {
-            if($vin == null || round($vin->getAntall(),2) <= 0){
+            /* @var $vin \intern3\Vin */
+            if(is_null($vin) || $vin->erSlettet() || is_null($vin->getType()) || round($vin->getAntall(),2) <= 0){
                 continue;
             }
             ?>
