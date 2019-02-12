@@ -43,31 +43,6 @@ class HelgaCtrl extends AbstraktCtrl
                             */
 
                             $helga = Helga::medAar($post['aar']);
-
-                            if ($post['klar'] == 'on') {
-                                $helga->setKlar();
-                            }
-
-                            $same = false;
-                            foreach ($post as $key => $val) {
-
-                                if($key == 'SameMax') {
-                                    $same = true;
-                                }
-
-                                $tmp = 'set' . $key;
-                                if (is_string($tmp)) {
-                                    if (is_callable(array($helga, $tmp))) {// method_exists($helga, $tmp)) {
-                                        $helga->$tmp($val);
-                                    }
-                                }
-                            }
-
-                            if(!$same) {
-                                $helga->setSameMax('off');
-                            }
-
-
                             if (isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null) {
                                 if (isset($post['fjern'])) {
                                     $vervet->fjern($post['fjern']);
@@ -119,6 +94,29 @@ class HelgaCtrl extends AbstraktCtrl
                                 $_SESSION['success'] = 1;
                                 $_SESSION['msg'] = "Endra tilgangen for dette vervet!";
 
+                            } else {
+                                if ($post['klar'] == 'on') {
+                                    $helga->setKlar();
+                                }
+
+                                $same = false;
+                                foreach ($post as $key => $val) {
+
+                                    if($key == 'SameMax') {
+                                        $same = true;
+                                    }
+
+                                    $tmp = 'set' . $key;
+                                    if (is_string($tmp)) {
+                                        if (is_callable(array($helga, $tmp))) {// method_exists($helga, $tmp)) {
+                                            $helga->$tmp($val);
+                                        }
+                                    }
+                                }
+
+                                if(!$same) {
+                                    $helga->setSameMax('off');
+                                }
                             }
 
                             header('Location: ?a=helga/general');
