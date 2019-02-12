@@ -80,19 +80,19 @@ require_once(__DIR__ . '/../static/topp.php');
             ?>
             <div class="alert alert-success fade in" id="success" style="display:table; margin: auto; margin-top: 5%">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Du er oppdaterte Helga!
+                Du er oppdaterte HELGA!
             </div>
             <?php
         }
         ?>
         <?php
-        echo "<h1>Helga " . $helga->getAar() . "</h1>";
+        echo "<h1>HELGA » HELGA-" . $helga->getAar() . "</h1>";
         ?>
         <div class="row">
             <div class="col-lg-6">
                 <hr>
                 <br/>
-                <h3> Generaler for Helga-<?php echo $helga->getAar(); ?>: </h3><br/>
+                <h3> Generaler for HELGA-<?php echo $helga->getAar(); ?>: </h3><br/>
                 <?php
                 foreach ($helga->getGeneraler() as $general) {
                     echo $general->getFulltNavn() . "<br/>";
@@ -104,12 +104,22 @@ require_once(__DIR__ . '/../static/topp.php');
                 <h4>Fredag: <?php echo $helga->getAntallPerDag()['fredag']; ?></h4>
                 <h4>Lørdag: <?php echo $helga->getAntallPerDag()['lordag']; ?></h4>
 
+                <hr>
+                <h4>Hvordan funker dette?</h4>
+                <p>
+                    HELGA-generalene fyller inn skjemaet etter deres preferanser. Deretter trykker de på klar-knappen.
+                    Etter dette kan beboerene invitere sine gjester. Gjestene får en e-post med en QR-kode, og blir også
+                    oppført på inngangslista. Ved inngangen scannes denne QR-koden av sikkerhet, hvorpå de trykker på en
+                    link til internsiden. Dette registrerer gjesten. Det er også mulig å registrere gjester manuelt i
+                    inngangs-visningen.
+                </p>
+
             </div>
             <div class="col-lg-6">
                 <hr>
-                <h3><?php echo $helga->getTema(); ?>-Helga <?php echo $helga->getAar(); ?> varer
+                <h3><?php echo $helga->getTema(); ?>-HELGA <?php echo $helga->getAar(); ?> varer
                     fra <?php echo $helga->getStartDato(); ?> til <?php echo $helga->getSluttDato(); ?></h3>
-                <p>Endre Helga:</p>
+                <p>Endre HELGA:</p>
 
                 <div id="formen" class="formen">
                     <form name="ajaxform" id="ajaxform" action="" method="POST">
@@ -124,7 +134,7 @@ require_once(__DIR__ . '/../static/topp.php');
                                 <td>Tema:</td>
                                 <td><input class="form-control" type="text" name="Tema" value="<?php echo $helga->getTema(); ?>"/></td>
                             </tr>
-                            <td>Klar (dette gjør <br/>Helga-siden synlig for alle):</td>
+                            <td>Klar (dette gjør <br/>HELGA-siden synlig for alle):</td>
                             <td><input type="checkbox"
                                        name="klar" <?php if (isset($helga) && $helga != null && $helga->getKlar()) {
                                     echo 'checked="checked"';
@@ -215,17 +225,21 @@ require_once(__DIR__ . '/../static/topp.php');
             </div>
 
             <div class="col-lg-6">
+                <p>
+                    Det trengs som regel ikke annet enn en sikkerhetssjef. Denne får da tilgang til HELGA-Inngang, som
+                    det som regel settes opp en datamaskin med tilgang til.
+                </p>
                 <form method="POST">
                     <h4>Legg til verv:</h4>
                     <table class="table table-bordered table-responsive">
                         <input type="hidden" name="form" value="addverv">
                         <tr>
                             <td>Navn:</td>
-                            <td><input type="text" name="navn" value=""></td>
+                            <td><input class="form-control" type="text" name="navn" value=""></td>
                         </tr>
                         <tr>
                             <td>Tilgang (tall fra 0 til hva du vil. > 0 gir tilgang til inngang):</td>
-                            <td><input type="text" name="tilgang" value=""></td>
+                            <td><input class="form-control" type="text" name="tilgang" value=""></td>
                         </tr>
                         <td></td>
                         <td><input class="btn btn-primary" type="submit" value="Legg til"></td>

@@ -4,7 +4,9 @@
         <table class="table table-bordered table-responsive">
             <tr class="bg-info">
                 <td>
-                    <b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() : ''; ?></b>
+                    <b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() .
+                            '   -   Rom ' . $beboerliste[$beboers_id]->getRom()->getNavn() : ''; ?>
+                    </b>
                 </td>
                 <td></td>
             </tr>

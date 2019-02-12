@@ -20,7 +20,7 @@ if(is_array($max_gjeste_count)) {
     $ledige = $max_gjeste_count - $gjeste_count;
 }
 
-$side_tittel = "Helga » $dag_array[$dag_tall]";
+$side_tittel = "HELGA » $dag_array[$dag_tall]";
 switch ($dag_tall) {
     case 0:
         $undertittel = "[ Torsdag ] [ <a href='?a=helga/fredag'>Fredag</a> ] [ <a href='?a=helga/lordag'>Lørdag</a> ]";
@@ -131,7 +131,7 @@ switch ($dag_tall) {
 
         <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
 
-        <p>Her kan du invitere dine venner til Helga!</p>
+        <p>Her kan du invitere dine venner til HELGA!</p>
         <div class="col-lg-6">
             <button class="btn btn-default" onclick="add_all()">Legg til alle</button>
             <hr>

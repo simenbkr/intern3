@@ -6,7 +6,7 @@ $dag_array = array(
     1 => 'Fredag',
     2 => 'Lørdag'
 );
-$side_tittel = "Helga inngang » $dag_array[$dag_tall]";
+$side_tittel = "HELGA Inngang » $dag_array[$dag_tall]";
 switch ($dag_tall) {
     case 0:
         $undertittel = "[ Torsdag ] [ <a href='?a=helga/inngang/fredag'>Fredag</a> ] [ <a href='?a=helga/inngang/lordag'>Lørdag</a> ]";
