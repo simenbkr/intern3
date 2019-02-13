@@ -77,7 +77,11 @@ require_once(__DIR__ . '/../static/topp.php');
                                 
                                 echo $vaktbytte->getVakt()->shortToString();
                                 echo "<br/>";
-                                echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
+                                
+                                if(!is_null($vaktbytte->getVakt()->getBruker())) {
+
+                                    echo $vaktbytte->getVakt()->getBruker()->getPerson()->getFulltNavn();
+                                }
                                 
                                 if($vaktbytte->getMerknad() != null && strlen($vaktbytte->getMerknad()) > 1){
                                     echo "<br/>";
