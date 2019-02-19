@@ -25,7 +25,7 @@ foreach($vakter_i_morgen as $vakt){
 
     if($beboeren->vilHaVaktVarsler()){
         $beskjed = "<html><body>Hei!<br/>Du har snart vakt! Du skal ha " . $vakt->toString() . "<br/>";
-        $beskjed .= "<br/><br/> Med vennlig hilsen <br/>Robottene ved Internsidene";
+        $beskjed .= "<br/><br/> Med vennlig hilsen <br/>Robotene ved Internsidene";
         $beskjed .= "<br/><br/>Hvis denne e-posten er sendt feil, vennligst ta kontakt med data@singsaker.no</body></html>";
 
         $tittel = "[SING-VAKT] Du skal snart sitte vakt!";
