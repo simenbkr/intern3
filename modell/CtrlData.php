@@ -51,6 +51,11 @@ class CtrlData {
 		$this->aktivBruker = $aktivBruker;
 	}
 	public function getAktivBruker() {
+
+	    if(is_null($this->aktivBruker) && isset($_SESSION['brukernavn'])) {
+	        $this->aktivBruker = LogginnCtrl::getAktivBruker();
+        }
+
 		return $this->aktivBruker;
 	}
 	public function setAdminBruker($adminBruker) {

@@ -30,7 +30,7 @@ class LogginnCtrl extends AbstraktCtrl
         exit();
     }
 
-    private static function loggInn()
+    private function loggInn()
     {
         session_destroy();
         session_start();
@@ -41,7 +41,7 @@ class LogginnCtrl extends AbstraktCtrl
             && $brukeren->getPerson()->erAktiv()) {
 
             $_SESSION['brukernavn'] = $post['brukernavn'];
-            //$_SESSION['passord'] = self::genererHash($post['passord'], $brukeren->getId());
+            $this->cd->setAktivBruker($brukeren);
         }
         header('Location: ' . $_SERVER['REQUEST_URI']);
         exit();

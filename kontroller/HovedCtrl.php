@@ -6,37 +6,22 @@ class HovedCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
-        /*
-        $aktueltArg = $this->cd->getAktueltArg();
-        if($aktueltArg == 'api'){
-            $valgtCtrl = new RestCtrl($this->cd->skiftArg());
-            $valgtCtrl->bestemHandling();
-            return;
-        }
-        */
 
         $aktueltArg = $this->cd->getAktueltArg();
-        if($aktueltArg == 'vinkjeller'){
+        if ($aktueltArg == 'vinkjeller') {
             $valgtCtrl = new VinkjellerCtrl($this->cd->skiftArg());
             $valgtCtrl->bestemHandling();
             return;
         }
 
-        if($aktueltArg == 'journal'){
+        if ($aktueltArg == 'journal') {
             $valgtCtrl = new JournalCtrl($this->cd->skiftArg());
             $valgtCtrl->bestemHandling();
             return;
         }
 
-        $aktivBruker = LogginnCtrl::getAktivBruker();
+        $aktivBruker = $this->cd->getAktivBruker();
         if ($aktivBruker == null) {
-            /*if (isset($_SESSION['brukernavn'])) {
-                if ($_SESSION['brukernavn'] == 'journal') {
-                    $valgtCtrl = new JournalCtrl($this->cd->skiftArg());
-                    $valgtCtrl->bestemHandling();
-                    return;
-                }
-            } */
             $valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
             $valgtCtrl->bestemHandling();
             return;
@@ -111,9 +96,6 @@ class HovedCtrl extends AbstraktCtrl
             case 'vinkjeller':
                 $valgtCtrl = new VinkjellerCtrl($this->cd->skiftArg());
                 break;
-            /*case 'api':
-                $valgtCtrl = new RestCtrl($this->cd->skiftArg());
-                break; */
             case 'diverse':
             default:
                 $valgtCtrl = new DiverseCtrl($this->cd->skiftArg());

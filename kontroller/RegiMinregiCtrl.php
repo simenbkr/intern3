@@ -14,7 +14,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
             ($arbeid = Arbeid::medId($this->cd->getSisteArg())) != null) {
 
             if ($this->cd->getAktivBruker() === $arbeid->getBruker() ||
-                LogginnCtrl::getAktivBruker()->getPerson()->harUtvalgVerv()) {
+                $this->cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 
                 // Legge til (flere) bilder, dersom arbeidet er i "Ubehandla" tilstand
                 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $arbeid->getIntStatus() == 0) {
