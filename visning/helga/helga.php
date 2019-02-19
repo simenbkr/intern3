@@ -75,8 +75,44 @@ switch ($dag_tall) {
         }
     }
 
+    function addAllDays(i) {
+        var navn = document.getElementById('navn-' + i).value;
+        var epost = document.getElementById('epost-' + i).value;
+
+        if(navn.length > 1 && epost.length > 2 && epost.includes('@')) {
+
+            for (var j = 0; j < 3; j++) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '?a=helga/<?php echo $jeg_er_dum[$dag_tall];?>',
+                    data: 'add=' + j + '&navn=' + navn + '&epost=' + epost,
+                    method: 'POST',
+                    success: function (html) {
+                        document.getElementById('add-' + i).remove();
+                        $('#lista').load(document.URL + ' #lista');
+                    },
+                    error: function (req, stat, err) {
+                        alert(err);
+                    }
+                });
+            }
+        }
+
+    }
+
+    function add_all_all_days() {
+        console.log("Hei. Jeg er også Håvard Ola-knappen. Jeg liker knapper. Jeg liker Javascript.")
+        var max = <?php echo $ledige; ?>;
+        var dag = <?php echo $dag_tall; ?>;
+        for(var i = 0; i < max; i++) {
+            addAllDays(i);
+        }
+
+    }
+
     function add_all() {
-        console.log("Hei. Jeg er Håvard-Ola-knappen. God Helg(a)!");
+        console.log("Hei. Jeg er Håvard Ola-knappen. God Helg(a)!");
         var max = <?php echo $ledige; ?>;
         var dag = <?php echo $dag_tall; ?>;
         for(var i = 0; i < max; i++) {
@@ -134,6 +170,7 @@ switch ($dag_tall) {
         <p>Her kan du invitere dine venner til HELGA!</p>
         <div class="col-lg-6">
             <button class="btn btn-default" onclick="add_all()">Legg til alle</button>
+            <button class="btn btn-warning" onclick="add_all_all_days()">Legg til alle, alle dager</button>
             <hr>
             <?php
             for ($i = 0; $i < $ledige; $i++) {
@@ -151,6 +188,12 @@ switch ($dag_tall) {
                                 <button class="btn btn-primary"
                                         onclick="add(<?php echo $i; ?>, <?php echo $dag_tall; ?>)">Legg til
                                 </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-info" onclick="addAllDays(<?php echo $i; ?>)">
+                                    Legg til alle dager
+                                </button>
+
                             </td>
                         </tr>
                     </table>
