@@ -37,13 +37,13 @@ class ExternCtrl extends AbstraktCtrl
         $message .= '<p>Telefon: ' .$phone .'<br>';
         $message .= 'E-post: ' .$email_address .'</p>';
         $message .= '<p> født:' .$birthyear .'</p>';
-        $message .= '<p> Studerer på ' .$school .' på ' .$studyyear .'året ' .$studyfield .'</p>';
+        $message .= '<p> Studerer på ' .$school .' på ' .$studyyear .'. året ' .$studyfield .'</p>';
         $message .= '<p> Fagbrev: ' .$fagbrev .'<br>';
         $message .= 'Annen kompetanse: ' .$kompetanse .'</p>';
         $message .= '<p> Hørte om sing: ' .$kjennskap .'<br>';
         $message .= 'Kjenner: ' .$beboere .'</p>';
         $message .= '<h3>Søknadstekst</h3>' .$personalletter;
-        $message .= "Bilde: <img src='{$bilde_url}'/>";
+        $message .= "<br/><br/>Bilde: <img style='max-width: 300px' src='{$bilde_url}'/>";
         $message .= "</body></html>";
 
         Epost::sendEpost($email_address, $tittel, $message);

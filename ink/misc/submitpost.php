@@ -10,29 +10,37 @@ if (!($_SERVER['REQUEST_METHOD'] === 'POST')) {
     header('Location: https://studenterhjem.singsaker.no/soknad.html');
     exit();
 }
-
-if (isset($_FILES['uploads']) && $_FILES['image']['size'] > 0) {
+$post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+$a = false;
+$new_name = "";
+if (isset($_FILES['uploads']) && $_FILES['uploads']['size'] > 0) {
+    var_dump($_FILES);
     $gyldige_extensions = array("jpeg", "jpg", "png", "gif");
     $file_ext = strtolower(end(explode('.', $_FILES['uploads']['name'])));
 
     if(in_array($file_ext, $gyldige_extensions)) {
-
-        $new_name = md5(random_bytes(20)) . $file_ext;
-        $path = '/var/www/studenterhjem.singsaker.no/www/uploads/' . $new_name;
-        if (!move_uploaded_file($_FILES['uploads']['tmp_name'], $path)) {
-            Throw new \RuntimeException("dafuq");
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $count = mb_strlen($chars);
+        for ($i = 0, $result = ''; $i < 20; $i++) {
+            $index = rand(0, $count - 1);
+            $result .= mb_substr($chars, $index, 1);
         }
-        chmod($path, 0644);
-        $bilde = array('bilde' => 'https://studenterhjem.singsaker.no/uploads/' . $new_name);
+
+        $new_name = md5($result) . '.' . $file_ext;
+        $path = __DIR__ . '/uploads/' . $new_name;
+        if (move_uploaded_file($_FILES['uploads']['tmp_name'], $path)) {
+            chmod($path, 0644);
+            $post = array_merge($post, array('bilde' => 'https://studenterhjem.singsaker.no/php/uploads/' . $new_name));
+            $a = true;
+        }
     }
 }
 
 $url = 'https://intern.singsaker.no/?a=extern/soknad';
-$post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
 $auth_arr = array('secret' => SHARED_SECRET);
 
-$postStr = http_build_query(array_merge($post, $auth_arr, $bilde));
+$postStr = http_build_query(array_merge($post, $auth_arr));
 $options = array(
     'http' => array(
         'method' => 'POST',
@@ -120,6 +128,14 @@ $result = file_get_contents($url, false, $streamContext);
 
             Søknadstekst: <br/>
             <?php echo $post['personalletter']; ?>
+
+            <br/>
+            <br/>
+            <?php if($a) { ?>
+            Bilde: <img class="img-responsive" style="max-width: 300px" src="<?php echo 'uploads/' . $new_name; ?>"/>
+
+            <?php } ?>
+
         </p>
 
     </div>
