@@ -14,7 +14,6 @@ $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 $a = false;
 $new_name = "";
 if (isset($_FILES['uploads']) && $_FILES['uploads']['size'] > 0) {
-    var_dump($_FILES);
     $gyldige_extensions = array("jpeg", "jpg", "png", "gif");
     $file_ext = strtolower(end(explode('.', $_FILES['uploads']['name'])));
 
