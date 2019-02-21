@@ -26,6 +26,7 @@ class ExternCtrl extends AbstraktCtrl
         $kjennskap = $post['kjennskap'];
         $beboere = $post['beboere'];
         $personalletter = nl2br($post['personalletter']);
+        $bilde_url = $post['bilde'];
 
         $tittel = "Søknad om plass fra {$name}";
 
@@ -42,6 +43,7 @@ class ExternCtrl extends AbstraktCtrl
         $message .= '<p> Hørte om sing: ' .$kjennskap .'<br>';
         $message .= 'Kjenner: ' .$beboere .'</p>';
         $message .= '<h3>Søknadstekst</h3>' .$personalletter;
+        $message .= "Bilde: <img src='{$bilde_url}'/>";
         $message .= "</body></html>";
 
         Epost::sendEpost($email_address, $tittel, $message);
