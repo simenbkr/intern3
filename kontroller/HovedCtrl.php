@@ -20,6 +20,12 @@ class HovedCtrl extends AbstraktCtrl
             return;
         }
 
+        if($aktueltArg == 'extern') {
+            $valgtCtrl = new ExternCtrl($this->cd->skiftArg());
+            $valgtCtrl->bestemHandling();
+            return;
+        }
+
         $aktivBruker = $this->cd->getAktivBruker();
         if ($aktivBruker == null) {
             $valgtCtrl = new LogginnCtrl($this->cd->skiftArg());
