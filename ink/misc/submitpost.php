@@ -90,13 +90,13 @@ $result = file_get_contents($url, false, $streamContext);
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="fasiliteter.html">Hybler og fasiliteter</a>
+                    <a href="../fasiliteter.html">Hybler og fasiliteter</a>
                 </li>
                 <li>
-                    <a href="utleie.html">Utleie av lokaler</a>
+                    <a href="../utleie.html">Utleie av lokaler</a>
                 </li>
                 <li>
-                    <a href="drift.html">Husets drift</a>
+                    <a href="../drift.html">Husets drift</a>
                 </li>
                 <li>
                     <a href="#" class="active" id="applynow">SØK NÅ</a>
@@ -150,7 +150,7 @@ $result = file_get_contents($url, false, $streamContext);
             Singsaker Studenterhjem - Rogerts gate 1, 7052 Trondheim - 73 89 31 30 - utvalget@singsaker.no
         </P>
         <p class="lead p-footer">
-            Besøk også <a href="http://sommerhotell.singsaker.no/?welcome">Singsaker Sommerhotell</a> sine nettsider.
+            Besøk også <a href="https://sommerhotell.singsaker.no/">Singsaker Sommerhotell</a> sine nettsider.
         <p>
         <div class="icon-group">
                 <span>
