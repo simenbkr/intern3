@@ -48,6 +48,7 @@ class ExternCtrl extends AbstraktCtrl
 
         Epost::sendEpost($email_address, $tittel, $message);
         Epost::sendEpost('data@singsaker.no', $tittel, $message);
+        Epost::sendEpost('romsjef@singsaker.no', $tittel, $message);
 
     }
 
