@@ -32,7 +32,7 @@ class HelgaCtrl extends AbstraktCtrl
                         if(Funk::isValidEmail($post['epost'])) {
                             $gjest->setEpost($post['epost']);
 
-                            Funk::setSuccess('Endret beboeren sin e-post!');
+                            Funk::setSuccess('Endret gjesten sin e-post!');
                         } else {
                             Funk::setError("{$post['epost']} er ikke en gyldig epostadresse!");
                         }

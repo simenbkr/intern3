@@ -218,7 +218,8 @@ switch ($dag_tall) {
                             <?php if ($gjest->getSendt() == 0) { ?>
                                 <td>
                                     <button class="btn btn-warning" onclick="vis(<?php echo $gjest->getId(); ?>)">Endre</button>
-
+                                </td>
+                                <td>
                                     <input class="btn btn-info" type="submit" value="Send"
                                            onclick="send_epost(<?php echo $gjest->getId(); ?>)">
                                 </td>
