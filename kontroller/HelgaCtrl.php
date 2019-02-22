@@ -21,7 +21,12 @@ class HelgaCtrl extends AbstraktCtrl
             switch ($aktueltArg) {
 
                 case 'endregjest':
-                    if(($gjest = HelgaGjest::medId($this->cd->getSisteArg())) !== null && $gjest->getVertId() === $beboer_id){
+                    if(($gjest = HelgaGjest::medId($this->cd->getSisteArg())) !== null
+                        && $gjest->getVertId() === $beboer_id
+                        && $gjest->getSendt() == 0
+
+                    ){
+
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
                         if(Funk::isValidEmail($post['epost'])) {
