@@ -52,6 +52,13 @@ class HelgaGjest {
         return $instance;
     }
 
+    public static function medId($id) {
+        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE id = :id');
+        $st->execute(['id' => $id]);
+
+        return self::init($st);
+    }
+
 
     public function getId(){
         return $this->id;

@@ -19,29 +19,58 @@ class HelgaCtrl extends AbstraktCtrl
         );
         if ($beboer != null && in_array($beboer, BeboerListe::aktive())) {
             switch ($aktueltArg) {
-                case 'beboermodal':
-                    $beboer = Beboer::medId($this->cd->getSisteArg());
 
-                    if (!is_null($beboer)) {
-                        $oppretta = false;
-                        if (isset($denne_helga->medEgendefinertAntall()[$beboer->getId()])) {
-                            $oppretta = true;
+                case 'endregjest':
+                    if(($gjest = HelgaGjest::medId($this->cd->getSisteArg())) !== null && $gjest->getVertId() === $beboer_id){
+                        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                        if(Funk::isValidEmail($post['epost'])) {
+                            $gjest->setEpost($post['epost']);
+
+                            Funk::setSuccess('Endret beboeren sin e-post!');
+                        } else {
+                            Funk::setError("{$post['epost']} er ikke en gyldig epostadresse!");
                         }
 
-                        $dok = new Visning($this->cd);
-                        $dok->set('oppretta', $oppretta);
-                        $dok->set('denne_helga', $denne_helga);
-                        $dok->set('aar', $denne_helga->getAar());
-                        $dok->set('beboer', $beboer);
-                        $dok->vis('helga/beboermodal.php');
+                        header('Location: ?a=helga/' . Helga::DAGER[$gjest->getDag()]);
+                        exit();
                         break;
                     }
+                case 'gjestmodal':
+                    if(($gjest = HelgaGjest::medId($this->cd->getSisteArg())) !== null) {
+
+                        $dok = new Visning($this->cd);
+                        $dok->set('gjest', $gjest);
+                        $dok->vis('helga/gjestmodal.php');
+                        break;
+                    }
+                case 'beboermodal':
+                    if ($beboer->erHelgaGeneral() || $beboer->harDataVerv()) {
+                        $beboer = Beboer::medId($this->cd->getSisteArg());
+
+                        if (!is_null($beboer)) {
+                            $oppretta = false;
+                            if (isset($denne_helga->medEgendefinertAntall()[$beboer->getId()])) {
+                                $oppretta = true;
+                            }
+
+                            $dok = new Visning($this->cd);
+                            $dok->set('oppretta', $oppretta);
+                            $dok->set('denne_helga', $denne_helga);
+                            $dok->set('aar', $denne_helga->getAar());
+                            $dok->set('beboer', $beboer);
+                            $dok->vis('helga/beboermodal.php');
+                            break;
+                        }
+                    }
                 case 'vervmodal':
-                    $beboerListe = BeboerListe::aktive();
-                    $dok = new Visning($this->cd);
-                    $dok->set('beboerListe', $beboerListe);
-                    $dok->vis('helga/helga_vervmodal.php');
-                    break;
+                    if ($beboer->erHelgaGeneral() || $beboer->harDataVerv()) {
+                        $beboerListe = BeboerListe::aktive();
+                        $dok = new Visning($this->cd);
+                        $dok->set('beboerListe', $beboerListe);
+                        $dok->vis('helga/helga_vervmodal.php');
+                        break;
+                    }
                 case 'general':
                     if ($beboer->erHelgaGeneral() || $beboer->harDataVerv()) {
                         $dok = new Visning($this->cd);
@@ -111,7 +140,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $_SESSION['success'] = 1;
                                 $_SESSION['msg'] = "Endra tilgangen for dette vervet!";
 
-                            } else {
+                            } elseif($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 if ($post['klar'] == 'on') {
                                     $helga->setKlar();
                                 }

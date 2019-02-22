@@ -135,6 +135,11 @@ switch ($dag_tall) {
                 }
             });
         }
+
+        function vis(id) {
+            $("#gjest").load("?a=helga/gjestmodal/" + id);
+            $("#gjest-modal").modal("show");
+        }
     </script>
     <div class="container">
         <?php
@@ -211,8 +216,12 @@ switch ($dag_tall) {
                             <td><input class="btn btn-primary" type="submit" value="Slett"
                                        onclick="fjern(<?php echo $gjest->getId(); ?>,<?php echo $dag_tall; ?>)"></td>
                             <?php if ($gjest->getSendt() == 0) { ?>
-                                <td><input class="btn btn-info" type="submit" value="Send"
-                                           onclick="send_epost(<?php echo $gjest->getId(); ?>)"></td>
+                                <td>
+                                    <button class="btn btn-warning" onclick="vis(<?php echo $gjest->getId(); ?>)">Endre</button>
+
+                                    <input class="btn btn-info" type="submit" value="Send"
+                                           onclick="send_epost(<?php echo $gjest->getId(); ?>)">
+                                </td>
                             <?php } else { ?>
                                 <td>
                                     <button class="btn btn-info disabled">Send</button>
@@ -223,6 +232,27 @@ switch ($dag_tall) {
 
             </div>
 
+        </div>
+
+
+        <div class="modal fade" id="gjest-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Endre på gjest</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="gjest">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
 <?php
