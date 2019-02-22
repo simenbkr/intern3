@@ -19,20 +19,51 @@ class HelgaCtrl extends AbstraktCtrl
         );
         if ($beboer != null && in_array($beboer, BeboerListe::aktive())) {
             switch ($aktueltArg) {
+                case 'beboermodal':
+                    $beboer = Beboer::medId($this->cd->getSisteArg());
+
+                    if (!is_null($beboer)) {
+                        $oppretta = false;
+                        if(isset($denne_helga->medEgendefinertAntall()[$beboer->getId()])) {
+                            $oppretta = true;
+                        }
+
+                        $dok = new Visning($this->cd);
+                        $dok->set('oppretta', $oppretta);
+                        $dok->set('denne_helga', $denne_helga);
+                        $dok->set('aar', $denne_helga->getAar());
+                        $dok->set('beboer', $beboer);
+                        $dok->vis('helga/beboermodal.php');
+                        break;
+                    }
                 case 'vervmodal':
-                    $dok = new Visning($this->cd);
                     $beboerListe = BeboerListe::aktive();
                     $dok = new Visning($this->cd);
                     $dok->set('beboerListe', $beboerListe);
                     $dok->vis('helga/helga_vervmodal.php');
                     break;
                 case 'general':
-                    if ($beboer->erHelgaGeneral() || $beboer->harUtvalgVerv() || $beboer->harDataVerv()) {
+                    if ($beboer->erHelgaGeneral() || $beboer->harDataVerv()) {
                         $dok = new Visning($this->cd);
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
                             $helga = Helga::medAar($post['aar']);
+
+                            if ($this->cd->getSisteArg() === 'egendefinert') {
+                                $beboer = Beboer::medId($post['beboer_id']);
+                                //$dager = array($post['torsdag'], $post['fredag'], $post['lordag']);
+
+                                $denne_helga->setMaxGjest($beboer->getId(), $post['torsdag'], $post['fredag'], $post['lordag']);
+                                Funk::setSuccess("Satte opp {$beboer->getFulltNavn()} med egetdefinert antall.");
+                            }
+
+                            if($this->cd->getSisteArg() === 'slettegendefinert') {
+                                $beboer = Beboer::medId($post['beboer_id']);
+
+                                $denne_helga->slettEgendefinert($beboer->getId());
+                                Funk::setSuccess("Fjerna {$beboer->getFulltNavn()} fra å ha egetdefinert antall.");
+                            }
+
                             if (isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null) {
                                 if (isset($post['fjern'])) {
                                     $vervet->fjern($post['fjern']);
@@ -92,7 +123,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $same = false;
                                 foreach ($post as $key => $val) {
 
-                                    if($key == 'SameMax') {
+                                    if ($key == 'SameMax') {
                                         $same = true;
                                     }
 
@@ -104,7 +135,7 @@ class HelgaCtrl extends AbstraktCtrl
                                     }
                                 }
 
-                                if(!$same) {
+                                if (!$same) {
                                     $helga->setSameMax('off');
                                 }
                             }
@@ -113,23 +144,14 @@ class HelgaCtrl extends AbstraktCtrl
                             exit();
                         }
                         $denne_helga = Helga::getLatestHelga();
-                        $har_ulike_antall = false;
-                        $tmp = 3 * $denne_helga->getMaxGjester()['torsdag'];
-                        foreach ($denne_helga->getMaxGjester() as $value) {
-                            $tmp -= $value;
-                        }
-
-                        if($tmp != 0) {
-                            $har_ulike_antall = true;
-                        }
-
                         $verv = Helgaverv::getAlle();
+                        $beboerListe = BeboerListe::aktive();
 
                         $alle_helga = Helga::getAlleHelga();
+                        $dok->set('beboerListe', $beboerListe);
                         $dok->set('helgaverv', $verv);
                         $dok->set('alle_helga', $alle_helga);
                         $dok->set('helga', $denne_helga);
-                        //$dok->set('har_ulike_antall', $har_ulike_antall);
                         $dok->vis('helga/helga_general.php');
                         break;
                     }
@@ -308,12 +330,10 @@ class HelgaCtrl extends AbstraktCtrl
                         $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE api_nokkel=:nokkel');
                         $st->bindParam(':nokkel', $sisteArg);
                         $st->execute();
-                        $success = 0;
                         $gjesten = null;
                         if ($st->rowCount() > 0) {
                             $gjesten = HelgaGjest::init($st);
                             if ($gjesten != null) {
-                                $success = 1;
                                 $dok->set('gjesten', $gjesten);
                                 $dok->set('success', 1);
                                 $gjesten->setInne(1);
@@ -334,16 +354,8 @@ class HelgaCtrl extends AbstraktCtrl
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                         if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
                             //Legg til gjest.
-                            //getGjesteCountDagBeboer($dag, $beboerid,$aar){
                             if (Funk::isValidEmail($post['epost'])) {
-
-                                $dager = array('torsdag', 'fredag', 'lordag');
-                                $dagstr = $dager[$post['add']];
-                                if($denne_helga->erSameMax()) {
-                                    $max_gjester = $denne_helga->getMaxAlle();
-                                } else {
-                                    $max_gjester = $denne_helga->getMaxGjester()[$dagstr];
-                                }
+                                $max_gjester = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(), $post['add']);
 
                                 $num_gjester_aktuell_dag = HelgaGjesteListe::getGjesteCountDagBeboer($post['add'], LogginnCtrl::getAktivBruker()->getPerson()->getId(), $denne_helga->getAar());
 
@@ -405,7 +417,7 @@ class HelgaCtrl extends AbstraktCtrl
                                     . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() .
                                     "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
                                     Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
-                                    Med vennlig hilsen<br/>Helga-" . $denne_helga->getAar() . "<br/><br/>
+                                    Med vennlig hilsen<br/>HELGA-" . $denne_helga->getAar() . "<br/><br/>
                                     <br/><br/><p>Dette er en automatisert melding. Feil? Vennligst ta kontakt
                                      med data@singsaker.no.</p></body></html>";
 
@@ -433,12 +445,7 @@ class HelgaCtrl extends AbstraktCtrl
                     }
                     $beboers_gjester = HelgaGjesteListe::getGjesteListeDagByBeboerAar($dag_tall, $beboer_id, $aar);
                     $gjeste_count = HelgaGjesteListe::getGjesteCountDagBeboer($dag_tall, $beboer_id, $aar);
-                    if($denne_helga->erSameMax()) {
-                        $max_gjeste_count = $denne_helga->getMaxAlle();
-                    } else {
-                        $max_gjeste_count = $denne_helga->getMaxGjester();
-                    }
-                    //$max_gjeste_count = $denne_helga->getMaxGjester();
+                    $max_gjeste_count = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(), $dag_tall);
                     $dok->set('dag_tall', $dag_tall);
                     $dok->set('max_gjeste_count', $max_gjeste_count);
                     $dok->set('beboers_gjester', $beboers_gjester);

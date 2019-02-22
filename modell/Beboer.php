@@ -583,7 +583,7 @@ class Beboer implements Person
     }
 
     public function harHelgaTilgang(){
-        if($this->harDataVerv() || $this->erHelgaGeneral() || $this->harUtvalgVerv()){
+        if($this->harDataVerv() || $this->erHelgaGeneral()){
             return true;
         }
         $st = DB::getDB()->prepare('SELECT * FROM helgaverv AS hv WHERE hv.id IN 

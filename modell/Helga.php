@@ -17,6 +17,8 @@ class Helga
     private $gjestelista;
     private $epost_tekst;
 
+    const DAGER = array('torsdag', 'fredag', 'lordag');
+
 
     public static function init(\PDOStatement $st)
     {
@@ -27,14 +29,14 @@ class Helga
         $instance = new self();
         $instance->aar = $rad['aar'];
 
-        if($rad['start_dato'] != null){
+        if ($rad['start_dato'] != null) {
             $instance->start_dato = date('Y-m-d', strtotime($rad['start_dato']));
             $instance->slutt_dato = date('Y-m-d', strtotime($rad['start_dato'] . ' + 2 days'));
         } else {
             $instance->start_dato = null;
             $instance->slutt_dato = null;
         }
-        if($rad['generaler'] != null) {
+        if ($rad['generaler'] != null) {
             $instance->generaler = json_decode($rad['generaler'], true);
         } else {
             $instance->generaler = array();
@@ -54,7 +56,8 @@ class Helga
         return $instance;
     }
 
-    public static function medAar($aar) {
+    public static function medAar($aar)
+    {
 
         $st = DB::getDB()->prepare('SELECT * FROM helga WHERE aar=:aar ORDER BY aar DESC LIMIT 1');
         $st->bindParam(':aar', $aar);
@@ -68,7 +71,8 @@ class Helga
         return $this->start_dato;
     }
 
-    public function setStartDato($start) {
+    public function setStartDato($start)
+    {
         $this->start_dato = date('Y-m-d', strtotime($start));
         $this->slutt_dato = date('Y-m-d', strtotime($start . ' + 2 days'));
         $this->oppdater();
@@ -84,12 +88,13 @@ class Helga
         return $this->generaler;
     }
 
-    public function getGeneraler(){
+    public function getGeneraler()
+    {
         $generalene = array();
-        if(count($this->generaler) > 0){
+        if (count($this->generaler) > 0) {
             foreach ($this->generaler as $id) {
                 $beboeren = Beboer::medId($id);
-                if($beboeren != null){
+                if ($beboeren != null) {
                     $generalene[] = $beboeren;
                 }
             }
@@ -126,7 +131,8 @@ class Helga
         return $antall_per_dag;
     }
 
-    public function getAntallInnePerDag(){
+    public function getAntallInnePerDag()
+    {
         $antall_per_dag = array(
             'torsdag' => 0,
             'fredag' => 0,
@@ -137,12 +143,12 @@ class Helga
         $st->bindParam(':aar', $this->aar);
         $st->execute();
 
-        for($i = 0; $i < $st->rowCount(); $i++){
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $rad = $st->fetch();
-            if($rad['inne'] == 0){
+            if ($rad['inne'] == 0) {
                 continue;
             }
-            switch($rad['dag']){
+            switch ($rad['dag']) {
                 case 0:
                     $antall_per_dag['torsdag']++;
                     break;
@@ -171,7 +177,8 @@ class Helga
         return $this->klar != 0;
     }
 
-    public function setKlar() {
+    public function setKlar()
+    {
         $this->klar = 1;
         $this->oppdater();
     }
@@ -186,7 +193,8 @@ class Helga
         return $this->epost_tekst;
     }
 
-    public function setTema($tema) {
+    public function setTema($tema)
+    {
         $this->tema = $tema;
         $this->oppdater();
     }
@@ -212,36 +220,43 @@ class Helga
         $this->oppdater();
     }
 
-    public function setMaxTorsdag(int $antall) {
+    public function setMaxTorsdag(int $antall)
+    {
         $this->max_gjester['torsdag'] = $antall;
         $this->oppdater();
     }
 
-    public function setMaxFredag(int $antall) {
+    public function setMaxFredag(int $antall)
+    {
         $this->max_gjester['fredag'] = $antall;
         $this->oppdater();
     }
 
-    public function setMaxLordag(int $antall) {
+    public function setMaxLordag(int $antall)
+    {
         $this->max_gjester['lordag'] = $antall;
         $this->oppdater();
     }
 
-    public function getMaxAlle(){
+    public function getMaxAlle()
+    {
         return $this->max_alle;
     }
 
-    public function setMaxAlle(int $antall) {
+    public function setMaxAlle(int $antall)
+    {
         $this->max_alle = $antall;
         $this->oppdater();
     }
 
-    public function erSameMax() {
+    public function erSameMax()
+    {
         return $this->same == 1;
     }
 
-    public function setSameMax($value) {
-        if($value == 'on') {
+    public function setSameMax($value)
+    {
+        if ($value == 'on') {
             $this->same = 1;
         } else {
             $this->same = 0;
@@ -321,7 +336,7 @@ class Helga
         $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC');
         $st->execute();
 
-        for($i = 0; $i < $st->rowCount(); $i++) {
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $helgaene[] = self::init($st);
         }
         return $helgaene;
@@ -337,25 +352,25 @@ class Helga
         $st = DB::getDB()->prepare('SELECT * FROM helga ORDER BY aar DESC LIMIT 1');
         $st->execute();
 
-        if($st->rowCount() > 0){
+        if ($st->rowCount() > 0) {
             return self::init($st);
         }
         return null;
-/*
-        if ($st->rowCount() > 0) {
-            $rader = $st->fetchAll()[0];
-        } else {
-            return null;
-        }
-        $generaler = array();
-        $json_generaler = json_decode($rader['generaler'], true);
-        if ($json_generaler != null) {
-            foreach ($json_generaler as $general) {
-                $generaler[] = Beboer::medId($general);
-            }
-        }
+        /*
+                if ($st->rowCount() > 0) {
+                    $rader = $st->fetchAll()[0];
+                } else {
+                    return null;
+                }
+                $generaler = array();
+                $json_generaler = json_decode($rader['generaler'], true);
+                if ($json_generaler != null) {
+                    foreach ($json_generaler as $general) {
+                        $generaler[] = Beboer::medId($general);
+                    }
+                }
 
-        return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest'], $rader['epost_tekst']);*/
+                return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest'], $rader['epost_tekst']);*/
     }
 
     public static function getHelgaByAar($aar)
@@ -364,7 +379,7 @@ class Helga
         $st->bindParam(':aar', $aar);
         $st->execute();
 
-        if($st->rowCount() > 0){
+        if ($st->rowCount() > 0) {
             return self::init($st);
         }
         return null;
@@ -392,6 +407,86 @@ class Helga
     public function erHelgaGeneral($beboer_id)
     {
         return in_array($beboer_id, $this->generaler);
+    }
+
+    public function getMaxGjest($beboer_id, $dag)
+    {
+
+        $st = DB::getDB()->prepare('SELECT * FROM helga_gjestantall WHERE (beboer_id = :beboer_id AND aar=:aar)');
+        $st->execute(['beboer_id' => $beboer_id, 'aar' => $this->getAar()]);
+
+        if ($st->rowCount() > 0) {
+            return $st->fetch()[self::DAGER[$dag]];
+        }
+
+        if ($this->erSameMax()) {
+            return $this->getMaxAlle();
+        }
+
+        return $this->getMaxGjester()[self::DAGER[$dag]];
+
+    }
+
+    public function setMaxGjest($beboer_id, $torsdag, $fredag, $lordag)
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM helga_gjesteantall WHERE (beboer_id = :beboer_id AND aar =: aar)');
+        $st->execute(['beboer_id' => $beboer_id, 'aar' => $this->getAar()]);
+
+        if($st->rowCount() < 1) {
+            $arr = array('torsdag' => $torsdag, 'fredag' => $fredag, 'lordag' => $lordag);
+            foreach($arr as $str => $val) {
+                if($this->erSameMax()) {
+                    if($val < $this->getMaxAlle()) {
+                        $val = $this->getMaxAlle();
+                    }
+                } else {
+                    if($val < $this->getMaxGjester()[$str]) {
+                        $val = $this->getMaxGjester()[$str];
+                    }
+                }
+
+                $arr[$str] = $val;
+            }
+
+            $st = DB::getDB()->prepare('INSERT INTO helga_gjestantall (aar, beboer_id, torsdag, fredag, lordag) VALUES(:aar, :beboer_id, :torsdag, :fredag, :lordag)');
+            $st->execute(array_merge(array('beboer_id' => $beboer_id, 'aar' => $this->getAar()), $arr));
+        } else {
+            $st = DB::getDB()->prepare('UPDATE helga_gjestantall SET torsdag = :torsdag, fredag = :fredag, lordag = :lordag WHERE (beboer_id = :beboer_id AND aar = :aar)');
+            $st->execute([
+                'torsdag' => $torsdag,
+                'fredag' => $fredag,
+                'lordag' => $lordag,
+                'beboer_id' => $beboer_id,
+                'aar' => $this->getAar()
+            ]);
+        }
+    }
+
+    public function medEgendefinertAntall() {
+
+        $array = array();
+
+        $st = DB::getDB()->prepare('SELECT * FROM helga_gjestantall WHERE aar = :aar');
+        $st->execute(['aar' => $this->getAar()]);
+
+        while(($rad = $st->fetch())) {
+
+            $array[$rad['beboer_id']] = array(
+                'beboer' => Beboer::medId($rad['beboer_id']),
+                'torsdag' => $rad['torsdag'],
+                'fredag' => $rad['fredag'],
+                'lordag' => $rad['lordag']
+            );
+
+        }
+
+        return $array;
+    }
+
+    public function slettEgendefinert($beboer_id) {
+        $st = DB::getDB()->prepare('DELETE FROM helga_gjestantall WHERE (aar = :aar AND beboer_id = :beboer_id)');
+        $st->execute(['aar' => $this->getAar(), 'beboer_id' => $beboer_id]);
+
     }
 
 }

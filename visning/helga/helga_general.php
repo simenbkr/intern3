@@ -173,6 +173,60 @@ require_once(__DIR__ . '/../static/topp.php');
                 </div>
             </div>
 
+
+            <div class="col-lg-6">
+
+                <h3>Legg til egetdefinert gjesteantall</h3>
+
+                <select id="beboerselect" onchange="vis(this)">
+
+                    <option>- Velg -</option>
+                    <?php foreach($beboerListe as $beboer) { ?>
+                        <option value="<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></option>
+                    <?php } ?>
+                </select>
+
+                <hr/>
+            </div>
+
+            <div class="col-lg-6">
+
+                <h3>Egetdefinert gjesteantall</h3>
+                <table class="table table-bordered table-condensed">
+
+                    <thead>
+                    <tr>
+                        <td>Navn</td>
+                        <td>Torsdag</td>
+                        <td>Fredag</td>
+                        <td>Lørdag</td>
+                        <td></td>
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+                        <?php foreach($helga->medEgendefinertAntall() as $beboer_id => $array) { ?>
+                            <tr id="<?php echo $beboer_id; ?>">
+                                <td id="<?php echo $beboer_id; ?>" onclick="vis_tabell(this)" class="btn-link"><?php echo $array['beboer']->getFulltNavn(); ?></td>
+                                <td><?php echo $array['torsdag']; ?></td>
+                                <td><?php echo $array['fredag']; ?></td>
+                                <td><?php echo $array['lordag']; ?></td>
+                                <td><button class="btn btn-warning" onclick="slettEgendefinert(<?php echo $beboer_id; ?>)">Slett</button></td>
+                            </tr>
+
+
+                        <?php } ?>
+                    </tbody>
+
+
+                </table>
+
+                <hr/>
+
+
+            </div>
+
             <div class="col-lg-6">
 
                 <h4>Tilganger</h4>
@@ -223,6 +277,7 @@ require_once(__DIR__ . '/../static/topp.php');
                     ?>
                 </table>
             </div>
+
 
             <div class="col-lg-6">
                 <p>
@@ -280,6 +335,33 @@ require_once(__DIR__ . '/../static/topp.php');
     </div>
 
     <script>
+
+        function vis(select) {
+            var id = select.options[select.selectedIndex].value;
+            $("#beboer").load("?a=helga/beboermodal/" + id);
+            $("#beboer-modal").modal("show");
+        }
+
+        function vis_tabell(elem) {
+            $("#beboer").load("?a=helga/beboermodal/" + elem.id);
+            $("#beboer-modal").modal("show");
+        }
+
+        function slettEgendefinert(bid) {
+            $.ajax({
+                type: 'POST',
+                url: '?a=helga/general/slettegendefinert',
+                data: 'beboer_id=' + bid,
+                method: 'POST',
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
         function fjern(beboerId, vervId) {
             $.ajax({
                 type: 'POST',
@@ -345,6 +427,28 @@ require_once(__DIR__ . '/../static/topp.php');
 
 
     </script>
+
+
+    <div class="modal fade" id="beboer-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Sett gjesteantall</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="beboer">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <?php
 require_once(__DIR__ . '/../static/bunn.php');
 ?>
