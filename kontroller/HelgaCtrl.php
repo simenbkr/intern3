@@ -24,7 +24,7 @@ class HelgaCtrl extends AbstraktCtrl
 
                     if (!is_null($beboer)) {
                         $oppretta = false;
-                        if(isset($denne_helga->medEgendefinertAntall()[$beboer->getId()])) {
+                        if (isset($denne_helga->medEgendefinertAntall()[$beboer->getId()])) {
                             $oppretta = true;
                         }
 
@@ -55,16 +55,12 @@ class HelgaCtrl extends AbstraktCtrl
 
                                 $denne_helga->setMaxGjest($beboer->getId(), $post['torsdag'], $post['fredag'], $post['lordag']);
                                 Funk::setSuccess("Satte opp {$beboer->getFulltNavn()} med egetdefinert antall.");
-                            }
-
-                            if($this->cd->getSisteArg() === 'slettegendefinert') {
+                            } elseif ($this->cd->getSisteArg() === 'slettegendefinert') {
                                 $beboer = Beboer::medId($post['beboer_id']);
 
                                 $denne_helga->slettEgendefinert($beboer->getId());
                                 Funk::setSuccess("Fjerna {$beboer->getFulltNavn()} fra å ha egetdefinert antall.");
-                            }
-
-                            if (isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null) {
+                            } elseif (isset($post['verv']) && ($vervet = Helgaverv::medId($post['verv'])) != null) {
                                 if (isset($post['fjern'])) {
                                     $vervet->fjern($post['fjern']);
                                     $_SESSION['success'] = 1;
