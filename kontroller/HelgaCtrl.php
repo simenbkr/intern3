@@ -452,6 +452,8 @@ class HelgaCtrl extends AbstraktCtrl
                                 $gjesten->setSendt(1);
                                 $dok->set('epostSendt', 1);
                             }
+                            header('Location: ' . $_SERVER['REQUEST_URI']);
+                            exit();
                         }
                         exit();
                     }
