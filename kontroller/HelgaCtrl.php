@@ -412,17 +412,12 @@ class HelgaCtrl extends AbstraktCtrl
                                         2);
 
                                 } else {
-                                    Funk::setError("Du har nådd maks gjestekapasitet for denne dagen!");
-                                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                                    print "Du har nådd maks gjestekapasitet for denne dagen!";
                                     exit();
                                 }
 
                             } else {
-                                $_SESSION['error'] = 1;
-                                $_SESSION['msg'] = "Ikke en gyldig epost-adresse!";
-
-                                $dok->set('epostError', 1);
-                                header('Location: ' . $_SERVER['REQUEST_URI']);
+                                print "Ugyldig epost!";
                                 exit();
                             }
                         }
@@ -458,6 +453,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $dok->set('epostSendt', 1);
                             }
                         }
+                        exit();
                     }
                     $dagen = $this->cd->getSisteArg();
                     switch ($dagen) {

@@ -65,11 +65,16 @@ switch ($dag_tall) {
                     success: function (html) {
                         document.getElementById('add-' + i).remove();
                         $('#lista').load(document.URL + ' #lista');
+                        if(html.length > 0) {
+                            tilbakemelding(html);
+                        }
                     },
                     error: function (req, stat, err) {
                         alert(err);
                     }
                 });
+            } else {
+                tilbakemelding("Ugyldig epost.");
             }
         }
 
@@ -89,12 +94,18 @@ switch ($dag_tall) {
                         success: function (html) {
                             document.getElementById('add-' + i).remove();
                             $('#lista').load(document.URL + ' #lista');
+
+                            if(html.length > 0) {
+                                tilbakemelding(html);
+                            }
                         },
                         error: function (req, stat, err) {
                             alert(err);
                         }
                     });
                 }
+            } else {
+                tilbakemelding("Ugyldig e-post.");
             }
 
         }
@@ -140,6 +151,12 @@ switch ($dag_tall) {
             $("#gjest").load("?a=helga/gjestmodal/" + id);
             $("#gjest-modal").modal("show");
         }
+
+        function tilbakemelding(beskjed) {
+            document.getElementById("success").style.display = "table";
+            document.getElementById("tilbakemelding-text").innerHTML = beskjed;
+        }
+
     </script>
     <div class="container">
         <?php
@@ -163,12 +180,19 @@ switch ($dag_tall) {
         }
         ?>
 
+        <div class="alert alert-danger fade in" id="success"
+             style="margin: auto; margin-top: 5%; display:none">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <p id="tilbakemelding-text"></p>
+        </div>
+
         <div class="row">
             <h1><?php echo $side_tittel; ?></h1>
             <h3><?php echo $undertittel; ?></h3>
             <hr>
 
             <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
+
 
             <p>Her kan du invitere dine venner til HELGA!</p>
             <div class="col-lg-6">
