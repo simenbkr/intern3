@@ -12,12 +12,6 @@ $dag_arrayv2 = array(
     2 => 'lordag'
 );
 
-if (is_array($max_gjeste_count)) {
-    $ledige = $max_gjeste_count[$dag_arrayv2[$dag_tall]] - $gjeste_count;
-} else {
-    $ledige = $max_gjeste_count - $gjeste_count;
-}
-
 $side_tittel = "HELGA » $dag_array[$dag_tall]";
 switch ($dag_tall) {
     case 0:

@@ -474,6 +474,8 @@ class HelgaCtrl extends AbstraktCtrl
                     $beboers_gjester = HelgaGjesteListe::getGjesteListeDagByBeboerAar($dag_tall, $beboer_id, $aar);
                     $gjeste_count = HelgaGjesteListe::getGjesteCountDagBeboer($dag_tall, $beboer_id, $aar);
                     $max_gjeste_count = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(), $dag_tall);
+                    $ledige = $max_gjeste_count - $gjeste_count;
+                    $dok->set('ledige', $ledige);
                     $dok->set('dag_tall', $dag_tall);
                     $dok->set('max_gjeste_count', $max_gjeste_count);
                     $dok->set('beboers_gjester', $beboers_gjester);
