@@ -429,7 +429,7 @@ class Helga
 
     public function setMaxGjest($beboer_id, $torsdag, $fredag, $lordag)
     {
-        $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM helga_gjesteantall WHERE (beboer_id = :beboer_id AND aar =: aar)');
+        $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM helga_gjestantall WHERE (beboer_id = :beboer_id AND aar = :aar)');
         $st->execute(['beboer_id' => $beboer_id, 'aar' => $this->getAar()]);
         $count = $st->fetch()['cnt'];
 
