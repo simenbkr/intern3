@@ -439,7 +439,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 $datoen = date('Y-m-d', strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
                                 $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
                                 $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til "
-                                    . $denne_helga->getTema() . "-" . $denne_helga->getAar() . " av " . $beboer->getFulltNavn() .
+                                    . $denne_helga->getTema() . "-" . "HELGA" . " av " . $beboer->getFulltNavn() .
                                     "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
                                     Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
                                     Med vennlig hilsen<br/>HELGA-" . $denne_helga->getAar() . "<br/><br/>
