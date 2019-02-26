@@ -5,7 +5,7 @@
             <tr class="bg-info">
                 <td>
                     <b><?php echo ($beboerliste[$beboers_id] != null) ? $beboerliste[$beboers_id]->getFulltNavn() .
-                            '   -   Rom ' . $beboerliste[$beboers_id]->getRom()->getNavn() : ''; ?>
+                            '   -   Rom ' . $beboerliste[$beboers_id]->getRom()->getNavn() . ' -    Telefon   ' . $beboerliste[$beboers_id]->getTelefon() : ''; ?>
                     </b>
                 </td>
                 <td></td>
