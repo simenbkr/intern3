@@ -133,6 +133,19 @@ class Epost
         mail($mottaker, $tittelen, '<html>' . $beskjed . '</html>', $headers);
     }
 
+    public static function sendEpost_replyto($mottaker, $tittel, $beskjed, $replyto) {
+        $headers = "From: Internsida Singsaker <no-reply@mail.singsaker.no>" . "\r\n";
+        $headers .= "Reply-To: {$replyto}\r\n";
+        $headers .= "Return-Path: no-reply@mail.singsaker.no\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $headers .= "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Date: " . date('r') . "\r\n";
+        $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
+
+        $tittelen = (isset($tittel) && $tittel != null) ? $tittel : "[INTERN] Du har fått en melding fra intern.singsaker.no";
+        mail($mottaker, $tittelen, '<html>' . $beskjed . '</html>', $headers);
+    }
+
 }
 
 ?>

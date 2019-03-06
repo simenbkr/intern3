@@ -46,9 +46,9 @@ class ExternCtrl extends AbstraktCtrl
         $message .= "<br/><br/>Bilde: <img style='max-width: 300px' src='{$bilde_url}'/>";
         $message .= "</body></html>";
 
-        Epost::sendEpost($email_address, $tittel, $message);
+        Epost::sendEpost_replyto($email_address, $tittel, $message, 'romsjef@singsaker.no');
         Epost::sendEpost('data@singsaker.no', $tittel, $message);
-        Epost::sendEpost('romsjef@singsaker.no', $tittel, $message);
+        Epost::sendEpost_replyto('romsjef@singsaker.no', $tittel, $message, $email_address);
 
     }
 
