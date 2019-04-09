@@ -55,9 +55,12 @@ class ExternCtrl extends AbstraktCtrl
 
         $st = DB::getDB()->prepare('INSERT INTO soknad(navn, adresse, epost, telefon, fodselsar, skole, studie, fagbrev, kompetanse, kjennskap, kjenner, tekst, bilde)
                                                  VALUES(:navn,:adresse,:epost,:telefon,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
-        $st->execute(['navn' => $post['navn'], 'adresse' => $post['adresse'], 'epost' => $post['epost'], 'telefon' => $post['telefon'], 'fodselsar' => $post['fodselsar'],
+       /* $st->execute(['navn' => $post['navn'], 'adresse' => $post['adresse'], 'epost' => $post['epost'], 'telefon' => $post['telefon'], 'fodselsar' => $post['fodselsar'],
             'skole' => $post['skole'], 'studie' => $post['studie'], 'fagbrev' => $post['fagbrev'], 'kompetanse' => $post['kompetanse'],
-            'kjennskap' => $post['kjennskap'], 'kjenner' => $post['kjenner'], 'tekst' => $post['tekst'], 'bilde' => $post['bilde']]);
+            'kjennskap' => $post['kjennskap'], 'kjenner' => $post['kjenner'], 'tekst' => $post['tekst'], 'bilde' => $post['bilde']]);*/
+        $st->execute(['navn' => $post['navn'],  'adresse' => $post['adresse'],  'epost' => $post['epost'],  'telefon' => $post['tlf'],  'fodselsar' => $post['fodselsdato'],
+            'skole' => $post['skole'],  'studie' => $post['studie'],  'fagbrev' => $post['fagbrev'],  'kompetanse' => $post['kompetanse'],  'kjennskap' => $post['kjennskap'],
+            'kjenner' => $post['kjenner'],  'tekst' => $post['tekst'],  'bilde' => $post['bilde']]);
 
     }
 
