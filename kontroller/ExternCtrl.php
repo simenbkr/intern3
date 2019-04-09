@@ -53,9 +53,8 @@ class ExternCtrl extends AbstraktCtrl
         Epost::sendEpost_replyto('romsjef@singsaker.no', $tittel, $message, $email_address);
 
 
-        $st = DB::getDB()->prepare('INSERT INTO 
-        soknad(navn,adresse,epost,telefon,fodselsar,skole,studie,fagbrev,kompetanse,kjennskap,kjenner,tekst,bilde)
-         VALUES(:navn,:adresse,:epost,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
+        $st = DB::getDB()->prepare('INSERT INTO soknad(navn, adresse, epost, telefon, fodselsar, skole, studie, fagbrev, kompetanse, kjennskap, kjenner, tekst, bilde)
+                                                 VALUES(:navn,:adresse,:epost,:telefon,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
         $st->execute(['navn' => $post['navn'], 'adresse' => $post['adresse'], 'epost' => $post['epost'], 'telefon' => $post['telefon'], 'fodselsar' => $post['fodselsar'],
             'skole' => $post['skole'], 'studie' => $post['studie'], 'fagbrev' => $post['fagbrev'], 'kompetanse' => $post['kompetanse'],
             'kjennskap' => $post['kjennskap'], 'kjenner' => $post['kjenner'], 'tekst' => $post['tekst'], 'bilde' => $post['bilde']]);
