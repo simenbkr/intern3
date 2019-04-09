@@ -54,10 +54,7 @@ class ExternCtrl extends AbstraktCtrl
 
 
         $st = DB::getDB()->prepare('INSERT INTO soknad(navn, adresse, epost, telefon, fodselsar, skole, studie, fagbrev, kompetanse, kjennskap, kjenner, tekst, bilde)
-                                                 VALUES(:navn,:adresse,:epost,:telefon,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
-       /* $st->execute(['navn' => $post['navn'], 'adresse' => $post['adresse'], 'epost' => $post['epost'], 'telefon' => $post['telefon'], 'fodselsar' => $post['fodselsar'],
-            'skole' => $post['skole'], 'studie' => $post['studie'], 'fagbrev' => $post['fagbrev'], 'kompetanse' => $post['kompetanse'],
-            'kjennskap' => $post['kjennskap'], 'kjenner' => $post['kjenner'], 'tekst' => $post['tekst'], 'bilde' => $post['bilde']]);*/
+                                                        VALUES(:navn,:adresse,:epost,:telefon,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
         $st->execute(['navn' => $name, 'adresse' => $address,  'epost' => $email_address,  'telefon' => $phone,
             'fodselsar' => $birthyear, 'skole' => $school,  'studie' => $studyfield,  'fagbrev' => $fagbrev,  'kompetanse' => $kompetanse,  'kjennskap' => $kjennskap,
             'kjenner' => $beboere,  'tekst' => $personalletter,  'bilde' => $bilde_url]);
