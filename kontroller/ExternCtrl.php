@@ -6,12 +6,14 @@ namespace intern3;
 class ExternCtrl extends AbstraktCtrl
 {
 
-    private function validateRequest() {
+    private function validateRequest()
+    {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         return $post['secret'] === SHARED_SECRET;
     }
 
-    private function receiveSoknad() {
+    private function receiveSoknad()
+    {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $name = $post['name'];
         $address = $post['address'];
@@ -32,17 +34,17 @@ class ExternCtrl extends AbstraktCtrl
 
         $message = '<html><body>';
         $message .= '<p><h2>Søknad om plass</h2>';
-        $message .= $name .'<br>';
+        $message .= $name . '<br>';
         $message .= $address . '</p>';
-        $message .= '<p>Telefon: ' .$phone .'<br>';
-        $message .= 'E-post: ' .$email_address .'</p>';
-        $message .= '<p> født:' .$birthyear .'</p>';
-        $message .= '<p> Studerer på ' .$school .' på ' .$studyyear .'. året ' .$studyfield .'</p>';
-        $message .= '<p> Fagbrev: ' .$fagbrev .'<br>';
-        $message .= 'Annen kompetanse: ' .$kompetanse .'</p>';
-        $message .= '<p> Hørte om sing: ' .$kjennskap .'<br>';
-        $message .= 'Kjenner: ' .$beboere .'</p>';
-        $message .= '<h3>Søknadstekst</h3>' .$personalletter;
+        $message .= '<p>Telefon: ' . $phone . '<br>';
+        $message .= 'E-post: ' . $email_address . '</p>';
+        $message .= '<p> født:' . $birthyear . '</p>';
+        $message .= '<p> Studerer på ' . $school . ' på ' . $studyyear . '. året ' . $studyfield . '</p>';
+        $message .= '<p> Fagbrev: ' . $fagbrev . '<br>';
+        $message .= 'Annen kompetanse: ' . $kompetanse . '</p>';
+        $message .= '<p> Hørte om sing: ' . $kjennskap . '<br>';
+        $message .= 'Kjenner: ' . $beboere . '</p>';
+        $message .= '<h3>Søknadstekst</h3>' . $personalletter;
         $message .= "<br/><br/>Bilde: <img style='max-width: 300px' src='{$bilde_url}'/>";
         $message .= "</body></html>";
 
@@ -50,17 +52,26 @@ class ExternCtrl extends AbstraktCtrl
         Epost::sendEpost('data@singsaker.no', $tittel, $message);
         Epost::sendEpost_replyto('romsjef@singsaker.no', $tittel, $message, $email_address);
 
+
+        $st = DB::getDB()->prepare('INSERT INTO 
+        soknad(navn,adresse,epost,telefon,fodselsar,skole,studie,fagbrev,kompetanse,kjennskap,kjenner,tekst,bilde)
+         VALUES(:navn,:adresse,:epost,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
+        $st->execute(['navn' => $post['navn'], 'adresse' => $post['adresse'], 'epost' => $post['epost'], 'telefon' => $post['telefon'], 'fodselsar' => $post['fodselsar'],
+            'skole' => $post['skole'], 'studie' => $post['studie'], 'fagbrev' => $post['fagbrev'], 'kompetanse' => $post['kompetanse'],
+            'kjennskap' => $post['kjennskap'], 'kjenner' => $post['kjenner'], 'tekst' => $post['tekst'], 'bilde' => $post['bilde']]);
+
     }
 
-    public function bestemHandling() {
+    public function bestemHandling()
+    {
 
-        if(!$this->validateRequest()) {
+        if (!$this->validateRequest()) {
             exit("Error! Invalid shared secret!");
         }
 
         $aktueltArg = $this->cd->getAktueltArg();
 
-        switch($aktueltArg) {
+        switch ($aktueltArg) {
             case 'soknad':
                 $this->receiveSoknad();
                 break;
