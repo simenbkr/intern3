@@ -12,6 +12,7 @@ require_once(__DIR__ . '/../../topp_utvalg.php');
             var table = $('#tabellen').DataTable({
                 "paging": true,
                 "searching": true,
+                "order": [[0, "desc"]]
             });
         });
 
