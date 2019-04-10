@@ -72,6 +72,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <th>Har sittet</th>
             <th>Er oppsatt</th>
             <th>Førstevakter</th>
+            <th>Kjipe vakter</th>
             <th>Har igjen</th>
             <th>Ikke oppsatt</th>
             <th>Ikke bekreftet</th>
@@ -90,6 +91,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <td><?php echo $bruker->antallVakterHarSittet(); ?></td>
                 <td><?php echo $bruker->antallVakterErOppsatt(); ?></td>
                 <td><?php echo $bruker->antallForstevakter(); ?></td>
+                <td><?php echo $bruker->getPerson()->antallKjipeVakter(); ?></td>
                 <td><?php echo $bruker->antallVakterHarIgjen(); ?></td>
                 <td><?php echo $bruker->antallVakterIkkeOppsatt(); ?></td>
                 <td><?php echo $bruker->antallVakterIkkeBekreftet(); ?></td>
