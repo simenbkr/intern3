@@ -82,9 +82,7 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                             <?php
                             foreach ($skoleListe as $skole) {
                                 ?>
-                                <option <?php if (isset($beboer) && $beboer != null && $skole->getId() == $beboer->getSkoleId()) {
-                                    echo 'selected="selected"';
-                                } ?> value="<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></option>
+                                <option value="<?php echo $skole->getId(); ?>"><?php echo $skole->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
@@ -98,9 +96,7 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                             <?php
                             foreach ($studieListe as $studie) {
                                 ?>
-                                <option <?php if (isset($beboer) && $beboer != null && $studie->getId() == $beboer->getStudieId()) {
-                                    echo 'selected="selected"';
-                                } ?> value="<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></option>
+                                <option value="<?php echo $studie->getId(); ?>"><?php echo $studie->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
@@ -111,25 +107,15 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                     <td>Klasse:</td>
                     <td>
                         <select name="klasse" class="form-control">
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '1') {
-                                echo 'selected="selected"';
-                            } ?> value="1">1
+                            <option value="1">1
                             </option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '2') {
-                                echo 'selected="selected"';
-                            } ?> value="2">2
+                            <option value="2">2
                             </option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '3') {
-                                echo 'selected="selected"';
-                            } ?> value="3">3
+                            <option value="3">3
                             </option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '4') {
-                                echo 'selected="selected"';
-                            } ?> value="4">4
+                            <option value="4">4
                             </option>
-                            <option <?php if (isset($beboer) && $beboer != null && $beboer->getKlassetrinn() == '5') {
-                                echo 'selected="selected"';
-                            } ?> value="5">5
+                            <option value="5">5
                             </option>
                         </select>
                     </td>
@@ -137,9 +123,7 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                 <tr>
                     <td>Betalt alkodepositum:</td>
                     <td><input type="checkbox"
-                               name="alkodepositum"<?php if (isset($beboer) && $beboer != null && $beboer->harAlkoholdepositum()) {
-                            echo ' checked="checked"';
-                        } ?>></td>
+                               name="alkodepositum"></td>
                 </tr>
                 <tr>
                     <td>Rolle:</td>
@@ -148,9 +132,7 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                             <?php
                             foreach ($rolleListe as $rolle) {
                                 ?>
-                                <option <?php if (isset($beboer) && $beboer != null && $rolle->getId() == $beboer->getRolleId()) {
-                                    echo 'selected="selected"';
-                                } ?> value="<?php echo $rolle->getId(); ?>"><?php echo $rolle->getNavn(); ?></option>
+                                <option value="<?php echo $rolle->getId(); ?>"><?php echo $rolle->getNavn(); ?></option>
                                 <?php
                             }
                             ?>
@@ -176,7 +158,7 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                 <tr>
                     <td></td>
                     <td><input class="btn btn-primary" type="submit"
-                               value="<?php echo !isset($beboer) || $beboer == null ? 'Legg til' : 'Endre'; ?>"></td>
+                               value="Legg til"></td>
                 </tr>
             </table>
         </form>
