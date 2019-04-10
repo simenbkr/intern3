@@ -68,6 +68,11 @@ require_once(__DIR__ . '/../../topp_utvalg.php');
                 <td><img style="max-width: 300px;" src="<?php echo $soknad->getBilde(); ?>"</td>
             </tr>
 
+            <tr>
+                <th></th>
+                <td><a href="?a=utvalg/romsjef/soknad/nybeboer/<?php echo $soknad->getId(); ?>"><button class="btn btn-primary">Legg til som beboer</button></a></td>
+            </tr>
+
         </table>
     </div>
 </div>

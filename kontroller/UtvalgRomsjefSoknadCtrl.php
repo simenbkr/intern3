@@ -16,6 +16,23 @@ class UtvalgRomsjefSoknadCtrl extends AbstraktCtrl
         if($_SERVER['REQUEST_METHOD'] === 'GET') {
             switch ($aktueltArg) {
 
+                case 'nybeboer':
+
+                    $dok = new Visning($this->cd);
+
+                    $skoleListe = SkoleListe::alle();
+                    $studieListe = StudieListe::alle();
+                    $rolleListe = RolleListe::alle();
+                    $romListe = RomListe::alle();
+                    $soknad = Soknad::medId($this->cd->getSisteArg());
+                    $dok->set('soknad', $soknad);
+                    $dok->set('skoleListe', $skoleListe);
+                    $dok->set('studieListe', $studieListe);
+                    $dok->set('rolleListe', $rolleListe);
+                    $dok->set('romListe', $romListe);
+                    $dok->vis('utvalg/romsjef/soknad/ny_beboer_soknad.php');
+                    exit();
+
                 case 'id':
                     if(($soknad = Soknad::medId($sisteArg)) !== null) {
 

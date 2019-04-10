@@ -436,12 +436,6 @@ class Beboer implements Person
         } catch(\Exception $e){}
     }
 
-    public function getVakterOgVakterSittet(){
-        $antall_vakter = 0;
-        $antall_sittet = 0;
-
-    }
-
     public function harVakt()
     {
         return $this->getRolle()->getRegitimer() < 48;
