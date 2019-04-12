@@ -464,22 +464,6 @@ class Vakt
         }
     }
 
-    /*  $instance = new self();
-        $instance->id = $rad['id'];
-        $instance->brukerId = $rad['bruker_id'];
-        $instance->vakttype = $rad['vakttype'];
-        $instance->dato = $rad['dato'];
-        $instance->bytte = $rad['bytte'] == 1 ? true : false;
-        $instance->bekreftet = $rad['bekreftet'];
-        $instance->autogenerert = $rad['autogenerert'];
-        $instance->dobbelvakt = $rad['dobbelvakt'];
-        $instance->straffevakt = $rad['straffevakt'];
-        $instance->vaktbytteDenneErMedI = explode(',', $rad['vaktbytte_id']);
-        return $instance;
-     *
-     *
-     */
-
 
     private function oppdater()
     {
@@ -542,6 +526,8 @@ class Vakt
 
     }
 
-}
+    public static function timeCompare(Vakt $a, Vakt $b) : int {
+        return abs(strtotime($a->getDato()) - strtotime($b->getDato()));
+    }
 
-?>
+}

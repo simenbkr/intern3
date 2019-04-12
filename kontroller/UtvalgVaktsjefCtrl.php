@@ -18,7 +18,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             return;
         }
 
-        if ($_POST && count($_POST) > 0) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             $antall = $post['antall'];
@@ -70,7 +70,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $this->endreVaktAntall();
                 }
 
-                if (isset($_POST)) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     //'endreVakt=1&hosthalv=' + host_halv + "&vaarhalv=" + vaar_halv + "&hosthel=" + host_hel + "&vaarhel=" + vaar_hel,
                     // [endreVakt] => 1 [hosthalv] => 5 [vaarhalv] => 6 [hosthel] => 1 [vaarhel] => 9
@@ -92,14 +92,13 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         $st2->execute();
                     }
                 }
-                $drikke = Drikke::alle();
+
                 $beboerListe = BeboerListe::harVakt();
                 $antallVakter = Vakt::antallVakter();
                 $antallUfordelte = Vakt::antallUfordelte();
                 $antallUbekreftet = Vakt::antallUbekreftet();
                 $roller = RolleListe::alle();
                 $dok = new Visning($this->cd);
-                $dok->set('drikke', $drikke);
                 $dok->set('beboerListe', $beboerListe);
                 $dok->set('antallVakter', $antallVakter);
                 $dok->set('antallUfordelte', $antallUfordelte);

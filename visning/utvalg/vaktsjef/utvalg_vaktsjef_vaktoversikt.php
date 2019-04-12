@@ -4,7 +4,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 ?>
 <script>
-    function endreVakter(){
+    function endreVakter() {
         var host_halv = document.getElementById("1h").value;
         var vaar_halv = document.getElementById("1v").value;
         var host_hel = document.getElementById("2h").value;
@@ -25,7 +25,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 </script>
 <div class="col-md-6">
     <h1>Utvalget &raquo; Vaktsjef &raquo; Vaktoversikt</h1>
-    
+
     <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
     <p>
@@ -39,23 +39,29 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 <div class="col-md-3" id="kake">
     <table class="table table-bordered table-responsive small">
         <tr>
-        <th>Rolle</th>
-        <th>Vakter Høst</th>
+            <th>Rolle</th>
+            <th>Vakter Høst</th>
             <th>Vakter Vår</th>
         </tr>
-        <?php foreach($roller as $rollen){
-            if($rollen->getNavn() == "Full regi") {continue;} ?>
-        <tr>
-            <td><?php echo $rollen->getNavn();?></td>
-            <td><input type="text" name="host" id="<?php echo $rollen->getId();?>h" value="<?php echo $rollen->getVakterH();?>" size="1"></td>
-            <td><input type="text" name="vaar" id="<?php echo $rollen->getId();?>v" value="<?php echo $rollen->getVakterV();?>" size="1"></td>
+        <?php foreach ($roller as $rollen) {
+            if ($rollen->getNavn() == "Full regi") {
+                continue;
+            } ?>
+            <tr>
+                <td><?php echo $rollen->getNavn(); ?></td>
+                <td><input class="form-control" type="text" name="host" id="<?php echo $rollen->getId(); ?>h"
+                           value="<?php echo $rollen->getVakterH(); ?>" size="1"></td>
+                <td><input class="form-control" type="text" name="vaar" id="<?php echo $rollen->getId(); ?>v"
+                           value="<?php echo $rollen->getVakterV(); ?>" size="1"></td>
             </tr>
-        <?php
+            <?php
         }
         ?>
         <tr>
             <td></td>
-            <td><button class="btn btn-primary btn-sm" onclick="endreVakter()">Endre</button></td>
+            <td>
+                <button class="btn btn-primary btn-sm" onclick="endreVakter()">Endre</button>
+            </td>
             <td></td>
         </tr>
     </table>
@@ -83,9 +89,17 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         foreach ($beboerListe as $beboer) {
             /* @var $beboer \intern3\Beboer */
             $bruker = $beboer->getBruker();
+            $advarsel = $bruker->vaktAdvarsel();
+
             ?>
             <tr>
-                <td><a href="?a=utvalg/vaktsjef/vaktoversikt/endre/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a></td>
+                <td>
+                    <a href="?a=utvalg/vaktsjef/vaktoversikt/endre/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a>
+                    <?php if ($bruker->vaktAdvarsel()) { ?>
+                        <i class="glyphicon glyphicon-question-sign"></i>
+                    <?php }
+                      ?>
+                </td>
                 <td><?php echo $bruker->antallStraffevakter(); ?></td>
                 <td><?php echo $bruker->antallVakterSkalSitte(); ?></td>
                 <td><?php echo $bruker->antallVakterHarSittet(); ?></td>
@@ -117,7 +131,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             //"scrollY": "500px"
         });
     });
-    
+
 </script>
 
 

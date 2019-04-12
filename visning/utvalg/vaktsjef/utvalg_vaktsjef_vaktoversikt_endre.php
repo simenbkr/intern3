@@ -8,8 +8,14 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <div class="container">
         <h1>Utvalget » Vaktsjef » Vaktoversikt » Endre vaktantall for <?php echo $beboer->getFulltNavn(); ?></h1>
         <hr>
-    
+
         <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+
+        <?php if($beboer->getBruker()->vaktAdvarsel()) { ?>
+        <div class="alert alert-danger">
+                <?php echo $beboer->getBruker()->advarselArsak(); ?>
+        </div>
+        <?php } ?>
 
         <div class="col-md-6">
             <h2>Endre antall vakter:</h2>
@@ -17,7 +23,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <table class="form table table-responsive table-bordered">
                     <tr>
                         <th>Antall vakter:</th>
-                        <td><input autofocus type="number" max="20" name="antall"
+                        <td><input class="form-control" autofocus type="number" max="20" name="antall"
                                    placeholder="<?php echo $beboer->getBruker()->antallVakterSkalSitte(); ?>"</td>
                     </tr>
                     <tr>
@@ -45,7 +51,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         <div class="col-md-6">
             <h2>Vakter oppsatt:</h2>
-            <table class="table table-bordered table-responsive">
+            <table class="table table-bordered table-responsive table-striped">
                 <tr>
                     <td><b>Type</b></td>
                     <td><b>Dato</b></td>
@@ -68,7 +74,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             </table>
 
             <h2>Vakter sittet:</h2>
-            <table class="table table-bordered table-responsive">
+            <table class="table table-bordered table-responsive table-striped">
                 <tr>
                     <td><b>Type</b></td>
                     <td><b>Dato</b></td>

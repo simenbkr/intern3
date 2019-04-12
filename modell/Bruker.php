@@ -87,7 +87,7 @@ class Bruker
 
         $semester = Funk::generateSemesterString(date('Y-m-d'));
 
-        if(($vaktantall = VaktAntall::medIdSemester($this->id, $semester)) != null){
+        if (($vaktantall = VaktAntall::medIdSemester($this->id, $semester)) != null) {
             return $vaktantall->getAntall();
         }
 
@@ -131,6 +131,124 @@ class Bruker
         return Vakt::antallIkkeBekreftetMedBrukerId($this->id);
     }
 
+
+    /*
+     * Returnerer førstevakter + 3.-4. vakt fredag og 2.,3.,4. vakt lørdag og 2.,3. vakt søndag
+     */
+    public function antallKjipeVakter(): int
+    {
+
+        $st = DB::getDB()->prepare('SELECT count(id) AS sum FROM vakt WHERE 
+                                        (bruker_id=:brukerid  
+                                        AND(
+                                          (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
+                                          OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
+                                          OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2,3))
+                                          OR vakttype = 1)
+                                      )');
+
+        $st->execute(['brukerid' => $this->id]);
+        return $st->fetch()["sum"];
+    }
+
+
+
+    public function harForMangeForstevakter($lista = null) : bool
+    {
+
+        if ($lista == null) {
+            $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
+        }
+
+        $i = 0;
+        foreach ($lista as $vakt) {
+            /* @var Vakt $vakt */
+            if ($vakt->getVakttype() == 1) {
+                $i++;
+            }
+        }
+
+        return $i > 2;
+    }
+
+    public function harForMangeKjipeVakter($lista = null) : bool
+    {
+
+        if ($lista == null) {
+            $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
+        }
+
+        $i = 0;
+        foreach ($lista as $vakt) {
+            /* @var Vakt $vakt */
+
+            if ($vakt->erKjip()) {
+                $i++;
+            }
+
+        }
+
+        return $i > intval(floor($this->getPerson()->getRolle()->getVakterNow() / 2));
+    }
+
+    public function harVakterTett($lista = null, $cnt = 0)
+    {
+
+        if ($lista == null) {
+            $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
+            $cnt = count($lista);
+        }
+
+        if ($cnt >= 2) {
+            for ($i = 1; $i < $cnt; $i++) {
+                $vakt_1 = $lista[$i - 1];
+                /* @var Vakt $vakt_1 */
+                $vakt_2 = $lista[$i];
+                /* @var Vakt $vakt_2 */
+
+                $max_time = 604800; // 7 days
+                if (Vakt::timeCompare($vakt_1, $vakt_2) < $max_time) {
+                    return true;
+                }
+
+            }
+        }
+
+        return false;
+    }
+
+    public function vaktAdvarsel(): bool
+    {
+
+        $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
+        $cnt = count($lista);
+
+        return $this->harForMangeForstevakter($lista) || $this->harForMangeKjipeVakter($lista) || $this->harVakterTett($lista, $cnt);
+    }
+
+    public function advarselArsak() : string {
+
+        $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
+        $cnt = count($lista);
+
+        $out = array();
+
+        if($this->harForMangeForstevakter($lista)) {
+            $out[] = "Det ser ut til at {$this->getPerson()->getFulltNavn()} skal sitte mange førstevakter.";
+        }
+
+        if($this->harForMangeKjipeVakter($lista)) {
+            $out[] = "Det ser ut til at {$this->getPerson()->getFulltNavn()} skal sitte mange kjipe vakter.";
+        }
+
+        if($this->harVakterTett($lista, $cnt)) {
+            $out[] = "Det ser ut til at {$this->getPerson()->getFulltNavn()} har vakter med kort tidsrom mellom enkelte av vaktene.";
+        }
+
+        return count($out) > 0 ? implode('<br/>', $out) : '';
+    }
+
+
     public function getRegisekunderMedSemester($unix = false)
     {
         if ($unix === false) {
@@ -147,16 +265,18 @@ class Bruker
         return $sum;
     }
 
-    public function getRegitimerigjen(){
+    public function getRegitimerigjen()
+    {
 
-        return $this->getPerson()->getRolle()->getRegitimer() - ($this->getRegisekunderMedSemester() / 3600);
+        return max($this->getPerson()->getRolle()->getRegitimer() - ($this->getRegisekunderMedSemester() / 3600), 0);
     }
 
-    public function getOppgaveTimer(){
+    public function getOppgaveTimer()
+    {
         $sum = 0;
-        foreach(Oppgave::getOppgaverISemesterBeboerId($this->getPerson()->getId()) as $oppgave){
+        foreach (Oppgave::getOppgaverISemesterBeboerId($this->getPerson()->getId()) as $oppgave) {
             /* @var \intern3\Oppgave $oppgave */
-            if(!$oppgave->getGodkjent()) {
+            if (!$oppgave->getGodkjent()) {
                 $sum += $oppgave->getAnslagTimer();
             }
         }
@@ -165,7 +285,8 @@ class Bruker
 
     }
 
-    public function getRegiTilBehandling(){
+    public function getRegiTilBehandling()
+    {
 
         $unix = $_SERVER['REQUEST_TIME'];
         $sum = 0;
@@ -175,11 +296,12 @@ class Bruker
                 $sum += $arbeid->getSekunderBrukt();
             }
         }
-        return $sum / (60*60);
+        return $sum / (60 * 60);
 
     }
 
-    public function getDisponibelRegitid(){
+    public function getDisponibelRegitid()
+    {
 
         return $this->getRegitimerigjen() - $this->getOppgaveTimer();
     }
