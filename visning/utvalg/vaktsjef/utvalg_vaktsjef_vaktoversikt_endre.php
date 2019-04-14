@@ -1,10 +1,40 @@
 <?php
 require_once(__DIR__ . '/../topp_utvalg.php');
 
-
 /* @var $beboer \intern3\Beboer */
 
+$data = array();
+$i = 1;
+foreach($vakter as $vakt) {
+    /* @var $vakt \intern3\Vakt */
+
+    switch ($vakt->getVakttype()) {
+        case 1:
+            $tid = strtotime($vakt->getDato() . '+ 1hour');
+            break;
+        case 2:
+            $tid = strtotime($vakt->getDato() . '+ 7hours');
+            break;
+        case 3:
+            $tid = strtotime($vakt->getDato() . '+ 13hours');
+            break;
+        case 4:
+            $tid = strtotime($vakt->getDato() . '+ 19hours');
+    }
+
+    $data[] = array(
+        'id' => $i++,
+        'content' => '',
+        'start' => date('Y-m-d H:i:s', $tid),
+        //'end' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s', $tid) . '+ 6hours'))
+    );
+
+}
+
+
 ?>
+    <script src="js/vis.min.js"></script>
+    <link href="css/vis.min.css" rel="stylesheet" type="text/css" />
     <div class="container">
         <h1>Utvalget » Vaktsjef » Vaktoversikt » Endre vaktantall for <?php echo $beboer->getFulltNavn(); ?></h1>
         <hr>
@@ -98,7 +128,20 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
         </div>
 
+        <div id="visual"></div>
+
+
     </div>
+
+    <script>
+
+        var container = document.getElementById('visual');
+        var data = <?php echo json_encode($data); ?>;
+        var timeline = new vis.Timeline(container, data, {});
+
+    </script>
+
+
 <?php
 require_once(__DIR__ . '/../../static/bunn.php');
 ?>
