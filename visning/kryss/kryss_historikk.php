@@ -56,55 +56,81 @@ require_once(__DIR__ . '/../static/topp.php');
     </table>
 </div>
 
-<div class="col-md-4">
-    <h2>Ditt alkoholkonsum denne måneden</h2>
-    <table class="table table-bordered">
-        <tr>
-            <th>Drikke</th>
-            <th>Antall</th>
-            <th>Prisanslag (stemmer ikke nødvendigvis)</th>
-        </tr>
+<script>
 
-        <?php
-        $totalt = 0;
-        $antallet = 0;
-        foreach ($mndkryss as $navn => $antall) {
-            $antallet += $antall;
-            ?>
-            <tr>
-                <td><?php echo $navn; ?></td>
-                <td><?php echo $antall; ?></td>
-                <td><?php echo ($pris = $drikke[$navn] * $antall);
-                    $totalt += $pris;
-                    ?>kr
-                </td>
-            </tr>
-        <?php } ?>
-        <?php
-        foreach ($vin_array as $kryss) {
-            $totalt += $kryss['kostnad'];
-            $antallet += $kryss['antall'];
-            ?>
-            <tr>
-                <td><?php echo $kryss['aktuell_vin']->getNavn(); ?></td>
-                <td><?php echo $kryss['antall']; ?></td>
-                <td><?php echo round($kryss['kostnad'], 2); ?>kr</td>
-            </tr>
+    function periode_select(a) {
+        id = a.options[a.selectedIndex].value;
+        $("#perioden").load("?a=kryss/periode/" + id);
+    }
+
+</script>
+
+<div class="col-md-4">
+    <h2>Ditt alkoholkonsum denne perioden</h2>
+
+    <div class="form-group">
+        <select class="form-control" onchange="periode_select(this)">
             <?php
-        }
-        ?>
-        <tr>
-            <td><b>TOTALT</b></td>
-            <td><b><?php echo $antallet; ?></b></td>
-            <td><b><?php echo $totalt; ?>kr</b></td>
-        </tr>
-    </table>
+            foreach ($periode as $p) {
+                /* @var \intern3\Periode $p */
+                ?>
+                <option class="form-control" value="<?php echo $p->getId(); ?>"><?php echo $p->toString(); ?></option>
+                <?php
+            }
+
+            ?>
+        </select>
+    </div>
+
+
+    <div id="perioden">
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Drikke</th>
+                <th>Antall</th>
+                <th>Prisanslag (stemmer ikke nødvendigvis)</th>
+            </tr>
+
+            <?php
+            $totalt = 0;
+            $antallet = 0;
+            foreach ($mndkryss as $navn => $antall) {
+                $antallet += $antall;
+                ?>
+                <tr>
+                    <td><?php echo $navn; ?></td>
+                    <td><?php echo $antall; ?></td>
+                    <td><?php echo($pris = $drikke[$navn] * $antall);
+                        $totalt += $pris;
+                        ?>kr
+                    </td>
+                </tr>
+            <?php } ?>
+            <?php
+            foreach ($vin_array as $kryss) {
+                $totalt += $kryss['kostnad'];
+                $antallet += $kryss['antall'];
+                ?>
+                <tr>
+                    <td><?php echo $kryss['aktuell_vin']->getNavn(); ?></td>
+                    <td><?php echo $kryss['antall']; ?></td>
+                    <td><?php echo round($kryss['kostnad'], 2); ?>kr</td>
+                </tr>
+                <?php
+            }
+            ?>
+            <tr>
+                <td><b>TOTALT</b></td>
+                <td><b><?php echo $antallet; ?></b></td>
+                <td><b><?php echo $totalt; ?>kr</b></td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <div class="col-md-4 col-sm-6">
     <h2>Ditt totale alkoholkonsum</h2>
-    <p>Har ikke med prisanslag her da det kan være skadelig for enkelte.</p>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
         <tr>
             <th>Drikke</th>
             <th>Antall</th>

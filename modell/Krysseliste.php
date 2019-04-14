@@ -530,6 +530,32 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         return $krysseListeListe;
     }
 
+    public static function getAlleKryssPeriodeBeboer($startdato, $sluttdato, $beboer_id)
+    {
+
+        $drikke = Drikke::alle();
+        $Helekrysseliste = self::medBeboerId($beboer_id);
+        $kryss = array();
+
+        foreach ($drikke as $drikken) {
+            $kryss[$drikken->getNavn()] = 0;
+        }
+
+        foreach ($Helekrysseliste as $delKryseListe) {
+            $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
+
+            foreach ($KryssDrikka as $enkelt_kryss) {
+                if ($enkelt_kryss['tid'] > $startdato && $enkelt_kryss['tid'] < $sluttdato) {
+                    $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
+                }
+            }
+
+        }
+
+        return $kryss;
+    }
+
+
     public static function getKryssSistPeriode()
     {
         $st = DB::getDB()->prepare('SELECT * from fakturert ORDER BY id DESC LIMIT 2');
