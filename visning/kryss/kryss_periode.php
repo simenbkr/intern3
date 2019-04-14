@@ -6,7 +6,6 @@
     </tr>
 
     <?php
-    var_dump($vin_array);
     $totalt = 0;
     $antallet = 0;
     foreach ($mndkryss as $navn => $antall) {
