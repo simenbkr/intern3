@@ -18,7 +18,7 @@ class DB extends \PDO {
 		$passord    = DB_PW;
 		// hvis ikke my.cnf har [client].default-character-set=utf8:
 		parent::__construct($domene, $brukernavn, $passord, array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'utf8\''));
-		parent::setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+		parent::setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 	}
 
 }
