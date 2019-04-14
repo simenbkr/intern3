@@ -24,7 +24,7 @@ foreach($vakter as $vakt) {
 
     $data[] = array(
         'id' => $i++,
-        'content' => '',
+        'content' => $vakt->getVakttype() . '. vakt',
         'start' => date('Y-m-d H:i:s', $tid),
         //'end' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s', $tid) . '+ 6hours'))
     );
