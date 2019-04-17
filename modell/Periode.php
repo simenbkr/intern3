@@ -11,7 +11,7 @@ class Periode
     private $start;
     private $slutt;
 
-    private static function init(\PDOStatement $st): Periode
+    private static function init(\PDOStatement $st): ?Periode
     {
 
         if (($rad = $st->fetch()) == null) {
@@ -29,10 +29,26 @@ class Periode
         return $instans;
     }
 
-    public static function medId(int $id)
+    public static function medId(int $id): ?Periode
     {
         $st = DB::getDB()->prepare('SELECT * FROM fakturert WHERE id = :id');
         $st->execute(['id' => $id]);
+
+        return self::init($st);
+    }
+
+    public static function getForste(): Periode
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY id ASC LIMIT 1');
+        $st->execute();
+
+        return self::init($st);
+    }
+
+    public static function getSiste(): Periode
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY id DESC LIMIT 1');
+        $st->execute();
 
         return self::init($st);
     }
@@ -47,7 +63,7 @@ class Periode
         return $this->slutt;
     }
 
-    public static function getAlle()
+    public static function getAlle(): array
     {
         $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY id DESC');
         $st->execute();
@@ -58,17 +74,54 @@ class Periode
         }
 
         return $array;
-
     }
 
-    public function toString()
+    public function toString(): string
     {
         return "{$this->start} - {$this->slutt}";
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
+    }
+
+    public static function beboerPerioder(Beboer $beboer): array
+    {
+        $result = array();
+        $semesterliste = $beboer->getSemesterlist();
+
+        $start = date('Y-m-d',
+            Funk::semStrToUnix(end($semesterliste))
+        );
+
+        $slutt = date('Y-m-d',
+            Funk::semStrToUnix(array_shift($semesterliste))
+        );
+
+        $st = DB::getDB()->prepare('SELECT * FROM fakturert WHERE (dato >= :start AND dato <= :slutt) ORDER BY id DESC');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
+        $kandidater = array();
+
+        for ($i = 0; $i < $st->rowCount(); $i++) {
+            $kandidater[] = self::init($st);
+        }
+
+        $current = array_shift($kandidater);
+
+        foreach ($kandidater as $kand) {
+            /* @var \intern3\Periode $kand */
+
+            if ($beboer->beboerVed($kand->getStart()) || $beboer->beboerVed($kand->getSlutt())) {
+                $result[] = $kand;
+            }
+
+        }
+
+        // Inkludér nåværende periode uanz. Litt loking for å få den på riktig plass i arrayen.
+        $result = array_merge(array($current), $result);
+
+        return $result;
     }
 
 }

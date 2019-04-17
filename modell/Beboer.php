@@ -352,7 +352,7 @@ class Beboer implements Person
         return $this->rom;
     }
 
-    public function getRomhistorikk()
+    public function getRomhistorikk() : ?Romhistorikk
     {
         if ($this->romhistorikkObjekt == null) {
             $this->romhistorikkObjekt = Romhistorikk::fraJson($this->romhistorikk);
@@ -788,6 +788,21 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $this->romhistorikk = $this->romhistorikkObjekt->tilJson();
         $this->oppdater();
 
+    }
+
+    public function beboerVed($tidspunkt) {
+
+        $tidspunkt = strtotime($tidspunkt);
+        foreach($this->getRomhistorikk()->getPerioder() as $periode) {
+            /* @var \intern3\Romhistorikk\Periode $periode */
+
+            if(strtotime($periode->innflyttet) <= $tidspunkt && strtotime($periode->utflyttet) >= $tidspunkt) {
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
 }

@@ -60,9 +60,12 @@ require_once(__DIR__ . '/../static/topp.php');
 
     function periode_select(a) {
         id = a.options[a.selectedIndex].value;
-        $("#perioden").load("?a=kryss/periode/" + id);
+        if(id === 'prehistorisk') {
+            $("#perioden").load("?a=kryss/prehistorisk");
+        } else {
+            $("#perioden").load("?a=kryss/periode/" + id);
+        }
     }
-
 </script>
 
 <div class="col-md-4">
@@ -76,6 +79,11 @@ require_once(__DIR__ . '/../static/topp.php');
                 ?>
                 <option class="form-control" value="<?php echo $p->getId(); ?>"><?php echo $p->toString(); ?></option>
                 <?php
+            }
+
+            if($prehistorisk) { ?>
+                <option class="form-control" value="prehistorisk">Prehistorisk kryssedata</option>
+            <?php
             }
 
             ?>

@@ -4,43 +4,71 @@ namespace intern3;
 
 class KryssCtrl extends AbstraktCtrl
 {
+
+    private function visPeriode($mndkryss, $periodekryss) {
+
+        $drikke = array();
+        foreach (Drikke::alle() as $drikken) {
+            $drikke[$drikken->getNavn()] = $drikken->getPris();
+        }
+
+        $vin_array = array();
+        foreach ($periodekryss as $vin_kryss) {
+            if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
+                $vin_array[$vin_kryss->getVinId()] = array(
+                    'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                    'antall' => round($vin_kryss->getAntall(), 2),
+                    'aktuell_vin' => $vin_kryss->getVin()
+                );
+            } else {
+                $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
+                $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
+            }
+        }
+
+        $dok = new Visning($this->cd);
+
+        $dok->set('vin_array', $vin_array);
+        $dok->set('mndkryss', $mndkryss);
+        $dok->set('drikke', $drikke);
+        $dok->vis('kryss/kryss_periode.php');
+
+        return;
+    }
+
     public function bestemHandling()
     {
 
         switch($this->cd->getAktueltArg()) {
-
 
             case 'periode':
 
                 $periode_id = $this->cd->getSisteArg();
                 $p = Periode::medId($periode_id);
 
-                $mndkryss = Krysseliste::getAlleKryssPeriodeBeboer($p->getStart(), $p->getSlutt(), $this->cd->getAktivBruker()->getPerson()->getId());
-                $drikke = array();
-                foreach (Drikke::alle() as $drikken) {
-                    $drikke[$drikken->getNavn()] = $drikken->getPris();
-                }
+                $mndkryss = Krysseliste::getAlleKryssPeriodeBeboer($p->getStart(), $p->getSlutt(),
+                    $this->cd->getAktivBruker()->getPerson()->getId());
 
-                $periodekryss = Vinkryss::getKryssBeboerPeriode($this->cd->getAktivBruker()->getPerson()->getId(), $p->getStart(), $p->getSlutt());
 
-                $vin_array = array();
-                foreach ($periodekryss as $vin_kryss) {
-                    if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
-                            'antall' => round($vin_kryss->getAntall(), 2),
-                            'aktuell_vin' => $vin_kryss->getVin());
-                    } else {
-                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
-                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
-                    }
-                }
+                $periodekryss = Vinkryss::getKryssBeboerPeriode($this->cd->getAktivBruker()->getPerson()->getId(),
+                    $p->getStart(), $p->getSlutt());
 
-                $dok = new Visning($this->cd);
+                $this->visPeriode($mndkryss, $periodekryss);
 
-                $dok->set('vin_array', $vin_array);
-                $dok->set('mndkryss', $mndkryss);
-                $dok->set('drikke', $drikke);
-                $dok->vis('kryss/kryss_periode.php');
+                break;
+
+            case 'prehistorisk':
+
+                $og_periode = Periode::getForste();
+                $lenge_siden = "1970-01-01";
+
+                $mndkryss = Krysseliste::getAlleKryssPeriodeBeboer($lenge_siden, $og_periode->getStart(),
+                    $this->cd->getAktivBruker()->getPerson()->getId());
+
+                $periodekryss = Vinkryss::getKryssBeboerPeriode($this->cd->getAktivBruker()->getPerson()->getId(),
+                    $lenge_siden, $og_periode->getStart());
+
+                $this->visPeriode($mndkryss, $periodekryss);
                 break;
             case '':
             case 'default':
@@ -85,7 +113,6 @@ class KryssCtrl extends AbstraktCtrl
                     }
                 }
 
-                //$mndkryss = Krysseliste::getKryssByMonth($this->cd->getAktivBruker()->getPerson()->getId());
                 $mndkryss = Krysseliste::getAllIkkeFakturertBeboer($this->cd->getAktivBruker()->getPerson()->getId());
                 $vinkryss = Vinkryss::getKryssBeboer($this->cd->getAktivBruker()->getPerson()->getId());
                 $ikke_fakturert = Vinkryss::getAlleIkkeFakturertByBeboerId($this->cd->getAktivBruker()->getPerson()->getId());
@@ -120,7 +147,9 @@ class KryssCtrl extends AbstraktCtrl
                     $drikke[$drikken->getNavn()] = $drikken->getPris();
                 }
 
-                $periode = Periode::getAlle();
+                $periode = Periode::beboerPerioder($this->cd->getAktivBruker()->getPerson());
+                $prehistorisk = ($this->cd->getAktivBruker()->getPerson()->beboerVed(Periode::getForste()->getStart()));
+
 
                 $dok = new Visning($this->cd);
                 $dok->set('periode', $periode);
@@ -129,8 +158,7 @@ class KryssCtrl extends AbstraktCtrl
                 $dok->set('vinkryss', $vinkryss);
                 $dok->set('vin_array', $vin_array);
                 $dok->set('vin_totalt', $alle_vin_kryss);
-                //$dok->set('datoen',$first);
-                //$dok->set('thisMonth',$thisMonth);
+                $dok->set('prehistorisk', $prehistorisk);
                 $dok->set('sumKryss', $sumKryss);
                 $dok->set('transaksjoner', $transaksjoner);
                 $dok->set('ukedager', $ukedager);
