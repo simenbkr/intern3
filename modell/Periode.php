@@ -88,33 +88,30 @@ class Periode
 
     public static function beboerPerioder(Beboer $beboer): array
     {
-        $result = array(self::getSiste());
+        $result = array();
         $semesterliste = $beboer->getSemesterlist();
 
         $start = date('Y-m-d',
             Funk::semStrToUnix(end($semesterliste))
         );
 
-        $slutt = date('Y-m-d',
-            Funk::semStrToUnix($semesterliste[0])
-        );
+        $slutt = Funk::getSemesterEnd($semesterliste[0]);
 
         $st = DB::getDB()->prepare('SELECT * FROM fakturert WHERE (dato >= :start AND dato <= :slutt) ORDER BY id DESC');
         $st->execute(['start' => $start, 'slutt' => $slutt]);
 
         for ($i = 0; $i < $st->rowCount(); $i++) {
-            $result[] = self::init($st);
+            $kandidater[] = self::init($st);
         }
 
-
-/*        foreach ($kandidater as $kand) {
+        foreach ($kandidater as $kand) {
             /* @var \intern3\Periode $kand */
-/*
+
             if ($beboer->beboerVed($kand->getStart()) || $beboer->beboerVed($kand->getSlutt())) {
                 $result[] = $kand;
             }
 
-        }*/
+        }
 
         return $result;
     }
