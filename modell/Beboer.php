@@ -800,6 +800,10 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                 return true;
             }
 
+            if(is_null($periode->utflyttet) && $tidspunkt >= strtotime($periode->innflyttet)) {
+                return true;
+            }
+
         }
 
         return false;
