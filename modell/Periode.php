@@ -101,20 +101,20 @@ class Periode
 
         $st = DB::getDB()->prepare('SELECT * FROM fakturert WHERE (dato >= :start AND dato <= :slutt) ORDER BY id DESC');
         $st->execute(['start' => $start, 'slutt' => $slutt]);
-        $kandidater = array();
 
         for ($i = 0; $i < $st->rowCount(); $i++) {
-            $kandidater[] = self::init($st);
+            $result[] = self::init($st);
         }
 
-        foreach ($kandidater as $kand) {
-            /* @var \intern3\Periode $kand */
 
+/*        foreach ($kandidater as $kand) {
+            /* @var \intern3\Periode $kand */
+/*
             if ($beboer->beboerVed($kand->getStart()) || $beboer->beboerVed($kand->getSlutt())) {
                 $result[] = $kand;
             }
 
-        }
+        }*/
 
         return $result;
     }
