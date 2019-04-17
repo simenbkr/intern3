@@ -88,7 +88,7 @@ class Periode
 
     public static function beboerPerioder(Beboer $beboer): array
     {
-        $result = array();
+        $result = array(self::getSiste());
         $semesterliste = $beboer->getSemesterlist();
 
         $start = date('Y-m-d',
@@ -96,7 +96,7 @@ class Periode
         );
 
         $slutt = date('Y-m-d',
-            Funk::semStrToUnix(array_shift($semesterliste))
+            Funk::semStrToUnix($semesterliste[0])
         );
 
         $st = DB::getDB()->prepare('SELECT * FROM fakturert WHERE (dato >= :start AND dato <= :slutt) ORDER BY id DESC');
@@ -107,8 +107,6 @@ class Periode
             $kandidater[] = self::init($st);
         }
 
-        $current = array_shift($kandidater);
-
         foreach ($kandidater as $kand) {
             /* @var \intern3\Periode $kand */
 
@@ -117,9 +115,6 @@ class Periode
             }
 
         }
-
-        // Inkludér nåværende periode uanz. Litt loking for å få den på riktig plass i arrayen.
-        $result = array_merge(array($current), $result);
 
         return $result;
     }
