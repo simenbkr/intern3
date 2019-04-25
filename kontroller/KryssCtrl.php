@@ -46,12 +46,18 @@ class KryssCtrl extends AbstraktCtrl
                 $periode_id = $this->cd->getSisteArg();
                 $p = Periode::medId($periode_id);
 
-                $mndkryss = Krysseliste::getAlleKryssPeriodeBeboer($p->getStart(), $p->getSlutt(),
+                if($p->getSlutt() == null) {
+                    $slutt = date('Y-m-d');
+                } else {
+                    $slutt = $p->getSlutt();
+                }
+
+                $mndkryss = Krysseliste::getAlleKryssPeriodeBeboer($p->getStart(), $slutt,
                     $this->cd->getAktivBruker()->getPerson()->getId());
 
 
                 $periodekryss = Vinkryss::getKryssBeboerPeriode($this->cd->getAktivBruker()->getPerson()->getId(),
-                    $p->getStart(), $p->getSlutt());
+                    $p->getStart(), $slutt);
 
                 $this->visPeriode($mndkryss, $periodekryss);
 
