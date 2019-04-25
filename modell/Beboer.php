@@ -115,7 +115,8 @@ class Beboer implements Person
         return $this->brukerId;
     }
 
-    public function setBrukerId($bruker_id){
+    public function setBrukerId($bruker_id)
+    {
         $this->brukerId = $bruker_id;
         $this->oppdater();
     }
@@ -125,7 +126,8 @@ class Beboer implements Person
         return $this->fornavn;
     }
 
-    public function setFornavn($fornavn){
+    public function setFornavn($fornavn)
+    {
         $this->fornavn = $fornavn;
         $this->oppdater();
     }
@@ -135,7 +137,8 @@ class Beboer implements Person
         return $this->mellomnavn;
     }
 
-    public function setMellomnavn($mellomnavn){
+    public function setMellomnavn($mellomnavn)
+    {
         $this->mellomnavn = $mellomnavn;
         $this->oppdater();
     }
@@ -145,7 +148,8 @@ class Beboer implements Person
         return $this->etternavn;
     }
 
-    public function setEtternavn($etternavn){
+    public function setEtternavn($etternavn)
+    {
         $this->etternavn = $etternavn;
         $this->oppdater();
     }
@@ -160,7 +164,8 @@ class Beboer implements Person
         return $this->fodselsdato;
     }
 
-    public function setFodselsdato($dato){
+    public function setFodselsdato($dato)
+    {
         $this->fodselsdato = date('Y-m-d', $dato);
         $this->oppdater();
     }
@@ -170,7 +175,8 @@ class Beboer implements Person
         return $this->bilde;
     }
 
-    public function setBilde($bilde){
+    public function setBilde($bilde)
+    {
         $this->bilde = $bilde;
         $this->bilde = $bilde;
     }
@@ -195,7 +201,8 @@ class Beboer implements Person
         return $this->adresse;
     }
 
-    public function setAdresse($adresse){
+    public function setAdresse($adresse)
+    {
         $this->adresse = $adresse;
         $this->oppdater();
     }
@@ -205,25 +212,28 @@ class Beboer implements Person
         return $this->postnummer;
     }
 
-    public function setPostnummer($nr){
+    public function setPostnummer($nr)
+    {
         $this->postnummer = $nr;
         $this->oppdater();
     }
 
-    public function getAnsiennitet() : int
+    public function getAnsiennitet(): int
     {
-        if(is_numeric($this->ansiennitet)){
+        if (is_numeric($this->ansiennitet)) {
             return $this->ansiennitet;
         }
         return 0;
     }
 
-    public function setAnsiennitet($ans){
+    public function setAnsiennitet($ans)
+    {
         $this->ansiennitet = $ans;
         $this->oppdater();
     }
-    
-    public function inkrementerAnsiennitet(){
+
+    public function inkrementerAnsiennitet()
+    {
         $this->ansiennitet++;
         $this->oppdater();
     }
@@ -236,7 +246,8 @@ class Beboer implements Person
         return $this->telefon;
     }
 
-    public function setTelefon($tel){
+    public function setTelefon($tel)
+    {
         $this->telefon = $tel;
         $this->oppdater();
     }
@@ -246,7 +257,8 @@ class Beboer implements Person
         return $this->klassetrinn;
     }
 
-    public function setKlassetrinn($trinn){
+    public function setKlassetrinn($trinn)
+    {
         $this->klassetrinn = $trinn;
         $this->oppdater();
     }
@@ -256,7 +268,8 @@ class Beboer implements Person
         return $this->alkoholdepositum > 0;
     }
 
-    public function setAlko($alko){
+    public function setAlko($alko)
+    {
         $this->alkoholdepositum = $alko;
         $this->oppdater();
     }
@@ -266,7 +279,8 @@ class Beboer implements Person
         return $this->studieId;
     }
 
-    public function setStudieId($id){
+    public function setStudieId($id)
+    {
         $this->studieId = $id;
         $this->oppdater();
         $this->studie = Studie::medId($id);
@@ -285,7 +299,8 @@ class Beboer implements Person
         return $this->skoleId;
     }
 
-    public function setSkoleId($id){
+    public function setSkoleId($id)
+    {
         $this->skoleId = $id;
         $this->oppdater();
         $this->skole = Skole::medId($id);
@@ -304,8 +319,9 @@ class Beboer implements Person
         return $this->epost;
     }
 
-    public function setEpost($epost){
-        if(Funk::isValidEmail($epost)) {
+    public function setEpost($epost)
+    {
+        if (Funk::isValidEmail($epost)) {
             $this->epost = $epost;
             $this->oppdater();
         }
@@ -316,7 +332,8 @@ class Beboer implements Person
         return $this->rolleId;
     }
 
-    public function setRolleId($id){
+    public function setRolleId($id)
+    {
         $this->rolleId = $id;
         $this->oppdater();
         $this->rolle = Rolle::medId($id);
@@ -338,7 +355,8 @@ class Beboer implements Person
         return $this->romId;
     }
 
-    public function setRomId($id){
+    public function setRomId($id)
+    {
         $this->romId = $id;
         $this->oppdater();
         $this->rom = Rom::medId($id);
@@ -352,7 +370,7 @@ class Beboer implements Person
         return $this->rom;
     }
 
-    public function getRomhistorikk() : ?Romhistorikk
+    public function getRomhistorikk(): ?Romhistorikk
     {
         if ($this->romhistorikkObjekt == null) {
             $this->romhistorikkObjekt = Romhistorikk::fraJson($this->romhistorikk);
@@ -389,28 +407,36 @@ class Beboer implements Person
         $st = DB::getDB()->prepare('DELETE FROM beboer_verv WHERE beboer_id=:id');
         $st->bindParam(':id', $this->getId());
         $st->execute();
-        
+
         //Slett aktive vaktbytter.
-        
-        foreach(Vaktbytte::getAlle() as $vaktbytte){
+
+        foreach (Vaktbytte::getAlle() as $vaktbytte) {
             /* @var Vaktbytte $vaktbytte */
-            if($vaktbytte->getVakt()->getBruker()->getPerson()->getId() === $this->id){
+            if ($vaktbytte->getVakt()->getBruker()->getPerson()->getId() === $this->id) {
                 $vaktbytte->slett();
             }
         }
-    
+
         try {
             $groupmanager = new \Group\GroupManage();
-            
+
             $groupmanager->addToGroup($this->epost, 'MEMBER', SING_VETERAN);
-    
+
+            /*
+             * Medlemsskap sjekkes ved kall til removeFromGroup.
+             */
             $groupmanager->removeFromGroup($this->epost, SING_ALLE);
             $groupmanager->removeFromGroup($this->epost, SING_SLARV);
-            
-        } catch(\Exception $e){}
+            $groupmanager->removeFromGroup($this->epost, SING_GUTTER);
+            $groupmanager->removeFromGroup($this->epost, SING_JENTER);
+
+
+        } catch (\Exception $e) {
+        }
     }
 
-    public function flyttInn(){
+    public function flyttInn()
+    {
 
         $romhistorikken = json_decode($this->romhistorikk, true);
 
@@ -425,15 +451,16 @@ class Beboer implements Person
         $st->bindParam(':historikk', $romhistorikken);
         $st->bindParam(':id', $this->id);
         $st->execute();
-    
+
         try {
             $groupmanager = new \Group\GroupManage();
 
             $groupmanager->addToGroup($this->epost, 'MEMBER', SING_ALLE);
             $groupmanager->addToGroup($this->epost, 'MEMBER', SING_SLARV);
-            
+
             $groupmanager->removeFromGroup($this->epost, SING_VETERAN);
-        } catch(\Exception $e){}
+        } catch (\Exception $e) {
+        }
     }
 
     public function harVakt()
@@ -455,7 +482,8 @@ class Beboer implements Person
         return $vakterInnenDogn;
     }
 
-    public function getPrefs(){
+    public function getPrefs()
+    {
         return Prefs::fraBeboerId($this->getId());
     }
 
@@ -572,12 +600,14 @@ class Beboer implements Person
         return (Helga::getLatestHelga()) != null ? Helga::getLatestHelga()->erHelgaGeneral($this->id) : false;
     }
 
-    public function toString(){
+    public function toString()
+    {
         return $this->getFulltNavn();
     }
 
-    public function harHelgaTilgang(){
-        if($this->harDataVerv() || $this->erHelgaGeneral()){
+    public function harHelgaTilgang()
+    {
+        if ($this->harDataVerv() || $this->erHelgaGeneral()) {
             return true;
         }
         $st = DB::getDB()->prepare('SELECT * FROM helgaverv AS hv WHERE hv.id IN 
@@ -586,33 +616,35 @@ class Beboer implements Person
         $st->execute();
         $helgaverv = Helgaverv::medId($st->fetch()['id']);
         /* @var \intern3\Helgaverv $helgaverv */
-        if($helgaverv != null){
+        if ($helgaverv != null) {
             return $helgaverv->harInngangTilgang();
         }
         return false;
     }
 
-    public function getSemesterlist(){
+    public function getSemesterlist()
+    {
         $innflyttet = $this->getRomhistorikk()->getPerioder()[0]->innflyttet;
         $lista = array(Funk::generateSemesterString(date('Y-m-d', strtotime($innflyttet))));
         //$innflytta_aar = date('Y', strtotime($innflyttet));
-        for($i = date('Y', strtotime($innflyttet)); $i <= date('Y'); $i++){
+        for ($i = date('Y', strtotime($innflyttet)); $i <= date('Y'); $i++) {
             $lista[] = Funk::generateSemesterString(date('Y-m-d', strtotime("$i-01-01")));
-            if($i == date('Y')){
+            if ($i == date('Y')) {
                 break;
             }
             $lista[] = Funk::generateSemesterString(date('Y-m-d', strtotime("$i-09-01")));
         }
         $current = Funk::generateSemesterString(date('Y-m-d'));
-        if(!in_array($current, $lista)){
+        if (!in_array($current, $lista)) {
             $lista[] = $current;
         }
-        
+
         return array_reverse(array_unique($lista));
     }
 
-    public static function nyBeboer ($fornavn, $mellomnavn, $etternavn, $fodselsdato, $adresse, $postnr, $mobilnr,
-                                     $studie_id, $skole_id, $klasse, $alko, $rolle_id, $epost, $rom_id) : Beboer {
+    public static function nyBeboer($fornavn, $mellomnavn, $etternavn, $fodselsdato, $adresse, $postnr, $mobilnr,
+                                    $studie_id, $skole_id, $klasse, $alko, $rolle_id, $epost, $rom_id): Beboer
+    {
 
         //Opprett beboer
 
@@ -676,7 +708,7 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
             $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
             $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_SLARV);
             Funk::setSuccess("Du la til " . $beboer->getFulltNavn() . " til Internsida, SING-ALLE og SING-SLARV!");
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             Epost::sendEpost("data@singsaker.no", "[SING-BOTS] Ble ikke lagt inn i epostlister",
                 "Beboeren " . $beboer->getFulltNavn() . " med e-post " . $beboer->getEpost() . " ble ikke
                        lagt til epostgruppene. Errormelding:<br/>\n" . $e->getMessage());
@@ -693,7 +725,8 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
         return $beboer;
     }
 
-    private function oppdater(){
+    private function oppdater()
+    {
 
         $st = DB::getDB()->prepare('UPDATE beboer SET fornavn=:fornavn,mellomnavn=:mellomnavn,etternavn=:etternavn,
 fodselsdato=:fodselsdato,adresse=:adresse,postnummer=:postnummer,telefon=:telefon,studie_id=:studie_id,skole_id=:skole_id,
@@ -719,11 +752,13 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $st->execute();
     }
 
-    public function erAktiv(){
-        return $this->getRomhistorikk()->romHistorikk[count($this->getRomhistorikk()->romHistorikk) -1]->utflyttet === null;
+    public function erAktiv()
+    {
+        return $this->getRomhistorikk()->romHistorikk[count($this->getRomhistorikk()->romHistorikk) - 1]->utflyttet === null;
     }
 
-    public function harVaktDato($dato){
+    public function harVaktDato($dato)
+    {
 
         $st = DB::getDB()->prepare('SELECT * FROM vakt WHERE (bruker_id=:brukerid AND dato=:dato)');
         $st->bindParam(':brukerid', $this->brukerId);
@@ -737,9 +772,10 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
     /*
      * Returnerer førstevakter + 3.-4. vakt fredag og 2.,3.,4. vakt lørdag og 2.,3. vakt søndag
      */
-    public function antallKjipeVakter() : int {
+    public function antallKjipeVakter(): int
+    {
 
-        if($this->antall_kjipe != -1){
+        if ($this->antall_kjipe != -1) {
             return $this->antall_kjipe;
         }
 
@@ -762,17 +798,18 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
 
     }
 
-    static function storhybelSort(Beboer $beboer1, Beboer $beboer2) {
+    static function storhybelSort(Beboer $beboer1, Beboer $beboer2)
+    {
 
-        if($beboer1->getAnsiennitet() > $beboer2->getAnsiennitet()){
+        if ($beboer1->getAnsiennitet() > $beboer2->getAnsiennitet()) {
             return -1;
         }
 
-        if($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() > $beboer2->getKlassetrinn()){
+        if ($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() > $beboer2->getKlassetrinn()) {
             return -1;
         }
 
-        if($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() == $beboer2->getKlassetrinn()){
+        if ($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() == $beboer2->getKlassetrinn()) {
             return 0;
         }
 
@@ -782,7 +819,8 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
     /*
      * Jesus fuck jeg hater denne datastrukturen.
      */
-    public function byttRom(Rom $nyttRom) {
+    public function byttRom(Rom $nyttRom)
+    {
         $this->getRomhistorikk();
         $this->romhistorikkObjekt->addPeriode($nyttRom->getId(), date('Y-m-d'), null);
         $this->romhistorikk = $this->romhistorikkObjekt->tilJson();
@@ -790,17 +828,18 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
 
     }
 
-    public function beboerVed($tidspunkt) {
+    public function beboerVed($tidspunkt)
+    {
 
         $tidspunkt = strtotime($tidspunkt);
-        foreach($this->getRomhistorikk()->getPerioder() as $periode) {
+        foreach ($this->getRomhistorikk()->getPerioder() as $periode) {
             /* @var \intern3\Romhistorikk\Periode $periode */
 
-            if(strtotime($periode->innflyttet) <= $tidspunkt && strtotime($periode->utflyttet) >= $tidspunkt) {
+            if (strtotime($periode->innflyttet) <= $tidspunkt && strtotime($periode->utflyttet) >= $tidspunkt) {
                 return true;
             }
 
-            if(is_null($periode->utflyttet) && $tidspunkt >= strtotime($periode->innflyttet)) {
+            if (is_null($periode->utflyttet) && $tidspunkt >= strtotime($periode->innflyttet)) {
                 return true;
             }
 
@@ -810,4 +849,5 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
     }
 
 }
+
 ?>
