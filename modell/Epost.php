@@ -146,6 +146,41 @@ class Epost
         mail($mottaker, $tittelen, '<html>' . $beskjed . '</html>', $headers);
     }
 
+    public static function conformList($email_list, $beboerListe) {
+
+        $epostliste = array_map(function($beboer) {
+            /* @var \intern3\Beboer $beboer */
+            return $beboer->getEpost();
+        }, $beboerListe);
+
+        $epostliste[] = 'data@singsaker.no';
+
+        $groupmanager = new \Group\GroupManage();
+        $deleted = array();
+        foreach($groupmanager->listGroup($email_list) as $record) {
+            if(!in_array($record['email'], $epostliste)) {
+                try {
+                    $deleted[] = $record['email'];
+                    $groupmanager->removeFromGroup($record['email'], $email_list);
+                } catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
+            }
+        }
+
+        return $deleted;
+    }
+
+    public static function assertOnlyBeboere() {
+        $aktive = BeboerListe::alle();
+
+        foreach(MAIL_LISTS as $liste) {
+            self::conformList($liste, $aktive);
+        }
+
+    }
+
+
 }
 
 ?>
