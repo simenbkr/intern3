@@ -174,10 +174,11 @@ class Epost
     }
 
     public static function assertOnlyBeboere() {
+        $report = array();
         $aktive = BeboerListe::alle();
 
         foreach(MAIL_LISTS as $liste) {
-            self::conformList($liste, $aktive);
+            $report[$liste] = self::conformList($liste, $aktive);
         }
 
     }
