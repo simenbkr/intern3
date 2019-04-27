@@ -181,6 +181,8 @@ class Epost
             $report[$liste] = self::conformList($liste, $aktive);
         }
 
+        return $report;
+
     }
 
 
