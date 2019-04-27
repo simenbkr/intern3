@@ -154,6 +154,8 @@ class Epost
         }, $beboerListe);
 
         $epostliste[] = 'data@singsaker.no';
+        $epostliste[] = 'romsjef@singsaker.no';
+        $epostliste[] = 'husfar@singsaker.no';
 
         $groupmanager = new \Group\GroupManage();
         $deleted = array();
