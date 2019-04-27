@@ -150,7 +150,7 @@ class Epost
 
         $epostliste = array_map(function($beboer) {
             /* @var \intern3\Beboer $beboer */
-            return $beboer->getEpost();
+            return strtolower($beboer->getEpost());
         }, $beboerListe);
 
         $epostliste[] = 'data@singsaker.no';
@@ -158,9 +158,9 @@ class Epost
         $groupmanager = new \Group\GroupManage();
         $deleted = array();
         foreach($groupmanager->listGroup($email_list) as $record) {
-            if(!in_array($record['email'], $epostliste)) {
+            if(!in_array(strtolower($record['email']), $epostliste)) {
                 try {
-                    $deleted[] = $record['email'];
+                    $deleted[] = strtolower($record['email']);
                     $groupmanager->removeFromGroup($record['email'], $email_list);
                 } catch (\Exception $e) {
                     error_log($e->getMessage());
