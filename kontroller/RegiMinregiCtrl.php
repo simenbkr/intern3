@@ -13,7 +13,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
         if (is_numeric($aktueltArg) &&
             ($arbeid = Arbeid::medId($this->cd->getSisteArg())) != null) {
 
-            if ($this->cd->getAktivBruker() === $arbeid->getBruker() ||
+            if ($this->cd->getAktivBruker()->getId() == $arbeid->getBruker()->getId() ||
                 $this->cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
 
                 // Legge til (flere) bilder, dersom arbeidet er i "Ubehandla" tilstand
