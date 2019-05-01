@@ -21,9 +21,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
                     $this->lastOppBilder($aktueltArg);
                 }
 
-                $dok = new Visning($this->cd);
-                $dok->set('arbeidet', $arbeid);
-                $dok->vis('regi/regi_minregi_detaljert.php');
+                header('Location: ?a=regi/minregi/' . $arbeid->getId());
 
             } else {
                 Funk::setError("Du har ikke tilgang til dette objektet!");
