@@ -19,9 +19,13 @@ class RegiMinregiCtrl extends AbstraktCtrl
                 // Legge til (flere) bilder, dersom arbeidet er i "Ubehandla" tilstand
                 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $arbeid->getIntStatus() == 0) {
                     $this->lastOppBilder($aktueltArg);
+                    header('Location: ?a=regi/minregi/' . $arbeid->getId());
+                    exit();
                 }
 
-                header('Location: ?a=regi/minregi/' . $arbeid->getId());
+                $dok = new Visning($this->cd);
+                $dok->set('arbeidet', $arbeid);
+                $dok->vis('regi/regi_minregi_detaljert.php');
 
             } else {
                 Funk::setError("Du har ikke tilgang til dette objektet!");
