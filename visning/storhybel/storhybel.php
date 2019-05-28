@@ -8,8 +8,24 @@ require_once(__DIR__ . '/../static/topp.php');
 /* @var $beboers_rom \intern3\Rom */
 /* @var $aktiv_velger \intern3\StorhybelVelger */
 
-
 ?>
+
+    <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+    <script type="text/javascript" src="js/dataTables.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            var table = $('#tabellen').DataTable({
+                "paging": false,
+                "searching": false,
+                "order": [[1, 'desc']],
+                "binfo": false
+                //"scrollY": "500px"
+            });
+        });
+
+    </script>
     <style>
         .table-inactive td {
             background-color: #C0C0C0;
@@ -56,7 +72,7 @@ require_once(__DIR__ . '/../static/topp.php');
             <p id="tilbakemelding-text"></p>
         </div>
 
-        <?php require_once (__DIR__ . '/../static/tilbakemelding.php'); ?>
+        <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
 
         <?php if ($min_tur) { ?>
             <div class="col-lg-6">
@@ -129,13 +145,16 @@ require_once(__DIR__ . '/../static/topp.php');
             </div>
         <?php } else { ?>
 
-            Du er nummer <?php echo $persnummer; ?> på lista, og vi er nå på nummer <?php echo $lista->getVelgerNr(); ?>.
+            <?php if ($persnummer != null) { ?>
+                Du er nummer <?php echo $persnummer; ?> på lista, og vi er nå på nummer <?php echo $lista->getVelgerNr(); ?>.
+            <?php }
+              ?>
 
             <div class="col-lg-3">
 
                 <h3>Ledige rom</h3>
 
-                <table class="table table-responsive">
+                <table class="table table-responsive" id="tabellen">
 
                     <thead>
                     <tr>
@@ -152,7 +171,7 @@ require_once(__DIR__ . '/../static/topp.php');
 
                         <tr id="<?php echo $rom->getId(); ?>">
                             <td><?php echo $rom->getNavn(); ?></td>
-                            <td><?php echo $rom->getType()->getNavn(); ?></td>
+                            <td data-order="<?php echo $rom->getType()->getId(); ?>"><?php echo $rom->getType()->getNavn(); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
