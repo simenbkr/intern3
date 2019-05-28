@@ -7,7 +7,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        if(strlen($post['tabell']) > 0){
+        if (strlen($post['tabell']) > 0) {
             $this->tomVaktTabell();
             Funk::setSuccess("Vaktlista ble tømt!");
             header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -34,7 +34,8 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_generer.php');
     }
 
-    private function tomVaktTabell() {
+    private function tomVaktTabell()
+    {
         DB::getDB()->query('TRUNCATE TABLE vakt;TRUNCATE TABLE vaktbytte;');
     }
 
@@ -141,7 +142,8 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
               //$feilVarighet[] = 'Sikkerhetsmargin mangler.';
               break;
             }*/
-            if (!preg_match("/^[\d]+$/", $_POST['varighet_sikkerhetsmargin']) || $_POST['varighet_sikkerhetsmargin'] < 0) {
+            if (!preg_match("/^[\d]+$/",
+                    $_POST['varighet_sikkerhetsmargin']) || $_POST['varighet_sikkerhetsmargin'] < 0) {
                 $feilVarighet[] = 'Sikkerhetsmargin må være et positivt heltall eller 0.';
                 break;
             }
@@ -271,7 +273,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         } while ($dato <= $varighetDatoSlutt);
     }
 
-
     private function tildelVakter()
     {
         /*
@@ -285,6 +286,9 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          *
          */
 
+        $oversikt = array();
+        $week_seconds = 604800;
+        $day_secs = 86400;
         $vanlige_vakter = VaktListe::autogenerertVanligVakt();
         $forstevakter = VaktListe::autogenerertForstevakt();
         $fullvakt = BeboerListe::fullVakt();
@@ -338,7 +342,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
                             || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
 
-                            if($beboeren->getBruker()->antallVakterErOppsatt() >= $antall++) {
+                            if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall++) {
                                 array_splice($beboere, $beboer_indeks, 1);
                                 array_splice($tmp, $beboer_indeks, 1);
                                 continue;
@@ -363,23 +367,60 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             break;
                         }
 
-                        if ($beboeren->harVaktDato($vakta->getDato())) {
+                        /*
+                         * Sjekk om beboeren har en vakt +/- 2 dager. Hvis det er tilfelle, forsøk å trekke på nytt
+                         * et visst antall ganger (10 valgt fordi jeg kan).
+                         */
+
+                        $i = 0;
+                        while ($i++ < 20) {
+                            $flag = true;
+                            foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
+                                if (Vakt::timeCompare($vakt, $vakta) < 7 * $day_secs) {
+                                    $flag = false;
+                                }
+                            }
+
+                            if ($flag) {
+                                break;
+                            }
+
                             $vakt_indeks = array_rand($vakter);
                             $vakta = $vakter[$vakt_indeks];
+
                         }
+
+                        $i = 0;
+                        while ($i++ < 20) {
+                            $flag = 0;
+                            foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
+                                if (Vakt::timeCompare($vakt, $vakta) < 4 * $week_seconds) {
+                                    $flag++;
+                                }
+                            }
+
+                            if ($flag < 1) {
+                                break;
+                            }
+
+                            $vakt_indeks = array_rand($vakter);
+                            $vakta = $vakter[$vakt_indeks];
+
+                        }
+
 
                         /*
                          * Dette er en svært uheldig situasjon - nesten alle vaktene er kjipe. Prøver derfor å finne en
                          * grei vakt for beboeren å sitte.
                          */
 
-
-                        if($vakta->erKjip() && $beboeren->getBruker()->antallVakterErOppsatt() - $beboeren->antallKjipeVakter() <= 1){
+                        if ($vakta->erKjip()
+                            && $beboeren->getBruker()->antallVakterErOppsatt() - $beboeren->antallKjipeVakter() <= (0.33 * $beboeren->getBruker()->antallVakterSkalSitte())) {
                             $i = 0;
-                            while($vakta->erKjip()){
+                            while ($vakta->erKjip()) {
                                 $vakt_indeks = array_rand($vakter);
                                 $vakta = $vakter[$vakt_indeks];
-                                if($i++ > 10){
+                                if ($i++ > 10) {
                                     break;
                                 }
                             }
@@ -390,6 +431,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * runden.
                          */
 
+                        $oversikt[$beboeren->getBrukerId()][] = $vakta;
                         $vakta->setBruker($beboeren->getBrukerId());
 
                         array_splice($tmp, $beboer_indeks, 1);
@@ -400,7 +442,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * en runde for førstevakt og en for vanlig vakt.
                          */
 
-                        if(count($vakter) == floor($margin / 2)){
+                        if (count($vakter) == floor($margin / 2)) {
                             break;
                         }
                     }

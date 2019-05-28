@@ -89,11 +89,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse69">
                             Ledige rom</a>
                     </h4>
                 </div>
-                <div id="collapse1" class="panel-collapse collapse">
+                <div id="collapse69" class="panel-collapse collapse">
                     <div class="panel-body">
                         <table class="table table-responsive">
 
@@ -127,6 +127,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     </div>
                 </div>
             </div>
+        </div>
 
             <?php } ?>
 

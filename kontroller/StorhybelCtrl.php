@@ -19,11 +19,14 @@ class StorhybelCtrl extends AbstraktCtrl
          * Henter ut alle Storhybellister som er aktive OG der den aktive beboeren er registrert.
          */
         $lister_med_beboer = Storhybelliste::listerMedBeboer($aktiv_beboer->getId());
+        $storhybellista = Storhybelliste::aktivStorhybelliste();
 
-
-        if (!Storhybelliste::finnesAktive() || count($lister_med_beboer) < 1) {
+        if (!Storhybelliste::finnesAktive()) {
             // Easter egg.
             exit('<img style="height:100%;width:100%" src="beboerkart/loading.gif">');
+        } elseif(!is_numeric($sisteArg) && count($lister_med_beboer) == 0 && !is_null($storhybellista)) {
+            header("Location: ?a=storhybel/{$storhybellista->getId()}");
+            exit();
         }
 
         /*

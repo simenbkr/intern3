@@ -87,7 +87,7 @@ class Storhybelliste
             return "Inaktiv";
         }
 
-        if($this->aktiv === '2') {
+        if ($this->aktiv === '2') {
             return "Arkivert";
         }
 
@@ -114,7 +114,7 @@ class Storhybelliste
         return $this->neste;
     }
 
-    public function getVelger() : ?StorhybelVelger
+    public function getVelger(): ?StorhybelVelger
     {
         return $this->velger;
     }
@@ -187,7 +187,7 @@ class Storhybelliste
         $tittel = "[SING-INTERN] Det er din tur på Storhybellisten!";
         $body = "<html><body>Hei, <br/><br/>Det er din tur på Storhybellisten til å velge. Du har 24t på å velge.<br/><br/>Med vennlig hilsen<br/>Internsida</body></html>";
 
-        foreach($this->getVelger()->getBeboere() as $beboer) {
+        foreach ($this->getVelger()->getBeboere() as $beboer) {
             /* @var Beboer $beboer */
             Epost::sendEpost($beboer->getEpost(), $tittel, $body);
         }
@@ -207,13 +207,14 @@ class Storhybelliste
         $this->lagreIntern();
     }
 
-    public function omgjor($velger_id) {
+    public function omgjor($velger_id)
+    {
 
         $fordeling = StorhybelFordeling::medVelgerIdStorhybelId($velger_id, $this->id);
         $velger = StorhybelVelger::medVelgerId($velger_id);
 
         $rommet = $fordeling->getNyttRom();
-        if(!is_null($rommet)) {
+        if (!is_null($rommet)) {
             $this->leggtilRom($rommet);
             $fordeling->setNyttRomId(null);
         }
@@ -229,12 +230,14 @@ class Storhybelliste
      * SP-lister kan bare ha SPer, og
      * Korrhybellista kan bare ha korrhybler.
      */
-    public function gyldigRom(Rom $rom){
+    public function gyldigRom(Rom $rom)
+    {
 
         $rel_navn = explode(' ', $this->navn)[0];
-        if(strpos($rel_navn, str_replace(' ','', $rom->getType()->getNavn())) !== false){
+        if (strpos($rel_navn, str_replace(' ', '', $rom->getType()->getNavn())) !== false) {
             return true;
-        } elseif ($rel_navn == 'Storhybelliste' && in_array($rom->getType()->getNavn(), array('Bøttekott', 'Storhybel', 'Liten Parhybel'))) {
+        } elseif ($rel_navn == 'Storhybelliste' && in_array($rom->getType()->getNavn(),
+                array('Bøttekott', 'Storhybel', 'Liten Parhybel'))) {
             return true;
         }
         return false;
@@ -460,7 +463,7 @@ class Storhybelliste
         $st = DB::getDB()->prepare('INSERT INTO storhybel_rekkefolge (storhybel_id,velger_id,nummer) VALUES(:sid,:vid,:nr)');
         $st->bindParam(':sid', $this->id);
         $st->bindParam(':vid', $velger_id);
-        if(is_null($nr)) {
+        if (is_null($nr)) {
             $nr = count($this->rekkefolge) + 1;
         }
         $st->bindParam(':nr', $nr);
@@ -622,7 +625,8 @@ class Storhybelliste
 
     }
 
-    public static function arkiverte() {
+    public static function arkiverte()
+    {
         $arr = array();
 
         $st = DB::getDB()->prepare('SELECT * FROM storhybel WHERE (aktiv = 2)');
@@ -635,12 +639,14 @@ class Storhybelliste
         return $arr;
     }
 
-    public function arkiver() {
+    public function arkiver()
+    {
         $this->aktiv = 2;
         $this->lagreIntern();
     }
 
-    public function erArkivert() {
+    public function erArkivert()
+    {
         return $this->aktiv === '2';
     }
 
@@ -665,7 +671,7 @@ class Storhybelliste
 
         $results = array();
 
-        for($i = 0; $i < $st->rowCount(); $i++) {
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $results[] = self::init($st);
         }
 
@@ -725,8 +731,8 @@ class Storhybelliste
          */
         foreach ($gamle_rom as $gammelt_rom) {
             /* @var Rom $gammelt_rom */
-            if(!($gammelt_rom->getId() == $rom->getId())
-               && $this->gyldigRom($gammelt_rom)) {
+            if (!($gammelt_rom->getId() == $rom->getId())
+                && $this->gyldigRom($gammelt_rom)) {
                 $this->leggtilRom($gammelt_rom);
             }
         }
@@ -735,15 +741,15 @@ class Storhybelliste
          * Beboerene i velger-objektet blir fjerna fra andre aktive lister. De har allerede valgt en hybel, og
          * trenger følgelig ikke flere for det kommende/inneværende semesteret.
          */
-        foreach($velger->getBeboere() as $beboer) {
+        foreach ($velger->getBeboere() as $beboer) {
             /* @var Beboer $beboer */
             $lister = self::listerMedBeboer($beboer->getId());
 
-            if(count($lister) > 1) {
-                foreach($lister as $lista) {
+            if (count($lister) > 1) {
+                foreach ($lister as $lista) {
                     /* @var Storhybelliste $lista */
 
-                    if($lista->getId() == $this->id) {
+                    if ($lista->getId() == $this->id) {
                         continue;
                     }
 
@@ -792,7 +798,8 @@ class Storhybelliste
     /*
      * Returnerer en liste med AKTIVE Storhybellister der beboeren med $beboer_id inngår.
      */
-    public static function listerMedBeboer(int $beboer_id) : array {
+    public static function listerMedBeboer(int $beboer_id): array
+    {
 
         $st = DB::getDB()->prepare(
             'SELECT * FROM storhybel AS sh WHERE 
@@ -803,14 +810,15 @@ class Storhybelliste
 
         $arr = array();
 
-        for($i = 0; $i < $st->rowCount(); $i++) {
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $arr[] = self::init($st);
         }
 
         return $arr;
     }
 
-    public function reSort() {
+    public function reSort()
+    {
 
         usort($this->rekkefolge, function (StorhybelVelger $a, StorhybelVelger $b) {
             if ($a->getAnsiennitet() > $b->getAnsiennitet()) {
@@ -857,6 +865,19 @@ class Storhybelliste
         $st = DB::getDB()->prepare('UPDATE storhybel SET aktiv=-1 WHERE id=:sid');
         $st->bindParam(':sid', $this->id);
         $st->execute();
+    }
+
+    public static function aktivStorhybelliste(): ?Storhybelliste
+    {
+        foreach (self::aktive() as $liste) {
+            /* @var \intern3\Storhybelliste $liste */
+
+            if (strpos($liste->getNavn(), 'Storhybelliste') !== false) {
+                return $liste;
+            }
+        }
+
+        return null;
     }
 
 }
