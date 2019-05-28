@@ -20,7 +20,7 @@ require_once(__DIR__ . '/../static/topp.php');
                 "paging": false,
                 "searching": false,
                 "order": [[1, 'desc']],
-                "binfo": false
+                "bInfo": false
                 //"scrollY": "500px"
             });
         });
