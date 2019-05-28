@@ -166,6 +166,10 @@ require_once(__DIR__ . '/../static/topp.php');
             <h3>Kart</h3>
             (Klikk for å se full størrelse.)
             <a href="beboerkart/kart.jpg"><img class="img-thumbnail" src="beboerkart/kart.jpg"></a>
+
+            <a href="beboerkart/1etasje.jpg"><img class="img-thumbnail" src="beboerkart/1etasje.jpg"></a>
+
+            <a href="beboerkart/2etasje.jpg"><img class="img-thumbnail" src="beboerkart/2etasje.jpg"></a>
         </div>
 
         <div class="col-lg-6">
