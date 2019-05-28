@@ -810,7 +810,8 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         }
 
         if ($beboer1->getAnsiennitet() == $beboer2->getAnsiennitet() && $beboer1->getKlassetrinn() == $beboer2->getKlassetrinn()) {
-            return 0;
+            $a = [-1, 1];
+            return $a[array_rand($a)];
         }
 
         return 1;

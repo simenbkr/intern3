@@ -801,6 +801,29 @@ class Storhybelliste
         return $arr;
     }
 
+    public function reSort() {
+
+        usort($this->rekkefolge, function (StorhybelVelger $a, StorhybelVelger $b) {
+            if ($a->getAnsiennitet() > $b->getAnsiennitet()) {
+                return -1;
+            }
+
+            if ($a->getAnsiennitet() == $b->getAnsiennitet() && $a->getMaxKlassetrinn() > $b->getMaxKlassetrinn()) {
+                return -1;
+            }
+
+            if ($a->getAnsiennitet() == $b->getAnsiennitet() && $a->getMaxKlassetrinn() == $b->getMaxKlassetrinn()) {
+                $r = [1, -1];
+                return $r[array_rand($r)];
+            }
+
+            return 1;
+        });
+
+        $this->slettRekkefolge();
+        $this->lagreRekkefolge();
+    }
+
     /*
      * Denne funksjonen kan bare kalles én gang per storhybelliste.
      * Når det commites, vil alle beboere 'flyttes' til de valgte rommene.

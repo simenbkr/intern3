@@ -49,6 +49,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
                         <button class="btn btn-info" onclick="neste()" id="neste">Neste person</button>
                         <button class="btn btn-default" onclick="forrige()" id="forrige">Forrige person</button>
+                        <button class="btn btn-primary" onclick="resort()" id="commit-res">Resortér</button>
                         <button class="btn btn-primary" onclick="vis()" id="commit-res">Lagre resultat</button>
                     </p>
 
@@ -560,6 +561,21 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 success: function (data) {
                     tilbakemelding(data);
                     $("#commit-modal").modal("hide");
+                },
+                error: function (req, stat, err) {
+                    alert(err);
+                }
+            });
+        }
+
+        function resort() {
+            $.ajax({
+                type: 'POST',
+                url: '?a=utvalg/romsjef/storhybel/liste/resort/<?php echo $lista->getId(); ?>',
+                data: '',
+                method: 'POST',
+                success: function (data) {
+                    tilbakemelding(data);
                 },
                 error: function (req, stat, err) {
                     alert(err);
