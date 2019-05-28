@@ -1,116 +1,132 @@
 <?php
 
 namespace intern3;
+
 require_once(__DIR__ . '/../topp_utvalg.php');
 /* @var $lista \intern3\Storhybelliste */
 
 ?>
     <div class="container">
-        <div class="col-lg-12">
-            <h1>Utvalget &raquo; Romsjef &raquo; Administrasjon for
-                &raquo; <?php echo $lista->getNavn(); ?></h1>
+    <div class="col-lg-12">
+    <h1>Utvalget &raquo; Romsjef &raquo; Administrasjon for
+        &raquo; <?php echo $lista->getNavn(); ?></h1>
 
-            [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel/arkiv">Arkiv</a>
-            ] |
-            [ <a href="?a=utvalg/romsjef/storhybel"> Ny
-                Storhybelliste</a> ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
-            [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
-            <hr>
+    [ <a href="?a=utvalg/romsjef/storhybel/liste">Liste</a> ] | [ <a href="?a=utvalg/romsjef/storhybel/arkiv">Arkiv</a>
+    ] |
+    [ <a href="?a=utvalg/romsjef/storhybel"> Ny
+        Storhybelliste</a> ] [ <a href="?a=utvalg/romsjef/storhybel/korr">Ny Korrhybelliste</a> ]
+    [ <a href="?a=utvalg/romsjef/storhybel/storparhybel">Ny Parhybelliste</a> ]
+    <hr>
 
-            <div class="alert alert-success fade in" id="success"
-                 style="margin: auto; margin-top: 5%; display:none">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <p id="tilbakemelding-text"></p>
-            </div>
+    <div class="alert alert-success fade in" id="success"
+         style="margin: auto; margin-top: 5%; display:none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <p id="tilbakemelding-text"></p>
+    </div>
 
-            <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+    <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
 
-            <div class="col-lg-6">
+    <div class="col-lg-12">
 
-                <h2 id="status">Status: <?php echo $lista->getStatusTekst(); ?></h2>
+        <h2 id="status">Status: <?php echo $lista->getStatusTekst(); ?></h2>
 
-                <?php if (!$lista->erArkivert()) { ?>
-                    <p>
-                        <button class="btn btn-danger" onclick="arkiver()">Arkiver</button>
-                    </p>
-                    <?php
-                }
-                if (!$lista->erFerdig() && $lista->getStatusTekst() !== 'Arkivert') { ?>
-                    <p>
-                        <?php if ($lista->erAktiv()) { ?>
-                            <button class="btn btn-warning" onclick="deaktiver()" id="aktiveringsknapp">Deaktiver
-                            </button>
-                        <?php } else { ?>
-                            <button class="btn btn-warning" onclick="aktiver()" id="aktiveringsknapp">Aktivér</button>
-                        <?php } ?>
+        <div class="btn-group">
+            <?php if (!$lista->erArkivert()) { ?>
+                <button class="btn btn-danger" onclick="arkiver()">Arkiver</button>
+                <?php
+            }
+            if (!$lista->erFerdig() && $lista->getStatusTekst() !== 'Arkivert') { ?>
 
-                        <button class="btn btn-danger" onclick="vis_slett()" id="slett">Slett</button>
 
-                        <button class="btn btn-info" onclick="neste()" id="neste">Neste person</button>
-                        <button class="btn btn-default" onclick="forrige()" id="forrige">Forrige person</button>
-                        <button class="btn btn-primary" onclick="resort()" id="commit-res">Resortér</button>
-                        <button class="btn btn-primary" onclick="vis()" id="commit-res">Lagre resultat</button>
-                    </p>
+            <?php if ($lista->erAktiv()) { ?>
+                <button class="btn btn-warning" onclick="deaktiver()" id="aktiveringsknapp">Deaktiver
+                </button>
+            <?php } else { ?>
+                <button class="btn btn-warning" onclick="aktiver()" id="aktiveringsknapp">Aktivér</button>
+            <?php } ?>
+            <button class="btn btn-danger" onclick="vis_slett()" id="slett">Slett</button>
 
+            <button class="btn btn-info" onclick="neste()" id="neste">Neste person</button>
+
+            <button class="btn btn-default" onclick="forrige()" id="forrige">Forrige person</button>
+
+            <button class="btn btn-primary" onclick="resort()" id="commit-res">Resortér</button>
+
+            <button class="btn btn-primary" onclick="vis()" id="commit-res">Lagre resultat</button>
+
+        </div>
+
+        <?php } ?>
+
+    </div>
+    <div class="col-lg-12">
+        <?php if (!$lista->erFerdig() && !$lista->erArkivert()) { ?>
+
+
+        <h3>Ledige rom</h3>
+
+        <p><select class="form-control" onchange="leggtilrom(this)" id="rom">
+                <option>- Velg -</option>
+                <?php foreach ($ledige_rom as $rom) { ?>
+                    <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)
+                    </option>
                 <?php } ?>
 
-            </div>
+                <?php foreach ($alle_rom as $rom) {
+                    /* @var \intern3\Rom $rom */
+                    ?>
 
-            <?php if (!$lista->erFerdig() && !$lista->erArkivert()) { ?>
-                <div class="col-lg-6">
+                    <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?>
+                    </option>
+                    <?php
+                }
+                ?>
 
-                    <h3>Ledige rom</h3>
+            </select></p>
 
-                    <p><select class="form-control" onchange="leggtilrom(this)" id="rom">
-                            <option>- Velg -</option>
-                            <?php foreach ($ledige_rom as $rom) { ?>
-                                <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?> (LEDIG)
-                                </option>
-                            <?php } ?>
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                            Ledige rom</a>
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <table class="table table-responsive">
 
-                            <?php foreach ($alle_rom as $rom) {
-                                /* @var \intern3\Rom $rom */
+                            <thead>
+                            <tr>
+                                <th>Romnummer</th>
+                                <th>Romtype</th>
+                                <th></th>
+                            </tr>
+
+                            </thead>
+
+                            <tbody>
+                            <?php foreach ($lista->getLedigeRom() as $rom) {
+                                /* @var $rom \intern3\Rom */
                                 ?>
 
-                                <option value="<?php echo $rom->getId(); ?>"><?php echo $rom->getNavn(); ?>
-                                </option>
-                                <?php
-                            }
-                            ?>
-
-                        </select></p>
-
-
-                    <table class="table table-responsive">
-
-                        <thead>
-                        <tr>
-                            <th>Romnummer</th>
-                            <th>Romtype</th>
-                            <th></th>
-                        </tr>
-
-                        </thead>
-
-                        <tbody>
-                        <?php foreach ($lista->getLedigeRom() as $rom) {
-                            /* @var $rom \intern3\Rom */
-                            ?>
-
-                            <tr id="<?php echo $rom->getId(); ?>">
-                                <td><?php echo $rom->getNavn(); ?></td>
-                                <td><?php echo $rom->getType()->getNavn(); ?></td>
-                                <td>
-                                    <button class="btn btn-danger" onclick="fjernrom(<?php echo $rom->getId(); ?>)">
-                                        Fjern
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                                <tr id="<?php echo $rom->getId(); ?>">
+                                    <td><?php echo $rom->getNavn(); ?></td>
+                                    <td><?php echo $rom->getType()->getNavn(); ?></td>
+                                    <td>
+                                        <button class="btn btn-danger"
+                                                onclick="fjernrom(<?php echo $rom->getId(); ?>)">
+                                            Fjern
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+            </div>
 
             <?php } ?>
 
@@ -121,18 +137,16 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </div>
 
 
+                <div class="col-lg-4">
                 <?php if (!$lista->erFerdig() && !$lista->erArkivert()) { ?>
-                    <div class="col-lg-6">
+
                         <h3>Legg til beboere</h3>
                         <p>Disse blir lagt til nederst. Kan bare legge til de som ikke er på lista fra før.</p>
 
                         <button class="btn btn-primary" onclick="vis_beboerlisten()">Velg Beboer(e)</button>
 
-
-                    </div>
-
                 <?php } ?>
-
+                </div>
 
                 <table class="table table-responsive table-hover grid" id="sort">
 
@@ -175,7 +189,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <td><?php echo $velger->getAnsiennitet(); ?></td>
                             <td><?php echo $velger->getKlassetrinn(); ?></td>
                             <td>
-                                <?php if ((in_array($lista->getStatusTekst(), array('Inaktiv', 'Aktiv'))) && $nummer < $velgerNr) { ?>
+                                <?php if ((in_array($lista->getStatusTekst(),
+                                        array('Inaktiv', 'Aktiv'))) && $nummer < $velgerNr) { ?>
                                     <button class="btn btn-warning"
                                             onclick="omgjor(<?php echo $velger->getVelgerId(); ?>, <?php echo $velger->getNummer(); ?>)">
                                         Omgjør
@@ -627,5 +642,5 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     </script>
 
-<?php
+    <?php
 require_once(__DIR__ . '/../../static/bunn.php');

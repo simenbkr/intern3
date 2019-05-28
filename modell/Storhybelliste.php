@@ -114,7 +114,7 @@ class Storhybelliste
         return $this->neste;
     }
 
-    public function getVelger() //Return type ?Beboer.
+    public function getVelger() : ?StorhybelVelger
     {
         return $this->velger;
     }
@@ -183,6 +183,15 @@ class Storhybelliste
         $this->velger = $this->velgerFraNr($this->velgerNr);
         $this->neste = $this->velgerFraNr($this->velgerNr + 1);
         $this->lagreIntern();
+
+        $tittel = "[SING-INTERN] Det er din tur på Storhybellisten!";
+        $body = "<html><body>Hei, <br/><br/>Det er din tur på Storhybellisten til å velge. Du har 24t på å velge.<br/><br/>Med vennlig hilsen<br/>Internsida</body></html>";
+
+        foreach($this->getVelger()->getBeboere() as $beboer) {
+            /* @var Beboer $beboer */
+            Epost::sendEpost($beboer->getEpost(), $tittel, $body);
+        }
+
     }
 
     public function forrige()

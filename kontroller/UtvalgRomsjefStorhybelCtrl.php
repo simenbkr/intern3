@@ -27,7 +27,7 @@ class UtvalgRomsjefStorhybelCtrl extends AbstraktCtrl
                 break;
             case 'resort':
                 $lista->reSort();
-                Funk::setSuccess("Resorterte lista!");
+                print "Resorterte lista!";
                 break;
             case 'slett':
                 $out = "Sletta Storhybellisten med navn " . $lista->getNavn() . ".";
