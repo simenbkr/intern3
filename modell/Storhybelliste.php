@@ -230,16 +230,35 @@ class Storhybelliste
      * SP-lister kan bare ha SPer, og
      * Korrhybellista kan bare ha korrhybler.
      */
-    public function gyldigRom(Rom $rom)
+    public function gyldigRom(Rom $rom): bool
     {
 
         $rel_navn = explode(' ', $this->navn)[0];
+
+        if ($this->romValgt($rom)) {
+            return false;
+        }
+
         if (strpos($rel_navn, str_replace(' ', '', $rom->getType()->getNavn())) !== false) {
             return true;
         } elseif ($rel_navn == 'Storhybelliste' && in_array($rom->getType()->getNavn(),
                 array('Bøttekott', 'Storhybel', 'Liten Parhybel'))) {
             return true;
         }
+        return false;
+    }
+
+    public function romValgt(Rom $rom): bool
+    {
+        foreach ($this->fordeling as $fordeling) {
+            /* @var StorhybelFordeling $fordeling */
+
+            if ($fordeling->getNyttRomId() == $rom->getId()) {
+                return true;
+            }
+
+        }
+
         return false;
     }
 
@@ -720,6 +739,10 @@ class Storhybelliste
         $st->bindParam(':vid', $velger->getVelgerId());
         $st->execute();
 
+        /*
+         * Oppdater fordelingsinstans for å sikre korrekt databehandling videre.
+         */
+        $this->fordeling = StorhybelFordeling::medStorhybelId($this->id);
 
         /*
          * Fjern det rommet som ble valgt fra lista.

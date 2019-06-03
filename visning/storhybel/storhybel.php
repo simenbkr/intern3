@@ -105,6 +105,11 @@ require_once(__DIR__ . '/../static/topp.php');
                     <tbody>
                     <?php foreach ($aktiv_velger->getBeboere() as $beboer) {
                         /* @var \intern3\Beboer $beboer */
+
+                        if($lista->romValgt($beboer->getRom())) {
+                            continue;
+                        }
+
                         ?>
 
                         <tr>
