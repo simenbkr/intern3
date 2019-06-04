@@ -95,10 +95,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <tr>
                 <td>
                     <a href="?a=utvalg/vaktsjef/vaktoversikt/endre/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a>
-                    <?php if ($bruker->vaktAdvarsel()) { ?>
-                        <i class="glyphicon glyphicon-question-sign"></i>
-                    <?php }
-                      ?>
+                    <?php if ($bruker->harVakterTett()) { ?>
+                        <i class="glyphicon glyphicon-time"></i>
+                    <?php } if($bruker->harForMangeKjipeVakter()) { ?>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <?php } if($bruker->harForMangeForstevakter()) { ?>
+                    <i class="glyphicon glyphicon-glyphicon-off"></i>
+                    <?php } ?>
                 </td>
                 <td><?php echo $bruker->antallStraffevakter(); ?></td>
                 <td><?php echo $bruker->antallVakterSkalSitte(); ?></td>

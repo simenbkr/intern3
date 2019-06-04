@@ -31,6 +31,9 @@ foreach($vakter as $vakt) {
 
 }
 
+$df = new IntlDateFormatter('nb_NO',
+    IntlDateFormatter::TRADITIONAL, IntlDateFormatter::NONE,
+    'Europe/Oslo');
 
 ?>
     <script src="js/vis.min.js"></script>
@@ -85,6 +88,8 @@ foreach($vakter as $vakt) {
                 <tr>
                     <td><b>Type</b></td>
                     <td><b>Dato</b></td>
+                    <td><b>Dag</b></td>
+                    <td><b>Kjip?</b></td>
                 </tr>
                 <?php
                 foreach ($vakter as $vakt) {
@@ -96,7 +101,8 @@ foreach($vakter as $vakt) {
                     <tr>
                         <td><?php echo $vakt->getVaktType(); ?>. vakt</td>
                         <td><?php echo $vakt->getDato(); ?></td>
-
+                        <td><?php echo ucfirst(explode(' ', $df->format(strtotime($vakt->getDato())))[0]); ?></td>
+                        <td><?php echo $vakt->erKjip() ? 'Ja' : 'Nei'; ?></td>
                     </tr>
                     <?php
                 }
@@ -108,6 +114,8 @@ foreach($vakter as $vakt) {
                 <tr>
                     <td><b>Type</b></td>
                     <td><b>Dato</b></td>
+                    <td><b>Dag</b></td>
+                    <td><b>Kjip?</b></td>
                 </tr>
                 <?php
                 foreach ($vakter as $vakt) {
@@ -119,7 +127,8 @@ foreach($vakter as $vakt) {
                     <tr>
                         <td><?php echo $vakt->getVaktType(); ?>. vakt</td>
                         <td><?php echo $vakt->getDato(); ?></td>
-
+                        <td><?php echo ucfirst(explode(' ', $df->format(strtotime($vakt->getDato())))[0]); ?></td>
+                        <td><?php echo $vakt->erKjip() ? 'Ja' : 'Nei'; ?></td>
                     </tr>
                     <?php
                 }

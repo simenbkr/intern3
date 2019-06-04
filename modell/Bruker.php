@@ -206,7 +206,7 @@ class Bruker
                 $vakt_2 = $lista[$i];
                 /* @var Vakt $vakt_2 */
 
-                $max_time = 604800; // 7 days
+                $max_time = 8600 * 5; // 5 days
                 if (Vakt::timeCompare($vakt_1, $vakt_2) < $max_time) {
                     return true;
                 }

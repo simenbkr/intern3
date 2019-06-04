@@ -289,7 +289,8 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $oversikt = array();
         $week_seconds = 604800;
         $day_secs = 86400;
-        $vanlige_vakter = VaktListe::autogenerertVanligVakt();
+        $vanlige_vakter = VaktListe::autogenerertIkkeKjipVakt();
+        $kjipe_vakter = VaktListe::autogenerertKjipVakt();
         $forstevakter = VaktListe::autogenerertForstevakt();
         $fullvakt = BeboerListe::fullVakt();
         $halvvakt = BeboerListe::halvVakt();
@@ -312,12 +313,19 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                 }
             }
         }
+        /*
+         * Fordeling ser nå omtrent slik ut:
+         * $fordeling = array(
+         *                      6 => array med beboerene som skal ha full vakt.
+         *                      4 => array med beboerene som skal ha halv vakt.
+         * );
+         */
 
         /*
          * Hovedloop. Vi deler først ut førstevakter, deretter de andre vaktene - i to "runder".
          */
 
-        foreach (array($forstevakter, $vanlige_vakter) as $vakter) {
+        foreach (array($forstevakter, $kjipe_vakter, $vanlige_vakter) as $vakter) {
 
             while (count($vakter) > floor($margin / 2)) {
 
@@ -342,7 +350,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
                             || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
 
-                            if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall++) {
+                            if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall++ || true) {
                                 array_splice($beboere, $beboer_indeks, 1);
                                 array_splice($tmp, $beboer_indeks, 1);
                                 continue;
@@ -368,15 +376,15 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         }
 
                         /*
-                         * Sjekk om beboeren har en vakt +/- 2 dager. Hvis det er tilfelle, forsøk å trekke på nytt
-                         * et visst antall ganger (10 valgt fordi jeg kan).
+                         * Sjekk om beboeren har en vakt +/- 5 dager. Hvis det er tilfelle, forsøk å trekke på nytt.
                          */
 
                         $i = 0;
-                        while ($i++ < 20) {
+                        while ($i++ < count($vakter)) {
                             $flag = true;
+
                             foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
-                                if (Vakt::timeCompare($vakt, $vakta) < 7 * $day_secs) {
+                                if (Vakt::timeCompare($vakt, $vakta) < 4 * $day_secs) {
                                     $flag = false;
                                 }
                             }
@@ -394,7 +402,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         while ($i++ < 20) {
                             $flag = 0;
                             foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
-                                if (Vakt::timeCompare($vakt, $vakta) < 4 * $week_seconds) {
+                                if (Vakt::timeCompare($vakt, $vakta) < 3 * $week_seconds) {
                                     $flag++;
                                 }
                             }
@@ -408,23 +416,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
                         }
 
-
-                        /*
-                         * Dette er en svært uheldig situasjon - nesten alle vaktene er kjipe. Prøver derfor å finne en
-                         * grei vakt for beboeren å sitte.
-                         */
-
-                        if ($vakta->erKjip()
-                            && $beboeren->getBruker()->antallVakterErOppsatt() - $beboeren->antallKjipeVakter() <= (0.33 * $beboeren->getBruker()->antallVakterSkalSitte())) {
-                            $i = 0;
-                            while ($vakta->erKjip()) {
-                                $vakt_indeks = array_rand($vakter);
-                                $vakta = $vakter[$vakt_indeks];
-                                if ($i++ > 10) {
-                                    break;
-                                }
-                            }
-                        }
 
                         /*
                          * Beboeren velges til denne vakta. Vakta fjernes fra lista, mens beboeren blir fjerna fra denne
