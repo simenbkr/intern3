@@ -35,6 +35,17 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <p>
     <h2>Ubekreftede vakter: <?php echo $antallUbekreftet; ?></h2></p>
 
+    <p>En kjip vakt er en vakt som oppfyller én eller flere av følgende krav:
+        <ul>
+            <li>Førstevakt</li>
+            <li>Lørdagsvakt</li>
+            <li>2., 3. vakt søndag</li>
+            <li>3., 4. vakt fredag</li>
+        </ul>
+        Dette utgjør nøyaktig halvparten av alle vakter i løpet av en uke (14/28).
+
+    </p>
+
 </div>
 <div class="col-md-3" id="kake">
     <table class="table table-bordered table-responsive small">

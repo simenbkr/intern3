@@ -10,7 +10,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     <?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
-    <p>Denne siden brukes for å generere vaktlister. Ved starten av hvert skoleår (august), burde tabellen tømmes ved å benytte
+    <p>Denne siden brukes for å generere vaktlister. Ved starten av hvert semester (august/januar), burde tabellen tømmes ved å benytte
     knappen under. Deretter burde vaktene genereres. Vaktene genereres så rettferdig som mulig.</p>
 
 </div>
