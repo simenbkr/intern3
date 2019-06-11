@@ -107,11 +107,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <td>
                     <a href="?a=utvalg/vaktsjef/vaktoversikt/endre/<?php echo $beboer->getId(); ?>"><?php echo $beboer->getFulltNavn(); ?></a>
                     <?php if ($bruker->harVakterTett()) { ?>
-                        <i class="glyphicon glyphicon-time"></i>
+                        <span class="glyphicon glyphicon-time" title="Det ser ut som denne beboeren har vakter tett."></span>
                     <?php } if($bruker->harForMangeKjipeVakter()) { ?>
-                    <i class="glyphicon glyphicon-trash"></i>
+                    <span class="glyphicon glyphicon-trash" title="Det ser ut som denne beboeren har mange kjipe vakter."></span>
                     <?php } if($bruker->harForMangeForstevakter()) { ?>
-                    <i class="glyphicon glyphicon-glyphicon-off"></i>
+                    <span class="glyphicon glyphicon-glyphicon-off" title="Det ser ut som denne beboeren har for mange førstevakter."></span>
                     <?php } ?>
                 </td>
                 <td><?php echo $bruker->antallStraffevakter(); ?></td>
