@@ -168,6 +168,12 @@ class ProfilCtrl extends AbstraktCtrl
                 foreach ($parametre as $navn => $verdi) {
                     $st->bindValue($navn, $verdi);
                 }
+
+                if($post['epost'] != $brukeren->getPerson()->getEpost()) {
+                    $brukeren->getPerson()->updateLists($post['epost'], true);
+                }
+
+
                 $st->execute();
 
                 Funk::setSuccess("Generell info ble endret!");

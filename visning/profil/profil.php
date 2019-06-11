@@ -244,6 +244,13 @@ foreach (intern3\StudieListe::alle() as $studie) {
             <td>Epost</td>
             <td>SING-ALLE</td>
             <td>SING-SLARV</td>
+            <?php if($beboer->getKjonn() == 'Mann') { ?>
+                <td>SING-GUTTER</td>
+            <?php } elseif($beboer->getKjonn() == 'Kvinne') { ?>
+                <td>SING-JENTER</td>
+            <?php } ?>
+
+
             <td>Sjekk</td>
         </tr>
 
@@ -253,6 +260,11 @@ foreach (intern3\StudieListe::alle() as $studie) {
             <td><?php echo $beboer->getEpost(); ?></td>
             <td class=sing-alle">Laster..</td>
             <td class=sing-slarv">Laster..</td>
+            <?php if($beboer->getKjonn() == 'Mann') { ?>
+                <td class="sing-gutter">Laster..</td>
+            <?php } elseif($beboer->getKjonn() == 'Kvinne') { ?>
+                <td class="sing-jenter">Laster..</td>
+            <?php } ?>
             <td>
                 <button class="btn btn-danger" onclick="sjekk('<?php echo $beboer->getId(); ?>')">Sjekk</button>
             </td>

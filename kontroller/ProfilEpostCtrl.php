@@ -40,7 +40,15 @@ class ProfilEpostCtrl extends AbstraktCtrl
             $ret = "<td>" . $beboer->getEpost() . "</td>";
             $id = $beboer->getId();
 
-            foreach (PUBLIC_MAIL as $lista) {
+            $mail_lists = array();
+            if($beboer->getKjonn() == 0) {
+                $mail_lists = [SING_GUTTER];
+            } elseif ($beboer->getKjonn() == 1) {
+                $mail_lists = [SING_JENTER];
+            }
+
+            $mail_lists = array_merge($mail_lists, PUBLIC_MAIL);
+            foreach ($mail_lists as $lista) {
                 $classname = explode("@", $lista)[0];
                 if ($group->inGroup($beboer->getEpost(), $lista)) {
                     $button_string = "✔ <button class='btn btn-danger' onclick='del($id, \"$lista\")'>Fjern</button>";

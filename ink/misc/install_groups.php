@@ -11,7 +11,9 @@ if (php_sapi_name() != 'cli') {
     throw new Exception('This application must be run on the command line.');
 }
 
-mkdir(__DIR__ . '/../../vendor/simenbkr/groupmanage/src/credentials');
+try {
+    mkdir(__DIR__ . '/../../vendor/simenbkr/groupmanage/src/credentials');
+} catch(\Exception $e){}
 
 $a = new \Group\GroupManage();
 $b = $a->listGroup("sing-korr@singsaker.no");
