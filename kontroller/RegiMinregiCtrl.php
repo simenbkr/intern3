@@ -101,6 +101,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
 
     private function registrerArbeid()
     {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $feil = $this->godkjennArbeid();
         if (count($feil) == 0) {
             $endringer = array(
@@ -113,11 +114,11 @@ class RegiMinregiCtrl extends AbstraktCtrl
             );
             $parametre = array(
                 ':bruker_id' => $this->cd->getAktivBruker()->getId(),
-                ':polymorfkategori_id' => $_POST['polymorfkategori_id'][$_POST['polymorfkategori_velger']],
+                ':polymorfkategori_id' => $post['polymorfkategori_id'][$post['polymorfkategori_velger']],
                 ':polymorfkategori_velger' => $this->getPolymorfkategoriVelger(),
                 ':sekunder_brukt' => $this->getSekunderBrukt(),
-                ':tidUtfort' => $_POST['tid_utfort'],
-                ':kommentar' => $_POST['kommentar']
+                ':tidUtfort' => $post['tid_utfort'],
+                ':kommentar' => $post['kommentar']
             );
             $sql = 'INSERT INTO arbeid(' . implode(',', array_keys($endringer)) . ') VALUES(' . implode(',', $endringer) . ');';
             $st = DB::getDB()->prepare($sql);

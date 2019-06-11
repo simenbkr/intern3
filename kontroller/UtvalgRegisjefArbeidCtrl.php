@@ -12,17 +12,6 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
         $aktueltArg = $this->cd->getAktueltArg();
         $sisteArg = $this->cd->getSisteArg();
 
-        /*if($sisteArg != $aktueltArg && ($arbeidet = Arbeid::medId($sisteArg)) != null){
-            setcookie('faen','lol');
-            //$this->underkjennArbeid($arbeidet, LogginnCtrl::getAktivBruker()->getId());
-            $bid = LogginnCtrl::getAktivBruker()->getId();
-            $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=-1,tid_godkjent=CURRENT_TIMESTAMP,godkjent_bruker_id=:bid WHERE id=:id');
-            $st->bindParam(':id', $sisteArg);
-            $st->bindParam(':bid', $bid);
-            $st->execute();
-            setcookie('hva','fæn');
-        }*/
-
         $dok = new Visning($this->cd);
         switch ($aktueltArg) {
             case 'tilbakemelding':
