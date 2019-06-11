@@ -22,6 +22,7 @@ class Beboer implements Person
     private $romhistorikk;
     private $bilde;
     private $ansiennitet;
+    private $kjonn;
     private $antall_kjipe;
 
     // Latskap
@@ -34,6 +35,11 @@ class Beboer implements Person
     private $vervListe;
     private $utvalgVervListe;
     private $bruker;
+
+    public static $MULIGE_KJONN = array(
+        '0' => "Mann",
+        '1' => "Kvinne"
+    );
 
     public static function medId($id)
     {
@@ -76,6 +82,7 @@ class Beboer implements Person
         $instance->romhistorikk = $rad['romhistorikk'];
         $instance->bilde = $rad['bilde'];
         $instance->ansiennitet = $rad['ansiennitet'];
+        $instance->kjonn = $rad['kjonn'];
         $instance->studie = null;
         $instance->skole = null;
         $instance->romId = null;
@@ -193,7 +200,8 @@ class Beboer implements Person
 
     public function getAlder()
     {
-        return $this->getAlderIAr() - (($_SERVER['REQUEST_TIME'] - mktime(0, 0, 0, substr($this->fodselsdato, 5, 2), substr($this->fodselsdato, 8, 2))) < 0 ? 1 : 0);
+        return $this->getAlderIAr() - (($_SERVER['REQUEST_TIME'] - mktime(0, 0, 0, substr($this->fodselsdato, 5, 2),
+                    substr($this->fodselsdato, 8, 2))) < 0 ? 1 : 0);
     }
 
     public function getAdresse()
@@ -224,6 +232,11 @@ class Beboer implements Person
             return $this->ansiennitet;
         }
         return 0;
+    }
+
+    public function getKjonn(): string
+    {
+        return self::$MULIGE_KJONN[$this->kjonn];
     }
 
     public function setAnsiennitet($ans)
@@ -458,6 +471,12 @@ class Beboer implements Person
             $groupmanager->addToGroup($this->epost, 'MEMBER', SING_ALLE);
             $groupmanager->addToGroup($this->epost, 'MEMBER', SING_SLARV);
 
+            if ($this->kjonn == 0) {
+                $groupmanager->addToGroup($this->epost, 'MEMBER', SING_GUTTER);
+            } elseif ($this->kjonn == 1) {
+                $groupmanager->addToGroup($this->epost, 'MEMBER', SING_JENTER);
+            }
+
             $groupmanager->removeFromGroup($this->epost, SING_VETERAN);
         } catch (\Exception $e) {
         }
@@ -642,16 +661,30 @@ class Beboer implements Person
         return array_reverse(array_unique($lista));
     }
 
-    public static function nyBeboer($fornavn, $mellomnavn, $etternavn, $fodselsdato, $adresse, $postnr, $mobilnr,
-                                    $studie_id, $skole_id, $klasse, $alko, $rolle_id, $epost, $rom_id): Beboer
-    {
+    public static function nyBeboer(
+        $fornavn,
+        $mellomnavn,
+        $etternavn,
+        $fodselsdato,
+        $adresse,
+        $postnr,
+        $mobilnr,
+        $studie_id,
+        $skole_id,
+        $klasse,
+        $alko,
+        $rolle_id,
+        $epost,
+        $rom_id,
+        $kjonn
+    ): Beboer {
 
         //Opprett beboer
 
         $bruker_id = Funk::getLastBrukerId() + 1;
         $st = DB::getDB()->prepare('INSERT INTO beboer
-(bruker_id,fornavn,mellomnavn,etternavn,fodselsdato,adresse,postnummer,telefon,studie_id,skole_id,klassetrinn,alkoholdepositum,rolle_id,epost,romhistorikk)
-VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnummer,:telefon,:studie_id,:skole_id,:klassetrinn,:alko,:rolle_id,:epost,:romhistorikk)');
+(bruker_id,fornavn,mellomnavn,etternavn,fodselsdato,adresse,postnummer,telefon,studie_id,skole_id,klassetrinn,alkoholdepositum,rolle_id,epost,romhistorikk,kjonn)
+VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnummer,:telefon,:studie_id,:skole_id,:klassetrinn,:alko,:rolle_id,:epost,:romhistorikk,:kjonn)');
 
         $st->bindParam(':bruker_id', $bruker_id);
         $st->bindParam(':fornavn', $fornavn);
@@ -667,6 +700,7 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
         $st->bindParam(':alko', $alko);
         $st->bindParam(':rolle_id', $rolle_id);
         $st->bindParam(':epost', $epost);
+        $st->bindParam(':kjonn', $kjonn);
         $rom = new Romhistorikk();
         $rom->addPeriode($rom_id, date('Y-m-d'), null);
         $romhistorikken = $rom->tilJson();
@@ -847,6 +881,51 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         }
 
         return false;
+    }
+
+    public function updateLists(string $nyepost = null, bool $epostbytte = false, bool $kjonnbytte = false)
+    {
+
+        if ($epostbytte && !is_null($nyepost)) {
+            try {
+
+                $groupmanager = new \Group\GroupManage();
+
+                $groupmanager->removeFromGroup($this->epost, SING_ALLE);
+                $groupmanager->removeFromGroup($this->epost, SING_SLARV);
+                $groupmanager->removeFromGroup($this->epost, SING_GUTTER);
+                $groupmanager->removeFromGroup($this->epost, SING_JENTER);
+
+                $groupmanager->addToGroup($this->epost, 'MEMBER', SING_ALLE);
+                $groupmanager->addToGroup($this->epost, 'MEMBER', SING_SLARV);
+
+                if ($this->kjonn == 0) {
+                    $groupmanager->addToGroup($this->epost, 'MEMBER', SING_GUTTER);
+                } elseif ($this->kjonn == 1) {
+                    $groupmanager->addToGroup($this->epost, 'MEMBER', SING_JENTER);
+                }
+
+            } catch (\Exception $e) {
+            }
+        }
+
+        if ($kjonnbytte) {
+            try {
+                $groupmanager = new \Group\GroupManage();
+
+                $groupmanager->removeFromGroup($this->epost, SING_GUTTER);
+                $groupmanager->removeFromGroup($this->epost, SING_JENTER);
+
+                if ($this->kjonn == 0) {
+                    $groupmanager->addToGroup($this->epost, 'MEMBER', SING_GUTTER);
+                } elseif ($this->kjonn == 1) {
+                    $groupmanager->addToGroup($this->epost, 'MEMBER', SING_JENTER);
+                }
+            } catch (\Exception $e) {
+            }
+            
+        }
+
     }
 
 }

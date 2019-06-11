@@ -50,6 +50,15 @@ $mellomnavn = implode(' ', array_shift($navn_arr));
                     </td>
                 </tr>
                 <tr>
+                    <td>Kjønn</td>
+                    <td>
+                        <select name="kjonn" class="form-control">
+                            <option value="0">Mann</option>
+                            <option value="1">Kvinne</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td>Adresse:</td>
                     <td><input type="text" name="adresse" class="form-control"
                                value="<?php echo $soknad->getAdresse(); ?>">

@@ -155,7 +155,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
                 $beboer = Beboer::nyBeboer(
                     $post['fornavn'], $post['mellomnavn'], $post['etternavn'], $post['fodselsdato'],
                     $post['adresse'], $post['postnummer'], $post['mobil'], $post['studie_id'], $post['skole_id'],
-                    $post['klasse'], $alko, $post['rolle_id'], $post['epost'], $post['rom_id']);
+                    $post['klasse'], $alko, $post['rolle_id'], $post['epost'], $post['rom_id'], $post['kjonn']);
 
                 header('Location: ?a=utvalg/romsjef/beboerliste/' . $beboer->getId());
                 exit();
@@ -209,6 +209,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $beboer_id = $post['beboerid'];
+        $beboer = Beboer::medId($beboer_id);
 
         $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM beboer WHERE (epost=:epost AND id != :id)');
         $st->execute(['epost' => $post['epost'], 'id' => $beboer_id]);
@@ -233,7 +234,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
 
         $st = DB::getDB()->prepare('UPDATE beboer SET fornavn=:fornavn,mellomnavn=:mellomnavn,etternavn=:etternavn,
 fodselsdato=:fodselsdato,adresse=:adresse,postnummer=:postnummer,telefon=:telefon,studie_id=:studie_id,skole_id=:skole_id,
-klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk WHERE id=:id');
+klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,romhistorikk=:romhistorikk,kjonn=:kjonn WHERE id=:id');
 
         $st->bindParam(':id', $beboer_id);
         $st->bindParam(':fornavn', $post['fornavn']);
@@ -250,10 +251,19 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $st->bindParam(':alko', $alko);
         $st->bindParam(':rolle', $post['rolle_id']);
         $st->bindParam(':epost', $post['epost']);
-        $st->bindParam('romhistorikk', $raden);
+        $st->bindParam(':kjonn', $post['kjonn']);
+        $st->bindParam(':romhistorikk', $raden);
+
+        if($beboer->getKjonn() != ($kjonn = Beboer::$MULIGE_KJONN[$post['kjonn']])) {
+            $beboer->updateLists('', false, true);
+        }
+
+        if($beboer->getEpost() != $post['epost']) {
+            $beboer->updateLists($post['epost'], true);
+        }
+
         $st->execute();
+
     }
 
 }
-
-?>
