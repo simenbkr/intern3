@@ -32,7 +32,7 @@
             <td>
                 <select name="kjonn" class="form-control">
                     <?php foreach(array('0' => 'Mann', '1' => 'Kvinne') as $key => $val) { ?>
-                        <option <?php if($beboer->getKjonn() == $val) { echo 'selected="selected"';} ?>
+                        <option <?php if(!is_null($beboer) && $beboer->getKjonn() == $val) { echo 'selected="selected"';} ?>
                                 value="<?php echo $key; ?>"><?php echo $val; ?></option>
 
                     <?php } ?>
