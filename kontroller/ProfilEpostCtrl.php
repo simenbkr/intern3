@@ -25,7 +25,7 @@ class ProfilEpostCtrl extends AbstraktCtrl
 
         $mail_lists = array_merge($mail_lists, PUBLIC_MAIL);
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && in_array($aktueltArg, PUBLIC_MAIL)) {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && in_array($aktueltArg, $mail_lists)) {
 
             if (!$group->inGroup($beboer->getEpost(), $aktueltArg)) {
                 $group->addToGroup($beboer->getEpost(), "MEMBER", $aktueltArg);
@@ -34,7 +34,7 @@ class ProfilEpostCtrl extends AbstraktCtrl
                 print $beboer->getEpost() . " er allerede i " . $aktueltArg . "!";
             }
 
-        } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && in_array($aktueltArg, PUBLIC_MAIL)){
+        } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && in_array($aktueltArg, $mail_lists)){
 
             if($group->inGroup($beboer->getEpost(), $aktueltArg)){
                 $group->removeFromGroup($beboer->getEpost(), $aktueltArg);
