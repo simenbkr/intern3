@@ -82,19 +82,19 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             tilbakemelding("Oppdaterte beboerens ansiennitet!");
 
         }
-        
-        function inkrementerEnkelt(id){
+
+        function inkrementerEnkelt(id) {
             inkrementer(id);
             tilbakemelding("Inkrementerte beboerens ansiennitet!");
         }
-        
-        function tilbakemelding(beskjed){
+
+        function tilbakemelding(beskjed) {
             document.getElementById("success").style.display = "table";
             document.getElementById("tilbakemelding-text").innerHTML = beskjed;
         }
-        
-        
-        function bulkInkrement(modus){
+
+
+        function bulkInkrement(modus) {
             $.ajax({
                 type: 'POST',
                 url: '?a=utvalg/romsjef/ansiennitet/bulkinkrement/',
@@ -102,7 +102,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 method: 'POST',
                 success: function (data) {
                     $("#tabellen").load("?a=utvalg/romsjef/ansiennitet #tabellen");
-                    if(modus === 1){
+                    if (modus === 1) {
                         tilbakemelding("Inkrementerte alle VALGTE!");
                     } else {
                         tilbakemelding("Inkrementerte alle UVALGTE!");
@@ -127,12 +127,14 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <p id="tilbakemelding-text"></p>
         </div>
         <p></p>
-        
+
+        <a href="?a=utvalg/romsjef/ansiennitet/eksporter"><button class="btn btn-warning pull-right">Eksporter til CSV</button></a>
+
         <p>
             <button class="btn btn-info btn-block" onclick="bulkInkrement(1)">Inkrementer alle VALGTE</button>
             <button class="btn btn-primary btn-block" onclick="bulkInkrement(0)">Inkrementer alle UVALGTE</button>
         </p>
-        
+
         <table class="table table-bordered table-responsive" id="tabellen">
             <thead>
             <tr>
@@ -148,7 +150,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             </thead>
             <tbody>
             <?php
-            
+
             foreach ($beboerliste as $beboer) {
                 /* @var \intern3\Beboer $beboer */
                 if ($beboer == null || !isset($beboer)) {
@@ -207,7 +209,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </tr>
                 <?php
             }
-            
+
             ?>
             </tbody>
         </table>
