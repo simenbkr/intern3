@@ -301,11 +301,20 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         /*
          * Sett opp fordeling til bruk i hovedloop senere.
          */
+
+        $semester = Funk::generateSemesterString(date('Y-m-d', strtotime($_POST['varighet_dato_slutt'])));
+        $host = strpos($semester, "host");
         $fordeling = array();
         foreach (RolleListe::alle() as $rolle) {
             /* @var Rolle $rolle */
             if ($rolle->getVakterNow() > 0) {
-                $antall = intval(floor($rolle->getVakterNow() * 2 / 3));
+                if($host) {
+                    $antall = $rolle->getVakterH();
+                } else {
+                    $antall = $rolle->getVakterV();
+                }
+                $antall = intval(floor($antall * 2 / 3));
+
                 if ($rolle->getNavn() === 'Full vakt') {
                     $fordeling[$antall] = $fullvakt;
                 } else {
@@ -384,7 +393,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             $flag = true;
 
                             foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
-                                if (Vakt::timeCompare($vakt, $vakta) < 4 * $day_secs) {
+                                if (Vakt::timeCompare($vakt, $vakta) < 7 * $day_secs) {
                                     $flag = false;
                                 }
                             }
@@ -399,7 +408,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         }
 
                         $i = 0;
-                        while ($i++ < 20) {
+                        while ($i++ < count($vakter)) {
                             $flag = 0;
                             foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
                                 if (Vakt::timeCompare($vakt, $vakta) < 3 * $week_seconds) {
@@ -407,7 +416,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                                 }
                             }
 
-                            if ($flag < 1) {
+                            if ($flag < 3) {
                                 break;
                             }
 
