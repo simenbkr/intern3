@@ -37,6 +37,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <p>
         NB: Når folk flyttes ut, fjernes de fra alle disse epostlistene
         og legges inn på veteranlista automagisk.
+        Ved å klikke på epostlistenavnene i tabellen under, kan en se alle medlemmer av en liste, og se om e-posten brukt
+        er tilknyttet en brukerkonto ved internsiden.
     </p>
     <hr>
     <div class="col-md-12">
@@ -47,10 +49,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <tr>
                 <td>Navn</td>
                 <td>Epost</td>
-                <td>SING-ALLE</td>
-                <td>SING-SLARV</td>
-                <td>SING-JENTER</td>
-                <td>SING-GUTTER</td>
+                <td><a href="?a=utvalg/romsjef/epost/status/sing-alle">SING-ALLE</a></td>
+                <td><a href="?a=utvalg/romsjef/epost/status/sing-slarv">SING-SLARV</a></td>
+                <td><a href="?a=utvalg/romsjef/epost/status/sing-jenter">SING-JENTER</a></td>
+                <td><a href="?a=utvalg/romsjef/epost/status/sing-gutter">SING-GUTTER</a></td>
                 <td>Sjekk</td>
             </tr>
 
