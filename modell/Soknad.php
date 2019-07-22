@@ -79,9 +79,21 @@ class Soknad
                                              fodselsar=:fodselsar,skole=:skole,studie=:studie,fagbrev=:fagbrev,
                                              kompetanse=:kompetanse,kjennskap=:kjennskap,kjenner=:kjenner,
                                              tekst=:tekst,bilde=:bilde WHERE id=:id');
-        $st->execute(['navn' => $this->navn, 'adresse' => $this->adresse, 'epost' => $this->epost, 'telefon' => $this->telefon, 'fodselsar' => $this->fodselsar,
-            'skole' => $this->skole, 'studie' => $this->studie, 'fagbrev' => $this->fagbrev, 'kompetanse' => $this->kompetanse,
-            'kjennskap' => $this->kjennskap, 'kjenner' => $this->kjenner, 'tekst' => $this->tekst, 'bilde' => $this->bilde]);
+        $st->execute([
+            'navn' => $this->navn,
+            'adresse' => $this->adresse,
+            'epost' => $this->epost,
+            'telefon' => $this->telefon,
+            'fodselsar' => $this->fodselsar,
+            'skole' => $this->skole,
+            'studie' => $this->studie,
+            'fagbrev' => $this->fagbrev,
+            'kompetanse' => $this->kompetanse,
+            'kjennskap' => $this->kjennskap,
+            'kjenner' => $this->kjenner,
+            'tekst' => $this->tekst,
+            'bilde' => $this->bilde
+        ]);
     }
 
 
@@ -242,6 +254,36 @@ class Soknad
     {
         $this->bilde = $bilde;
         $this->oppdater();
+    }
+
+    public static function fraYear($year): array
+    {
+        $ret = array();
+        $start = "$year-01-01 00:00:00";
+        $slutt = "$year-12-31 23:59:59";
+        $st = DB::getDB()->prepare('SELECT * FROM soknad WHERE innsendt > :start AND innsendt < :slutt');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
+
+        for ($i = 0; $i < $st->rowCount(); $i++) {
+            $ret[] = self::init($st);
+        }
+
+        return $ret;
+    }
+
+    public static function SoknaderTilCSV($soknader) {
+
+        $out[0] = array('Innsendt','Navn','Epost','Telefon','Født','Fagbrev','Kompetanse','Kjenner til Sing','Kjenner beboere','Søknadstekst');
+
+        foreach($soknader as $soknad) {
+            /* @var Soknad $soknad */
+
+            $data = array($soknad->getInnsendt(), $soknad->getNavn(), $soknad->getEpost(), $soknad->getTelefon(), $soknad->getFodselsar(),
+                $soknad->getFagbrev() == 0 ? 'Nei' : 'Ja', $soknad->getKompetanse(), $soknad->getKjennskap(), $soknad->getKjenner(), $soknad->getTekst());
+            $out[] = $data;
+        }
+
+        return $out;
     }
 
 }

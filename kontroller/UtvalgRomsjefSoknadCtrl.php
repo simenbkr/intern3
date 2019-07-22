@@ -41,13 +41,46 @@ class UtvalgRomsjefSoknadCtrl extends AbstraktCtrl
                         $dok->vis('utvalg/romsjef/soknad/soknad_detaljer.php');
                         exit();
                     }
-                case '':
-                default:
+                case 'year':
+                    if(!is_numeric($sisteArg) || strlen($sisteArg) !== 4) {
+                        return;
+                    }
 
-                    $soknader = Soknad::alle();
+                    $soknader = Soknad::fraYear($sisteArg);
                     $dok = new Visning($this->cd);
                     $dok->set('soknader', $soknader);
                     $dok->vis('utvalg/romsjef/soknad/soknad.php');
+
+                    break;
+
+                case 'eksporter':
+                    if(!is_numeric($sisteArg) || strlen($sisteArg) !== 4) {
+                        return;
+                    }
+
+                    $soknader = Soknad::fraYear($sisteArg);
+                    $csv = Soknad::SoknaderTilCSV($soknader);
+                    header("Content-type: text/csv");
+                    $ts = date('Y-m-d_H_i_s');
+                    header("Content-Disposition: attachment; filename=soknad-$sisteArg-$ts.csv");
+                    header("Pragma: no-cache");
+                    header("Expires: 0");
+
+                    $output = fopen('php://output', 'wb');
+                    foreach($csv as $line) {
+                        fputcsv($output, $line);
+                    }
+
+                    fclose($output);
+
+                    break;
+                case '':
+                default:
+
+                    //$soknader = Soknad::alle();
+                    $dok = new Visning($this->cd);
+                    //$dok->set('soknader', $soknader);
+                    $dok->vis('utvalg/romsjef/soknad/meta_soknad.php');
                     exit();
             }
 
