@@ -83,6 +83,10 @@ class StorhybelCtrl extends AbstraktCtrl
                 $kan_passe = true;
             }
 
+            if(!is_null(StorhybelFordeling::medVelgerIdStorhybelId($aktuell_velger->getId(), $lista->getId())->getNyttRomId())) {
+                $kan_passe = true;
+            }
+            
             $persnummer = implode('., ', $persnummer);
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && $min_tur) {
