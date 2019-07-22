@@ -796,6 +796,10 @@ class Storhybelliste
     public function kanPasse(Beboer $beboer, StorhybelVelger $aktuell_velger): bool
     {
 
+        if(!is_null(StorhybelFordeling::medVelgerIdStorhybelId($aktuell_velger->getVelgerId(), $this->id)->getNyttRomId())) {
+            return true;
+        }
+
         $st = DB::getDB()->prepare('SELECT count(*) as cnt FROM storhybel_velger AS sv WHERE (sv.storhybel_id = :sid AND sv.beboer_id= :bid)');
         $st->execute(['sid' => $this->id, 'bid' => $beboer->getId()]);
         $count = $st->fetch()['cnt'];
