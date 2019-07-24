@@ -7,7 +7,7 @@ class JournalCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
 
-        $aktivBruker = LogginnCtrl::getAktivBruker();
+        $aktivBruker = $this->cd->getAktivBruker();
         $aktueltArg = $this->cd->getAktueltArg();
         $sistearg = $this->cd->getSisteArg();
 
@@ -17,9 +17,8 @@ class JournalCtrl extends AbstraktCtrl
             session_destroy();
             session_start();
             $token = Token::createToken('journal', 15768000);
-            $_SESSION['token'] = $token->getToken();
-            $_SESSION['success'] = 1;
-            $_SESSION['msg'] = "Du har blitt logget ut av egen bruker, og inn på Journalen.";
+            Session::set('token', $token->getToken());
+            Funk::setSuccess("Du har blitt logget ut av egen bruker, og inn på Journalen.");
 
             if ($aktueltArg == 'token') {
                 header('Location: ?a=journal/krysseliste');
@@ -27,8 +26,8 @@ class JournalCtrl extends AbstraktCtrl
             }
 
         } elseif (
-            !isset($_SESSION['token'])
-            || ($token = Token::byToken($_SESSION['token'])) == null
+            empty(Session::get('token'))
+            || ($token = Token::byToken(Session::get('token'))) == null
             || !$token->isValidToken('journal')
         ) {
             header('Location: ?a=diverse');

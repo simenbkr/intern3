@@ -86,7 +86,7 @@ class RomskjemaCtrl extends AbstraktCtrl {
 
 		//Sende epost til Romsjef angående dette:
 		$mottaker = "regisjef@singsaker.no, romsjef@singsaker.no";
-		$registrant = LogginnCtrl::getAktivBruker()->getPerson();
+		$registrant = $this->cd->getAktivBruker()->getPerson();
 		$navn = $registrant->getFulltNavn();
 		//$mottaker = "data@singsaker.no";
 		$tittel = "[SING-INTERN] Ny feil registrert av " . $registrant->getFornavn() . " på rom " . $registrant->getRom()->getNavn();

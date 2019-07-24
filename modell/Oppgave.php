@@ -317,7 +317,7 @@ class Oppgave
         } elseif ($status == 1) {
             $st = DB::getDB()->prepare('UPDATE oppgave SET godkjent=1,tid_godkjent=NOW(),godkjent_bruker_id=:brukerId WHERE id=:id');
             $st->bindParam(':id', $oppgaveId);
-            $aktivbrukerId = LogginnCtrl::getAktivBruker()->getId();
+            $aktivbrukerId = Session::get('brid');
             $st->bindParam(':brukerId', $aktivbrukerId);
             $st->execute();
         }

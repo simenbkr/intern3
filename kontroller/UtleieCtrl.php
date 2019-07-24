@@ -7,7 +7,7 @@ class UtleieCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
         $dok = new Visning($this->cd);
-        $denne_beboeren = LogginnCtrl::getAktivBruker()->getPerson();
+        $denne_beboeren = $this->cd->getAktivBruker()->getPerson();
         if (isset($_POST)) {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             if (isset($post['meldpa']) && isset($post['utleieid']) &&

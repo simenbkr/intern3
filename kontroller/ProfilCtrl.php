@@ -7,7 +7,7 @@ class ProfilCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
 
-        if($this->cd->getAktueltArg() == 'epost'){
+        if ($this->cd->getAktueltArg() == 'epost') {
             $ctrl = new ProfilEpostCtrl($this->cd->skiftArg());
             $ctrl->bestemHandling();
             exit();
@@ -37,8 +37,8 @@ class ProfilCtrl extends AbstraktCtrl
                 }
             }
         }
-        $epostInst = LogginnCtrl::getAktivBruker()->getPerson()->getEpostPref();
-        $prefs = LogginnCtrl::getAktivBruker()->getPerson()->getPrefs();
+        $epostInst = $this->cd->getAktivBruker()->getPerson()->getEpostPref();
+        $prefs = $this->cd->getAktivBruker()->getPerson()->getPrefs();
         $dok = new Visning($this->cd);
         $dok->set('prefs', $prefs);
         $dok->set('epostInst', $epostInst);
@@ -46,9 +46,10 @@ class ProfilCtrl extends AbstraktCtrl
         $dok->vis('profil/profil.php');
     }
 
-    private function endrePrefs(){
+    private function endrePrefs()
+    {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        
+
         $st = DB::getDB()->prepare('UPDATE prefs SET resepp=:resepp, vinkjeller=:vinkjeller, pinboo=:pinboo, pinkode=:pinkode, vinpin=:vinpinkode WHERE beboerId=:id');
         $st->bindParam(':vinpinkode', $post['vinpin']);
         $st->bindParam(':pinkode', $post['pinkode']);
@@ -56,21 +57,22 @@ class ProfilCtrl extends AbstraktCtrl
         $options = array("resepp", "vinkjeller", "pinboo");
         $en = 1;
         $null = 0;
-        foreach($options as $option){
+        foreach ($options as $option) {
             $var = ':' . $option;
-            if( isset($post[$option]) && $post[$option] == 1 ){
+            if (isset($post[$option]) && $post[$option] == 1) {
                 $st->bindParam($var, $en);
             } else {
                 $st->bindParam($var, $null);
             }
         }
         Funk::setSuccess("Kryssepreferanser ble endret!");
-        $st->bindParam(':id', LogginnCtrl::getAktivBruker()->getPerson()->getId());
+        $st->bindParam(':id', $this->cd->getAktivBruker()->getPerson()->getId());
         $st->execute();
         return array();
     }
 
-    private function endreBilde(){
+    private function endreBilde()
+    {
         $tillatte_filtyper = array('jpg', 'jpeg', 'png', 'gif');
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         if (isset($_FILES['image'])) {
@@ -84,7 +86,7 @@ class ProfilCtrl extends AbstraktCtrl
                 $bildets_navn = md5($file_name . Funk::generatePassword(15) . time()) . '.' . $file_ext;
                 move_uploaded_file($tmp_file, "profilbilder/" . $bildets_navn);
                 chmod("profilbilder/" . $bildets_navn, 0644);
-                $id = LogginnCtrl::getAktivBruker()->getPerson()->getId();
+                $id = $this->cd->getAktivBruker()->getPerson()->getId();
                 $st = DB::getDB()->prepare('UPDATE beboer SET bilde=:bilde WHERE id=:id');
                 $st->bindParam(':bilde', $bildets_navn);
                 $st->bindParam(':id', $id);
@@ -102,7 +104,7 @@ class ProfilCtrl extends AbstraktCtrl
 
     private function endreVarsler()
     {
-        if(($bruker = LogginnCtrl::getAktivBruker()) != null && ($beboer = $bruker->getPerson()) != null){
+        if (($bruker = $this->cd->getAktivBruker()) != null && ($beboer = $bruker->getPerson()) != null) {
             $bebId = $beboer->getId();
         } else {
             Funk::setError("Noe gikk galt.. Prøv på nytt");
@@ -135,12 +137,12 @@ class ProfilCtrl extends AbstraktCtrl
     private function endreGenerellInfo()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        
-        if(($brukeren = Bruker::medEpost($post['epost'])) != null && $brukeren->getId() != $this->cd->getAktivBruker()->getId()){
-          Funk::setError("En annen beboer har allerede epost $post[epost]!");
-          return array("En annen beboer har allerede epost $post[epost]!");
+
+        if (($brukeren = Bruker::medEpost($post['epost'])) != null && $brukeren->getId() != $this->cd->getAktivBruker()->getId()) {
+            Funk::setError("En annen beboer har allerede epost $post[epost]!");
+            return array("En annen beboer har allerede epost $post[epost]!");
         }
-        
+
         $feil = $this->godkjennGenerellInfo();
         if (count($feil) == 0) {
             $endringer = array();
@@ -169,7 +171,7 @@ class ProfilCtrl extends AbstraktCtrl
                     $st->bindValue($navn, $verdi);
                 }
 
-                if($post['epost'] != $brukeren->getPerson()->getEpost()) {
+                if ($post['epost'] != $brukeren->getPerson()->getEpost()) {
                     $brukeren->getPerson()->updateLists($post['epost'], true);
                 }
 
@@ -221,13 +223,9 @@ class ProfilCtrl extends AbstraktCtrl
         } while (false);
         do {
             if (!isset($_POST['adresse']) || !$_POST['adresse']) {
-            $feil[] = 'Adresse mangler.';
-            break;
-        }
-            /*if (!filter_var($_POST['adresse'], FILTER_VALIDATE_STRING)) {
-                $feil[] = 'Adresse har ugyldig format.';
+                $feil[] = 'Adresse mangler.';
                 break;
-            } */
+            }
             if (!isset($_POST['postnummer']) || !$_POST['postnummer']) {
                 $feil[] = 'Postnummer mangler.';
                 break;

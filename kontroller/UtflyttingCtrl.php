@@ -7,11 +7,11 @@ class UtflyttingCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
         $dok = new Visning($this->cd);
-        $bruker = LogginnCtrl::getAktivBruker();
+        $bruker = $this->cd->getAktivBruker();
         if(isset($_POST)) {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            if(isset($post['tekst']) && isset($post['passord']) && $bruker->passordErGyldig(LogginnCtrl::genererHash($post['passord'], LogginnCtrl::getAktivBruker()->getId()))){
-                $beboer = Beboer::medBrukerId(LogginnCtrl::getAktivBruker()->getId());
+            if(isset($post['tekst']) && isset($post['passord']) && $bruker->passordErGyldig(LogginnCtrl::genererHash($post['passord'], $this->cd->getAktivBruker()->getId()))){
+                $beboer = $bruker->getPerson();
                 $fulltNavn = $beboer->getFulltNavn();
                 $teksten = "<html>" . $post['tekst'] . "<br/><br/>Dette er en automatisert melding. Vennligst ta kontakt med data@singsaker.no dersom denne ble sendt feil.</html>";
                 $mottaker = "romsjef@singsaker.no";

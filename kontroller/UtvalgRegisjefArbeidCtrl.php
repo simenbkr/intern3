@@ -35,7 +35,7 @@ class UtvalgRegisjefArbeidCtrl extends AbstraktCtrl
                             header('Location: ' . $_SERVER['REQUEST_URI']);
                             exit();
                         } elseif(isset($post['underkjenn'])){
-                            $bid = LogginnCtrl::getAktivBruker()->getId();
+                            $bid = $this->cd->getAktivBruker()->getId();
                             $st = DB::getDB()->prepare('UPDATE arbeid SET godkjent=-1,tid_godkjent=CURRENT_TIMESTAMP,godkjent_bruker_id=:bid WHERE id=:id');
                             $st->bindParam(':id', $sisteArg);
                             $st->bindParam(':bid', $bid);

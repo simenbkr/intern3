@@ -11,8 +11,9 @@ class VervCtrl extends AbstraktCtrl
         $dok = new Visning($this->cd);
         if ($sisteArg != 'verv' && is_numeric($sisteArg)) {
             $vervet = Verv::medId($sisteArg);
-            $kan_redigere_beskrivelse = in_array($vervet, LogginnCtrl::getAktivBruker()->getPerson()->getVervListe()) || LogginnCtrl::getAktivBruker()->getPerson()->harUtvalgVerv();
-            $har_vervet = in_array($vervet, LogginnCtrl::getAktivBruker()->getPerson()->getVervListe());
+            $kan_redigere_beskrivelse = in_array($vervet, $this->cd->getAktivBruker()->getPerson()->getVervListe())
+                || $this->cd->getAktivBruker()->getPerson()->harUtvalgVerv();
+            $har_vervet = in_array($vervet, $this->cd->getAktivBruker()->getPerson()->getVervListe());
             if ($vervet != null) {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -27,7 +28,7 @@ class VervCtrl extends AbstraktCtrl
                         $st = DB::getDB()->prepare('INSERT INTO verv_melding (tekst,verv_id,beboer_id) VALUES(:tekst,:verv_id,:beboer_id)');
                         $st->bindParam(':tekst', $post['melding']);
                         $st->bindParam(':verv_id', $sisteArg);
-                        $st->bindParam(':beboer_id', LogginnCtrl::getAktivBruker()->getPerson()->getId());
+                        $st->bindParam(':beboer_id', $this->cd->getAktivBruker()->getPerson()->getId());
                         $st->execute();
                         header('Location: ' . $_SERVER['REQUEST_URI']);
                     }

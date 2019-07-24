@@ -7,6 +7,8 @@ class HovedCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
 
+        Session::refresh();
+
         $aktueltArg = $this->cd->getAktueltArg();
         if ($aktueltArg == 'vinkjeller') {
             $valgtCtrl = new VinkjellerCtrl($this->cd->skiftArg());

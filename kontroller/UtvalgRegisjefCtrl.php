@@ -161,7 +161,7 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
                 ':tidUtfort' => $post['tid_utfort'],
                 ':kommentar' => $post['kommentar']
             );
-            $aktiv_bruker = LogginnCtrl::getAktivBruker()->getId();
+            $aktiv_bruker = $this->cd->getAktivBruker()->getId();
             $sql = 'INSERT INTO arbeid(' . implode(',', array_keys($endringer)) . ', godkjent,godkjent_bruker_id,tid_godkjent) VALUES(' . implode(',', $endringer) . ',1,' . $aktiv_bruker . ',CURRENT_TIMESTAMP);';
             $st = DB::getDB()->prepare($sql);
             foreach ($parametre as $navn => $verdi) {

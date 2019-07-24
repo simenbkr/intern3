@@ -8,17 +8,21 @@ class LogginnCtrl extends AbstraktCtrl
     {
         if ($this->cd->getAktueltArg() == 'loggut') {
             $this->loggUt();
-        } else if ($this->cd->getAktueltArg() == 'passord') {
+        } else {
+            if ($this->cd->getAktueltArg() == 'passord') {
 
-            if ('passord' == $this->cd->getSisteArg()) {
+                if ('passord' == $this->cd->getSisteArg()) {
 
-                $this->glemtPassord();
-                exit();
+                    $this->glemtPassord();
+                    exit();
+                } else {
+                    $this->resettPassord();
+                }
             } else {
-                $this->resettPassord();
+                if (isset($_POST['brukernavn']) && isset($_POST['passord'])) {
+                    $this->loggInn();
+                }
             }
-        } else if (isset($_POST['brukernavn']) && isset($_POST['passord'])) {
-            $this->loggInn();
         }
         $this->visSkjema();
     }
@@ -40,7 +44,8 @@ class LogginnCtrl extends AbstraktCtrl
             && $brukeren->passordErGyldig(self::genererHash($post['passord'], $brukeren->getId()))
             && $brukeren->getPerson()->erAktiv()) {
 
-            $_SESSION['brukernavn'] = $post['brukernavn'];
+            //$_SESSION['brukernavn'] = $post['brukernavn'];
+            Session::loginUser($brukeren);
             $this->cd->setAktivBruker($brukeren);
         }
         header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -102,8 +107,7 @@ class LogginnCtrl extends AbstraktCtrl
                     exit();
 
                 } else {
-                    $_SESSION['error'] = 1;
-                    $_SESSION['msg'] = "Passordene matchet ikke. Prøv på nytt!";
+                    Funk::setError("Passordene matchet ikke. Prøv på nytt!");
                 }
             }
 
@@ -157,14 +161,7 @@ vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne
 
     public static function getAktivBruker()
     {
-        if (!isset($_SESSION['brukernavn'])) {
-            return null;
-        }
-        $bruker = Bruker::medEpost($_SESSION['brukernavn']);
-        if ($bruker == null) {
-            return null;
-        }
-        return $bruker;
+        return Session::getAktivBruker();
     }
 
     public static function genererHash($passord, $brukerid)
@@ -184,5 +181,3 @@ vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne
         throw new \Exception('Sugefisk?');
     }
 }
-
-?>

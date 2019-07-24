@@ -3,6 +3,8 @@
 setlocale(LC_ALL, 'nb_NO.utf-8');
 date_default_timezone_set('Europe/Oslo');
 ini_set('memory_limit', '512M');
+ini_set('session.use_trans_sid', 0);
+ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_httponly',1);
 ini_set('session.use_only_cookies',1);
 ini_set('session.gc_maxlifetime', 36000000);
@@ -44,4 +46,3 @@ $cd = new intern3\CtrlData($arg);
 $ctrl = new intern3\HovedCtrl($cd);
 $ctrl->bestemHandling();
 
-?>

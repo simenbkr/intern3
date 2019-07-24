@@ -47,8 +47,7 @@ class KjellerCtrl extends AbstraktCtrl
 
     public function bestemHandling()
     {
-        if (LogginnCtrl::getAktivBruker() == null || LogginnCtrl::getAktivBruker()->getPerson() == null ||
-            !LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()
+        if (empty(Session::get('data')) && empty(Session::get('kjellermester'))
         ) {
             header('Location: ?a=diverse');
             exit();
@@ -104,7 +103,8 @@ class KjellerCtrl extends AbstraktCtrl
                     if (isset($_POST)) {
                         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-                        $keys = array('navn' => $vinen->getNavn(),
+                        $keys = array(
+                            'navn' => $vinen->getNavn(),
                             'pris' => $vinen->getPris(),
                             'avanse' => $vinen->getAvanse(),
                             'type' => $vinen->getTypeId(),
@@ -120,7 +120,8 @@ class KjellerCtrl extends AbstraktCtrl
 
                             if (in_array($file_ext, $tillatte_filtyper)) {
                                 $vinbilder_path = dirname(__DIR__) . '/www/vinbilder/';
-                                if (!move_uploaded_file($_FILES['image']['tmp_name'], $vinbilder_path . $bildets_navn)) {
+                                if (!move_uploaded_file($_FILES['image']['tmp_name'],
+                                    $vinbilder_path . $bildets_navn)) {
                                     Throw new \RuntimeException("dafuq");
                                 }
 
@@ -254,13 +255,16 @@ class KjellerCtrl extends AbstraktCtrl
                             $beboerlista = BeboerListe::aktive();
                             $beboer_antall_vin = array();
                             foreach ($beboerlista as $beboer) {
-                                $beboer_vin = array('beboer' => $beboer,
+                                $beboer_vin = array(
+                                    'beboer' => $beboer,
                                     'antall' => 0,
-                                    'kostnad' => 0);
+                                    'kostnad' => 0
+                                );
                                 $alle_kryss = Vinkryss::getAlleIkkeFakturertByBeboerId($beboer->getId());
                                 foreach ($alle_kryss as $krysset) {
                                     $beboer_vin['antall'] += round($krysset->getAntall(), 2);
-                                    $beboer_vin['kostnad'] += round($krysset->getKostnad() * $krysset->getVin()->getAvanse(), 2);
+                                    $beboer_vin['kostnad'] += round($krysset->getKostnad() * $krysset->getVin()->getAvanse(),
+                                        2);
                                 }
                                 $beboer_antall_vin[] = $beboer_vin;
                             }
@@ -287,17 +291,24 @@ class KjellerCtrl extends AbstraktCtrl
                                 if (count($ikke_fakturert) < 1) {
                                     continue;
                                 }
-                                $beboer_vin = array('beboer' => $beboer,
-                                    'vin' => '');
+                                $beboer_vin = array(
+                                    'beboer' => $beboer,
+                                    'vin' => ''
+                                );
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array(
+                                            'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                                2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
-                                            'aktuell_vin' => $vin_kryss->getVin());
+                                            'aktuell_vin' => $vin_kryss->getVin()
+                                        );
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
-                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                            2);
+                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(),
+                                            2);
                                     }
                                 }
                                 $beboer_vin['vin'] = $vin_array;
@@ -314,17 +325,24 @@ class KjellerCtrl extends AbstraktCtrl
                                 if (count($ikke_fakturert) < 1) {
                                     continue;
                                 }
-                                $beboer_vin = array('beboer' => $beboer,
-                                    'vin' => '');
+                                $beboer_vin = array(
+                                    'beboer' => $beboer,
+                                    'vin' => ''
+                                );
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array(
+                                            'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                                2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
-                                            'aktuell_vin' => $vin_kryss->getVin());
+                                            'aktuell_vin' => $vin_kryss->getVin()
+                                        );
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
-                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                            2);
+                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(),
+                                            2);
                                     }
                                 }
                                 $beboer_vin['vin'] = $vin_array;
@@ -341,17 +359,24 @@ class KjellerCtrl extends AbstraktCtrl
                                 if (count($ikke_fakturert) < 1) {
                                     continue;
                                 }
-                                $beboer_vin = array('beboer' => $beboer,
-                                    'vin' => '');
+                                $beboer_vin = array(
+                                    'beboer' => $beboer,
+                                    'vin' => ''
+                                );
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array(
+                                            'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                                2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
-                                            'aktuell_vin' => $vin_kryss->getVin());
+                                            'aktuell_vin' => $vin_kryss->getVin()
+                                        );
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
-                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                            2);
+                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(),
+                                            2);
                                     }
                                 }
                                 $beboer_vin['vin'] = $vin_array;
@@ -368,17 +393,24 @@ class KjellerCtrl extends AbstraktCtrl
                                 if (count($ikke_fakturert) < 1) {
                                     continue;
                                 }
-                                $beboer_vin = array('beboer' => $beboer,
-                                    'vin' => '');
+                                $beboer_vin = array(
+                                    'beboer' => $beboer,
+                                    'vin' => ''
+                                );
                                 $vin_array = array();
                                 foreach ($ikke_fakturert as $vin_kryss) {
                                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                                        $vin_array[$vin_kryss->getVinId()] = array(
+                                            'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                                2),
                                             'antall' => round($vin_kryss->getAntall(), 2),
-                                            'aktuell_vin' => $vin_kryss->getVin());
+                                            'aktuell_vin' => $vin_kryss->getVin()
+                                        );
                                     } else {
-                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
-                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
+                                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                                            2);
+                                        $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(),
+                                            2);
                                     }
                                 }
                                 $beboer_vin['vin'] = $vin_array;
@@ -411,7 +443,7 @@ class KjellerCtrl extends AbstraktCtrl
                 }
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if (LogginnCtrl::getAktivBruker()->getPerson()->erKjellerMester()) {
+                    if (Session::get('kjellermester') || Session::get('data')) {
                         if (isset($post['navn'])) {
                             $st = DB::getDB()->prepare('INSERT INTO vintype (navn) VALUES(:navn)');
                             $st->bindParam(':navn', $post['navn']);
@@ -496,22 +528,22 @@ class KjellerCtrl extends AbstraktCtrl
                 $dok->vis('kjeller/kjeller_pafyll.php');
                 break;
             case 'regler':
-                
-                if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if(strlen($post['regel']) > 1){
+                    if (strlen($post['regel']) > 1) {
                         Vinregel::nyRegel($_POST['regel']);
                         Funk::setSuccess("Regelen ble endret!");
                         header('Location: ?a=kjeller/regler');
                         exit();
                     }
                 }
-                
+
                 $regel = Vinregel::getRegel();
                 $dok->set('regel', $regel);
                 $dok->vis('kjeller/kjeller_regel.php');
                 break;
-                
+
             case 'oversikt':
                 $transaksjoner = Vinkryss::getAlle();
 
@@ -523,29 +555,7 @@ class KjellerCtrl extends AbstraktCtrl
         }
     }
 
-    private
-    function insertVin($medbilde = false, $bildenavn)
-    {
-        $bildet = $medbilde ? $bildenavn : ' ';
-        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $st = DB::getDB()->prepare('INSERT INTO vin (navn,bilde,pris,avanse,antall,typeId,beskrivelse, land) VALUES(
-:navn,:bilde,:pris,:avanse,:antall,:typeId,:beskrivelse, :land)');
-
-        $st->bindParam(':navn', $post['navn']);
-        $st->bindParam(':bilde', $bildet);
-        $st->bindParam(':pris', $post['pris']);
-        $st->bindParam(':avanse', $post['avanse']);
-        $st->bindParam(':antall', $post['antall']);
-        $st->bindParam(':typeId', $post['type']);
-        $st->bindParam(':beskrivelse', $post['beskrivelse']);
-        $st->bindParam(':land', $post['land']);
-        $st->execute();
-        return true;
-    }
-
-    private
-    function updateVinUtenBilde($id)
-    {
+    private function updateVinUtenBilde($id) {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $st = DB::getDB()->prepare('UPDATE vin SET navn=:navn,pris=:pris,avanse=:avanse,
         typeId=:typeId,beskrivelse=:beskrivelse,land=:land WHERE id=:id');
@@ -573,5 +583,3 @@ class KjellerCtrl extends AbstraktCtrl
 
     }
 }
-
-?>

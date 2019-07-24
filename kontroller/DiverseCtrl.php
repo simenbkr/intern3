@@ -8,7 +8,7 @@ class DiverseCtrl extends AbstraktCtrl
     {
         $oppgaveListe = OppgaveListe::ikkeGodkjente();
         $verv_meldinger = VervMelding::getTreSiste();
-        $aktuell_beboer = LogginnCtrl::getAktivBruker()->getPerson();
+        $aktuell_beboer = $this->cd->getAktivBruker()->getPerson();
         $dok = new Visning($this->cd);
         $dok->set('aktuell_beboer', $aktuell_beboer);
         $dok->set('verv_meldinger', $verv_meldinger);

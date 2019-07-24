@@ -16,7 +16,7 @@ class VaktbytteCtrl extends AbstraktCtrl
     {
 
         $aktueltArg = $this->cd->getAktueltArg();
-        $bruker = LogginnCtrl::getAktivBruker();
+        $bruker = $this->cd->getAktivBruker();
 
         //API-endpoint for å endre ting.
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {

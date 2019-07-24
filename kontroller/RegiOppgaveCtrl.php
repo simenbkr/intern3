@@ -21,8 +21,8 @@ class RegiOppgaveCtrl extends AbstraktCtrl
                     exit();
                 }
 
-                $beboeren = LogginnCtrl::getAktivBruker()->getPerson();
-                if ($oppgaven != null && LogginnCtrl::getAktivBruker() != null && $beboeren != null && $oppgaven->getAnslagPersoner() > sizeof($oppgaven->getPameldteId())) {
+                $beboeren = $this->cd->getAktivBruker()->getPerson();
+                if ($oppgaven != null && $this->cd->getAktivBruker() != null && $beboeren != null && $oppgaven->getAnslagPersoner() > sizeof($oppgaven->getPameldteId())) {
 
                     $paameldt_array = $oppgaven->getPameldteId();
                     if ($paameldt_array == null) {
@@ -49,8 +49,8 @@ class RegiOppgaveCtrl extends AbstraktCtrl
                     header('Location: ' . $_SERVER['REQUEST_URI']);
                     exit();
                 }
-                $beboeren = LogginnCtrl::getAktivBruker()->getPerson();
-                if ($oppgaven != null && LogginnCtrl::getAktivBruker() != null && $beboeren != null && in_array($beboeren, $oppgaven->getPameldteBeboere())) {
+                $beboeren = $this->cd->getAktivBruker()->getPerson();
+                if ($oppgaven != null && $this->cd->getAktivBruker() != null && $beboeren != null && in_array($beboeren, $oppgaven->getPameldteBeboere())) {
                     $paameldt_array = $oppgaven->getPameldteId();
                     $ny_paameldt_array = array();
                     foreach ($paameldt_array as $id) {
@@ -78,7 +78,7 @@ class RegiOppgaveCtrl extends AbstraktCtrl
         }
         $oppgaveListe = OppgaveListe::ikkeGodkjente();
         $dok = new Visning($this->cd);
-        $aktuell_beboer = LogginnCtrl::getAktivBruker()->getPerson();
+        $aktuell_beboer = $this->cd->getAktivBruker()->getPerson();
         $dok->set('aktuell_beboer', $aktuell_beboer);
         $dok->set('oppgaveListe', $oppgaveListe);
         $dok->vis('regi/regi_oppgaver.php');

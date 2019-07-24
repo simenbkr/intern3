@@ -46,7 +46,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             if ($post['slett'] == 1 && isset($post['arbeid']) && is_numeric($post['arbeid'])) {
                 $arbeidId = $post['arbeid'];
-                $brukerId = LogginnCtrl::getAktivBruker()->getId();
+                $brukerId = $this->cd->getAktivBruker()->getId();
                 $aktuell_arbeid = Arbeid::medId($arbeidId);
                 if (($aktuell_arbeid->getBrukerId() == $brukerId || Beboer::medBrukerId($brukerId)->harUtvalgVerv())
                     && $aktuell_arbeid->getGodkjent() == 0 && $aktuell_arbeid->inCurrentSem()) {
@@ -85,7 +85,7 @@ class RegiMinregiCtrl extends AbstraktCtrl
         foreach ($arbeidListe as $arbeid) {
             $regitimer[$arbeid->getIntStatus()] += $arbeid->getSekunderBrukt() / 3600;
         }
-        $semesterList = LogginnCtrl::getAktivBruker()->getPerson()->getSemesterlist();
+        $semesterList = $this->cd->getAktivBruker()->getPerson()->getSemesterlist();
         $mapping = array();
         foreach ($semesterList as $sem) {
             $mapping[$sem] = Funk::semStrToReadable($sem);

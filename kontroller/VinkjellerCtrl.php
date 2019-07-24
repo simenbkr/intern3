@@ -9,7 +9,7 @@ class VinkjellerCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
 
-        $aktivBruker = LogginnCtrl::getAktivBruker();
+        $aktivBruker = $this->cd->getAktivBruker();
         $aktueltarg = $this->cd->getAktueltArg();
         $sisteArg = $this->cd->getSisteArg();
         if ($aktivBruker != null &&

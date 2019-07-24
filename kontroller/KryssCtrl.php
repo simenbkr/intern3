@@ -5,7 +5,8 @@ namespace intern3;
 class KryssCtrl extends AbstraktCtrl
 {
 
-    private function visPeriode($mndkryss, $periodekryss) {
+    private function visPeriode($mndkryss, $periodekryss)
+    {
 
         $drikke = array();
         foreach (Drikke::alle() as $drikken) {
@@ -21,7 +22,8 @@ class KryssCtrl extends AbstraktCtrl
                     'aktuell_vin' => $vin_kryss->getVin()
                 );
             } else {
-                $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
+                $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                    2);
                 $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
             }
         }
@@ -39,14 +41,14 @@ class KryssCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
 
-        switch($this->cd->getAktueltArg()) {
+        switch ($this->cd->getAktueltArg()) {
 
             case 'periode':
 
                 $periode_id = $this->cd->getSisteArg();
                 $p = Periode::medId($periode_id);
 
-                if($p->getSlutt() == null) {
+                if ($p->getSlutt() == null) {
                     $slutt = date('Y-m-d');
                 } else {
                     $slutt = $p->getSlutt();
@@ -126,11 +128,14 @@ class KryssCtrl extends AbstraktCtrl
                 $vin_array = array();
                 foreach ($ikke_fakturert as $vin_kryss) {
                     if (!isset($vin_array[$vin_kryss->getVinId()]) || $vin_array[$vin_kryss->getVinId()] == null) {
-                        $vin_array[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                        $vin_array[$vin_kryss->getVinId()] = array(
+                            'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
                             'antall' => round($vin_kryss->getAntall(), 2),
-                            'aktuell_vin' => $vin_kryss->getVin());
+                            'aktuell_vin' => $vin_kryss->getVin()
+                        );
                     } else {
-                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
+                        $vin_array[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                            2);
                         $vin_array[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                     }
                 }
@@ -139,11 +144,14 @@ class KryssCtrl extends AbstraktCtrl
                 $alle_vin_kryss = $vin_array;
                 foreach ($fakturert as $vin_kryss) {
                     if (!isset($alle_vin_kryss[$vin_kryss->getVinId()]) || $alle_vin_kryss[$vin_kryss->getVinId()] == null) {
-                        $alle_vin_kryss[$vin_kryss->getVinId()] = array('kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
+                        $alle_vin_kryss[$vin_kryss->getVinId()] = array(
+                            'kostnad' => round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2),
                             'antall' => round($vin_kryss->getAntall(), 2),
-                            'aktuell_vin' => $vin_kryss->getVin());
+                            'aktuell_vin' => $vin_kryss->getVin()
+                        );
                     } else {
-                        $alle_vin_kryss[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(), 2);
+                        $alle_vin_kryss[$vin_kryss->getVinId()]['kostnad'] += round($vin_kryss->getKostnad() * $vin_kryss->getVin()->getAvanse(),
+                            2);
                         $alle_vin_kryss[$vin_kryss->getVinId()]['antall'] += round($vin_kryss->getAntall(), 2);
                     }
                 }
