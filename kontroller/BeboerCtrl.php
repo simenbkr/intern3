@@ -15,57 +15,65 @@ class BeboerCtrl extends AbstraktCtrl
             $dok->set('beboerListe', $beboerListe);
             $dok->set('skjulMeny', 1);
             $dok->vis('beboer/beboer_utskrift.php');
-        } else if ($aktueltArg == 'statistikk') {
-            $this->visStatistikk();
-        } else if ($aktueltArg == 'kart') {
-            $dok = new Visning($this->cd);
-            $beboerlista = BeboerListe::aktive();
-            $dok->set('beboerlista', $beboerlista);
-            $dok->vis('beboer/beboer_kart.php');
-        } else if ($aktueltArg == 'gamle') {
-            $dok = new Visning($this->cd);
-            $beboerListe = BeboerListe::ikkeAktive();
-            $dok->set('beboerlista', $beboerListe);
-            $dok->vis('beboer/beboer_gamle.php');
-        } else if($aktueltArg == 'olstat'){
-            $dok = new Visning($this->cd);
-
-            $dok->vis('beboer/beboer_olstat.php');
-        }
-
-        else if (is_numeric($aktueltArg)) {
-            $beboer = Beboer::medId($aktueltArg);
-            // Trenger feilhåndtering her.
-            $dok = new Visning($this->cd);
-            $dok->set('beboer', $beboer);
-            $dok->vis('beboer/beboer_detaljer.php');
         } else {
-            $beboerListe = BeboerListe::aktive();
-            
-            $fullvakt = 0;
-            $fullregi = 0;
-            $halv     = 0;
-            
-            foreach($beboerListe as $beboer){
-                /* @var Beboer $beboer */
-                switch($beboer->getRolle()->getRegitimer()){
-                  case 0:
-                      $fullvakt++;
-                      break;
-                  case 18:
-                      $halv++;
-                      break;
-                  case 48:
-                      $fullregi++;
+            if ($aktueltArg == 'statistikk') {
+                $this->visStatistikk();
+            } else {
+                if ($aktueltArg == 'kart') {
+                    $dok = new Visning($this->cd);
+                    $beboerlista = BeboerListe::aktive();
+                    $dok->set('beboerlista', $beboerlista);
+                    $dok->vis('beboer/beboer_kart.php');
+                } else {
+                    if ($aktueltArg == 'gamle') {
+                        $dok = new Visning($this->cd);
+                        $beboerListe = BeboerListe::ikkeAktive();
+                        $dok->set('beboerlista', $beboerListe);
+                        $dok->vis('beboer/beboer_gamle.php');
+                    } else {
+                        if ($aktueltArg == 'olstat') {
+                            $dok = new Visning($this->cd);
+
+                            $dok->vis('beboer/beboer_olstat.php');
+                        } else {
+                            if (is_numeric($aktueltArg)) {
+                                $beboer = Beboer::medId($aktueltArg);
+                                // Trenger feilhåndtering her.
+                                $dok = new Visning($this->cd);
+                                $dok->set('beboer', $beboer);
+                                $dok->vis('beboer/beboer_detaljer.php');
+                            } else {
+                                $beboerListe = BeboerListe::aktive();
+
+                                $fullvakt = 0;
+                                $fullregi = 0;
+                                $halv = 0;
+
+                                foreach ($beboerListe as $beboer) {
+                                    /* @var Beboer $beboer */
+                                    switch ($beboer->getRolle()->getRegitimer()) {
+                                        case 0:
+                                            $fullvakt++;
+                                            break;
+                                        case 18:
+                                            $halv++;
+                                            break;
+                                        case 48:
+                                            $fullregi++;
+                                    }
+                                }
+
+                                $dok = new Visning($this->cd);
+                                $dok->set('beboerListe', $beboerListe);
+                                $dok->set('fullregi', $fullregi);
+                                $dok->set('fullvakt', $fullvakt);
+                                $dok->set('halv', $halv);
+                                $dok->vis('beboer/beboer_beboerliste.php');
+                            }
+                        }
+                    }
                 }
             }
-            
-            $dok = new Visning($this->cd);
-            $dok->set('beboerListe', $beboerListe);
-            $dok->set('fullregi',$fullregi);
-            $dok->set('fullvakt', $fullvakt);
-            $dok->set('halv', $halv);
-            $dok->vis('beboer/beboer_beboerliste.php');
         }
     }
 
@@ -74,6 +82,12 @@ class BeboerCtrl extends AbstraktCtrl
         $beboerListe = BeboerListe::aktive();
         $this->histogram = array();
         foreach ($beboerListe as $beboer) {
+            /* @var Beboer $beboer */
+
+            if($beboer->getEpost() == 'data@singsaker.no') {
+                continue;
+            }
+
             $fodtar = $beboer->getFodselsar();
             if ($fodtar <> '0000' && $fodtar != 1920) {
                 $this->addStatistikk('Når beboerne er født', $fodtar);
