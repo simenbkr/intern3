@@ -29,6 +29,10 @@ require_once(__DIR__ . '/../../topp_utvalg.php');
                 location.href = "?a=utvalg/romsjef/soknad/eksporter/" + year;
             }
 
+            document.getElementById("knapp2").onclick = function() {
+                location.href = "?a=utvalg/romsjef/soknad/clean";
+            }
+
         }
 
     </script>
@@ -54,7 +58,7 @@ require_once(__DIR__ . '/../../topp_utvalg.php');
                 ?>
             </select>
 
-
+            <p><button id="knapp2" class="btn btn-danger pull-right">Slett duplikater/tomme.</button></p>
             <p><button id="knapp" class="btn btn-warning pull-right">Eksporter data</button></p>
 
             <hr>

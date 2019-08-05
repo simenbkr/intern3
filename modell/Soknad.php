@@ -73,6 +73,21 @@ class Soknad
         return $alle;
     }
 
+    public static function medEpost($epost)
+    {
+        $st = DB::getDB()->prepare('SELECT * FROM soknad WHERE epost=:epost ORDER BY innsendt DESC');
+        $st->execute(['epost' => $epost]);
+
+        $lista = array();
+
+        for ($i = 0; $i < $st->rowCount(); $i++) {
+            $lista[] = self::init($st);
+        }
+
+        return $lista;
+
+    }
+
     private function oppdater()
     {
         $st = DB::getDB()->prepare('UPDATE soknad SET navn=:navn,adresse=:adresse,epost=:epost,telefon=:telefon
@@ -271,19 +286,110 @@ class Soknad
         return $ret;
     }
 
-    public static function SoknaderTilCSV($soknader) {
+    public static function SoknaderTilCSV($soknader)
+    {
 
-        $out[0] = array('Innsendt','Navn','Epost','Telefon','Født','Fagbrev','Kompetanse','Kjenner til Sing','Kjenner beboere','Søknadstekst');
+        $out[0] = array(
+            'Innsendt',
+            'Navn',
+            'Epost',
+            'Telefon',
+            'Født',
+            'Fagbrev',
+            'Kompetanse',
+            'Kjenner til Sing',
+            'Kjenner beboere',
+            'Søknadstekst'
+        );
 
-        foreach($soknader as $soknad) {
+        foreach ($soknader as $soknad) {
             /* @var Soknad $soknad */
 
-            $data = array($soknad->getInnsendt(), $soknad->getNavn(), $soknad->getEpost(), $soknad->getTelefon(), $soknad->getFodselsar(),
-                $soknad->getFagbrev() == 0 ? 'Nei' : 'Ja', $soknad->getKompetanse(), $soknad->getKjennskap(), $soknad->getKjenner(), $soknad->getTekst());
+            $data = array(
+                $soknad->getInnsendt(),
+                $soknad->getNavn(),
+                $soknad->getEpost(),
+                $soknad->getTelefon(),
+                $soknad->getFodselsar(),
+                $soknad->getFagbrev() == 0 ? 'Nei' : 'Ja',
+                $soknad->getKompetanse(),
+                $soknad->getKjennskap(),
+                $soknad->getKjenner(),
+                $soknad->getTekst()
+            );
             $out[] = $data;
         }
 
         return $out;
+    }
+
+    public function slett()
+    {
+        $st = DB::getDB()->prepare('DELETE FROM soknad WHERE id=:id');
+        $st->execute(['id' => $this->id]);
+    }
+
+    public function compare(Soknad $s)
+    {
+
+        if (empty($this->tekst) && !empty($s->tekst)) {
+            return 1;
+        }
+
+        if (!empty($this->tekst) && empty($s->tekst)) {
+            return -1;
+        }
+
+        if (empty($this->bilde) && !empty($s->bilde)) {
+            return 1;
+        }
+
+        if (!empty($this->bilde) && empty($s->bilde)) {
+            return -1;
+        }
+
+        return 0;
+    }
+
+    public static function cleanSoknader()
+    {
+
+        $soknader = self::alle();
+        $mem = array();
+
+        foreach ($soknader as $soknad) {
+            /* @var Soknad $soknad */
+
+            if (array_key_exists($soknad->getEpost(), $mem)) {
+                continue;
+            }
+
+            if (empty($soknad->getEpost()) || empty($soknad->getNavn())) {
+                $soknad->slett();
+            }
+
+            $mem[$soknad->getEpost()] = 1;
+            $duplikater = self::medEpost($soknad->getEpost());
+
+            if (count($duplikater) > 1) {
+
+                for ($i = 0; $i < count($duplikater) - 1; $i++) {
+                    $s1 = $duplikater[$i];
+                    /* @var Soknad $s1 */
+                    $s2 = $duplikater[$i + 1];
+                    /* @var Soknad $s2 */
+
+                    if ($s1->compare($s2) == 1) {
+                        $s1->slett();
+                    }
+                }
+
+            }
+
+
+        }
+
+
     }
 
 }

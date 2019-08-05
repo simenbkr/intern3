@@ -15,7 +15,11 @@ class UtvalgRomsjefSoknadCtrl extends AbstraktCtrl
 
         if($_SERVER['REQUEST_METHOD'] === 'GET') {
             switch ($aktueltArg) {
-
+                case 'clean':
+                    Soknad::cleanSoknader();
+                    header("Location: ?a=utvalg/romsjef/soknad");
+                    exit();
+                    break;
                 case 'nybeboer':
 
                     $dok = new Visning($this->cd);
