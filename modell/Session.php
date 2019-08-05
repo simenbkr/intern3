@@ -57,8 +57,12 @@ class Session
         }
 
         //7 dager uten aktivitet eller hver 6. måned.
-        if (time() - self::get('last_active') > 60200 || time() - self::get('logged_in') > 15778463) {
+        if (time() - self::get('last_active') > 604800 || time() - self::get('logged_in') > 15778463) {
             self::destroy();
+            self::start();
+            Funk::setError('Du ble logget ut som følge av inaktivitet.');
+            self::redirect();
+            return;
         }
 
         self::updatePrivileges();
@@ -86,6 +90,11 @@ class Session
         }
 
         return Bruker::medId($_SESSION['brid']);
+    }
+
+    public static function redirect() {
+        header("Refresh:0");
+        exit();
     }
 
 }
