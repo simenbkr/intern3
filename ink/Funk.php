@@ -147,6 +147,11 @@ class Funk {
         return date('Y-m-d', strtotime("$year-07-31"));
     }
 
-}
+    //https://developers.google.com/api-client-library/java/google-http-java-client/reference/1.20.0/com/google/api/client/util/Base64#encodeBase64URLSafeString(byte[])
+    public static function urlsafe_b64enc($string) {
+        $data = base64_encode($string);
+        $data = str_replace(array('+','/', '='), array('-','_',''), $data);
+        return $data;
+    }
 
-?>
+}
