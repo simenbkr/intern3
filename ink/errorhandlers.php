@@ -65,13 +65,22 @@ register_shutdown_function("\intern3\\shutdownHandler");
 function mylog($error, $errlvl)
 {
 
+    $mail_content = '';
+
+    if(!is_null(Session::getAktivBruker())) {
+        $mail_content .= "BRID: " . Session::get('brid');
+        $mail_content .= "\nBEID: " . Session::get('beid');
+    }
+
+    $mail_content .= "Request-method: " . $_SERVER['REQUEST_METHOD'];
+    $mail_content .= "Request URI: " . $_SERVER['REQUEST_URI'];
+
     switch ($errlvl) {
         case 'fatal':
-            Epost::sendEpost('data@singsaker.no', 'Fatal error på internsida', $error);
+            Epost::sendEpost('data@singsaker.no', 'Fatal error på internsida',$mail_content . $error);
             break;
         case 'error':
-            Epost::sendEpost('data@singsaker.no', 'Error på internsida', $error);
+            Epost::sendEpost('data@singsaker.no', 'Error på internsida',$mail_content . $error);
             break;
     }
 }
-?>
