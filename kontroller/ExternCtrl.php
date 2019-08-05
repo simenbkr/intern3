@@ -9,7 +9,16 @@ class ExternCtrl extends AbstraktCtrl
     private function validateRequest()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        return $post['secret'] === SHARED_SECRET;
+        $valid_fields = ['name', 'email', 'phone', 'birthyear', 'studyyear', 'fagbrev', 'kompetanse', 'kjennskap', 'personalletter'];
+        $data = '';
+        foreach($post as $key => $field) {
+            if(in_array($key, $valid_fields)) {
+                $data .= $field;
+            }
+        }
+        $sig = Funk::urlsafe_b64enc(hash_hmac('sha256', $data, SHARED_SECRET, true));
+
+        return $post['secret'] == $sig;
     }
 
     private function receiveSoknad()
@@ -65,7 +74,7 @@ class ExternCtrl extends AbstraktCtrl
     {
 
         if (!$this->validateRequest()) {
-            exit("Error! Invalid shared secret!");
+            error_log("FEIL SIGNATUR!");
         }
 
         $aktueltArg = $this->cd->getAktueltArg();
