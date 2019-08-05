@@ -39,7 +39,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <ul>
             <li>Førstevakt</li>
             <li>Lørdagsvakt</li>
-            <li>2., 3. vakt søndag</li>
+            <li>2. vakt søndag</li>
             <li>3., 4. vakt fredag</li>
         </ul>
         Dette utgjør nøyaktig halvparten av alle vakter i løpet av en uke (14/28).

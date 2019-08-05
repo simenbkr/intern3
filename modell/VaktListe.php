@@ -53,7 +53,7 @@ class VaktListe
                                           (
                                             (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
                                             OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
-                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2,3))
+                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2))
                                             )
                                             AND autogenerert=1
                                           )');
@@ -67,7 +67,7 @@ class VaktListe
                                           	(
                                             (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
                                             OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
-                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2,3))
+                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2))
                                             OR vakttype = 1
                                             )
                                             AND autogenerert=1

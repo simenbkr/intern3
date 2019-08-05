@@ -804,7 +804,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
     }
 
     /*
-     * Returnerer førstevakter + 3.-4. vakt fredag og 2.,3.,4. vakt lørdag og 2.,3. vakt søndag
+     * Returnerer førstevakter + 3.-4. vakt fredag og 2.,3.,4. vakt lørdag og 3. vakt søndag
      */
     public function antallKjipeVakter(): int
     {
@@ -818,7 +818,7 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
                                         AND(
                                           (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
                                           OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
-                                          OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2,3))
+                                          OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2))
                                           OR vakttype = 1)
                                       )');
 
