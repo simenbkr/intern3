@@ -5,7 +5,7 @@ namespace intern3;
 require_once("/var/www/intern.singsaker.no/ink/autolast_absolute.php");
 
 $year = date('Y');
-$running_dates = array("$year-08-08", "$year-01-01");
+$running_dates = array("$year-08-01", "$year-01-01");
 $now = date('Y-m-d');
 
 if(!in_array($now, $running_dates)) {
