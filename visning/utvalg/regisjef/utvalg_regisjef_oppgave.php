@@ -387,6 +387,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             
             foreach ($oppgaveListe as $oppgave) {
                 /* @var \intern3\Oppgave $oppgave */
+
+                if($oppgave->erArkivert()) {
+                    continue;
+                }
+
                 $id = $oppgave->getId();
                 $navn = $oppgave->getNavn();
                 $pri = $oppgave->getPrioritetId();

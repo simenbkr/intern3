@@ -62,6 +62,11 @@ require_once(__DIR__ . '/../static/topp.php');
 
         foreach ($oppgaveListe as $oppgave) {
             /* @var \intern3\Oppgave $oppgave */
+
+            if($oppgave->erArkivert()) {
+                continue;
+            }
+
             ?>
             <tr>
                 <td><?php echo $oppgave->getNavn(); ?></td>

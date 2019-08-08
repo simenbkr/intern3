@@ -153,8 +153,13 @@ require_once('static/topp.php');
     </table>
 </div>
 
+<?php
 
-<?php if(count($oppgaveListe) > 0){ ?>
+$ikke_fryste = array_reduce($oppgaveListe, function($sum, $oppgave) {
+    return $sum + ($oppgave->erFryst() ? 0 : 1);
+});
+
+if($ikke_fryste > 0){ ?>
 <div class="col-sm-6 col-xs-12">
     <h1>Regioppgaver <a href="?a=regi/oppgave"><button class="btn btn-primary btn-sm">Påmelding</button></a><br/></h1>
     <hr>

@@ -6,7 +6,7 @@ class RegiOppgaveCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
-        if (isset($_POST)) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             //Melder aktiv bruker på aktuell regi-oppgave.
             //data: 'meldPa=1&id=' + id,
@@ -14,8 +14,7 @@ class RegiOppgaveCtrl extends AbstraktCtrl
                 $oppgaven = Oppgave::medId($post['id']);
 
                 if($oppgaven->erFryst()){
-                    $_SESSION['error'] = 1;
-                    $_SESSION['msg'] = "Du kan ikke melde deg på - oppgaven er fryst.";
+                    Funk::setError("Du kan ikke melde deg på - oppgaven er fryst.");
 
                     header('Location: ' . $_SERVER['REQUEST_URI']);
                     exit();
@@ -43,9 +42,7 @@ class RegiOppgaveCtrl extends AbstraktCtrl
             elseif (isset($post['meldAv']) && $post['meldAv'] == 1 && isset($post['id']) && is_numeric($post['id'])) {
                 $oppgaven = Oppgave::medId($post['id']);
                 if($oppgaven->erFryst()){
-                    $_SESSION['error'] = 1;
-                    $_SESSION['msg'] = "Du kan ikke melde deg av - oppgaven er fryst.";
-
+                    Funk::setError("Du kan ikke melde deg av - oppgaven er fryst.");
                     header('Location: ' . $_SERVER['REQUEST_URI']);
                     exit();
                 }
@@ -77,6 +74,18 @@ class RegiOppgaveCtrl extends AbstraktCtrl
             }
         }
         $oppgaveListe = OppgaveListe::ikkeGodkjente();
+
+        uasort($oppgaveListe, function ($a, $b) {
+            /* @var Oppgave $a $b */
+            if ($a->erFryst() && $b->erFryst()) {
+                return 0;
+            }
+            if ($a->erFryst()) {
+                return 1;
+            }
+            return -1;
+        });
+
         $dok = new Visning($this->cd);
         $aktuell_beboer = $this->cd->getAktivBruker()->getPerson();
         $dok->set('aktuell_beboer', $aktuell_beboer);
@@ -85,4 +94,3 @@ class RegiOppgaveCtrl extends AbstraktCtrl
     }
 }
 
-?>

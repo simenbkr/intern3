@@ -125,6 +125,17 @@ class Oppgave
         return $this->status;
     }
 
+    public function erArkivert() {
+        return $this->status == 2;
+    }
+
+    public function arkiver() {
+        $this->status = 2;
+        $this->setStatus(2);
+        $st = DB::getDB()->prepare('UPDATE oppgave SET godkjent=1 WHERE id=:id');
+        $st->execute(['id' => $this->id]);
+    }
+
     public function erFryst()
     {
         return $this->status == 1;
