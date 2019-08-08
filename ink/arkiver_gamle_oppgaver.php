@@ -19,4 +19,5 @@ foreach($oppgaveListe as $oppgave) {
     $oppgave->arkiver();
 }
 
+Epost::sendEpost('data@singsaker.no', '[SING-INTERN]', 'Arkiverte gamle oppgaver, se intern3/ink/arkiver_gamle_oppgaver.php');
 exit("Arkiverte gamle oppgaver");
