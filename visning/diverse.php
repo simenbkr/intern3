@@ -170,6 +170,11 @@ require_once('static/topp.php');
         <?php
         foreach ($oppgaveListe as $oppgave) {
             /* @var \intern3\Oppgave $oppgave */
+
+            if($oppgave->erFryst()) {
+                continue;
+            }
+
             ?>
             <tr>
                 <td><?php echo $oppgave->getNavn(); ?></td>
