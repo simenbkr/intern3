@@ -40,6 +40,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <?php }
       ?>
 
+    <a href="?a=utvalg/romsjef/eksporter"><button class="btn btn-warning pull-right">Eksporter til CSV</button></a>
+
 
     <table class="table-bordered table" id="tabellen">
         <thead>

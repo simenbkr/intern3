@@ -110,6 +110,24 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
             $dok->vis('utvalg/romsjef/utvalg_romsjef_beboerliste.php');
             exit();
 
+        } else if($aktueltArg == 'eksporter') {
+
+            $beboerListe = BeboerListe::aktive();
+            $csv = BeboerListe::tilCSV($beboerListe);
+            header("Content-type: text/csv");
+            $ts = date('Y-m-d_H_i_s');
+            header("Content-Disposition: attachment; filename=beboerliste-$ts.csv");
+            header("Pragma: no-cache");
+            header("Expires: 0");
+
+            $output = fopen('php://output', 'wb');
+            foreach($csv as $line) {
+                fputcsv($output, $line);
+            }
+
+            fclose($output);
+            return;
+
         } else if ($aktueltArg == 'flyttinn') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             if (($beboer = Beboer::medId($post['id'])) != null && !in_array($beboer, BeboerListe::aktive())) {

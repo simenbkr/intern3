@@ -218,6 +218,41 @@ ORDER BY fornavn,mellomnavn,etternavn COLLATE utf8_swedish_ci;');
 
         return $lista;
     }
+
+    public static function tilCSV(array $beboerliste) {
+
+        $out = array();
+        $out[0] = array(
+          "Fornavn",
+          "Mellomnavn",
+          "Etternavn",
+          "Rom",
+          "Telefon",
+          "E-post",
+          "Studie",
+          "Fødselsdato",
+          "Rolle"
+        );
+
+        foreach($beboerliste as $beboer) {
+            /* @var \intern3\Beboer $beboer */
+
+            $out[] = array(
+                $beboer->getFornavn(),
+                $beboer->getMellomnavn(),
+                $beboer->getEtternavn(),
+                $beboer->getRom()->getNavn(),
+                $beboer->getTelefon(),
+                $beboer->getEpost(),
+                $beboer->getStudie()->getNavn(),
+                $beboer->getFodselsdato(),
+                $beboer->getRolle()->getNavn()
+            );
+
+        }
+
+        return $out;
+    }
+
 }
 
-?>
