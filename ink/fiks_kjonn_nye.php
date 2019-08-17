@@ -36,8 +36,8 @@ foreach (BeboerListe::aktive() as $beboer) {
     if(in_array($beboer->getFornavn(), $jentenavn)) {
         $st->execute(['id' => $beboer->getId()]);
         $groupmanager = new \Group\GroupManage();
-        $groupmanager->removeFromGroup($this->epost, SING_GUTTER);
-        $groupmanager->addToGroup($this->epost, 'MEMBER', SING_JENTER);
+        $groupmanager->removeFromGroup($beboer->getEpost(), SING_GUTTER);
+        $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_JENTER);
 
     }
 }
