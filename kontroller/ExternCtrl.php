@@ -29,7 +29,7 @@ class ExternCtrl extends AbstraktCtrl
         foreach($mandatory_fields as $field) {
             if(empty($post[$field])) {
                 $s = implode(';', $post);
-                error_log("Mottok tom søknad. POST-data: $post");
+                error_log("Mottok tom søknad. POST-data: $s");
                 return;
             }
         }
