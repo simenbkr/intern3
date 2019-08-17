@@ -9,7 +9,7 @@ $running_dates = array("$year-08-01", "$year-01-01");
 $now = date('Y-m-d');
 
 if(!in_array($now, $running_dates)) {
-    exit("Ikke korrekt tidspunkt. Lukker");
+    exit();
 }
 
 $oppgaveListe = OppgaveListe::ikkeGodkjente();
