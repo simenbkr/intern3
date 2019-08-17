@@ -526,7 +526,7 @@ class Beboer implements Person
     {
         $id = $this->getId();
 
-        $st = DB::getDB()->prepare('SELECT * from beboer_verv WHERE (beboer_id=:beboer_id AND (verv_id=43 OR verv_id=44))');
+        $st = DB::getDB()->prepare('SELECT * from beboer_verv WHERE (beboer_id=:beboer_id AND (verv_id=43 OR verv_id=44 OR verv_id=81))');
         $st->bindParam(':beboer_id', $id);
         $st->execute();
 
