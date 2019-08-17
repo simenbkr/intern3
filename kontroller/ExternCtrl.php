@@ -24,6 +24,16 @@ class ExternCtrl extends AbstraktCtrl
     private function receiveSoknad()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $mandatory_fields = ['name', 'email', 'phone'];
+
+        foreach($mandatory_fields as $field) {
+            if(empty($post[$field])) {
+                $s = implode(';', $post);
+                error_log("Mottok tom søknad. POST-data: $post");
+                return;
+            }
+        }
+
         $name = $post['name'];
         $address = $post['address'];
         $email_address = $post['email'];
