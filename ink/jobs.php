@@ -1061,8 +1061,10 @@ function add_to_sing_alle()
     foreach (BeboerListe::aktive() as $beboer) {
         /* @var Beboer $beboer */
 
-        if(!in_array(strtolower($beboer->getEpost()), $emails)) {
-            $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
+        if(!in_array(strtolower(str_replace(' ', '', $beboer->getEpost())), $emails)) {
+            try {
+                $groupmanager->addToGroup(strtolower(str_replace(' ', '', $beboer->getEpost())), 'MEMBER', SING_ALLE);
+            } catch(\Exception $e) {}
         }
 
     }
