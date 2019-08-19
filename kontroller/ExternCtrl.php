@@ -6,13 +6,55 @@ namespace intern3;
 class ExternCtrl extends AbstraktCtrl
 {
 
+    private function externAuth()
+    {
+        define('SHARED_SECRET', 'test');
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $user = $post['user'];
+        $pass = $post['pass'];
+        $nonce = $post['nonce'];
+        $sig = $post['sig'];
+
+        //Nonce må være en string med lenge >=8.
+        if(empty($nonce) || strlen($nonce) < 8) {
+            return false;
+        }
+
+        $local_sig = Funk::urlsafe_b64enc(hash_hmac('sha256', $user . $pass . $nonce, SHARED_SECRET, true));
+
+        //Sjekk om signaturene matcher.
+        if ($local_sig != $sig) {
+            return false;
+        }
+
+        //Sjekk om data stemmer med en bruker.
+        if (($bruker = Bruker::medEpost($user)) != null &&
+            $bruker->passordErGyldig(LogginnCtrl::genererHash($pass, $bruker->getId())) &&
+            $bruker->getPerson()->erAktiv()) {
+
+            return true;
+        }
+
+        return false;
+    }
+
     private function validateRequest()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $valid_fields = ['name', 'email', 'phone', 'birthyear', 'studyyear', 'fagbrev', 'kompetanse', 'kjennskap', 'personalletter'];
+        $valid_fields = [
+            'name',
+            'email',
+            'phone',
+            'birthyear',
+            'studyyear',
+            'fagbrev',
+            'kompetanse',
+            'kjennskap',
+            'personalletter'
+        ];
         $data = '';
-        foreach($post as $key => $field) {
-            if(in_array($key, $valid_fields)) {
+        foreach ($post as $key => $field) {
+            if (in_array($key, $valid_fields)) {
                 $data .= $field;
             }
         }
@@ -23,11 +65,16 @@ class ExternCtrl extends AbstraktCtrl
 
     private function receiveSoknad()
     {
+
+        if (!$this->validateRequest()) {
+            error_log("FEIL SIGNATUR!");
+        }
+
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $mandatory_fields = ['name', 'email', 'phone'];
 
-        foreach($mandatory_fields as $field) {
-            if(empty($post[$field])) {
+        foreach ($mandatory_fields as $field) {
+            if (empty($post[$field])) {
                 $s = implode(';', $post);
                 error_log("Mottok tom søknad. POST-data: $s");
                 return;
@@ -74,18 +121,26 @@ class ExternCtrl extends AbstraktCtrl
 
         $st = DB::getDB()->prepare('INSERT INTO soknad(navn, adresse, epost, telefon, fodselsar, skole, studie, fagbrev, kompetanse, kjennskap, kjenner, tekst, bilde)
                                                         VALUES(:navn,:adresse,:epost,:telefon,:fodselsar,:skole,:studie,:fagbrev,:kompetanse,:kjennskap,:kjenner,:tekst,:bilde)');
-        $st->execute(['navn' => $name, 'adresse' => $address,  'epost' => $email_address,  'telefon' => $phone,
-            'fodselsar' => $birthyear, 'skole' => $school,  'studie' => $studyfield,  'fagbrev' => $fagbrev,  'kompetanse' => $kompetanse,  'kjennskap' => $kjennskap,
-            'kjenner' => $beboere,  'tekst' => $personalletter,  'bilde' => $bilde_url]);
+        $st->execute([
+            'navn' => $name,
+            'adresse' => $address,
+            'epost' => $email_address,
+            'telefon' => $phone,
+            'fodselsar' => $birthyear,
+            'skole' => $school,
+            'studie' => $studyfield,
+            'fagbrev' => $fagbrev,
+            'kompetanse' => $kompetanse,
+            'kjennskap' => $kjennskap,
+            'kjenner' => $beboere,
+            'tekst' => $personalletter,
+            'bilde' => $bilde_url
+        ]);
 
     }
 
     public function bestemHandling()
     {
-
-        if (!$this->validateRequest()) {
-            error_log("FEIL SIGNATUR!");
-        }
 
         $aktueltArg = $this->cd->getAktueltArg();
 
@@ -93,6 +148,8 @@ class ExternCtrl extends AbstraktCtrl
             case 'soknad':
                 $this->receiveSoknad();
                 break;
+            case 'auth':
+                exit($this->externAuth());
         }
     }
 
