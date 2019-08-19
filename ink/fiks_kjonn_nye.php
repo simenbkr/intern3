@@ -17,8 +17,8 @@ if(!in_array($now, $running_dates)) {
  * ------------------------------------------------------------------------------
  */
 
-require_once("autolast_absolute.php");
-require_once("../vendor/autoload.php");
+require_once("/var/www/intern.singsaker.no/ink/autolast_absolute.php");
+require_once("/var/www/intern.singsaker.no/vendor/autoload.php");
 
 $db = DB::getDB();
 
