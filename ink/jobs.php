@@ -8,7 +8,7 @@ require_once("/var/www/intern.singsaker.no/vendor/autoload.php");
 $funk_array = array('fiks_kjonn_nye', 'add_to_sing_alle', 'arkiver_gamle_oppgaver');
 
 foreach($funk_array as $funk) {
-    call_user_func($funk);
+    call_user_func("intern3\\$funk");
 }
 
 
@@ -76,9 +76,9 @@ function add_to_sing_alle()
 
     foreach (BeboerListe::aktive() as $beboer) {
         /* @var Beboer $beboer */
-
-        $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
-
+        if(!$groupmanager->inGroup($beboer->getEpost(), SING_ALLE)) {
+            $groupmanager->addToGroup($beboer->getEpost(), 'MEMBER', SING_ALLE);
+        }
     }
 
 }
