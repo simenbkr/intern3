@@ -320,8 +320,101 @@ class Krysseliste
 
     }
 
+    public static function ufakturertTilCSVoppTilDato($tildato)
+    {
+        $beboerListe = BeboerListe::aktive();
+        $drikke = Drikke::alle();
+        $out = array();
+        $header = array("Fullt navn");
+
+        foreach($drikke as $drikken) {
+            $header[] = $drikken->getNavn();
+        }
+
+        $out[0] = $header;
+
+        foreach ($beboerListe as $beboer) {
+            /* @var Beboer $beboer */
+            if (!$beboer->harAlkoholdepositum()) {
+                continue;
+            }
+
+            $beboers_krysseliste = self::medBeboerId($beboer->getId());
+            $kryss = array();
+            foreach($drikke as $drikken) {
+                $kryss[$drikken->getNavn()] = 0;
+            }
+
+            foreach($beboers_krysseliste as $delkrysseliste) {
+                $dekodet_delkrysseliste = json_decode($delkrysseliste->krysseliste, true);
+
+                foreach($dekodet_delkrysseliste as $enkelt_kryss) {
+                    if(strtotime($enkelt_kryss->tid) <= strtotime($tildato) && $enkelt_kryss->fakturert == 0) {
+                        $kryss[Drikke::medId($delkrysseliste->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
+                    }
+                }
+
+            }
+            $beb_arr = array($beboer->getFulltNavn());
+            foreach($kryss as $res) {
+                $beb_arr[] = $res;
+            }
+            $out[] = $beb_arr;
+        }
+
+        return $out;
+    }
+
+
+    public static function periodeTilCSV()
+    {
+        $beboerListe = BeboerListe::aktive();
+        $drikke = Drikke::alle();
+        $out = array();
+        $header = array("Fullt navn");
+
+        foreach($drikke as $drikken) {
+            $header[] = $drikken->getNavn();
+        }
+
+        $out[0] = $header;
+
+        foreach ($beboerListe as $beboer) {
+            /* @var Beboer $beboer */
+            if (!$beboer->harAlkoholdepositum()) {
+                continue;
+            }
+
+            $beboers_krysseliste = self::medBeboerId($beboer->getId());
+            $kryss = array();
+            foreach($drikke as $drikken) {
+                $kryss[$drikken->getNavn()] = 0;
+            }
+
+            foreach($beboers_krysseliste as $delkrysseliste) {
+                $dekodet_delkrysseliste = json_decode($delkrysseliste->krysseliste, true);
+
+                foreach($dekodet_delkrysseliste as $enkelt_kryss) {
+                    if($enkelt_kryss['fakturert'] == 0) {
+                        $kryss[Drikke::medId($delkrysseliste->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
+                    }
+                }
+
+            }
+            $beb_arr = array($beboer->getFulltNavn());
+            foreach($kryss as $res) {
+                $beb_arr[] = $res;
+            }
+            $out[] = $beb_arr;
+        }
+
+        return $out;
+    }
+
+
     public static function setPeriodeFakturert()
     {
+
         $beboerListe = BeboerListe::aktive();
 
         foreach ($beboerListe as $beboer) {
@@ -498,8 +591,9 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
 
         $siste_lista = array();
         foreach ($beboerKrysselisteListe as $key => $lista) {
-            if (array_sum($lista) > 0)
+            if (array_sum($lista) > 0) {
                 $siste_lista[$key] = $lista;
+            }
         }
         return $siste_lista;
     }

@@ -268,13 +268,30 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_detaljkryss.php');
                 }
                 break;
+                
+            case 'krysserapport_csv':
+                $perioden = Krysseliste::periodeTilCSV();
+                header("Content-type: text/csv");
+                $ts = date('Y-m-d_H_i_s');
+                header("Content-Disposition: attachment; filename=krysserapport-$ts.csv");
+                header("Pragma: no-cache");
+                header("Expires: 0");
+
+                $output = fopen('php://output', 'wb');
+                foreach($perioden as $line) {
+                    fputcsv($output, $line);
+                }
+
+                fclose($output);
+                break;
             case 'krysserapport':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
+                    $perioden = base64_encode(implode('\n',Krysseliste::periodeTilCSV()));
                     Krysseliste::setPeriodeFakturert();
-                    $_SESSION['success'] = 1;
-                    $_SESSION['msg'] = "Perioden ble nullstilt!";
+                    Funk::setSuccess("Perioden ble fakturert! Du skal ha mottatt en CSV-fil som omhandler den aktuelle perioden.");
+                    Epost::sendEpost('data@singsaker.no', '[SING-INTERN] Kryssedata for nåværende periode.', $perioden);
                     exit();
                 } elseif(isset($post['settfakturert']) && $post['settfakturert'] == 2 && isset($post['dato'])){
                     $datoen = date('Y-m-d H:i:s', strtotime($post['dato']));

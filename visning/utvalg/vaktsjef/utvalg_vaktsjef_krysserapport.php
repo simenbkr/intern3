@@ -21,6 +21,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             });
         }
 
+        function get_periode_csv() {
+            var win = window.open('?a=utvalg/vaktsjef/krysserapport_csv', '_blank');
+            win.focus();
+        }
+
         function sett_fakturert_dato() {
             var dato = document.getElementById('datoen').value;
             $("#kult2").show();
@@ -38,10 +43,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             });
         }
 
-        $('form > input').keyup(function() {
+        $('form > input').keyup(function () {
             console.log("asdkasdjasdghjas");
             var empty = false;
-            $('form > input[required]').each(function() {
+            $('form > input[required]').each(function () {
                 if ($(this).val() == '') {
                     empty = true;
                 }
@@ -59,10 +64,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         $("body").on('change', '#datoen', datothingy);
 
 
-        function datothingy(){
+        function datothingy() {
             var empty = false;
 
-            if(document.getElementById('datoen').value.length > 0){
+            if (document.getElementById('datoen').value.length > 0) {
                 empty = true;
             } else {
                 empty = false;
@@ -76,19 +81,19 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             }
         }
 
-        $(function() {
+        $(function () {
             $('#datoen').datepicker({
                 dateFormat: 'yy-mm-dd',
-                onSelect: function(datetext){
+                onSelect: function (datetext) {
                     var d = new Date(); // for now
                     var h = d.getHours();
-                    h = (h < 10) ? ("0" + h) : h ;
+                    h = (h < 10) ? ("0" + h) : h;
 
                     var m = d.getMinutes();
-                    m = (m < 10) ? ("0" + m) : m ;
+                    m = (m < 10) ? ("0" + m) : m;
 
                     var s = d.getSeconds();
-                    s = (s < 10) ? ("0" + s) : s ;
+                    s = (s < 10) ? ("0" + s) : s;
 
                     datetext = datetext + " " + h + ":" + m;
                     $('#datoen').val(datetext);
@@ -123,7 +128,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <p>
             Fakturer til NÅ:
             <input type="button" class="btn btn-md btn-danger" value="Nullstill" data-toggle="modal"
-                  data-target="#modal-nullstill">
+                   onclick="get_periode_csv()"
+                   data-target="#modal-nullstill">
 
             Fakturer til spesifikt nullpunkt:
             <input type="button" class="btn btn-md btn-warning" value="Nullstill" data-toggle="modal"
@@ -167,7 +173,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     </div>
                     <div class="modal-body">
                         <p>Fyll inn dato:
-                            <form><input class="form-control" id="datoen" type="text" required/></form>
+                        <form><input class="form-control" id="datoen" type="text" required/></form>
                         </p>
                         <button type="button" class="btn btn-md btn-danger" id="knappen" onclick="sett_fakturert_dato()"
                                 disabled="disabled">Ja!
