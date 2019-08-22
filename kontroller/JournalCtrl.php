@@ -211,7 +211,7 @@ class JournalCtrl extends AbstraktCtrl
                 $beboer = Beboer::medId($beboerId);
 
                 if ($beboer != null && $beboer->harAlkoholdepositum()) {
-                    $drikker = Drikke::alle();
+                    $drikker = Drikke::aktive();
                     $drikke_navn = array();
                     $drikke_farger = array();
                     $forste = $drikker[1]->getId();
