@@ -211,7 +211,7 @@ class UtvalgSekretarCtrl extends AbstraktCtrl
                 case 'apmandsverv_beskrivelser_utskrift':
                     $apmandsverv = VervListe::alle();
                     $dok->set('vervene', $apmandsverv);
-                    $dok->vis('utvalg_sekretar_lister_apmandsverv_beskrivelser_utskrift.php');
+                    $dok->vis('utvalg/sekretar/utvalg_sekretar_lister_apmandsverv_beskrivelser_utskrift.php');
                     return;
             }
         } else if ($aktueltArg == 'apmandstimer') {
