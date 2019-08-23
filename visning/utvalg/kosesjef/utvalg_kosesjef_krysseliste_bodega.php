@@ -3,7 +3,7 @@
 <table id="krysselistetop">
     <tr>
         <th class="tittel">Singsaker Studenterhjem</th>
-        <th class="dato">___ vakt, _______dag ____ / ____ 2017</th>
+        <th class="dato">___ vakt, _______dag ____ / ____ <?php echo date('Y'); ?></th>
     </tr>
 </table>
 
@@ -17,13 +17,21 @@
         <th class="antall">Antall øl</th>
         <th class="sum">Sum</th>
     </tr>
-    <?php for($i = 0; $i < count($beboerliste) ; $i+=2){ ?>
+    <?php
+    $length = count($beboerliste);
+    $half = intval($length / 2);
+
+    if($half + $half < $length) {
+        $half++;
+    }
+
+    for($i = 0; $i < $half; $i++){ ?>
     <tr>
         <td class="navn"><?php echo ($beboerliste[$i] != null) ? $beboerliste[$i]->getFulltNavn() : '';?></td>
         <td class="antall"></td>
         <td class="sum"></td>
         <td class="tom"></td>
-        <td class="navn"><?php echo ($beboerliste[$i+1] != null) ? $beboerliste[$i+1]->getFulltNavn() : '';?></td>
+        <td class="navn"><?php echo ($beboerliste[$half + $i] != null) ? $beboerliste[$half + $i]->getFulltNavn() : '';?></td>
         <td class="antall"></td>
         <td class="sum"></td>
     </tr>
@@ -31,7 +39,7 @@
 }
 ?>
     </table>
-<p>Antall beboere på krysselista: <?php echo count($beboerliste);?></p>
+<p>Antall beboere på krysselista: <?php echo $length;?></p>
 <h2>Viktig!</h2>
 <ol>
     <li>Bare de som står på lista kan krysse</li>
