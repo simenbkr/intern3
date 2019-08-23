@@ -4,47 +4,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 ?>
 <script>
-    $('form > input').keyup(function () {
-        var empty = false;
-        $('form > input[required]').each(function () {
-            if ($(this).val() == '') {
-                empty = true;
-            }
-        });
-
-        if (empty) {
-            $('#knappen').attr('disabled', 'disabled');
-        } else {
-            $('#knappen').removeAttr('disabled');
-        }
-    });
-
-    $("body").on('keyup', '#datoen', datothingy);
-    $("body").on('click', '#datoen', datothingy);
-    $("body").on('change', '#datoen', datothingy);
-
-
-    function datothingy() {
-        var empty = false;
-
-        if (document.getElementById('datoen').value.length > 0) {
-            empty = true;
-        } else {
-            empty = false;
-        }
-
-
-        if (empty) {
-            $('#knappen').attr('disabled', 'disabled');
-        } else {
-            $('#knappen').removeAttr('disabled');
-        }
-    }
-
     $(function () {
         $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
     });
-
 
 </script>
 
