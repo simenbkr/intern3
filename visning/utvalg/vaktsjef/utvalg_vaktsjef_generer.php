@@ -3,6 +3,52 @@
 require_once(__DIR__ . '/../topp_utvalg.php');
 
 ?>
+<script>
+    $('form > input').keyup(function () {
+        var empty = false;
+        $('form > input[required]').each(function () {
+            if ($(this).val() == '') {
+                empty = true;
+            }
+        });
+
+        if (empty) {
+            $('#knappen').attr('disabled', 'disabled');
+        } else {
+            $('#knappen').removeAttr('disabled');
+        }
+    });
+
+    $("body").on('keyup', '#datoen', datothingy);
+    $("body").on('click', '#datoen', datothingy);
+    $("body").on('change', '#datoen', datothingy);
+
+
+    function datothingy() {
+        var empty = false;
+
+        if (document.getElementById('datoen').value.length > 0) {
+            empty = true;
+        } else {
+            empty = false;
+        }
+
+
+        if (empty) {
+            $('#knappen').attr('disabled', 'disabled');
+        } else {
+            $('#knappen').removeAttr('disabled');
+        }
+    }
+
+    $(function () {
+        $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
+    });
+
+
+</script>
+
+
 
 <div class="col-md-12">
     <h1>Utvalget &raquo; Vaktsjef &raquo; Generer vaktliste</h1>
@@ -10,7 +56,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     <?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
-    <p>Denne siden brukes for å generere vaktlister. Ved starten av hvert semester (august/januar), burde tabellen tømmes ved å benytte
+    <p>Denne siden brukes for å generere vaktlister. Ved starten av hvert semester (august/januar), burde tabellen (fra forrige semester) tømmes ved å benytte
     knappen under. Deretter burde vaktene genereres. Vaktene genereres så rettferdig som mulig.</p>
 
 </div>
@@ -19,6 +65,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <hr>
 
     <button class="btn btn-danger" data-toggle="modal" data-target="#modal-tøm">Tøm vakttabell</button>
+
+    <button class="btn btn-warning" data-toggle="modal" data-target="#modal-tømperiode">Velg periode for tømming</button>
 
     <hr>
 </div>
@@ -213,7 +261,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <h4 class="modal-title">Vil du tømme tabellen?</h4>
             </div>
             <div class="modal-body">
-                <form method="post" action="">
+                <form method="post" action="?a=utvalg/vaktsjef/generer/tom">
                     <input type="submit" class="btn btn-md btn-danger" value="Tøm tabellen" name="tabell">
                 </form>
             </div>
@@ -223,6 +271,31 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-tømperiode" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Vil du tømme tabellen?</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="?a=utvalg/vaktsjef/generer/tomperiode">
+                    <p><input class="datepicker form-control" name="start" id="datoen" placeholder="Start" type="text" required/></p>
+
+                    <p><input class="datepicker form-control" name="slutt" id="datoen2" placeholder="Slutt" type="text" required/></p>
+
+
+                    <input type="submit" class="btn btn-md btn-danger" value="Tøm tabellen" name="tabell">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     var button = document.getElementById('bigbutton');

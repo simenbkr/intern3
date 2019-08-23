@@ -7,10 +7,20 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
     public function bestemHandling()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        if (strlen($post['tabell']) > 0) {
+        if ($this->cd->getSisteArg() == 'tom') {
             $this->tomVaktTabell();
             Funk::setSuccess("Vaktlista ble tømt!");
             header('Location: ' . $_SERVER['REQUEST_URI']);
+            exit();
+        }
+
+        if ($this->cd->getSisteArg() == 'tomperiode') {
+            $this->tomVaktTabellPeriode(
+                date('Y-m-d', strtotime($post['start'])),
+                date('Y-m-d', strtotime($post['slutt'])));
+
+            Funk::setSuccess("Tømte perioden fra $post[start]-$post[slutt]");
+            header('Location: ?a=utvalg/vaktsjef/generer');
             exit();
         }
 
@@ -32,6 +42,15 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $dok->set('feilEnkelt', $feilEnkelt);
         $dok->set('feilPeriode', $feilPeriode);
         $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_generer.php');
+    }
+
+    private function tomVaktTabellPeriode($start, $slutt)
+    {
+        $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE vaktbytte.vakt_id IN (SELECT id FROM vakt WHERE (dato >= :start AND dato <= :slutt))');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
+
+        $st = DB::getDB()->prepare('DELETE FROM vakt WHERE dato >= :start AND dato <= :slutt');
+        $st->execute(['start' => $start, 'slutt' => $slutt]);
     }
 
     private function tomVaktTabell()
@@ -308,7 +327,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         foreach (RolleListe::alle() as $rolle) {
             /* @var Rolle $rolle */
             if ($rolle->getVakterNow() > 0) {
-                if($host) {
+                if ($host) {
                     $antall = $rolle->getVakterH();
                 } else {
                     $antall = $rolle->getVakterV();
