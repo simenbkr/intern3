@@ -125,7 +125,7 @@ require_once(__DIR__ . '/../static/topp.php');
                 if($kryss['antall'] == 0) {
                     continue;
                 }
-                
+
                 $totalt += $kryss['kostnad'];
                 $antallet += $kryss['antall'];
                 ?>
