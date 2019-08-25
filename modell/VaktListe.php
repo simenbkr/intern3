@@ -64,15 +64,11 @@ class VaktListe
     {
         $st = DB::getDB()->prepare('SELECT v.id FROM vakt as v WHERE v.id NOT IN (
 											(SELECT id FROM vakt WHERE 
-                                          	(
                                             (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
                                             OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
                                             OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2))
-                                            OR vakttype = 1
-                                            )
-                                            AND autogenerert=1
-                                            )
-                                          )');
+                                            OR vakttype = 1)
+                                          ) AND autogenerert=1');
         return self::medPdoSt($st);
     }
 
@@ -85,5 +81,3 @@ class VaktListe
     }
 
 }
-
-?>

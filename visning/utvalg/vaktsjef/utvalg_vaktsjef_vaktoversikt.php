@@ -42,7 +42,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <li>2. vakt søndag</li>
             <li>3., 4. vakt fredag</li>
         </ul>
-        Dette utgjør nøyaktig halvparten av alle vakter i løpet av en uke (14/28).
+        Dette utgjør 13 av 28 vakter i løpet av en uke.
 
     </p>
 

@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             </tr>
             <tr>
                 <td>Pris:</td>
-                <td><input type="text" name="pris" value="<?php echo $drikka->getPris(); ?>"></td>
+                <td><input class="form-control" type="text" name="pris" value="<?php echo $drikka->getPris(); ?>"></td>
             </tr>
             <tr>
                 <td>Farge:</td>

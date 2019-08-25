@@ -10,7 +10,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         if ($this->cd->getSisteArg() == 'tom') {
             $this->tomVaktTabell();
             Funk::setSuccess("Vaktlista ble tømt!");
-            header('Location: ' . $_SERVER['REQUEST_URI']);
+            header('Location: ?a=utvalg/vaktsjef/generer');
             exit();
         }
 
@@ -283,7 +283,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                     $st->bindParam(':vakttype', $type);
                     $isoDato = date('Y-m-d', $dato);
                     $st->bindParam(':dato', $isoDato);
-                    $auto = self::skalAutogenereres($type, $dato);
+                    $auto = self::skalAutogenereres($type, $dato) ? 1 : 0;
                     $st->bindParam(':autogenerert', $auto);
                     $st->execute();
                 }
@@ -547,6 +547,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private static function erITidsrom($typeStart, $datoStart, $typeSlutt, $datoSlutt, $typeTest, $datoTest)
     {
+        //error_log("$typeStart-$datoStart -> $typeSlutt-$datoSlutt: $typeTest-$datoTest");
         /* Sjekk om en tenkt vakt (gitt av type og dato) er i et tidsrom. */
         if ($datoStart > $datoTest || $datoTest > $datoSlutt) {
             /* Dato er ikke i periode. */
@@ -561,17 +562,19 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private static function skalAutogenereres($type, $dato)
     {
-        for ($i = 0; $i < count($_POST['enkeltvakt_type']); $i++) {
-            if ($type == $_POST['enkeltvakt_type'][$i] && date('Y-m-d', $dato) == $_POST['enkeltvakt_dato'][$i]) {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        for ($i = 0; $i < count($post['enkeltvakt_type']); $i++) {
+            if ($type == $post['enkeltvakt_type'][$i] && date('Y-m-d', $dato) == $post['enkeltvakt_dato'][$i]) {
+                error_log("FALSE: $type-$dato");
                 return false;
             }
         }
-        for ($i = 0; $i < count($_POST['vaktperiode_type_start']); $i++) {
+        for ($i = 0; $i < count($post['vaktperiode_type_start']); $i++) {
             $vaktperiodeDatoStart = strtotime($_POST['vaktperiode_dato_start'][$i]);
             $vaktperiodeDatoSlutt = strtotime($_POST['vaktperiode_dato_slutt'][$i]);
             if (self::erITidsrom(
-                $_POST['vaktperiode_type_start'][$i], $vaktperiodeDatoStart,
-                $_POST['vaktperiode_type_slutt'][$i], $vaktperiodeDatoSlutt,
+                $post['vaktperiode_type_start'][$i], $vaktperiodeDatoStart,
+                $post['vaktperiode_type_slutt'][$i], $vaktperiodeDatoSlutt,
                 $type, $dato
             )) {
                 return false;
@@ -585,5 +588,3 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         return date('N', $dato) > 5;
     }
 }
-
-?>
