@@ -29,7 +29,7 @@
     foreach ($vin_array as $kryss) {
 
         if($kryss['antall'] == 0) {
-            continue
+            continue;
         }
 
         $totalt += $kryss['kostnad'];
