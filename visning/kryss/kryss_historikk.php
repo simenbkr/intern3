@@ -103,6 +103,11 @@ require_once(__DIR__ . '/../static/topp.php');
             $totalt = 0;
             $antallet = 0;
             foreach ($mndkryss as $navn => $antall) {
+
+                if($antall < 1) {
+                    continue;
+                }
+
                 $antallet += $antall;
                 ?>
                 <tr>
