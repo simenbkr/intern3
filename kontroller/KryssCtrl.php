@@ -50,7 +50,7 @@ class KryssCtrl extends AbstraktCtrl
                 $periode = Periode::getForrige();
                 $drikker = Drikke::alle();
                 $dato_liste = Krysseliste::getTotalKryssByDate($periode->getStart(), $periode->getSlutt());
-                $totalt = Krysseliste::periodeSummary(Krysseliste::getKryssSistPeriode());
+                $totalt = Krysseliste::periodeSummary(Krysseliste::getTotalKryssByDate($periode->getStart(), $periode->getSlutt()));
 
                 $dok = new Visning($this->cd);
                 $dok->set('periode', $periode);
