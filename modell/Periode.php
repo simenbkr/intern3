@@ -53,6 +53,14 @@ class Periode
         return self::init($st);
     }
 
+    public static function getForrige(): Periode {
+        $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY id DESC LIMIT 2');
+        $st->execute();
+        self::init($st);
+
+        return self::init($st);
+    }
+
     public function getStart()
     {
         return $this->start;

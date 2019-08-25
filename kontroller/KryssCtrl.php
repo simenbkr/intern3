@@ -2,6 +2,8 @@
 
 namespace intern3;
 
+use intern3\Krysseliste\Kryss;
+
 class KryssCtrl extends AbstraktCtrl
 {
 
@@ -43,6 +45,20 @@ class KryssCtrl extends AbstraktCtrl
 
         switch ($this->cd->getAktueltArg()) {
 
+            case 'statistikk':
+
+                $periode = Periode::getForrige();
+                $drikker = Drikke::alle();
+                $dato_liste = Krysseliste::getTotalKryssByDate($periode->getStart(), $periode->getSlutt());
+                $totalt = Krysseliste::periodeSummary(Krysseliste::getKryssSistPeriode());
+
+                $dok = new Visning($this->cd);
+                $dok->set('periode', $periode);
+                $dok->set('drikker', $drikker);
+                $dok->set('dato_liste', $dato_liste);
+                $dok->set('totalt', $totalt);
+                $dok->vis('kryss/kryss_statistikk.php');
+                break;
             case 'periode':
 
                 $periode_id = $this->cd->getSisteArg();
@@ -180,5 +196,3 @@ class KryssCtrl extends AbstraktCtrl
         }
     }
 }
-
-?>

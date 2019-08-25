@@ -649,6 +649,67 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
         return $kryss;
     }
 
+    public static function periodeSummary($periode_array) {
+
+        $result = array();
+
+        foreach($periode_array as $drikke_array) {
+            foreach($drikke_array as $drikke_navn => $antall) {
+                if(array_key_exists($drikke_navn, $result)) {
+                    $result[$drikke_navn] += $antall;
+                } else {
+                    $result[$drikke_navn] = $antall;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+
+    public static function getTotalKryssByDate($start, $slutt) {
+
+        $unix_start = strtotime($start);
+        $unix_end = strtotime($slutt);
+
+        $day_to_result = array(); //array(2019-02-03 => array(Pant => 42, Øl => 102))
+        $template = array();
+        $drikker = array();
+
+        foreach(Drikke::alle() as $d) {
+            $drikker[$d->getId()] = $d->getNavn();
+            $template[$d->getNavn()] = 0;
+        }
+
+        $krysselista = array();
+        foreach(BeboerListe::aktiveMedAlko() as $beboer) {
+            $krysselista = array_merge($krysselista, self::medBeboerId($beboer->getId()));
+        }
+
+
+        foreach($krysselista as $drikke_kryss) {
+            /* @var \intern3\Krysseliste $drikke_kryss */
+
+            foreach($drikke_kryss->getKryssListe() as $enkelt_kryss) {
+                $unix = strtotime($enkelt_kryss->tid);
+                $date = date('Y-m-d', $unix);
+
+                if($unix >= $unix_end || $unix <= $unix_start) {
+                    continue;
+                }
+
+                if(array_key_exists($date, $day_to_result)) {
+                    $day_to_result[$date][$drikke_kryss->getDrikke()->getNavn()] += $enkelt_kryss->antall;
+                } else {
+                    $day_to_result[$date] = $template;
+                    $day_to_result[$date][$drikke_kryss->getDrikke()->getNavn()] += $enkelt_kryss->antall;
+                }
+            }
+        }
+
+        return $day_to_result;
+
+    }
 
     public static function getKryssSistPeriode()
     {
@@ -659,5 +720,3 @@ WHERE beboer_id=:beboerId AND drikke_id=:drikkeId;');
     }
 
 }
-
-?>
