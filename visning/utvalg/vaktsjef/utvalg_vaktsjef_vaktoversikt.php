@@ -141,7 +141,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     $(document).ready(function () {
         var table = $('#tabellen').DataTable({
             "paging": false,
-            "searching": false,
+            "searching": true,
+            "scrollY": "80vh",
+            "scrollCollapse": true,
             //"scrollY": "500px"
         });
     });
