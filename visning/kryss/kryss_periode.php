@@ -27,6 +27,11 @@
     <?php } ?>
     <?php
     foreach ($vin_array as $kryss) {
+
+        if($kryss['antall'] == 0) {
+            continue
+        }
+
         $totalt += $kryss['kostnad'];
         $antallet += $kryss['antall'];
         ?>
