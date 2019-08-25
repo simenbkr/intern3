@@ -547,7 +547,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private static function erITidsrom($typeStart, $datoStart, $typeSlutt, $datoSlutt, $typeTest, $datoTest)
     {
-        //error_log("$typeStart-$datoStart -> $typeSlutt-$datoSlutt: $typeTest-$datoTest");
         /* Sjekk om en tenkt vakt (gitt av type og dato) er i et tidsrom. */
         if ($datoStart > $datoTest || $datoTest > $datoSlutt) {
             /* Dato er ikke i periode. */
@@ -565,7 +564,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         for ($i = 0; $i < count($post['enkeltvakt_type']); $i++) {
             if ($type == $post['enkeltvakt_type'][$i] && date('Y-m-d', $dato) == $post['enkeltvakt_dato'][$i]) {
-                error_log("FALSE: $type-$dato");
                 return false;
             }
         }
