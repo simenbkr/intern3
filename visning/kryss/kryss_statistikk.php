@@ -113,9 +113,10 @@ $df = new \IntlDateFormatter('nb_NO',
             legend: {
                 enabled: true,
             },
-            drawPoints: {
-                size: 0,
-            },
+            drawPoints: false,
+            //drawPoints: {
+            //    size: 0,
+            //},
             dataAxis: {
                 icons: true,
             },
