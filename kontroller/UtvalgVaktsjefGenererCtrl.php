@@ -355,7 +355,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
         foreach (array($forstevakter, $kjipe_vakter, $vanlige_vakter) as $vakter) {
 
-            while (count($vakter) > floor($margin / 2)) {
+            while (count($vakter) > floor($margin)) {
 
                 foreach ($fordeling as $antall => $beboere) {
 
@@ -461,7 +461,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * en runde for førstevakt og en for vanlig vakt.
                          */
 
-                        if (count($vakter) == floor($margin / 2)) {
+                        if (count($vakter) == floor($margin)) {
                             break;
                         }
                     }
