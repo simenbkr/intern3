@@ -64,9 +64,9 @@ class UtvalgRomsjefEpostCtrl extends AbstraktCtrl
 
                             foreach($deltakere as $deltaker) {
                                 if(in_array(strtolower($deltaker['email']), $beboerEposter)) {
-                                    $behandla[] = array(true, $deltaker['email']);
+                                    $behandla[] = array(true, $deltaker['email'], Bruker::medEpost($deltaker['email']));
                                 } else {
-                                    $behandla[] = array(false, $deltaker['email']);
+                                    $behandla[] = array(false, $deltaker['email'], NULL);
                                 }
 
                             }
