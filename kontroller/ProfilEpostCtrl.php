@@ -16,10 +16,9 @@ class ProfilEpostCtrl extends AbstraktCtrl
         $beboer = $bruker->getPerson();
         $group = new GroupManage();
 
-        $mail_lists = array();
-        if($beboer->getKjonn() == 0) {
+        if($beboer->getKjonn() === 'Mann') {
             $mail_lists = [SING_GUTTER];
-        } elseif ($beboer->getKjonn() == 1) {
+        } else {
             $mail_lists = [SING_JENTER];
         }
 
@@ -48,7 +47,7 @@ class ProfilEpostCtrl extends AbstraktCtrl
 
             $ret = "<td>" . $beboer->getEpost() . "</td>";
             $id = $beboer->getId();
-
+            asort( $mail_lists);
             foreach ($mail_lists as $lista) {
                 $classname = explode("@", $lista)[0];
                 if ($group->inGroup($beboer->getEpost(), $lista)) {

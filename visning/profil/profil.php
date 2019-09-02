@@ -272,12 +272,12 @@ if (isset($feil) && count($feil) > 0) {
             <tr>
                 <td>Epost</td>
                 <td>SING-ALLE</td>
-                <td>SING-SLARV</td>
                 <?php if ($beboer->getKjonn() == 'Mann') { ?>
                     <td>SING-GUTTER</td>
                 <?php } elseif ($beboer->getKjonn() == 'Kvinne') { ?>
                     <td>SING-JENTER</td>
                 <?php } ?>
+                <td>SING-SLARV</td>
 
 
                 <td>Sjekk</td>
