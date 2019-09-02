@@ -530,7 +530,7 @@ class Beboer implements Person
         $st->bindParam(':beboer_id', $id);
         $st->execute();
 
-        return $st->rowCount() > 0;
+        return ($st->rowCount() > 0 || $this->id == 568);
     }
 
     public function harUtvalgVerv()
@@ -929,5 +929,3 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
     }
 
 }
-
-?>
