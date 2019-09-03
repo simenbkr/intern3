@@ -170,7 +170,8 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 if (isset($_POST['vaktId_1'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vaktId_1 = $post['vaktId_1'];
-                    Vakt::setDobbelvakt($vaktId_1);
+                    //Vakt::setDobbelvakt($vaktId_1);
+                    Vakt::medId($vaktId_1)->endreDobbelvakt();
                 }
                 break;
             case 'vaktstyring_straffevakt':

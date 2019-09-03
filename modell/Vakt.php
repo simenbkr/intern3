@@ -372,6 +372,15 @@ class Vakt
         return $this->dobbelvakt == 1;
     }
 
+    public function endreDobbelvakt() {
+        if($this->erDobbelvakt()) {
+            $this->dobbelvakt = 0;
+        } else {
+            $this->dobbelvakt = 1;
+        }
+        self::oppdater();
+    }
+
     public static function setDobbelvakt($vaktId)
     {
         $st = DB::getDB()->prepare('UPDATE vakt SET dobbelvakt=1-dobbelvakt WHERE id=:id');
