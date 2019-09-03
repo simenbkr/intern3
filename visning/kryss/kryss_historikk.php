@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../static/topp.php');
 <div class="col-md-12">
     <h1>Kryss &raquo; Historikk</h1>
 
-    [ Kryss historikk] | [ <a href="?a=kryss/statistikk">Kryssestatistikk</a> ]
+    [ Kryss historikk ] | [ <a href="?a=kryss/statistikk">Kryssestatistikk</a> ]
 
     <?php /*<p>[ <a href="?a=kryss">Nylig kryssing</a> ] [ <a href="?a=kryss/historikk">Historikk</a> ] [ <a href="?a=kryss/statistikk">Statistikk</a> ]</p>*/ ?>
     <hr>
