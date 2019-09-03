@@ -124,7 +124,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             </tr>
         </table>
         <?php /* <input class="btn btn-primary" type="submit" value="Nullstill" onclick="sett_fakturert()"> */ ?>
-        <h4>Sett alle til fakturert: (dette kan ta opp til 10s)</h4> (Ingen vei tilbake etter at du har trykket!)
+        <h4>Sett alle til fakturert: (dette kan ta lang tid..)</h4> (Ingen vei tilbake etter at du har trykket!)
         <p>
             Fakturer til NÅ:
             <input type="button" class="btn btn-md btn-danger" value="Nullstill" data-toggle="modal"
@@ -135,6 +135,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <input type="button" class="btn btn-md btn-warning" value="Nullstill" data-toggle="modal"
                    data-target="#modal-nullstill2">
         </p>
+
+        <p>For hver periode som skrives ut til Torild, er det essensielt at man markerer periodens kryss som "fakturert".
+            Det gjøres primært gjennom den RØDE knappen over, men i spesielle tilfeller (les: der fakturering har blitt glemt)
+            kan den GULE knappen benyttes. Det er svært viktig at det IKKE krysses mens fakturering pågår.</p>
 
         <div class="modal fade" id="modal-nullstill" role="dialog">
             <div class="modal-dialog modal-sm">
