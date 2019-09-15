@@ -28,6 +28,9 @@ class UtvalgCtrl extends AbstraktCtrl
                 case 'admin':
                     $valgtCtrl = new UtvalgAdminCtrl($this->cd->skiftArg());
                     break;
+                case 'fordeling':
+                    $valgtCtrl = new UtvalgFordelingsCtrl($this->cd->skiftArg());
+                    break;
                 default:
                     $valgtCtrl = new UtvalgDiverseCtrl($this->cd->skiftArg());
                     break;
@@ -36,5 +39,3 @@ class UtvalgCtrl extends AbstraktCtrl
         }
     }
 }
-
-?>
