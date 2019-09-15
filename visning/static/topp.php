@@ -221,6 +221,7 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                                 <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/regiliste">Regilister</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>utvalg/regisjef/leggtilarbeid">Legg til
                                         arbeid</a></li>
+                                <li><a href="<?php echo $cd->getBase(); ?>utvalg/fordeling">Rollefordeling</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -265,6 +266,7 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                                         Historie</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/kryss">Kryss minutt for
                                         minutt</a></li>
+                                <li><a href="<?php echo $cd->getBase(); ?>utvalg/fordeling">Rollefordeling</a></li>
                             </ul>
                         </li>
                     </ul>
