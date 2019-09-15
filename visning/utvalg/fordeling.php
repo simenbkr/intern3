@@ -75,7 +75,6 @@ require_once "topp_utvalg.php";
 
         </div>
 
-        <hr>
         <div class="col-lg-6">
             <p id="infotekst"></p>
 
