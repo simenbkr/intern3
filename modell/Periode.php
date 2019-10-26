@@ -37,7 +37,7 @@ class Periode
         return self::init($st);
     }
 
-    public static function getForste(): Periode
+    public static function getForste(): ?Periode
     {
         $st = DB::getDB()->prepare('SELECT * FROM fakturert ORDER BY id ASC LIMIT 1');
         $st->execute();

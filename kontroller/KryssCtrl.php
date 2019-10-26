@@ -178,7 +178,11 @@ class KryssCtrl extends AbstraktCtrl
                 }
 
                 $periode = Periode::beboerPerioder($this->cd->getAktivBruker()->getPerson());
-                $prehistorisk = ($this->cd->getAktivBruker()->getPerson()->beboerVed(Periode::getForste()->getStart()));
+                if(!is_null(Periode::getForste())) {
+                    $prehistorisk = ($this->cd->getAktivBruker()->getPerson()->beboerVed(Periode::getForste()->getStart()));
+                } else {
+                    $prehistorisk = false;
+                }
 
 
                 $dok = new Visning($this->cd);
