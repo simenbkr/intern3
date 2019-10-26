@@ -71,7 +71,7 @@ class VaktbytteCtrl extends AbstraktCtrl
                 case 'ta':
                     if (($vaktbyttet = Vaktbytte::medId($sisteArg)) != null &&
                         $bruker->getId() != $vaktbyttet->getVakt()->getBrukerId()
-                        && $vaktbyttet->getGisBort()) {
+                        && $vaktbyttet->getGisBort() && $vaktbyttet->erTilgjengelig()) {
 
                         if (!$vaktbyttet->harPassord() ||
                             ($vaktbyttet->harPassord() && $vaktbyttet->stemmerPassord($post['passord']))) {

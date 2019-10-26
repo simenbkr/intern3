@@ -143,13 +143,20 @@ require_once(__DIR__ . '/../static/topp.php');
                                            data-target="#myModal" data-remote="false"
                                            class="btn-sm btn-info pull-right">Bytt</a>
                                         <?php
-                                    } else { ?>
+                                    } else {
+                                        if ($vaktbytte->erTilgjengelig()) {
+                                        ?>
                                         <a href="?a=vakt/bytte/modal_gibort/<?php echo $vaktbytte->getId(); ?>"
                                            data-toggle="modal"
                                            data-target="#myModal" data-remote="false"
                                            class="btn-sm btn-warning pull-right">
                                             Ta vakt</a>
                                         <?php
+                                        } else { ?>
+                                            <p>Tilgjengelig fra: <?php echo $vaktbytte->getSlipp();?> </p>
+                                            <button class="btn btn-secondary">Ta vakt</button>
+                            
+                                        <?php } 
                                     }
 
                                 }

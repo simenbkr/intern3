@@ -67,9 +67,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'publiser':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $vaktliste = VaktListe::listeEtterDatoType($post['start'], $post['slutt'], $post['options']);
+                $slipp = date('Y-m-d H:i:s', strtotime($post['slipp']));
 
                 foreach($vaktliste as $vakt) {
-                    $vakt->toggleByttemarked();
+                    $vakt->toggleByttemarked($slipp);
                 }
                 Funk::setSuccess('Innsending fullført!');
                 header('Location: ?a=utvalg/vaktsjef/vaktstyring');

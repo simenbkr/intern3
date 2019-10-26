@@ -6,6 +6,26 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
 
 <script>
+  $(function () {
+      $('#datoen3').datepicker({
+          dateFormat: 'yy-mm-dd',
+          onSelect: function (datetext) {
+              var d = new Date(); // for now
+              var h = d.getHours();
+              h = (h < 10) ? ("0" + h) : h;
+
+              var m = d.getMinutes();
+              m = (m < 10) ? ("0" + m) : m;
+
+              var s = d.getSeconds();
+              s = (s < 10) ? ("0" + s) : s;
+
+              datetext = datetext + " " + h + ":" + m;
+              $('#datoen3').val(datetext);
+          },
+      });
+  });
+
 function modal() {
   var modalId = $(this).attr('data-target');
   var vakttype = $(this).attr('data-type');
@@ -100,11 +120,9 @@ function setHost(){
                     <input type="radio" name="options" value="4" autocomplete="off"> 4. Vakt
                   </label>
                 </div>
-                    <p><input class="datepicker form-control" name="start" id="datoen" placeholder="Start" type="text" required/></p>
-
+                    <p><input class="datepicker form-control" name="start" id="datoen0" placeholder="Start" type="text" required/></p>
                     <p><input class="datepicker form-control" name="slutt" id="datoen2" placeholder="Slutt" type="text" required/></p>
-                    <p><input class="datepicker form-control" name="slipp" id="datoen3" placeholder="Slippdato" type="text" required/></p>
-                    
+                    <p><input class="form-control" name="slipp" id="datoen3" placeholder="Slippdato" type="text" required/></p>
                     
                     <input type="submit" class="btn btn-md btn-primary" value="Send inn" name="tabell">
                 </form>
