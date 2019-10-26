@@ -71,6 +71,8 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 foreach($vaktliste as $vakt) {
                     $vakt->toggleByttemarked();
                 }
+                Funk::setSuccess('Innsending fullført!');
+                header('Location: ?a=utvalg/vaktsjef/vaktstyring');
                 break;
             case 'vaktoversikt':
 
