@@ -539,4 +539,20 @@ class Vakt
         return abs(strtotime($a->getDato()) - strtotime($b->getDato()));
     }
 
+    public function toggleByttemarked() {
+        if ($this->getBytte() && $this->getVaktbytte() != NULL) {
+            $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');
+            $st->execute(['id'=>$this->getVaktbytte()->getId()]);
+
+            $st_1 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=0 WHERE id=:id');
+            $st_1->execute(['id'=>$this->getId()]);
+        } else {
+            $st = DB::getDB()->prepare('INSERT INTO vaktbytte (vakt_id,gisbort) VALUES(:vakt_id,1)');
+            $st->execute(['vakt_id'=>$this->getId()]);
+            $vaktbyttet = $this->getVaktbytte();
+
+            $st_1 = DB::getDB()->prepare('UPDATE vakt SET bytte=1,vaktbytte_id=:vaktbyttet WHERE id=:id');
+            $st_1->execute(['id'=>$this->getId(), 'vaktbyttet'=>$vaktbyttet->getId()]);
+        }
+    }
 }
