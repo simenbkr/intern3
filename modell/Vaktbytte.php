@@ -13,6 +13,7 @@ class Vaktbytte
     private $merknad;
     private $harPassord;
     private $passord;
+    private $slipp;
 
     // Latskap
     private $vakt;
@@ -56,6 +57,7 @@ class Vaktbytte
         $instance->merknad = $rad['merknad'];
         $instance->harPassord = $rad['har_passord'] == 0 ? false : true;
         $instance->passord = $instance->harPassord ? $rad['passord'] : null;
+        $instance->slipp = $rad['slipp'];
         return $instance;
     }
 
@@ -135,6 +137,16 @@ class Vaktbytte
     public function getMerknad()
     {
         return $this->merknad;
+    }
+
+    public function getSlipp()
+    {
+        return $this->slipp;
+    }
+
+    public function erTilgjengelig()
+    {
+        return strtotime('now') > strtotime($this->slipp); 
     }
 
     public function harPassord(){

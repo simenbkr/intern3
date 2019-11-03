@@ -6,6 +6,27 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
 
 <script>
+  // Legger til mulighet for å endre klokkeslett for vaktslipp
+  $(function () {
+      $('#datoen3').datepicker({
+          dateFormat: 'yy-mm-dd',
+          onSelect: function (datetext) {
+              var d = new Date(); // for now
+              var h = d.getHours();
+              h = (h < 10) ? ("0" + h) : h;
+
+              var m = d.getMinutes();
+              m = (m < 10) ? ("0" + m) : m;
+
+              var s = d.getSeconds();
+              s = (s < 10) ? ("0" + s) : s;
+
+              datetext = datetext + " " + h + ":" + m;
+              $('#datoen3').val(datetext);
+          },
+      });
+  });
+
 function modal() {
   var modalId = $(this).attr('data-target');
   var vakttype = $(this).attr('data-type');
@@ -65,14 +86,74 @@ function setHost(){
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Vaktsjef &raquo; Vaktstyring</h1>
 	<hr>
-<div class="dropdown">
-  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
-  <span class="caret"></span></button>
-  <ul class="dropdown-menu">
-    <li><a href="#" onclick="setVar()">Vår</a></li>
-    <li><a href="#" onclick="setHost()">Høst</a></li>
-  </ul>
+
+<div class="btn-group" role="group">
+  <div class="btn-group" role="group">
+    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Semester <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="#" onclick="setVar()">Vår</a></li>
+      <li><a href="#" onclick="setHost()">Høst</a></li>
+    </ul>
+  </div>
+  <button data-toggle="modal" class="btn btn-primary" data-target="#modal-leggutvakter">Vaktslipp</button>
 </div>
+
+<div class="modal fade" aria-hidden="true" id="modal-leggutvakter" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Velg vakter som skal legges ut</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="?a=utvalg/vaktsjef/publiser">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <label class="btn btn-secondary active">
+                    <input type="radio" name="options" value="1" autocomplete="off" checked> 1. Vakt
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input type="radio" name="options" value="2" autocomplete="off"> 2. Vakt
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input type="radio" name="options" value="3" autocomplete="off"> 3. Vakt
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input type="radio" name="options" value="4" autocomplete="off"> 4. Vakt
+                  </label>
+                </div>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p><input class="datepicker form-control" name="start" id="datoen0" placeholder="Start" type="text" required/></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p><input class="datepicker form-control" name="slutt" id="datoen2" placeholder="Slutt" type="text" required/></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p><input class="form-control" name="slipp" id="datoen3" placeholder="Slippdato" type="text" required/></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <input type="submit" class="btn btn-md btn-primary" value="Send inn" name="tabell">
+                        </div>
+                      </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 	<hr>
 
 <?php
