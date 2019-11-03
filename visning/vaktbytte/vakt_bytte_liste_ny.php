@@ -152,8 +152,14 @@ require_once(__DIR__ . '/../static/topp.php');
                                            class="btn-sm btn-warning pull-right">
                                             Ta vakt</a>
                                         <?php
-                                        } else { ?>
-                                            <p>Tilgjengelig fra: <?php echo $vaktbytte->getSlipp();?> </p>
+                                        } else {
+                                            $df = new \IntlDateFormatter('nb_NO',
+                                                \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT,
+                                                'Europe/Oslo');
+
+
+                                            ?>
+                                            <p>Tilgjengelig fra: <?php echo $df->format(strtotime($vaktbytte->getSlipp()));?> </p>
                                             <button class="btn btn-secondary">Ta vakt</button>
                             
                                         <?php } 
