@@ -6,6 +6,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
 
 <script>
+  // Legger til mulighet for å endre klokkeslett for vaktslipp
   $(function () {
       $('#datoen3').datepicker({
           dateFormat: 'yy-mm-dd',
@@ -85,19 +86,21 @@ function setHost(){
 <div class="col-md-12">
 	<h1>Utvalget &raquo; Vaktsjef &raquo; Vaktstyring</h1>
 	<hr>
-  
-<div class="dropdown">
-  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
-  <span class="caret"></span></button>
-  <ul class="dropdown-menu">
-    <li><a href="#" onclick="setVar()">Vår</a></li>
-    <li><a href="#" onclick="setHost()">Høst</a></li>
-  </ul>
+
+<div class="btn-group" role="group">
+  <div class="btn-group" role="group">
+    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Semester <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="#" onclick="setVar()">Vår</a></li>
+      <li><a href="#" onclick="setHost()">Høst</a></li>
+    </ul>
+  </div>
+  <button data-toggle="modal" class="btn btn-primary" data-target="#modal-leggutvakter">Vaktslipp</button>
 </div>
 
-<button data-toggle="modal" class="btn btn-primary" data-target="#modal-leggutvakter">Knapp</button>
-
-<div class="modal fade" id="modal-leggutvakter" role="dialog">
+<div class="modal fade" aria-hidden="true" id="modal-leggutvakter" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -120,11 +123,28 @@ function setHost(){
                     <input type="radio" name="options" value="4" autocomplete="off"> 4. Vakt
                   </label>
                 </div>
-                    <p><input class="datepicker form-control" name="start" id="datoen0" placeholder="Start" type="text" required/></p>
-                    <p><input class="datepicker form-control" name="slutt" id="datoen2" placeholder="Slutt" type="text" required/></p>
-                    <p><input class="form-control" name="slipp" id="datoen3" placeholder="Slippdato" type="text" required/></p>
-                    
-                    <input type="submit" class="btn btn-md btn-primary" value="Send inn" name="tabell">
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p><input class="datepicker form-control" name="start" id="datoen0" placeholder="Start" type="text" required/></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p><input class="datepicker form-control" name="slutt" id="datoen2" placeholder="Slutt" type="text" required/></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p><input class="form-control" name="slipp" id="datoen3" placeholder="Slippdato" type="text" required/></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <input type="submit" class="btn btn-md btn-primary" value="Send inn" name="tabell">
+                        </div>
+                      </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
