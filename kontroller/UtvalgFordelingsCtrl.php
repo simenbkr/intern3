@@ -18,7 +18,6 @@ class UtvalgFordelingsCtrl extends AbstraktCtrl
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $start = $post['start'];
             $slutt = $post['slutt'];
-            $sem = $post['sem'];
             $ansattfri = $post['fri'];
             $minimum_regi = $post['min_regi'];
             $minimum_full = $post['min_full'];
@@ -26,6 +25,7 @@ class UtvalgFordelingsCtrl extends AbstraktCtrl
             $max_regi = $post['max_regi'];
             $max_full = $post['max_full'];
             $max_gauder = $post['max_gauder'];
+            $fridager = $post['fridager'];
 
             if (empty($ansattfri)) {
                 $ansattfri = 0;
@@ -59,15 +59,12 @@ class UtvalgFordelingsCtrl extends AbstraktCtrl
                 (strtotime($slutt) - strtotime($start)) / (60 * 60 * 24)
             );
 
-            $vakt_estimate = intval(floor($days * 4 - ($days * 5 / 7))) + intval($ansattfri);
+            $vakt_estimate = intval(floor($days * 4 - ($days * 5 / 7))) + intval($ansattfri) - intval($fridager);
 
             $valid_combos = array(); // array( array(halv/halv, fullv, fullr) .. )
-            if (empty($sem)) {
-                $semester = Funk::generateSemesterString(date('Y-m-d', strtotime($slutt)));
-                $sem = strpos($semester, "host");
-            }
+            $semester = Funk::generateSemesterString(date('Y-m-d', strtotime($slutt)));
 
-            if ($sem == 'host') {
+            if (explode('-', $semester)[0] == 'host') {
                 $fullvakt = Rolle::medNavn('Full vakt')->getVakterH();
                 $vanlig = Rolle::medNavn('Halv vakt/regi')->getVakterH();
             } else {

@@ -34,14 +34,8 @@ require_once "topp_utvalg.php";
                     </tr>
 
                     <tr>
-                        <td>Semester</td>
-                        <td>
-                            <select class="form-control">
-                                <option value="host">Høst</option>
-                                <option value="var">Vår</option>
-                            </select>
-
-                        </td>
+                        <td>Antall fridager</td>
+                        <td><input name="fridager" value="0" type="number" class="form-control"/></td>
                     </tr>
 
                     <tr>
