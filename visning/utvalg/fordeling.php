@@ -11,8 +11,7 @@ require_once "topp_utvalg.php";
             <p>
                 Her kan utvalget teste/eksperimentere med ulike parametere for å finne optimale fordelinger av
                 roller. Stjernemerka felt er obligatoriske, de andre har default-verdier gitt i grått, dersom intet
-                input gis. NB: Skriv inn datoer på gitt format (ISO8601). Semestervalg angir verdier brukt for å estimere
-                antall som trengs av hver rolle etter hvor mange vakter den rollen sitter det angitte semesteret.
+                input gis. NB: Skriv inn datoer på gitt format (ISO8601).
             </p>
             <form id="f" method="post" action="">
                 <table class="table table-responsive">

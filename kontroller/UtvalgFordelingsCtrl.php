@@ -59,7 +59,7 @@ class UtvalgFordelingsCtrl extends AbstraktCtrl
                 (strtotime($slutt) - strtotime($start)) / (60 * 60 * 24)
             );
 
-            $vakt_estimate = intval(floor($days * 4 - ($days * 5 / 7))) + intval($ansattfri) - intval($fridager);
+            $vakt_estimate = intval(floor($days * 4 - ($days * 5 / 7) + 1)) + intval($ansattfri) - intval($fridager) * 4;
 
             $valid_combos = array(); // array( array(halv/halv, fullv, fullr) .. )
             $semester = Funk::generateSemesterString(date('Y-m-d', strtotime($slutt)));
@@ -69,7 +69,7 @@ class UtvalgFordelingsCtrl extends AbstraktCtrl
                 $vanlig = Rolle::medNavn('Halv vakt/regi')->getVakterH();
             } else {
                 $fullvakt = Rolle::medNavn('Full vakt')->getVakterV();
-                $vanlig = Rolle::medNavn('Halv vakt/regi')->getVakterH();
+                $vanlig = Rolle::medNavn('Halv vakt/regi')->getVakterV();
             }
 
             $beboer_count = 110;
