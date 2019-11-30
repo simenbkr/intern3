@@ -64,6 +64,21 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $valgtCtrl = new UtvalgVaktsjefGenererCtrl($this->cd->skiftArg());
                 $valgtCtrl->bestemHandling();
                 break;
+            case 'opprett':
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                $dato = strtotime($post['start']);
+                $slutt = strtotime($post['slutt']);
+                $vakttype = $post['options'];
+
+                while($dato < $slutt) {
+                    $isodato = date('Y-m-d', $dato);
+                    $st = DB::getDB()->prepare('INSERT INTO vakt(vakttype,dato) VALUES(:vakttype, :dato)');
+                    $st->execute(['vakttype' => $vakttype, 'dato' => $isodato]);
+                    $dato = strtotime('midnight + 1 day', $dato);
+                }
+                Funk::setSuccess("La til blanke {$vakttype}. vakter {$post['start']}-{$post['slutt']}");
+                header('Location: ?a=utvalg/vaktsjef/vaktstyring');
+                exit();
             case 'publiser':
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $vaktliste = VaktListe::listeEtterDatoType($post['start'], $post['slutt'], $post['options']);
