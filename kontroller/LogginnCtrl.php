@@ -41,10 +41,9 @@ class LogginnCtrl extends AbstraktCtrl
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $brukeren = Bruker::medEpost($post['brukernavn']);
         if ($brukeren != null
-            && $brukeren->passordErGyldig(self::genererHash($post['passord'], $brukeren->getId()))
+            && $brukeren->passordErGyldig($post['passord'])
             && $brukeren->getPerson()->erAktiv()) {
 
-            //$_SESSION['brukernavn'] = $post['brukernavn'];
             Session::loginUser($brukeren);
             $this->cd->setAktivBruker($brukeren);
         }
@@ -93,7 +92,8 @@ class LogginnCtrl extends AbstraktCtrl
 
                 if ($passord1 === $passord2) {
 
-                    $hash = LogginnCtrl::genererHash($passord1, $bruker->getId());
+                    //$hash = LogginnCtrl::genererHash($passord1, $bruker->getId());
+                    $hash = $bruker->newhash($passord1);
                     $bruker->endrePassord($hash);
 
                     //Fjerne gyldighet av link.
