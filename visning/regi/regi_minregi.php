@@ -149,19 +149,19 @@ require_once(__DIR__ . '/../static/topp.php');
                             ?>
                         </optgroup>
                     </select>
-                    <!--<select name="polymorfkategori_id[oppg]" id="polymorfkategori_oppg">
+                    <select name="polymorfkategori_id[oppg]" id="polymorfkategori_oppg" class="form-control">
 <?php
 
-                    //foreach (intern3\OppgaveListe::aktiveListe() as $o) {
-                    //	echo '						<option value="' . $o->getId() . '"';
-                    //	if (isset($_POST['polymorfkategori_id']['oppg']) && $_POST['polymorfkategori_id']['oppg'] == $o->getId()) {
-                    //		echo ' selected="selected"';
-                    //	}
-                    //	echo '>' . $o->getNavn() . '</option>' . PHP_EOL;
-                    //}
+                    foreach (intern3\OppgaveListe::aktive() as $o) {
+                    	echo '						<option value="' . $o->getId() . '"';
+                    	if (isset($_POST['polymorfkategori_id']['oppg']) && $_POST['polymorfkategori_id']['oppg'] == $o->getId()) {
+                    		echo ' selected="selected"';
+                    	}
+                    	echo '>' . $o->getNavn() . '</option>' . PHP_EOL;
+                    }
 
                     ?>
-					</select>-->
+					</select>
                 </td>
             </tr>
             <tr>
