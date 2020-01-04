@@ -180,4 +180,8 @@ vennligst besøk $link. Dersom du ikke ønsker å resette det, se bort fra denne
         }
         throw new \Exception('Sugefisk?');
     }
+
+    public static function genererNyHash($passord, $salt) {
+        return password_hash($passord . $salt, PASSWORD_ARGON2ID);
+    }
 }

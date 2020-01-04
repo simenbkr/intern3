@@ -719,7 +719,7 @@ VALUES(:bruker_id,:fornavn,:mellomnavn,:etternavn,:fodselsdato,:adresse,:postnum
         $st->bindParam(':id', $bruker_id);
         $passord = Funk::generatePassword();
         $saltet = Funk::generatePassword(28);
-        $hashen = LogginnCtrl::genererHashMedSalt($passord, $saltet);
+        $hashen = LogginnCtrl::genererNyHash($passord, $saltet);
         $st->bindParam(':passord', $hashen);
         $st->bindParam(':salt', $saltet);
         $st->execute();
