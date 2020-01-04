@@ -342,12 +342,18 @@ class Bruker
         $this->salt = $salt;
     }
 
-    public function endrePassord($passord)
+    public function endrePassord($passord_hash)
     {
         $st = DB::getDB()->prepare('UPDATE bruker SET passord=:password WHERE id=:id');
-        $st->bindParam(':password', $passord);
+        $st->bindParam(':password', $passord_hash);
         $st->bindParam(':id', $this->id);
         $st->execute();
+    }
+
+    public function endreRawPassord($passord) {
+        $st = DB::getDB()->prepare('UPDATE bruker SET passord=:password WHERE id=:id');
+        $hash = $this->newhash($passord);
+        $st->execute(['password' => $hash, 'id' => $this->id]);
     }
 
     public static function byGlemtToken($token)

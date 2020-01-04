@@ -272,17 +272,16 @@ class ProfilCtrl extends AbstraktCtrl
     {
         $feil = $this->godkjennPassord();
         if (count($feil) == 0 && isset($_POST['passord1'])) {
-            $st = DB::getDB()->prepare('UPDATE bruker SET passord=:passord WHERE id=:id;');
-            $id = $this->cd->getAktivBruker()->getId();
-            $passord = LogginnCtrl::genererHash($_POST['passord1'], $id);
-            $st->bindParam(':id', $id);
-            $st->bindParam(':passord', $passord);
-            $st->execute();
-            //setcookie('passord', $passord, $_SERVER['REQUEST_TIME'] + 31556926, NULL, NULL, NULL, TRUE);
-            $_SESSION['passord'] = $passord;
-            //$feil = array("Endret passord");
-            $_SESSION['success'] = 1;
-            $_SESSION['msg'] = "Passord endret!";
+
+            $bruker = $this->cd->getAktivBruker();
+
+            if(is_null($bruker)) {
+                return array('Noe gikk galt ved endring av passord.');
+            }
+
+            // Null filtrering fordi det dyttes igjennom en hash-funksjon læll sjø.
+            $bruker->endreRawPassord($_POST['passord1']);
+            Funk::setSuccess('Passordet ble endret!');
         }
         return $feil;
     }
