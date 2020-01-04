@@ -90,7 +90,7 @@ class Bruker
         }
 
         //return $this->newhash($passord) === $this->passord;
-        return password_verify($passord, $this->passord);
+        return password_verify($passord . $this->salt, $this->passord);
     }
 
     public function getPerson()
