@@ -241,6 +241,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <div class="col-md-12">
         <h1>Utvalget &raquo; Regisjef &raquo; Oppgave</h1>
 
+        <a href="?a=utvalg/regisjef/oppgave/gamle">Gamle oppgaver</a>
+
         <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
         <?php if (isset($feilSubmit)) { ?>
             <div class="alert alert-danger fade in" id="success" style="display:table; margin: auto; margin-top: 5%">

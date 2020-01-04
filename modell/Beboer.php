@@ -425,6 +425,11 @@ class Beboer implements Person
 
         foreach (Vaktbytte::getAlle() as $vaktbytte) {
             /* @var Vaktbytte $vaktbytte */
+
+            if(is_null($vaktbytte->getVakt()->getBruker())) {
+                continue;
+            }
+
             if ($vaktbytte->getVakt()->getBruker()->getPerson()->getId() === $this->id) {
                 $vaktbytte->slett();
             }

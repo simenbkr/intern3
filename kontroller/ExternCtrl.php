@@ -29,7 +29,7 @@ class ExternCtrl extends AbstraktCtrl
 
         //Sjekk om data stemmer med en bruker.
         if (($bruker = Bruker::medEpost($user)) != null &&
-            $bruker->passordErGyldig(LogginnCtrl::genererHash($pass, $bruker->getId())) &&
+            $bruker->passordErGyldig($pass) &&
             $bruker->getPerson()->erAktiv()) {
 
             return true;

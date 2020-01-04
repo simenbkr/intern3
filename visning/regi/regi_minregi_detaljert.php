@@ -26,7 +26,21 @@ require_once(__DIR__ . '/../static/topp.php');
             </tr>
             <tr>
                 <th>Kategori:</th>
-                <td><?php echo $arbeidet->getPolymorfKategori()->getNavn(); ?></td>
+                <td>
+                    <?php
+                       $poly = $arbeidet->getPolymorfKategori();
+                       if($poly instanceof \intern3\Oppgave) {
+                           echo "Oppgave: ";
+                       } elseif ($poly instanceof \intern3\Feil) {
+                           echo "Feilretting: ";
+                       } elseif ($poly instanceof \intern3\Rapport) {
+                           echo "Rapport: ";
+                       } elseif ($poly instanceof \intern3\Arbeidskategori) {
+                           echo "Arbeid: ";
+                       }
+                        echo $arbeidet->getPolymorfKategori()->getNavn();
+                       ?>
+                </td>
             </tr>
             <tr>
                 <th>Tid brukt:</th>

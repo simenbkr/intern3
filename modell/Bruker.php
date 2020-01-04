@@ -59,10 +59,37 @@ class Bruker
         return $this->salt;
     }
 
+    public function oldHash($pw) {
+        // Hvorfor var dette en greie så lenge? Big yikes.
+        return crypt($pw, '$6$rounds=5000$' . $this->salt . '$');
+    }
+
+    public function newhash($pw) {
+        return password_hash($pw . $this->salt, PASSWORD_ARGON2ID);
+    }
+
     public function passordErGyldig($passord)
     {
-        //MÅ bruke === og ikke == da == er en shitty operator i denne situasjonen. TODO test at funker.
-        return $passord === $this->passord;
+        //MÅ bruke === og ikke ==.
+        // == vil forsøke å typecaste, som kan være uheldig i denne konteksten.
+
+        // Gammelt hash
+        if(substr($this->passord, 0, 3) === "$6$") {
+            $expected_hash = $this->oldHash($passord);
+
+            if ($expected_hash === $this->passord) {
+
+                $new_hash = $this->newhash($passord);
+                $this->passord = $new_hash;
+                $this->endrePassord($new_hash);
+                return true;
+
+            }
+
+            return false;
+        }
+
+        return $this->newhash($passord) === $this->passord;
     }
 
     public function getPerson()
