@@ -383,116 +383,245 @@ class HelgaCtrl extends AbstraktCtrl
                 }
             case 'helga':
             default:
-                $dok = new Visning($this->cd);
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+                $bruker = $this->cd->getAktivBruker();
+                $beboer = $bruker->getPerson();
+                $helga = Helga::getLatestHelga();
+                $gjester = HelgaGjesteObjekt::medAarVert($helga->getAar(), $beboer->getId());
+                $count = HelgaGjesteListe::getGjesteCountBeboer($beboer->getId(), $helga->getAar());
+
+
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
-                        //Legg til gjest.
-                        if (Funk::isValidEmail($post['epost'])) {
-                            $max_gjester = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(),
-                                $post['add']);
+                    $arg = $this->cd->getSisteArg();
 
-                            $num_gjester_aktuell_dag = HelgaGjesteListe::getGjesteCountDagBeboer($post['add'],
-                                $this->cd->getAktivBruker()->getPerson()->getId(), $denne_helga->getAar());
+                    switch ($arg) {
 
-                            if ($num_gjester_aktuell_dag < $max_gjester) {
-                                //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
-                                $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
-                                VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
-                                $nokkel = hash('sha512', Funk::generatePassword(30));
-                                $null = 0;
-                                $st->bindParam(':navn', $post['navn']);
-                                $st->bindParam(':aar', $aar);
-                                $st->bindParam(':epost', $post['epost']);
-                                $st->bindParam(':vert', $beboer_id);
-                                $st->bindParam(':inne', $null);
-                                $st->bindParam(':sendt_epost', $null);
-                                $st->bindParam(':dag', $post['add']);
-                                $st->bindParam(':nokkel', $nokkel);
-                                $st->execute();
+                        case 'slett':
+                            $gjest = HelgaGjest::medId($post['id']);
+                            $navn = $gjest->getNavn();
+                            $alle_instanser = HelgaGjesteObjekt::medAarEpost($helga->getAar(), $gjest->getEpost());
+                            $alle_instanser->slett();
+                            print "Slettet gjesten $navn.";
+                            break;
+                        case 'endre':
+                            $gjest = HelgaGjest::medId($post['id']);
+                            $alle_instanser = HelgaGjesteObjekt::medAarEpost($helga->getAar(), $gjest->getEpost());
+                            $days = HelgaCtrl::daysToNumeric(explode(';', $post['dager']));
 
-                                \PHPQRCode\QRcode::png("http://intern.singsaker.no/?a=helga/reg/" . $nokkel,
-                                    PATH . '/www/qrkoder/' . $nokkel . ".png",
-                                    'L',
-                                    4,
-                                    2);
+                            if (count($days) > 3) {
+                                exit("Plsno");
+                            }
 
-                            } else {
-                                print "Du har nådd maks gjestekapasitet for denne dagen!";
+                            if (sort($days) != sort($alle_instanser->getDager())) {
+                                $navn = $gjest->getNavn();
+                                $epost = $gjest->getEpost();
+                                $alle_instanser->slett();
+                                HelgaGjesteObjekt::addMultidayGjest($navn, $epost, $helga->getAar(), $days, $beboer);
+                            }
+
+                            if ($post['epost'] != $gjest->getEpost() && strlen($post['epost']) > 1 && strpos($post['epost'],
+                                    "@") !== false) {
+                                $alle_instanser->setEpost($post['epost']);
+                                Funk::setSuccess("Endret epost til {$alle_instanser->getNavn()}.");
+                                foreach ($alle_instanser->getInstanser() as $gjesten) {
+                                    $gjesten->setSendt(0);
+                                }
+                                header('Location: ?a=helga');
                                 exit();
                             }
 
-                        } else {
-                            print "Ugyldig epost!";
+                            print "Endret på gjesten {$gjest->getNavn()}.";
+
+                            break;
+                        case 'add':
+                            $days = HelgaCtrl::daysToNumeric(explode(';', $post['dager']));
+
+                            if (count($days) > 3) {
+                                exit("Plsno");
+                            }
+
+                            if(count($days) < 1) {
+                                print "Du må velge minst en dag!";
+                                exit();
+                            }
+
+                            $actual = array();
+                            foreach ($days as $day) {
+                                if ($helga->kanLeggeTil($beboer->getId(), $day)) {
+                                    $actual[] = $day;
+                                }
+                            }
+
+                            if (count($actual) > 0) {
+                                HelgaGjesteObjekt::addMultidayGjest($post['navn'], $post['epost'], $helga->getAar(),
+                                    $days,
+                                    $beboer);
+                                print "La til gjestene!";
+                            } else {
+                                print "Du har dessverre gått tom for invitasjoner for denne invitasjonen. Prøv gjerne igjen!";
+                            }
+
+                            break;
+                        case 'send_epost':
+                            $gjest = HelgaGjest::medId($post['id']);
+                            $alle_instanser = HelgaGjesteObjekt::medAarEpost($helga->getAar(), $gjest->getEpost());
+
+                            foreach ($alle_instanser->getInstanser() as $gjesten) {
+                                /* @var HelgaGjest $gjesten */
+                                if (!$gjesten->getSendt()) {
+                                    $gjesten->sendEpost();
+                                }
+                            }
+                            print "Sendte epost med invitasjon(er) til {$gjesten->getNavn()}";
+                            break;
+                        default:
                             exit();
-                        }
-                    }
-                    if (isset($post['fjern']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
-                        //Fjern gjest.
-                        $id = $post['gjestid'];
-                        if (HelgaGjest::belongsToBeboer($id, $beboer_id)) {
-                            HelgaGjest::removeGjest($post['gjestid']);
-                        } else {
-                            $dok->set('VisError', 1);
-                        }
-                    }
-                    if (isset($post['send']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
-                        $gjesteid = $post['gjestid'];
-                        $gjesten = HelgaGjest::byId($gjesteid);
-                        if (HelgaGjest::belongsToBeboer($gjesteid,
-                                $beboer_id) && Funk::isValidEmail($gjesten->getEpost())) {
-                            $nettsiden = "http://intern.singsaker.no/qrkoder/" . $gjesten->getNokkel() . ".png";
-                            $dagen = $dag_array[$gjesten->getDag()];
-                            $datoen = date('Y-m-d',
-                                strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
-                            $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
-                            $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til "
-                                . $denne_helga->getTema() . "-" . "HELGA" . " av " . $beboer->getFulltNavn() .
-                                "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
-                                    Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
-                                    Med vennlig hilsen<br/>HELGA-" . $denne_helga->getAar() . "<br/><br/>
-                                    <br/><br/><p>Dette er en automatisert melding. Feil? Vennligst ta kontakt
-                                     med data@singsaker.no.</p></body></html>";
-
-
-                            //$beskjed = $denne_helga->getEpostTekst() . "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>Med vennlig hilsen<br/>" . $denne_helga->getTema() . "-Helga 2017";
-                            Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
-                            $gjesten->setSendt(1);
-                            $dok->set('epostSendt', 1);
-                        }
-                        header('Location: ' . $_SERVER['REQUEST_URI']);
-                        exit();
                     }
                     exit();
                 }
-                $dagen = $this->cd->getSisteArg();
-                switch ($dagen) {
-                    case 'torsdag':
-                        $dag_tall = 0;
-                        break;
-                    case 'fredag':
-                        $dag_tall = 1;
-                        break;
-                    case 'lordag':
-                        $dag_tall = 2;
-                        break;
-                    default:
-                        $dag_tall = 0;
+
+                $status = array();
+                foreach ([0, 1, 2] as $day) {
+                    $status[$helga::DAGER[$day]] = HelgaGjesteListe::getGjesteCountDagBeboer($day, $beboer->getId(), $helga->getAar());
                 }
-                $beboers_gjester = HelgaGjesteListe::getGjesteListeDagByBeboerAar($dag_tall, $beboer_id, $aar);
-                $gjeste_count = HelgaGjesteListe::getGjesteCountDagBeboer($dag_tall, $beboer_id, $aar);
-                $max_gjeste_count = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(),
-                    $dag_tall);
-                $ledige = $max_gjeste_count - $gjeste_count;
-                $dok->set('ledige', $ledige);
-                $dok->set('dag_tall', $dag_tall);
-                $dok->set('max_gjeste_count', $max_gjeste_count);
-                $dok->set('beboers_gjester', $beboers_gjester);
-                $dok->set('gjeste_count', $gjeste_count);
-                $dok->set('dagen', $dagen);
-                $dok->vis('helga/helga.php');
+
+                $dok = new Visning($this->cd);
+                $dok->set('helga', $helga);
+                $dok->set('beboer', $beboer);
+                $dok->set('gjester', $gjester);
+                $dok->set('count', $count);
+                $dok->set('status', $status);
+                $dok->vis('helga/helga_alt.php');
                 exit();
+
+            /*
+
+                        $dok = new Visning($this->cd);
+                        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                            if (isset($post['add']) && isset($post['navn']) && isset($post['epost']) && is_numeric($post['add'])) {
+                                //Legg til gjest.
+                                if (Funk::isValidEmail($post['epost'])) {
+                                    $max_gjester = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(),
+                                        $post['add']);
+
+                                    $num_gjester_aktuell_dag = HelgaGjesteListe::getGjesteCountDagBeboer($post['add'],
+                                        $this->cd->getAktivBruker()->getPerson()->getId(), $denne_helga->getAar());
+
+                                    if ($num_gjester_aktuell_dag < $max_gjester) {
+                                        //HelgaGjest::addGjest($post['navn'], $post['epost'], $beboer_id, $post['add'], $aar);
+                                        $st = DB::getDB()->prepare('INSERT INTO helgagjest (navn, aar, epost, vert, dag ,inne, sendt_epost, api_nokkel)
+                                        VALUES(:navn, :aar, :epost, :vert, :dag, :inne, :sendt_epost, :nokkel)');
+                                        $nokkel = hash('sha512', Funk::generatePassword(30));
+                                        $null = 0;
+                                        $st->bindParam(':navn', $post['navn']);
+                                        $st->bindParam(':aar', $aar);
+                                        $st->bindParam(':epost', $post['epost']);
+                                        $st->bindParam(':vert', $beboer_id);
+                                        $st->bindParam(':inne', $null);
+                                        $st->bindParam(':sendt_epost', $null);
+                                        $st->bindParam(':dag', $post['add']);
+                                        $st->bindParam(':nokkel', $nokkel);
+                                        $st->execute();
+
+                                        \PHPQRCode\QRcode::png("http://intern.singsaker.no/?a=helga/reg/" . $nokkel,
+                                            PATH . '/www/qrkoder/' . $nokkel . ".png",
+                                            'L',
+                                            4,
+                                            2);
+
+                                    } else {
+                                        print "Du har nådd maks gjestekapasitet for denne dagen!";
+                                        exit();
+                                    }
+
+                                } else {
+                                    print "Ugyldig epost!";
+                                    exit();
+                                }
+                            }
+                            if (isset($post['fjern']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
+                                //Fjern gjest.
+                                $id = $post['gjestid'];
+                                if (HelgaGjest::belongsToBeboer($id, $beboer_id)) {
+                                    HelgaGjest::removeGjest($post['gjestid']);
+                                } else {
+                                    $dok->set('VisError', 1);
+                                }
+                            }
+                            if (isset($post['send']) && isset($post['gjestid']) && is_numeric($post['gjestid'])) {
+                                $gjesteid = $post['gjestid'];
+                                $gjesten = HelgaGjest::byId($gjesteid);
+                                if (HelgaGjest::belongsToBeboer($gjesteid,
+                                        $beboer_id) && Funk::isValidEmail($gjesten->getEpost())) {
+                                    $nettsiden = "http://intern.singsaker.no/qrkoder/" . $gjesten->getNokkel() . ".png";
+                                    $dagen = $dag_array[$gjesten->getDag()];
+                                    $datoen = date('Y-m-d',
+                                        strtotime($denne_helga->getStartDato() . " +" . $gjesten->getDag() . " days"));
+                                    $tittel = "[SING-HELGA] Du har blitt invitert til HELGA-" . $denne_helga->getAar();
+                                    $beskjed = "<html><body>Hei, " . $gjesten->getNavn() . "! <br/><br/>Du har blitt invitert til "
+                                        . $denne_helga->getTema() . "-" . "HELGA" . " av " . $beboer->getFulltNavn() .
+                                        "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
+                                            Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
+                                            Med vennlig hilsen<br/>HELGA-" . $denne_helga->getAar() . "<br/><br/>
+                                            <br/><br/><p>Dette er en automatisert melding. Feil? Vennligst ta kontakt
+                                             med data@singsaker.no.</p></body></html>";
+
+                                    Epost::sendEpost($gjesten->getEpost(), $tittel, $beskjed);
+                                    $gjesten->setSendt(1);
+                                    $dok->set('epostSendt', 1);
+                                }
+                                header('Location: ' . $_SERVER['REQUEST_URI']);
+                                exit();
+                            }
+                            exit();
+                        }
+                        $dagen = $this->cd->getSisteArg();
+                        switch ($dagen) {
+                            case 'torsdag':
+                                $dag_tall = 0;
+                                break;
+                            case 'fredag':
+                                $dag_tall = 1;
+                                break;
+                            case 'lordag':
+                                $dag_tall = 2;
+                                break;
+                            default:
+                                $dag_tall = 0;
+                        }
+                        $beboers_gjester = HelgaGjesteListe::getGjesteListeDagByBeboerAar($dag_tall, $beboer_id, $aar);
+                        $gjeste_count = HelgaGjesteListe::getGjesteCountDagBeboer($dag_tall, $beboer_id, $aar);
+                        $max_gjeste_count = $denne_helga->getMaxGjest($this->cd->getAktivBruker()->getPerson()->getId(),
+                            $dag_tall);
+                        $ledige = $max_gjeste_count - $gjeste_count;
+                        $dok->set('ledige', $ledige);
+                        $dok->set('dag_tall', $dag_tall);
+                        $dok->set('max_gjeste_count', $max_gjeste_count);
+                        $dok->set('beboers_gjester', $beboers_gjester);
+                        $dok->set('gjeste_count', $gjeste_count);
+                        $dok->set('dagen', $dagen);
+                        $dok->vis('helga/helga.php');
+                        exit();*/
         }
+    }
+
+    public static function daysToNumeric($d)
+    {
+        $days = array();
+        $valid = array(
+            'torsdag' => 0,
+            'fredag' => 1,
+            'lordag' => 2
+        );
+        foreach ($d as $dag) {
+            if (in_array($dag, $valid)) {
+                $days[] = $valid[$dag];
+            }
+        }
+
+        return $days;
     }
 
 }

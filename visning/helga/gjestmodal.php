@@ -2,7 +2,9 @@
 /* @var \intern3\HelgaGjest $gjest */
 ?>
 
-<form action="?a=helga/endregjest/<?php echo $gjest->getId(); ?>" method="post">
+<?php /*<form action="?a=helga/endregjest/<?php echo $gjest->getId(); ?>" */ ?>
+<form action="?a=helga/endre" method="post">
+    <input type="hidden" name="id" value="<?php echo $gjest->getId(); ?>"
 
     <table class="table table-responsive table-bordered">
 
