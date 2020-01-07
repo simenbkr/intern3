@@ -41,7 +41,6 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
         function add(i) {
             var navn = document.getElementById('navn-' + i).value;
             var epost = document.getElementById('epost-' + i).value;
-            var dager = [];
 
             var days = [];
             ['torsdag-' + i, 'fredag-' + i, 'lordag-' + i].forEach(function (str, index) {
@@ -84,21 +83,25 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
         <div class="col-lg-12">
             <h1>HELGA Â» Invitasjon</h1>
 
+
+            <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
+
+            <div class="alert alert-danger fade in" id="success"
+                 style="margin: auto; margin-top: 5%; display:none">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <p id="tilbakemelding-text"></p>
+            </div>
+
             <div class="col-lg-7">
-
-                <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
-
-                <div class="alert alert-danger fade in" id="success"
-                     style="margin: auto; margin-top: 5%; display:none">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <p id="tilbakemelding-text"></p>
-                </div>
 
                 <p>Her kan du invitere til HELGA!
                     <?php if (!$helga->erSameMax() || $helga->harEgendefinert($beboer->getId())) { ?>
                         <?php $max_invites = $helga->getMaxGjest($beboer->getId(),
                                 0) + $helga->getMaxGjest($beboer->getId(), 1) + $helga->getMaxGjest($beboer->getId(),
                                 2); ?>
+                        Du har <?php echo $helga->getMaxGjest($beboer->getId(), 0); ?> invitasjoner torsdag,
+                        <?php echo $helga->getMaxGjest($beboer->getId(), 1); ?> invitasjoner fredag og
+                        <?php echo $helga->getMaxGjest($beboer->getId(), 2); ?> invitasjoner lÃ¸rdag.
                     <?php } else { ?>
                         Du har <?php echo $helga->getMaxAlle(); ?> invitasjoner hver dag.
                         <?php $max_invites = 3 * $helga->getMaxAlle(); ?>
@@ -106,7 +109,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                     Â  ?>
                 </p>
                 <p>
-                Invitasjons-status:
+                    Invitasjons-status:
                 <ul>
                     <li>Torsdag: <?php echo $status['torsdag']; ?>/<?php echo $helga->getMaxGjest($beboer->getId(),
                             0); ?></li>
@@ -114,10 +117,13 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                             1); ?></li>
                     <li>LÃ¸rdag: <?php echo $status['lordag']; ?>/<?php echo $helga->getMaxGjest($beboer->getId(),
                             2); ?></li>
-                </ul></p>
+                </ul>
+                </p>
+
+                <hr>
 
 
-                <?php for ($i = 0; $i < $max_invites /*- $count */; $i++) { ?>
+                <?php for ($i = 0; $i < $max_invites - $count; $i++) { ?>
                     <div class="formen">
                         <table class="table table-bordered table-responsive">
                             <tr id="add-<?php echo $i; ?>">
@@ -159,7 +165,22 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
             <div class="col-lg-5" id="lista">
 
-                <table class="table table-bordered table-responsive">
+                <button id="torsdag" class="btn btn-primary">Torsdag</button>
+                <button id="fredag" class="btn btn-default">Fredag</button>
+                <button id="lordag" class="btn btn-info">LÃ¸rdag</button>
+                <hr>
+                <table class="table table-bordered table-responsive" id="tabellen">
+                    <thead>
+                    <th>Navn</th>
+                    <th>Epost</th>
+                    <th>Torsdag</th>
+                    <th>Fredag</th>
+                    <th>LÃ¸rdag</th>
+                    <th>Endre</th>
+                    <th>Send Epost</th>
+                    <th>Slett</th>
+                    </thead>
+                    <tbody>
                     <?php foreach ($gjester as $gjest) {
                         /* @var \intern3\HelgaGjesteObjekt $gjest */
                         ?>
@@ -167,34 +188,35 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                         <tr id="<?php echo $gjest->getIder()[0]; ?>">
                             <td>Navn: <?php echo $gjest->getNavn(); ?></td>
                             <td>Epost: <?php echo $gjest->getEpost(); ?></td>
-                            <td>Invitert: <?php
-                                $s = '';
-                                foreach ($gjest->getDager() as $i) {
-                                    $s .= $dager_readable[$helga::DAGER[$i]] . ", ";
-                                }
-                                echo rtrim($s, ', ');
-                                ?>
-                            </td>
+                            <td data-label="<?php echo in_array("0",
+                                $gjest->getDager()) ? '1' : '0'; ?>"><?php if (in_array("0", $gjest->getDager())) {
+                                    echo "âœ—";
+                                } ?></td>
+                            <td data-label="<?php echo in_array("1",
+                                $gjest->getDager()) ? '1' : '0'; ?>"><?php if (in_array("1", $gjest->getDager())) {
+                                    echo "âœ—";
+                                } ?></td>
+                            <td data-label="<?php echo in_array("2",
+                                $gjest->getDager()) ? '1' : '0'; ?>"><?php if (in_array("2", $gjest->getDager())) {
+                                    echo "âœ—";
+                                } ?></td>
                             <td><input class="btn btn-primary" type="submit" value="Slett"
                                        onclick="fjern(<?php echo $gjest->getIder()[0]; ?>)"></td>
-                            <?php if (!$gjest->erEpostSendt()) { ?>
-                                <td>
-                                    <button class="btn btn-warning" onclick="vis(<?php echo $gjest->getIder()[0]; ?>)">
-                                        Endre
-                                    </button>
-                                </td>
-                                <td>
-                                    <input class="btn btn-info" type="submit" value="Send"
-                                           onclick="send_epost(<?php echo $gjest->getIder()[0]; ?>)">
-                                </td>
-                            <?php } else { ?>
-                                <td>
-                                    <button class="btn btn-info disabled">Send</button>
-                                </td>
-                            <?php } ?>
+                            <td>
+                                <button class="btn btn-warning" onclick="vis(<?php echo $gjest->getIder()[0]; ?>)">
+                                    Endre
+                                </button>
+                            </td>
+                            <td>
+                                <input class="btn btn-info" type="submit" value="Send"
+                                       onclick="send_epost(<?php echo $gjest->getIder()[0]; ?>)">
+                            </td>
                         </tr>
-                    <?php }
+                        <?php
+                    }
                     Â  ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -219,6 +241,45 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
             </div>
         </div>
     </div>
+
+    <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
+    <script type="text/javascript" src="js/dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#tabellen').DataTable({
+                "paging": false,
+                "searching": false,
+                "info": false
+            });
+
+            $('#torsdag').click(function() {
+                $.fn.dataTable.ext.search.push(
+                    function (settings, data, dataIndex) {
+                        return false;
+                        return table.row(table.row(dataIndex).node().children[2]).data()[2].length > 0;
+                    }
+                );
+
+                table.draw();
+            })
+
+
+        });
+
+       /* $('#torsdag').on('click', function () {
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    return table.row(table.row(dataIndex).node().children[2]).data()[2].length > 0;
+                }
+            );
+            table.draw();
+            $.fn.dataTable.ext.search.pop();
+        })*/
+
+
+    </script>
+
 <?php
 
 require_once(__DIR__ . '/../static/bunn.php');
