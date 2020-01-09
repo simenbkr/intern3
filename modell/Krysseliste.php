@@ -184,7 +184,7 @@ class Krysseliste
                 $KryssDrikka = json_decode($delKryseListe->krysseliste, true);
 
                 foreach ($KryssDrikka as $enkelt_kryss) {
-                    if ($enkelt_kryss['fakturert'] == 0 && strtotime($enkelt_kryss['tid']) < strtotime($dato)) {
+                    if ($enkelt_kryss['fakturert'] == 0 && strtotime($enkelt_kryss['tid']) <= strtotime($dato)) {
                         $kryss[Drikke::medId($delKryseListe->drikkeId)->getNavn()] += $enkelt_kryss['antall'];
                     }
                 }

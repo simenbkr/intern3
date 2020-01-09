@@ -351,7 +351,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 if ('krysserapportutskrift' !== $periode) {
                     $ts = strtotime($periode);
                     if($ts > strtotime($sistFakturert)) {
-                        $krysseListeMonthListe = Krysseliste::getAllIkkeFakturertFDato($ts);
+                        $krysseListeMonthListe = Krysseliste::getAllIkkeFakturertFDato(date('Y-m-d H:i:s', $ts));
                         $dok->set('dato', date('Y-m-d H:i:s', $ts));
                     }
                 }
