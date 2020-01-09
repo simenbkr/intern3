@@ -4,6 +4,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 
 ?>
+    <script src="js/moment.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
+
     <script>
         function sett_fakturert() {
             $("#kult").show();
@@ -27,7 +30,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         }
 
         function sett_fakturert_dato() {
-            var dato = document.getElementById('datoen').value;
+            var dato = document.getElementById('datoen-tekst').value;
             $("#kult2").show();
             $.ajax({
                 type: 'POST',
@@ -43,34 +46,18 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             });
         }
 
-        $('form > input').keyup(function () {
-            console.log("asdkasdjasdghjas");
-            var empty = false;
-            $('form > input[required]').each(function () {
-                if ($(this).val() == '') {
-                    empty = true;
-                }
-            });
-
-            if (empty) {
-                $('#knappen').attr('disabled', 'disabled');
-            } else {
-                $('#knappen').removeAttr('disabled');
-            }
-        });
-
         $("body").on('keyup', '#datoen', datothingy);
         $("body").on('click', '#datoen', datothingy);
         $("body").on('change', '#datoen', datothingy);
 
 
         function datothingy() {
-            var empty = false;
+            var empty = true;
 
-            if (document.getElementById('datoen').value.length > 0) {
-                empty = true;
-            } else {
+            if (document.getElementById('datoen-tekst').value.length > 0) {
                 empty = false;
+            } else {
+                empty = true;
             }
 
 
@@ -81,25 +68,24 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             }
         }
 
-        $(function () {
-            $('#datoen').datepicker({
-                dateFormat: 'yy-mm-dd',
-                onSelect: function (datetext) {
-                    var d = new Date(); // for now
-                    var h = d.getHours();
-                    h = (h < 10) ? ("0" + h) : h;
+        function vis_utskrift() {
+            var dato = document.getElementById('dato-utskrift-tekst').value;
+            window.location = '?a=utvalg/vaktsjef/krysserapportutskrift/' + dato;
+        }
 
-                    var m = d.getMinutes();
-                    m = (m < 10) ? ("0" + m) : m;
-
-                    var s = d.getSeconds();
-                    s = (s < 10) ? ("0" + s) : s;
-
-                    datetext = datetext + " " + h + ":" + m;
-                    $('#datoen').val(datetext);
-                },
+        $(function(){
+            $('#datoen').datetimepicker({
+               format: 'YYYY-MM-DD HH:mm:ss'
             });
         });
+
+
+        $(function () {
+            $('#dato-utskrift').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            });
+        });
+
 
         $(function () {
             $("#datepicker").datepicker({dateFormat: "yy-mm-dd"});
@@ -110,20 +96,27 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <h1>Utvalget » Vaktsjef » Krysserapport</h1>
         <h3>[ Krysserapport ] [ <a
                     href="<?php echo $cd->getBase(); ?>utvalg/vaktsjef/krysserapportutskrift">Utskrift</a> ]
+
         </h3>
 
-        <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+        <hr>
+
+        <input type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-utskrift" value="Utskrift
+            fra <?php echo $sistFakturert; ?> til bestemt tidspunkt"/>
+
+        <hr>
+
+        <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
         <table class="table table-bordered table-responsive">
             <tr>
                 <th class="tittel">Krysseliste</th>
                 <th class="dato">
-                    Fra: <?php echo date('Y-m-d H:i', strtotime($sistFakturert)); ?>
-                    Til: <?php echo date('Y-m-d H:i'); ?>
+                    Fra: <?php echo date('Y-m-d H:i:s', strtotime($sistFakturert)); ?>
+                    Til: <?php echo date('Y-m-d H:i:s'); ?>
                 </th>
             </tr>
         </table>
-        <?php /* <input class="btn btn-primary" type="submit" value="Nullstill" onclick="sett_fakturert()"> */ ?>
         <h4>Sett alle til fakturert: (dette kan ta lang tid..)</h4> (Ingen vei tilbake etter at du har trykket!)
         <p>
             Fakturer til NÅ:
@@ -136,8 +129,10 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                    data-target="#modal-nullstill2">
         </p>
 
-        <p>For hver periode som skrives ut til Torild, er det essensielt at man markerer periodens kryss som "fakturert".
-            Det gjøres primært gjennom den RØDE knappen over, men i spesielle tilfeller (les: der fakturering har blitt glemt)
+        <p>For hver periode som skrives ut til Torild, er det essensielt at man markerer periodens kryss som
+            "fakturert".
+            Det gjøres primært gjennom den RØDE knappen over, men i spesielle tilfeller (les: der fakturering har blitt
+            glemt)
             kan den GULE knappen benyttes. Det er svært viktig at det IKKE krysses mens fakturering pågår.</p>
 
         <div class="modal fade" id="modal-nullstill" role="dialog">
@@ -176,11 +171,16 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <h4 class="modal-title">Ønsker du å nullstille kryssetabellen? Husket å skrive ut?</h4>
                     </div>
                     <div class="modal-body">
-                        <p>Fyll inn dato:
-                        <form><input class="form-control" id="datoen" type="text" required/></form>
-                        </p>
-                        <button type="button" class="btn btn-md btn-danger" id="knappen" onclick="sett_fakturert_dato()"
-                                disabled="disabled">Ja!
+                        <p>Fyll inn dato:</p>
+                        <div class="form-group">
+                            <div class='input-group date' id='datoen'>
+                                <input id="datoen-tekst" type='text' class="form-control"/>
+                                <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-md btn-danger" id="knappen" onclick="sett_fakturert_dato()" disabled="disabled">Ja!
                         </button>
                         <div id="kult2" style="display:none">
                             <p>
@@ -189,6 +189,32 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                 <img src="beboerkart/loading.gif">
                             </p>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="modal-utskrift" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Velg dato</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class='input-group date' id='dato-utskrift'>
+                                <input id="dato-utskrift-tekst" type='text' class="form-control"/>
+                                <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                            </div>
+                        </div>
+                        <button class="btn btn-warning" onclick="vis_utskrift()">Vis</button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
@@ -296,4 +322,3 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 <?php
 require_once(__DIR__ . '/../../static/bunn.php');
-?>

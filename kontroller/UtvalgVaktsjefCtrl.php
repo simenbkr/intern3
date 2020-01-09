@@ -297,29 +297,28 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
-                    $perioden = base64_encode(implode('\n', Krysseliste::periodeTilCSV()));
+                    $perioden = base64_encode(implode('\n', Krysseliste::periodeTilCSV())); //TODO Fix
                     Krysseliste::setPeriodeFakturert();
                     Funk::setSuccess("Perioden ble fakturert! Du skal ha mottatt en CSV-fil som omhandler den aktuelle perioden.");
                     Epost::sendEpost('data@singsaker.no', '[SING-INTERN] Kryssedata for nåværende periode.', $perioden);
                     exit();
                 } elseif (isset($post['settfakturert']) && $post['settfakturert'] == 2 && isset($post['dato'])) {
                     $datoen = date('Y-m-d H:i:s', strtotime($post['dato']));
-                    $now = date('Y-m-d');
-                    if ($datoen > $now) {
-                        Funk::setError("Kan ikke fakturer i fremtiden!");
-                        header('Location: ' . $_SERVER['REQUEST_URI']);
+                    $now = strtotime(date('Y-m-d H:i:s'));
+                    if (strtotime($post['dato']) > $now) {
+                        Funk::setError("Kan ikke fakturere i fremtiden!");
                         exit();
                     }
                     $forrigeFaktura = Krysseliste::getSistFakturert();
 
-                    if ($forrigeFaktura > $forrigeFaktura) {
+                    if ($forrigeFaktura > $datoen) {
                         Funk::setError("Kan ikke fakturere over én eller flere perioder.");
-                        header('Location: ' . $_SERVER['REQUEST_URI']);
                         exit();
                     }
 
                     Krysseliste::fakturerOppTil($datoen);
                 }
+
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();
                 foreach ($beboerListe as $beboer) {
@@ -350,8 +349,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $sistFakturert = Krysseliste::getSistFakturert();
 
                 if ('krysserapportutskrift' !== $periode) {
-                    if(strtotime($periode) > strtotime($sistFakturert)) {
-                        $krysseListeMonthListe = Krysseliste::getAllIkkeFakturertFDato($periode);
+                    $ts = strtotime($periode);
+                    if($ts > strtotime($sistFakturert)) {
+                        $krysseListeMonthListe = Krysseliste::getAllIkkeFakturertFDato($ts);
+                        $dok->set('dato', date('Y-m-d H:i:s', $ts));
                     }
                 }
 

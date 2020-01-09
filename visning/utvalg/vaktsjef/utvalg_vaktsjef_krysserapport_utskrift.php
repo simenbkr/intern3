@@ -1,48 +1,59 @@
-<link rel="stylesheet" type="text/css" href="css/print.css"/>
-<div class="container">
-    <table class="table table-bordered table-responsive">
-        <tr>
-            <th class="tittel">Krysseliste</th>
-            <th class="dato">
-                Fra: <?php echo date('Y-m-d H:i', strtotime($sistFakturert)); ?>
-                Til: <?php echo date('Y-m-d H:i'); ?>
-            </th>
-        </tr>
-    </table>
+<?php
 
-    <table id="krysseliste">
-            <tr><th class="navn">Navn</th>
+if (!isset($dato)) {
+    $dato = date('Y-m-d H:i:s');
+}
+?>
+
+
+    <link rel="stylesheet" type="text/css" href="css/print.css"/>
+    <div class="container">
+        <table class="table table-bordered table-responsive">
+            <tr>
+                <th class="tittel">Krysseliste</th>
+                <th class="dato">
+                    Fra: <?php echo date('Y-m-d H:i:s', strtotime($sistFakturert)); ?>
+                    Til: <?php echo $dato; ?>
+                </th>
+            </tr>
+        </table>
+
+        <table id="krysseliste">
+            <tr>
+                <th class="navn">Navn</th>
                 <?php
                 $sum = array();
-                foreach($drikke as $drikken) {
-                    if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                        (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
+                foreach ($drikke as $drikken) {
+                    /* @var intern3\Drikke $drikken */
+                    if (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0) {
                         continue;
                     }
                     ?>
-                    <th class="sum"><?php echo $drikken->getNavn();?></th>
-                <?php
-                
-                  $sum[$drikken->getNavn()] = 0;
-                
+                    <th class="sum"><?php echo $drikken->getNavn(); ?></th>
+                    <?php
+
+                    $sum[$drikken->getNavn()] = 0;
+
                 }
                 ?>
             </tr>
-            <?php foreach($krysseListeMonthListe as $beboerID => $krysseliste){
+            <?php foreach ($krysseListeMonthListe as $beboerID => $krysseliste) {
                 $beboeren = $beboerListe[$beboerID]; ?>
                 <tr>
-                    <td class="navn"><a href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId();?>"><?php echo $beboeren->getFulltNavn();?></td>
-                    <?php foreach($drikke as $drikken){
+                    <td class="navn"><a
+                                href="?a=utvalg/vaktsjef/detaljkryss/<?php echo $beboeren->getId(); ?>"><?php echo $beboeren->getFulltNavn(); ?>
+                    </td>
+                    <?php foreach ($drikke as $drikken) {
                         if (//($drikken->getId() == 1 || $drikken->getNavn() == 'Pant' ||
-                            (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)){
+                        (!$drikken->harBlittDrukketSiden($sistFakturert) && $drikken->getAktiv() == 0)) {
                             continue;
                         }
                         ?>
-                        <td class="<?php echo $drikken->getNavn();?>"><?php echo $krysseliste[$drikken->getNavn()];?></td>
-                    <?php
-                    
-                      $sum[$drikken->getNavn()] += $krysseliste[$drikken->getNavn()];
-                    
+                        <td class="<?php echo $drikken->getNavn(); ?>"><?php echo $krysseliste[$drikken->getNavn()]; ?></td>
+                        <?php
+
+                        $sum[$drikken->getNavn()] += $krysseliste[$drikken->getNavn()];
+
                     } ?>
                 </tr>
 
@@ -51,18 +62,19 @@
 
             ?>
 
-        <tr><td>TOTALT</td>
-          <?php foreach ($sum as $drikken => $verdi) { ?>
-              <td><?php echo $verdi; ?></td>
-            <?php
-          }
-          ?>
+            <tr>
+                <td>TOTALT</td>
+                <?php foreach ($sum as $drikken => $verdi) { ?>
+                    <td><?php echo $verdi; ?></td>
+                    <?php
+                }
+                ?>
 
-        </tr>
-</table>
-        </div>
+            </tr>
+        </table>
+    </div>
 
-    <?php /*
+<?php /*
 
     <table id="krysseliste">
 
