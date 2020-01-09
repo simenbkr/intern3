@@ -70,7 +70,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $slutt = strtotime($post['slutt']);
                 $vakttype = $post['options'];
 
-                while($dato < $slutt) {
+                while ($dato < $slutt) {
                     $isodato = date('Y-m-d', $dato);
                     $st = DB::getDB()->prepare('INSERT INTO vakt(vakttype,dato) VALUES(:vakttype, :dato)');
                     $st->execute(['vakttype' => $vakttype, 'dato' => $isodato]);
@@ -84,7 +84,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $vaktliste = VaktListe::listeEtterDatoType($post['start'], $post['slutt'], $post['options']);
                 $slipp = date('Y-m-d H:i:s', strtotime($post['slipp']));
 
-                foreach($vaktliste as $vakt) {
+                foreach ($vaktliste as $vakt) {
                     $vakt->toggleByttemarked($slipp);
                 }
                 Funk::setSuccess('Innsending fullført!');
@@ -154,7 +154,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $beboerId = $post['beboerId'];
                     $vaktId_1 = $post['vaktId_1'];
                     $beboer = Beboer::medId($beboerId);
-                    if ($beboer == NULL) {
+                    if ($beboer == null) {
                         exit();
                     } else {
                         $brukerId = $beboer->getBrukerId();
@@ -182,7 +182,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $beboerId = $post['beboerId'];
                     $beboer = Beboer::medId($beboerId);
-                    if ($beboer == NULL) {
+                    if ($beboer == null) {
                         exit();
                     } else {
                         $dok = new Visning($this->cd);
@@ -231,7 +231,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 if (isset($_POST['vaktId'])) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     $vakten = Vakt::medId($post['vaktId']);
-                    if($vakten != NULL) {
+                    if ($vakten != null) {
                         $vakten->toggleByttemarked();
                     }
                 }
@@ -277,7 +277,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_detaljkryss.php');
                 }
                 break;
-                
+
             case 'krysserapport_csv':
                 $perioden = Krysseliste::periodeTilCSV();
                 header("Content-type: text/csv");
@@ -287,7 +287,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 header("Expires: 0");
 
                 $output = fopen('php://output', 'wb');
-                foreach($perioden as $line) {
+                foreach ($perioden as $line) {
                     fputcsv($output, $line);
                 }
 
@@ -297,22 +297,22 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
-                    $perioden = base64_encode(implode('\n',Krysseliste::periodeTilCSV()));
+                    $perioden = base64_encode(implode('\n', Krysseliste::periodeTilCSV()));
                     Krysseliste::setPeriodeFakturert();
                     Funk::setSuccess("Perioden ble fakturert! Du skal ha mottatt en CSV-fil som omhandler den aktuelle perioden.");
                     Epost::sendEpost('data@singsaker.no', '[SING-INTERN] Kryssedata for nåværende periode.', $perioden);
                     exit();
-                } elseif(isset($post['settfakturert']) && $post['settfakturert'] == 2 && isset($post['dato'])){
+                } elseif (isset($post['settfakturert']) && $post['settfakturert'] == 2 && isset($post['dato'])) {
                     $datoen = date('Y-m-d H:i:s', strtotime($post['dato']));
                     $now = date('Y-m-d');
-                    if($datoen > $now){
+                    if ($datoen > $now) {
                         Funk::setError("Kan ikke fakturer i fremtiden!");
                         header('Location: ' . $_SERVER['REQUEST_URI']);
                         exit();
                     }
                     $forrigeFaktura = Krysseliste::getSistFakturert();
 
-                    if($forrigeFaktura > $forrigeFaktura){
+                    if ($forrigeFaktura > $forrigeFaktura) {
                         Funk::setError("Kan ikke fakturere over én eller flere perioder.");
                         header('Location: ' . $_SERVER['REQUEST_URI']);
                         exit();
@@ -335,6 +335,9 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport.php');
                 break;
             case 'krysserapportutskrift':
+
+                $periode = $this->cd->getSisteArg();
+
                 $drikke = Drikke::alle();
                 $beboerListe = BeboerListe::aktive();
                 $beboerListe2_0 = array();
@@ -342,8 +345,15 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $beboerListe2_0[$beboer->getId()] = $beboer;
                 }
                 $dok = new Visning($this->cd);
+
                 $krysseListeMonthListe = Krysseliste::getAllIkkeFakturert();
                 $sistFakturert = Krysseliste::getSistFakturert();
+
+                if ('krysserapportutskrift' !== $periode) {
+                    if(strtotime($periode) > strtotime($sistFakturert)) {
+                        $krysseListeMonthListe = Krysseliste::getAllIkkeFakturertFDato($periode);
+                    }
+                }
 
                 $dok->set('sistFakturert', $sistFakturert);
                 $dok->set('drikke', $drikke);
@@ -351,11 +361,12 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('krysseListeMonthListe', $krysseListeMonthListe);
                 $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_krysserapport_utskrift.php');
                 break;
+
             case 'kryss':
 
                 $alleKryss = array();
 
-                foreach(BeboerListe::aktive() as $beboer){
+                foreach (BeboerListe::aktive() as $beboer) {
                     $alleKryss[$beboer->getFulltNavn()] = Krysseliste::medBeboerId($beboer->getId());
                 }
 
