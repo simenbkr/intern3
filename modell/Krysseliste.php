@@ -435,6 +435,17 @@ class Krysseliste
         return $out;
     }
 
+    public static function CSVtoStr($csv) {
+        $out = '';
+        foreach ($csv as $line) {
+            foreach ($line as $item) {
+                $out .= "$item,";
+            }
+            $out = rtrim($out, ',') . '\n';
+        }
+        return $out;
+    }
+
 
     public static function setPeriodeFakturert()
     {

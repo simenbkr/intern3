@@ -297,7 +297,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $dok = new Visning($this->cd);
                 if (isset($_POST['settfakturert']) && $_POST['settfakturert'] == 1) {
-                    $perioden = base64_encode(implode('\n', Krysseliste::periodeTilCSV())); //TODO Fix
+                    $perioden = base64_encode(Krysseliste::CSVtoStr(Krysseliste::periodeTilCSV()));
                     Krysseliste::setPeriodeFakturert();
                     Funk::setSuccess("Perioden ble fakturert! Du skal ha mottatt en CSV-fil som omhandler den aktuelle perioden.");
                     Epost::sendEpost('data@singsaker.no', '[SING-INTERN] Kryssedata for nåværende periode.', $perioden);
