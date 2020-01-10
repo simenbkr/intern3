@@ -382,6 +382,21 @@ class HelgaCtrl extends AbstraktCtrl
                     $dok->vis('helga/helga_reg_gjest.php');
                     exit();
                 }
+            case 'reggjest':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->cd->getAktivBruker()->getPerson()->harHelgaTilgang()) {
+                    $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                    $gjest = HelgaGjest::medId($post['id']);
+
+                    if ($post['verdi'] == '1') {
+                        $gjest->setInne(1);
+                    } elseif ($post['verdi'] == '0') {
+                        $gjest->setInne(0);
+                    }
+
+                    Funk::setSuccess("Registrerte inngangsstatus på {$gjest->getNavn()}");
+                    exit();
+                }
+                break;
             case 'helga':
             default:
 
@@ -444,7 +459,7 @@ class HelgaCtrl extends AbstraktCtrl
                                 exit("Plsno");
                             }
 
-                            if(count($days) < 1) {
+                            if (count($days) < 1) {
                                 print "Du må velge minst en dag!";
                                 exit();
                             }
@@ -486,7 +501,8 @@ class HelgaCtrl extends AbstraktCtrl
 
                 $status = array();
                 foreach ([0, 1, 2] as $day) {
-                    $status[$helga::DAGER[$day]] = HelgaGjesteListe::getGjesteCountDagBeboer($day, $beboer->getId(), $helga->getAar());
+                    $status[$helga::DAGER[$day]] = HelgaGjesteListe::getGjesteCountDagBeboer($day, $beboer->getId(),
+                        $helga->getAar());
                 }
 
                 $dok = new Visning($this->cd);
@@ -517,13 +533,14 @@ class HelgaCtrl extends AbstraktCtrl
         return $days;
     }
 
-    public static function day_equality($a, $b) {
+    public static function day_equality($a, $b)
+    {
 
-        if(count($a) != count($b)) {
+        if (count($a) != count($b)) {
             return false;
         }
 
-        if(array_sum($a) != array_sum($b)) {
+        if (array_sum($a) != array_sum($b)) {
             return false;
         }
 
