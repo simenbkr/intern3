@@ -57,8 +57,8 @@ switch ($dag_tall) {
 
             $.ajax({
                 type: 'POST',
-                url: '?a=helga/inngang/<?php echo $jeg_er_dum[$dag_tall];?>',
-                data: 'registrer=ok&gjestid=' + id + "&verdi=" + verdi,
+                url: '?a=helga/reggjest',
+                data: 'id=' + id + "&verdi=" + verdi,
                 method: 'POST',
                 success: function (html) {
                     $("#liste-" + id).remove();
@@ -110,7 +110,6 @@ switch ($dag_tall) {
                     if (document.getElementById('status').innerHTML != response.getElementById('status').innerHTML) {
                         $('#status').replaceWith(response.getElementById('status'));
                     }
-                    //reloadAvkryss();
                 },
                 error: function (req, stat, err) {
                     alert(err);
@@ -135,8 +134,6 @@ switch ($dag_tall) {
         function reloadAvkryss() {
             $("#gjestavkryss").load("?a=helga/gjestavkryss/" + '<?php echo $jeg_er_dum[$dag_tall];?>');
         }
-
-        function ost(){console.log("ost")}
 
         setInterval(function () {
             reloadAvkryss();

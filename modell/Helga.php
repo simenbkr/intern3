@@ -116,49 +116,31 @@ class Helga
 
     public function getAntallPerDag()
     {
-        $antall_per_dag = array(
-            'torsdag' => 0,
-            'fredag' => 0,
-            'lordag' => 0
-        );
+        $st = DB::getDB()->prepare('SELECT COUNT(*) as cnt FROM helgagjest WHERE (aar = :year AND dag = :dag)');
+        $st->execute(['year' => $this->aar, 'dag' => '0']);
+        $antall_per_dag['torsdag'] = $st->fetch()['cnt'];
 
-        //public static function getGjesteCountDagBeboer($dag, $beboerid,$aar){
-        foreach (BeboerListe::aktive() as $beboer) {
-            $antall_per_dag['torsdag'] += HelgaGjesteListe::getGjesteCountDagBeboer(0, $beboer->getId(), $this->getAar());
-            $antall_per_dag['fredag'] += HelgaGjesteListe::getGjesteCountDagBeboer(1, $beboer->getId(), $this->getAar());
-            $antall_per_dag['lordag'] += HelgaGjesteListe::getGjesteCountDagBeboer(2, $beboer->getId(), $this->getAar());
-        }
+        $st->execute(['year' => $this->aar, 'dag' => '1']);
+        $antall_per_dag['fredag'] = $st->fetch()['cnt'];
+
+        $st->execute(['year' => $this->aar, 'dag' => '2']);
+        $antall_per_dag['lordag'] = $st->fetch()['cnt'];
+
         return $antall_per_dag;
     }
 
     public function getAntallInnePerDag()
     {
-        $antall_per_dag = array(
-            'torsdag' => 0,
-            'fredag' => 0,
-            'lordag' => 0
-        );
+        $st = DB::getDB()->prepare('SELECT COUNT(*) as cnt FROM helgagjest WHERE (aar = :year AND dag = :dag AND inne = 1)');
+        $st->execute(['year' => $this->aar, 'dag' => '0']);
+        $antall_per_dag['torsdag'] = $st->fetch()['cnt'];
 
-        $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE aar=:aar');
-        $st->bindParam(':aar', $this->aar);
-        $st->execute();
+        $st->execute(['year' => $this->aar, 'dag' => '1']);
+        $antall_per_dag['fredag'] = $st->fetch()['cnt'];
 
-        for ($i = 0; $i < $st->rowCount(); $i++) {
-            $rad = $st->fetch();
-            if ($rad['inne'] == 0) {
-                continue;
-            }
-            switch ($rad['dag']) {
-                case 0:
-                    $antall_per_dag['torsdag']++;
-                    break;
-                case 1:
-                    $antall_per_dag['fredag']++;
-                    break;
-                case 2:
-                    $antall_per_dag['lordag']++;
-            }
-        }
+        $st->execute(['year' => $this->aar, 'dag' => '2']);
+        $antall_per_dag['lordag'] = $st->fetch()['cnt'];
+
         return $antall_per_dag;
     }
 
@@ -356,21 +338,6 @@ class Helga
             return self::init($st);
         }
         return null;
-        /*
-                if ($st->rowCount() > 0) {
-                    $rader = $st->fetchAll()[0];
-                } else {
-                    return null;
-                }
-                $generaler = array();
-                $json_generaler = json_decode($rader['generaler'], true);
-                if ($json_generaler != null) {
-                    foreach ($json_generaler as $general) {
-                        $generaler[] = Beboer::medId($general);
-                    }
-                }
-
-                return new self($rader['aar'], $rader['start_dato'], $rader['slutt_dato'], $generaler, $rader['tema'], $rader['klar'], $rader['max_gjest'], $rader['epost_tekst']);*/
     }
 
     public static function getHelgaByAar($aar)
@@ -484,10 +451,19 @@ class Helga
         return $array;
     }
 
+    public function harEgendefinert($beboer_id) : bool {
+        $st = DB::getDB()->prepare('SELECT COUNT(*) as cnt FROM helga_gjestantall WHERE beboer_id = :beboer_id');
+        $st->execute(['beboer_id' => $beboer_id]);
+        return $st->fetch()['cnt'] > 0;
+    }
+
     public function slettEgendefinert($beboer_id) {
         $st = DB::getDB()->prepare('DELETE FROM helga_gjestantall WHERE (aar = :aar AND beboer_id = :beboer_id)');
         $st->execute(['aar' => $this->getAar(), 'beboer_id' => $beboer_id]);
 
     }
 
+    public function kanLeggeTil($beboer_id, $dag) {
+        return HelgaGjesteListe::getGjesteCountDagBeboer($dag, $beboer_id, $this->aar) < $this->getMaxGjest($beboer_id, $dag);
+    }
 }
