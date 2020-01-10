@@ -10,8 +10,8 @@ class HelgaCtrl extends AbstraktCtrl
         $beboer = $this->cd->getAktivBruker()->getPerson();
         $beboer_id = $beboer->getId();
         $denne_helga = Helga::getLatestHelga();
-        $gjestelista = $denne_helga->getGjesteliste();
-        $aar = $denne_helga->getAar();
+        //$gjestelista = $denne_helga->getGjesteliste();
+        //$aar = $denne_helga->getAar();
         $dag_array = array(
             0 => 'Torsdag',
             1 => 'Fredag',
@@ -45,6 +45,7 @@ class HelgaCtrl extends AbstraktCtrl
                 if (($gjest = HelgaGjest::medId($this->cd->getSisteArg())) !== null) {
 
                     $dok = new Visning($this->cd);
+                    $gjest = HelgaGjesteObjekt::medAarEpost($gjest->getAar(), $gjest->getEpost());
                     $dok->set('gjest', $gjest);
                     $dok->vis('helga/gjestmodal.php');
                     break;
@@ -413,11 +414,13 @@ class HelgaCtrl extends AbstraktCtrl
                                 exit("Plsno");
                             }
 
-                            if (sort($days) != sort($alle_instanser->getDager())) {
+                            //die(var_dump(HelgaCtrl::day_equality($days, $alle_instanser->getDager())));
+                            if (!HelgaCtrl::day_equality($days, $alle_instanser->getDager())) {
                                 $navn = $gjest->getNavn();
                                 $epost = $gjest->getEpost();
                                 $alle_instanser->slett();
                                 HelgaGjesteObjekt::addMultidayGjest($navn, $epost, $helga->getAar(), $days, $beboer);
+                                $_SESSION['woopidoop'] = "yike";
                             }
 
                             if ($post['epost'] != $gjest->getEpost() && strlen($post['epost']) > 1 && strpos($post['epost'],
@@ -624,4 +627,17 @@ class HelgaCtrl extends AbstraktCtrl
         return $days;
     }
 
+    public static function day_equality($a, $b) {
+
+        if(count($a) != count($b)) {
+            return false;
+        }
+
+        if(array_sum($a) != array_sum($b)) {
+            return false;
+        }
+
+        return true;
+
+    }
 }

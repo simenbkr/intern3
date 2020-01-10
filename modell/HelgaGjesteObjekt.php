@@ -144,4 +144,32 @@ class HelgaGjesteObjekt
             HelgaGjest::addGjest($navn, $epost, $vert->getId(), $dag, $aar);
         }
     }
+
+    public function gjestTorsdag() {
+        foreach($this->dager as $dag) {
+            if($dag === '0') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function gjestFredag() {
+        foreach($this->dager as $dag) {
+            if($dag === '1') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function gjestLordag() {
+        foreach($this->dager as $dag) {
+            if($dag === '2') {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

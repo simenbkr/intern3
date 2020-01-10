@@ -92,7 +92,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                 <p id="tilbakemelding-text"></p>
             </div>
 
-            <div class="col-lg-7">
+            <div class="col-lg-6">
 
                 <p>Her kan du invitere til HELGA!
                     <?php if (!$helga->erSameMax() || $helga->harEgendefinert($beboer->getId())) { ?>
@@ -122,10 +122,13 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
                 <hr>
 
+                <div class="formen">
+                    <table class="table table-bordered table-responsive table-condensed">
+                        <?php for ($i = 0;
+                                   $i < $max_invites - $count;
+                                   $i++) { ?>
 
-                <?php for ($i = 0; $i < $max_invites - $count; $i++) { ?>
-                    <div class="formen">
-                        <table class="table table-bordered table-responsive">
+
                             <tr id="add-<?php echo $i; ?>">
                                 <td>Navn:
                                     <input id="navn-<?php echo $i; ?>" type="text" name="navn" value=""
@@ -152,10 +155,12 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                                     </button>
                                 </td>
                             </tr>
-                        </table>
-                    </div>
 
-                <?php }
+
+                        <?php } ?>
+                    </table>
+                </div>
+                <?php
                 if ($max_invites - $count < 1) { ?>
                     <p> Det ser ut til at du har brukt opp alle dine invitasjoner. </p>
                 <?php }
@@ -163,13 +168,19 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
             </div>
 
-            <div class="col-lg-5" id="lista">
+            <div class="col-lg-6" id="lista">
+
+                <h3>Inviterte gjester</h3>
+
+                <p>Her vises de du har invitert til HELGA.</p>
+
+                <hr>
 
                 <button id="torsdag" class="btn btn-primary">Torsdag</button>
                 <button id="fredag" class="btn btn-default">Fredag</button>
                 <button id="lordag" class="btn btn-info">LÃ¸rdag</button>
                 <hr>
-                <table class="table table-bordered table-responsive" id="tabellen">
+                <table class="table table-bordered table-responsive table-condensed display compact" id="tabellen">
                     <thead>
                     <th>Navn</th>
                     <th>Epost</th>
@@ -188,15 +199,15 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                         <tr id="<?php echo $gjest->getIder()[0]; ?>">
                             <td>Navn: <?php echo $gjest->getNavn(); ?></td>
                             <td>Epost: <?php echo $gjest->getEpost(); ?></td>
-                            <td data-label="<?php echo in_array("0",
+                            <td id="torsdag-<?php echo $gjest->getIder()[0]; ?>" data-label="<?php echo in_array("0",
                                 $gjest->getDager()) ? '1' : '0'; ?>"><?php if (in_array("0", $gjest->getDager())) {
                                     echo "âœ—";
                                 } ?></td>
-                            <td data-label="<?php echo in_array("1",
+                            <td id="fredag-<?php echo $gjest->getIder()[0]; ?>" data-label="<?php echo in_array("1",
                                 $gjest->getDager()) ? '1' : '0'; ?>"><?php if (in_array("1", $gjest->getDager())) {
                                     echo "âœ—";
                                 } ?></td>
-                            <td data-label="<?php echo in_array("2",
+                            <td id="lordag-<?php echo $gjest->getIder()[0]; ?>" data-label="<?php echo in_array("2",
                                 $gjest->getDager()) ? '1' : '0'; ?>"><?php if (in_array("2", $gjest->getDager())) {
                                     echo "âœ—";
                                 } ?></td>
@@ -245,41 +256,155 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
     <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
     <script type="text/javascript" src="js/dataTables.js"></script>
 
+
     <script>
+
+        var table;
         $(document).ready(function () {
-            var table = $('#tabellen').DataTable({
+            var dager = [1, 1, 1];
+            var neutral = true;
+
+            table = $('#tabellen').DataTable({
                 "paging": false,
-                "searching": false,
-                "info": false
+                "info": false,
+                'destroy': true
             });
 
-            $('#torsdag').click(function() {
-                $.fn.dataTable.ext.search.push(
-                    function (settings, data, dataIndex) {
-                        return false;
-                        return table.row(table.row(dataIndex).node().children[2]).data()[2].length > 0;
+            function draw_buttons() {
+                if(neutral) {
+                    $('#torsdag').text('Torsdag');
+                    $('#torsdag').removeClass('btn-danger');
+                    $('#torsdag').addClass('btn-primary');
+
+                    $('#fredag').text('Fredag');
+                    $('#fredag').removeClass('btn-warning');
+                    $('#fredag').addClass('btn-default');
+
+                    $('#lordag').text('LÃ¸rdag');
+                    $('#lordag').removeClass('btn-success');
+                    $('#lordag').addClass('btn-info');
+
+                    return;
+                }
+
+                if(dager[0] === 1) {
+                    $('#torsdag').text('Ikke Torsdag');
+                    $('#torsdag').addClass('btn-danger');
+                    $('#torsdag').removeClass('btn-primary');
+                } else {
+                    $('#torsdag').text('Torsdag');
+                    $('#torsdag').removeClass('btn-danger');
+                    $('#torsdag').addClass('btn-primary');
+                }
+
+                if(dager[1] === 1) {
+                    $('#fredag').text('Ikke Fredag');
+                    $('#fredag').addClass('btn-warning');
+                    $('#fredag').removeClass('btn-default');
+                } else {
+                    $('#fredag').text('Fredag');
+                    $('#fredag').removeClass('btn-warning');
+                    $('#fredag').addClass('btn-default');
+                }
+
+                if(dager[2] === 1) {
+                    $('#lordag').text('Ikke LÃ¸rdag');
+                    $('#lordag').addClass('btn-success');
+                    $('#lordag').removeClass('btn-info');
+                } else {
+                    $('#lordag').text('LÃ¸rdag');
+                    $('#lordag').removeClass('btn-success');
+                    $('#lordag').addClass('btn-info');
+                }
+
+            }
+
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    var arr_sum = dager.reduce((a, b) => a + b, 0);
+                    if (arr_sum === 3 || arr_sum === 0) {
+                        dager = [1,1,1];
+                        neutral = true;
+
+                        draw_buttons();
+
+                        return true;
                     }
-                );
 
+                    /*
+                    (1 * false || 0 * true || 1 * true) == true => true
+                    (1 * false || 1 * false || 1 * false) == true => false
+                    (0 * true || 0 * true || 0 * true) == true => false
+                    etc.
+                    */
+
+                    return  (dager[0] * table.row(dataIndex).node().children[2].innerHTML.length > 0 ||
+                        dager[1] * table.row(dataIndex).node().children[3].innerHTML.length > 0 ||
+                        dager[2] * table.row(dataIndex).node().children[4].innerHTML.length > 0) == true;
+                }
+            );
+
+            $('#torsdag').click(function () {
+
+                if(neutral) {
+                    neutral = false;
+                    dager = [1, 0, 0];
+                } else {
+                    if (dager[0] === 1) {
+                        dager[0] = 0;
+                    } else {
+                        dager[0] = 1;
+
+                    }
+                }
+
+                draw_buttons();
                 table.draw();
-            })
+            });
 
+            $('#fredag').click(function () {
+
+                if(neutral) {
+                    neutral = false;
+                    dager = [0,1,0];
+                } else {
+
+                    if (dager[1] === 1) {
+                        dager[1] = 0;
+                    } else {
+                        dager[1] = 1;
+                    }
+                }
+
+                draw_buttons();
+                table.draw();
+            });
+
+            $('#lordag').click(function () {
+
+                if(neutral) {
+                    neutral = false;
+                    dager = [0,0,1];
+                } else {
+
+                    if (dager[2] === 1) {
+                        dager[2] = 0;
+                    } else {
+                        dager[2] = 1;
+                    }
+                }
+                draw_buttons();
+                table.draw();
+            });
 
         });
 
-       /* $('#torsdag').on('click', function () {
-            $.fn.dataTable.ext.search.push(
-                function (settings, data, dataIndex) {
-                    return table.row(table.row(dataIndex).node().children[2]).data()[2].length > 0;
-                }
-            );
-            table.draw();
-            $.fn.dataTable.ext.search.pop();
-        })*/
-
-
     </script>
-
+    <style>
+        .dataTables_filter {
+            display: none;
+        }
+    </style>
 <?php
 
 require_once(__DIR__ . '/../static/bunn.php');
