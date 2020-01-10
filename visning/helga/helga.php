@@ -78,7 +78,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                 url: '?a=helga/send_epost',
                 data: 'id=' + id,
                 method: 'POST',
-                success: function(html) {
+                success: function (html) {
                     tilbakemelding("Sendte epost med invitasjon(er)!");
                 }
             })
@@ -224,7 +224,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                                     echo "âœ—";
                                 } ?></td>
                             <td><input class="btn btn-primary" type="submit" value="Slett"
-                                       onclick="fjern(<?php echo $gjest->getIder()[0]; ?>)"></td>
+                                       onclick="fjern(<?php echo $gjest->getIder()[0]; ?>)" <?php echo $gjest->erInne() ? 'disabled="disabled"' : ''; ?>></td>
                             <td>
                                 <button class="btn btn-warning" onclick="vis(<?php echo $gjest->getIder()[0]; ?>)">
                                     Endre
@@ -232,7 +232,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                             </td>
                             <td>
                                 <input class="btn btn-info" type="submit" value="Send"
-                                       onclick="send_epost(<?php echo $gjest->getIder()[0]; ?>)">
+                                       onclick="send_epost(<?php echo $gjest->getIder()[0]; ?>)" <?php echo $gjest->erEpostSendt() ? 'disabled="disabled"' : '' ?>>
                             </td>
                         </tr>
                         <?php
@@ -283,7 +283,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
             });
 
             function draw_buttons() {
-                if(neutral) {
+                if (neutral) {
                     $('#torsdag').text('Torsdag');
                     $('#torsdag').removeClass('btn-danger');
                     $('#torsdag').addClass('btn-primary');
@@ -299,7 +299,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                     return;
                 }
 
-                if(dager[0] === 1) {
+                if (dager[0] === 1) {
                     $('#torsdag').text('Ikke Torsdag');
                     $('#torsdag').addClass('btn-danger');
                     $('#torsdag').removeClass('btn-primary');
@@ -309,7 +309,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                     $('#torsdag').addClass('btn-primary');
                 }
 
-                if(dager[1] === 1) {
+                if (dager[1] === 1) {
                     $('#fredag').text('Ikke Fredag');
                     $('#fredag').addClass('btn-warning');
                     $('#fredag').removeClass('btn-default');
@@ -319,7 +319,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                     $('#fredag').addClass('btn-default');
                 }
 
-                if(dager[2] === 1) {
+                if (dager[2] === 1) {
                     $('#lordag').text('Ikke LÃ¸rdag');
                     $('#lordag').addClass('btn-success');
                     $('#lordag').removeClass('btn-info');
@@ -335,7 +335,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                 function (settings, data, dataIndex) {
                     var arr_sum = dager.reduce((a, b) => a + b, 0);
                     if (arr_sum === 3 || arr_sum === 0) {
-                        dager = [1,1,1];
+                        dager = [1, 1, 1];
                         neutral = true;
 
                         draw_buttons();
@@ -350,7 +350,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                     etc.
                     */
 
-                    return  (dager[0] * table.row(dataIndex).node().children[2].innerHTML.length > 0 ||
+                    return (dager[0] * table.row(dataIndex).node().children[2].innerHTML.length > 0 ||
                         dager[1] * table.row(dataIndex).node().children[3].innerHTML.length > 0 ||
                         dager[2] * table.row(dataIndex).node().children[4].innerHTML.length > 0) == true;
                 }
@@ -358,7 +358,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
             $('#torsdag').click(function () {
 
-                if(neutral) {
+                if (neutral) {
                     neutral = false;
                     dager = [1, 0, 0];
                 } else {
@@ -376,9 +376,9 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
             $('#fredag').click(function () {
 
-                if(neutral) {
+                if (neutral) {
                     neutral = false;
-                    dager = [0,1,0];
+                    dager = [0, 1, 0];
                 } else {
 
                     if (dager[1] === 1) {
@@ -394,9 +394,9 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
             $('#lordag').click(function () {
 
-                if(neutral) {
+                if (neutral) {
                     neutral = false;
-                    dager = [0,0,1];
+                    dager = [0, 0, 1];
                 } else {
 
                     if (dager[2] === 1) {

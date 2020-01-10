@@ -417,6 +417,13 @@ class HelgaCtrl extends AbstraktCtrl
                             $gjest = HelgaGjest::medId($post['id']);
                             $navn = $gjest->getNavn();
                             $alle_instanser = HelgaGjesteObjekt::medAarEpost($helga->getAar(), $gjest->getEpost());
+                            foreach ($alle_instanser->getInstanser() as $instans) {
+                                /* @var HelgaGjest $instans */
+                                if ($instans->getInne() != '1') {
+                                    $instans->delete();
+                                }
+                            }
+
                             $alle_instanser->slett();
                             print "Slettet gjesten $navn.";
                             break;
@@ -429,13 +436,20 @@ class HelgaCtrl extends AbstraktCtrl
                                 exit("Plsno");
                             }
 
-                            //die(var_dump(HelgaCtrl::day_equality($days, $alle_instanser->getDager())));
                             if (!HelgaCtrl::day_equality($days, $alle_instanser->getDager())) {
-                                $navn = $gjest->getNavn();
-                                $epost = $gjest->getEpost();
-                                $alle_instanser->slett();
-                                HelgaGjesteObjekt::addMultidayGjest($navn, $epost, $helga->getAar(), $days, $beboer);
-                                $_SESSION['woopidoop'] = "yike";
+                                foreach ($days as $day) {
+                                    if (!in_array($day, $alle_instanser->getDager())) {
+                                        HelgaGjest::addGjest($alle_instanser->getNavn(), $alle_instanser->getEpost(),
+                                            $alle_instanser->getVertId(), $day, $alle_instanser->getAar());
+                                    }
+                                }
+
+
+                                foreach($alle_instanser->getInstanser() as $gjest) {
+                                    if(!in_array($gjest->getDag(), $days)) {
+                                        $gjest->delete();
+                                    }
+                                }
                             }
 
                             if ($post['epost'] != $gjest->getEpost() && strlen($post['epost']) > 1 && strpos($post['epost'],
@@ -520,12 +534,12 @@ class HelgaCtrl extends AbstraktCtrl
     {
         $days = array();
         $valid = array(
-            'torsdag' => 0,
-            'fredag' => 1,
-            'lordag' => 2
+            'torsdag' => '0',
+            'fredag' => '1',
+            'lordag' => '2'
         );
         foreach ($d as $dag) {
-            if (in_array($dag, $valid)) {
+            if (isset($valid[$dag])) {
                 $days[] = $valid[$dag];
             }
         }

@@ -38,6 +38,7 @@ class HelgaGjesteObjekt
             $instance->billetter[] = $rad['api_nokkel'];
             $instance->vertId = $rad['vert'];
             $instance->sendt[] = $rad['sendt_epost'];
+            $instance->inne[] = $rad['inne'];
         }
 
         foreach ($instance->ider as $id) {
@@ -67,6 +68,9 @@ class HelgaGjesteObjekt
         return self::init($st);
     }
 
+    public function getVertId() {
+        return $this->vertId;
+    }
 
     public function getVert()
     {
@@ -136,6 +140,17 @@ class HelgaGjesteObjekt
             }
         }
         return true;
+    }
+
+    public function erInne() {
+        $k = 0;
+        foreach($this->inne as $i) {
+            if($i == 1) {
+                $k++;
+            }
+        }
+
+        return $k == count($this->inne);
     }
 
     public static function addMultidayGjest($navn, $epost, $aar, $dager, Beboer $vert)

@@ -197,8 +197,22 @@ class HelgaGjest
 
     }
 
+    public function delete() {
+        $filename = PATH . '/www/qrkoder/' . $this->api_nokkel . '.png';
+        unlink($filename);
+
+        $st = DB::getDB()->prepare('DELETE FROM helgagjest WHERE id=:id');
+        $st->execute(['id' => $this->id]);
+    }
+
     public static function removeGjest($gjestid)
     {
+        $st = DB::getDB()->prepare('SELECT api_nokkel FROM helgagjest WHERE id=:id');
+        $st->execute(['id' => $gjestid]);
+        $key = $st->fetch()['api_nokkel'];
+        $filename = PATH . '/' . '/www/qrkoder' . $key;
+        unlink($filename);
+
         $st = DB::getDB()->prepare('DELETE FROM helgagjest WHERE id=:id');
         $st->bindParam(':id', $gjestid);
         $st->execute();
@@ -226,7 +240,7 @@ class HelgaGjest
         $beskjed = "<html><body>Hei, " . $this->getNavn() . "! <br/><br/>Du har blitt invitert til "
             . $helga->getTema() . "-" . "HELGA" . " av " . $beboer->getFulltNavn() .
             "<br/><br/>Denne invitasjonen gjelder for $dagen $datoen<br/><br/>
-                                            Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a><br/><br/>
+                                            Vi håper du ønsker å ta turen! Din billett for dagen finnes <a href='" . $nettsiden . "'>her</a> ($nettsiden)<br/><br/>
                                             Med vennlig hilsen<br/>HELGA-" . $helga->getAar() . "<br/><br/>
                                             <br/><br/><p>Dette er en automatisert melding. Feil? Vennligst ta kontakt
                                              med data@singsaker.no.</p></body></html>";
