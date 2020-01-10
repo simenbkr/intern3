@@ -72,6 +72,18 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
             }
         }
 
+        function send_epost(id) {
+            $.ajax({
+                type: 'POST',
+                url: '?a=helga/send_epost',
+                data: 'id=' + id,
+                method: 'POST',
+                success: function(html) {
+                    tilbakemelding("Sendte epost med invitasjon(er)!");
+                }
+            })
+        }
+
         function tilbakemelding(beskjed) {
             document.getElementById("success").style.display = "table";
             document.getElementById("tilbakemelding-text").innerHTML = beskjed;
@@ -86,7 +98,7 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
 
             <?php require_once(__DIR__ . '/../static/tilbakemelding.php'); ?>
 
-            <div class="alert alert-danger fade in" id="success"
+            <div class="alert alert-success fade in" id="success"
                  style="margin: auto; margin-top: 5%; display:none">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <p id="tilbakemelding-text"></p>
@@ -187,9 +199,9 @@ $dager_readable = ['torsdag' => 'Torsdag', 'fredag' => 'Fredag', 'lordag' => 'LÃ
                     <th>Torsdag</th>
                     <th>Fredag</th>
                     <th>LÃ¸rdag</th>
+                    <th>Slett</th>
                     <th>Endre</th>
                     <th>Send Epost</th>
-                    <th>Slett</th>
                     </thead>
                     <tbody>
                     <?php foreach ($gjester as $gjest) {
