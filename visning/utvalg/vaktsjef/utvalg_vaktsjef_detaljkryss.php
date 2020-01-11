@@ -3,12 +3,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 ?>
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <script type="text/javascript" src="js/dataTables.js"></script>
-<script>
-    $(document).ready(function(){
-        $('#tabellen').DataTable();
-    });
-</script>
-
 <div class="container">
 
     <h1>Utvalget » Vaktsjef » Detalj-kryss</h1>
@@ -39,7 +33,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </tbody>
     </table>
 </div>
-
+<script>
+    $(document).ready(function(){
+        $('#tabellen').DataTable();
+    });
+</script>
 
 <?php
 require_once(__DIR__ . '/../../static/bunn.php');
