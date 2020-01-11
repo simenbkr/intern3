@@ -4,8 +4,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <script type="text/javascript" src="js/dataTables.js"></script>
-1
-
 <div class="container">
     <div class="col-lg-12">
     <h1>Utvalget » Vaktsjef » Kryss minutt for minutt</h1>
@@ -43,3 +41,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('#tabellen').DataTable();
+    });
+</script>
+
+<?php
+require_once(__DIR__ . '/../../static/bunn.php');
+?>
