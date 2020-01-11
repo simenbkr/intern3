@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * In the appropriate PHP.ini, add: opcache.preload=/var/www/intern.singsaker.no/ink/preloader.php
+ */
+
 namespace intern3;
 
 require_once(__DIR__ . '/../config.php');
