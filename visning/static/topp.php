@@ -288,8 +288,7 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-haspopup="true" aria-expanded="false">Husfar <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?php echo $cd->getBase(); ?>utvalg/husfar/viktigedatoer">Viktige
-                                        datoer</a></li>
+                                <li><a href="<?php echo $cd->getBase(); ?>utvalg/husfar/epost">Rådets E-postlister</a></li>
                             </ul>
                         </li>
                     </ul>

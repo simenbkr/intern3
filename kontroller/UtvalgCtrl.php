@@ -31,6 +31,9 @@ class UtvalgCtrl extends AbstraktCtrl
                 case 'fordeling':
                     $valgtCtrl = new UtvalgFordelingsCtrl($this->cd->skiftArg());
                     break;
+                case 'husfar':
+                    $valgtCtrl = new UtvalgHusfarCtrl($this->cd->skiftArg());
+                    break;
                 default:
                     $valgtCtrl = new UtvalgDiverseCtrl($this->cd->skiftArg());
                     break;
