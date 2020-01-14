@@ -19,11 +19,15 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             </tr>
             <tr>
                 <td>Farge:</td>
-                <td><input type="color" name="farge" value="<?php echo $drikka->getFarge();?>"</td>
+                <td><input type="color" name="farge" value="<?php echo $drikka->getFarge();?>"></td>
             </tr>
             <tr>
                 <td>Aktiv</td>
-                <td><input type="checkbox" name="aktiv" <?php echo $drikka->getAktiv() ? 'checked=checked' :'';?></td>
+                <td><input type="checkbox" name="aktiv" <?php echo $drikka->getAktiv() ? 'checked=checked' :'';?>></td>
+            </tr>
+            <tr>
+                <td>Drikke</td>
+                <td><input class="form-control" type="text" name="drikke1" value="<?php echo $drikka->getDrikke();?>"></td>
             </tr>
             <tr>
                 <td></td>

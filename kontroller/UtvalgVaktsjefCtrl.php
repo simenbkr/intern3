@@ -383,9 +383,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         if (isset($post['pris']) && isset($post['farge'])) {
                             //Har bestemt at man ikke kan endre navn på drikker. Det er bedre å sette de som inaktive
                             //fordi da skaper man mindre forvirring for brukere (trolig).
-                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv WHERE id=:id');
+                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv, drikke=:drikke WHERE id=:id');
                             $st->bindParam(':pris', $post['pris']);
                             $st->bindParam(':farge', $post['farge']);
+                            $st->bindParam(':drikke', $post['drikke1']);
                             $aktiv = isset($post['aktiv']) && $post['aktiv'] == 'on' ? 1 : 0;
                             $st->bindParam(':aktiv', $aktiv);
                             $st->bindParam(':id', $this->cd->getSisteArg());

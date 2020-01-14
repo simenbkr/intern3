@@ -28,10 +28,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                         <input type="hidden" name="thingy" value="1">
                         <thead>
                         <tr>
-                            <th>Drikke</th>
+                            <th>Kategori</th>
                             <th>Pris</th>
                             <th>Aktiv</th>
                             <th>Farge</th>
+                            <th>Drikke</th>
                         </tr>
                         </thead>
 
@@ -44,6 +45,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                 <td><?php echo $drikken->getPris(); ?></td>
                                 <td><?php echo $drikken->getAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                                 <td><?php echo $drikken->getFarge(); ?></td>
+                                <td><?php echo $drikken->getDrikke(); ?></td>
                             </tr>
                             <?php
                         }
@@ -58,15 +60,19 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <table class="table table-bordered table-responsive">
                         <tr>
                             <td>Navn:</td>
-                            <td><input type="text" name="navn" value=""></td>
+                            <td><input class="form-control" type="text" name="navn" value="" placeholder="Navn på drikke/kategori"></td>
                         </tr>
                         <tr>
                             <td>Pris:</td>
-                            <td><input type="text" name="pris" value=""></td>
+                            <td><input class="form-control" type="text" name="pris" value="" placeholder="0.0"></td>
                         </tr>
                         <tr>
                             <td>Farge (på krysselista):</td>
-                            <td><input type="color" name="farge" value="#000"></td>
+                            <td><input class="form-control" type="color" name="farge" value="#000"></td>
+                        </tr>
+                        <tr>
+                            <td>Drikke:</td>
+                            <td><input class="form-control" type="text" name="drikke1" value="" placeholder="'Liste med tilhørende drikke...'"></td>
                         </tr>
                         <tr>
                             <td></td>
