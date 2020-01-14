@@ -294,7 +294,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     private function tildelVakter()
     {
-        /*
+        /**
          * Funksjon for å tildele vakter på en rettferdig måte. Vakter som autogenereres står for ca 2/3 av vaktene.
          * Funksjonen etterstreber å tildele kjipe vakter jevnt, og de andre vaktene vilkårlig.
          * Kjipe vakter er
@@ -316,8 +316,13 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $maks_kjipe = ceil(Vakt::antallKjipeAutogenererte() / (count($fullvakt) + count($halvvakt))) + 1;
         $margin = $_POST['varighet_sikkerhetsmargin'];
 
+        $number_vakter = count($vanlige_vakter) + count($kjipe_vakter) + count($forstevakter);
+        $number_full = count($fullvakt);
+        $number_halv = count($halvvakt);
+        $v_full = floor(($number_vakter / $number_full) * 0.4) + 1;
+        $v_halv = floor(($number_vakter / $number_halv) * 0.6) + 1;
 
-        /*
+        /**
          * Sett opp fordeling til bruk i hovedloop senere.
          */
 
@@ -334,14 +339,19 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                 }
                 $antall = intval(floor($antall * 2 / 3));
 
-                if ($rolle->getNavn() === 'Full vakt') {
-                    $fordeling[$antall] = $fullvakt;
-                } else {
-                    $fordeling[$antall] = $halvvakt;
+                switch ($rolle->getNavn()) {
+                    case Rolle::FULLVAKT:
+                        $fordeling[$antall] = $fullvakt;
+                        break;
+                    case Rolle::HALV:
+                        $fordeling[$antall] = $halvvakt;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
-        /*
+        /**
          * Fordeling ser nå omtrent slik ut:
          * $fordeling = array(
          *                      6 => array med beboerene som skal ha full vakt.
@@ -349,8 +359,10 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          * );
          */
 
+        $threshold = 0;
+
         /*
-         * Hovedloop. Vi deler først ut førstevakter, deretter de andre vaktene - i to "runder".
+         * Hovedloop. Vi deler først ut førstevakter, deretter de øvrige kjipe vaktene og til sist de andre vaktene - i tre "runder".
          */
 
         foreach (array($forstevakter, $kjipe_vakter, $vanlige_vakter) as $vakter) {
@@ -363,7 +375,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
                     while (count($tmp) > 0) {
 
-                        /*
+                        /**
                          * Velg én tilfeldig beboer.
                          */
 
@@ -371,21 +383,25 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         $beboeren = $tmp[$beboer_indeks];
                         /* @var Beboer $beboeren */
 
-                        /*
+                        /**
                          * Sjekk at beboeren kan sitte flere vakter. Hvis ikke fjernes den fra denne omgangen.
                          */
 
-                        if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
-                            || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
-
-                            if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall++ || true) {
-                                array_splice($beboere, $beboer_indeks, 1);
-                                array_splice($tmp, $beboer_indeks, 1);
-                                continue;
-                            }
+                        $egendef_antall = $antall;
+                        if($threshold > 20) {
+                            $egendef_antall += self::maksEkstraAntall($beboeren);
                         }
 
-                        /*
+                        if ($beboeren->getBruker()->antallVakter() >= $egendef_antall
+                            || $beboeren->getBruker()->antallVakter() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
+
+                            array_splice($beboere, $beboer_indeks, 1);
+                            array_splice($tmp, $beboer_indeks, 1);
+                            $threshold++;
+                            continue;
+                        }
+
+                        /**
                          * Velg én tilfeldig vakt av de gjenværende vaktene.
                          */
 
@@ -393,7 +409,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         $vakta = $vakter[$vakt_indeks];
                         /* @var Vakt $vakta */
 
-                        /*
+                        /**
                          * Dersom det ikke er noen flere vakter, vil array_rand returnere null. Derfor breaker vi om dette
                          * skjer, fordi da er det på tide med neste omgang.
                          * Hvis beboeren allerede har en vakt denne datoen, hopper vi til neste runde.
@@ -403,7 +419,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             break;
                         }
 
-                        /*
+                        /**
                          * Sjekk om beboeren har en vakt +/- 5 dager. Hvis det er tilfelle, forsøk å trekke på nytt.
                          */
 
@@ -445,7 +461,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         }
 
 
-                        /*
+                        /**
                          * Beboeren velges til denne vakta. Vakta fjernes fra lista, mens beboeren blir fjerna fra denne
                          * runden.
                          */
@@ -456,7 +472,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         array_splice($tmp, $beboer_indeks, 1);
                         array_splice($vakter, $vakt_indeks, 1);
 
-                        /*
+                        /**
                          * Sjekker om marginen er nådd. Vi deler på to fordi det er to runder -
                          * en runde for førstevakt og en for vanlig vakt.
                          */
@@ -472,11 +488,27 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
         foreach (VaktListe::autogenerert() as $vakt) {
             $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
-            $vaktId = $vakt->getId();
-            $st->bindParam(':id', $vaktId);
-            $st->execute();
+            $st->execute(['id' => $vakt->getId()]);
         }
 
+    }
+
+    private static function maksEkstraAntall(Beboer $beboer)
+    {
+        if ($beboer->getBruker()->antallVakterHarSittet() > 0) {
+            switch ($beboer->getRolle()->getNavn()) {
+                case Rolle::FULLVAKT:
+                    return floor($beboer->getRolle()->getVakterNow() / 3);
+                    break;
+                case Rolle::HALV:
+                    return 0;
+                    break;
+                default:
+                    return 0;
+            }
+        }
+
+        return 0;
     }
 
 

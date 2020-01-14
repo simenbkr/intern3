@@ -159,6 +159,10 @@ class Bruker
         return Vakt::antallIkkeBekreftetMedBrukerId($this->id);
     }
 
+    public function antallVakter() {
+        return Vakt::antallErOppsattMedBrukerId($this->id) + Vakt::antallHarSittetMedBrukerId($this->id);
+    }
+
 
     /*
      * Returnerer førstevakter + 3.-4. vakt fredag og 2.,3.,4. vakt lørdag og 2.,3. vakt søndag

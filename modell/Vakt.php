@@ -259,18 +259,18 @@ class Vakt
 
     public static function antallHarSittetMedBrukerId($brukerId)
     {
-        $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato < CURDATE();');
-        $st->bindParam(':brukerId', $brukerId);
-        $st->execute();
-        $res = $st->fetch();
-        return $res['antall'];
+        $start = date('Y-m-d', Funk::startOfSemUnix());
+        $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato < CURDATE() AND vakt.dato >= :start;');
+        $st->execute(['brukerId' => $brukerId, 'start' => $start]);
+        return $st->fetch()['antall'];
     }
 
     public static function antallErOppsattMedBrukerId($brukerId)
     {
-        $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato >= CURDATE()');
+        $slutt = date('Y-m-d', Funk::endOfSemUnix());
+        $st = DB::getDB()->prepare('SELECT count(id) AS antall FROM vakt WHERE bruker_id=:brukerId AND vakt.dato >= CURDATE() AND vakt.dato <= :slutt');
         $st->bindParam(':brukerId', $brukerId);
-        $st->execute();
+        $st->execute(['brukerId' => $brukerId, 'slutt' => $slutt]);
         $res = $st->fetch();
         return $res['antall'];
     }

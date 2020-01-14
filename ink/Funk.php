@@ -154,4 +154,18 @@ class Funk {
         return $data;
     }
 
+    public static function startOfSemUnix() {
+        $str = self::generateSemesterString(date('Y-m-d'));
+        $start = self::getSemesterStart($str);
+
+	    return strtotime($start);
+    }
+
+    public static function endOfSemUnix() {
+	    $str = self::generateSemesterString(date('Y-m-d'));
+	    $end = self::getSemesterEnd($str);
+
+	    return strtotime($end);
+    }
+
 }

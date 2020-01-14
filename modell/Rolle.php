@@ -4,6 +4,10 @@ namespace intern3;
 
 class Rolle {
 
+    public const HALV = "Halv vakt/regi";
+    public const FULLVAKT = "Full vakt";
+    public const FULLREGI = "Full regi";
+
 	private $id;
 	private $navn;
 	private $regitimer;
