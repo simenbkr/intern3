@@ -406,12 +406,13 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $drikke = Drikke::alle();
                 if (isset($_POST)) {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge'])
+                    if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge']) && isset($post['drikke1'])
                     ) {
-                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge) VALUES(:navn,:pris,1,:farge)');
+                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge,drikke) VALUES(:navn,:pris,1,:farge,:drikke)');
                         $st->bindParam(':navn', $post['navn']);
                         $st->bindParam(':pris', $post['pris']);
                         $st->bindParam(':farge', $post['farge']);
+                        $st->bindParam(':drikke', $post['drikke1']);
                         $st->execute();
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Du la til en ny drikke!";
