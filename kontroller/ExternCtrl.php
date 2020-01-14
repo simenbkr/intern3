@@ -59,9 +59,15 @@ class ExternCtrl extends AbstraktCtrl
                 $data .= $field;
             }
         }
+        
         $sig = Funk::urlsafe_b64enc(hash_hmac('sha256', $data, SHARED_SECRET, true));
 
-        return $post['secret'] == $sig;
+        if($sig != $post['secret']) {
+            error_log("ERROR ERROR ERROR ExternCtrl->externAuth expected {$post['secret']}. Received: {$sig}");
+            return false;
+        }
+
+        return true;
     }
 
     private function receiveSoknad()
