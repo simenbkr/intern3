@@ -59,12 +59,14 @@ class Bruker
         return $this->salt;
     }
 
-    public function oldHash($pw) {
+    public function oldHash($pw)
+    {
         // Hvorfor var dette en greie så lenge? Big yikes.
         return crypt($pw, '$6$rounds=5000$' . $this->salt . '$');
     }
 
-    public function newhash($pw) {
+    public function newhash($pw)
+    {
         return password_hash($pw . $this->salt, PASSWORD_ARGON2ID);
     }
 
@@ -74,7 +76,7 @@ class Bruker
         // == vil forsøke å typecaste, som kan være uheldig i denne konteksten.
 
         // Gammelt hash
-        if(substr($this->passord, 0, 3) === "$6$") {
+        if (substr($this->passord, 0, 3) === "$6$") {
             $expected_hash = $this->oldHash($passord);
 
             if ($expected_hash === $this->passord) {
@@ -159,7 +161,8 @@ class Bruker
         return Vakt::antallIkkeBekreftetMedBrukerId($this->id);
     }
 
-    public function antallVakter() {
+    public function antallVakter()
+    {
         return Vakt::antallErOppsattMedBrukerId($this->id) + Vakt::antallHarSittetMedBrukerId($this->id);
     }
 
@@ -184,8 +187,7 @@ class Bruker
     }
 
 
-
-    public function harForMangeForstevakter($lista = null) : bool
+    public function harForMangeForstevakter($lista = null): bool
     {
 
         if ($lista == null) {
@@ -203,7 +205,7 @@ class Bruker
         return $i > 2;
     }
 
-    public function harForMangeKjipeVakter($lista = null) : bool
+    public function harForMangeKjipeVakter($lista = null): bool
     {
 
         if ($lista == null) {
@@ -255,25 +257,27 @@ class Bruker
         $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
         $cnt = count($lista);
 
-        return $this->harForMangeForstevakter($lista) || $this->harForMangeKjipeVakter($lista) || $this->harVakterTett($lista, $cnt);
+        return $this->harForMangeForstevakter($lista) || $this->harForMangeKjipeVakter($lista) || $this->harVakterTett($lista,
+                $cnt);
     }
 
-    public function advarselArsak() : string {
+    public function advarselArsak(): string
+    {
 
         $lista = VaktListe::medBrukerIdEtter($this->id, date('Y-m-d'));
         $cnt = count($lista);
 
         $out = array();
 
-        if($this->harForMangeForstevakter($lista)) {
+        if ($this->harForMangeForstevakter($lista)) {
             $out[] = "Det ser ut til at {$this->getPerson()->getFulltNavn()} skal sitte mange førstevakter.";
         }
 
-        if($this->harForMangeKjipeVakter($lista)) {
+        if ($this->harForMangeKjipeVakter($lista)) {
             $out[] = "Det ser ut til at {$this->getPerson()->getFulltNavn()} skal sitte mange kjipe vakter.";
         }
 
-        if($this->harVakterTett($lista, $cnt)) {
+        if ($this->harVakterTett($lista, $cnt)) {
             $out[] = "Det ser ut til at {$this->getPerson()->getFulltNavn()} har vakter med kort tidsrom mellom enkelte av vaktene.";
         }
 
@@ -355,7 +359,8 @@ class Bruker
         $st->execute();
     }
 
-    public function endreRawPassord($passord) {
+    public function endreRawPassord($passord)
+    {
         $st = DB::getDB()->prepare('UPDATE bruker SET passord=:password WHERE id=:id');
         $hash = $this->newhash($passord);
         $st->execute(['password' => $hash, 'id' => $this->id]);
@@ -379,6 +384,12 @@ class Bruker
         return $this->glemt_token;
     }
 
-}
+    public function getRandomAutogenerertVakt(): ?Vakt
+    {
+        $vakter = VaktListe::medBrukerIdAutogen($this->id);
 
-?>
+        $i = array_rand($vakter);
+        return $vakter[$i];
+    }
+
+}

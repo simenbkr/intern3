@@ -359,9 +359,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          * );
          */
 
-        $threshold = 0;
-
-        /*
+        /**
          * Hovedloop. Vi deler først ut førstevakter, deretter de øvrige kjipe vaktene og til sist de andre vaktene - i tre "runder".
          */
 
@@ -388,16 +386,13 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          */
 
                         $egendef_antall = $antall;
-                        if($threshold > 20) {
-                            $egendef_antall += self::maksEkstraAntall($beboeren);
-                        }
+
 
                         if ($beboeren->getBruker()->antallVakter() >= $egendef_antall
                             || $beboeren->getBruker()->antallVakter() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
 
                             array_splice($beboere, $beboer_indeks, 1);
                             array_splice($tmp, $beboer_indeks, 1);
-                            $threshold++;
                             continue;
                         }
 
@@ -485,6 +480,58 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             }
         }
 
+        /**
+         * Query for å bytte vakt.
+         */
+        $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id = :bid WHERE id = :id');
+
+        for($runder = 0; $runder < 3; $runder++) {
+
+            $alle_med_vakt = BeboerListe::harVakt();
+            uasort($alle_med_vakt, function (Beboer $a, Beboer $b) {
+                if ($b->getBruker()->antallVakterIkkeOppsatt() == $a->getBruker()->antallVakterIkkeOppsatt()) {
+                    return 0;
+                }
+
+                if ($b->getBruker()->antallVakterIkkeOppsatt() > $a->getBruker()->antallVakterIkkeOppsatt()) {
+                    return 1;
+                }
+
+                return -1;
+            });
+
+            /**
+             * Må kopiere over for å kunne aksessere ved hjelp av integer-indekser fordi PHP :).
+             */
+            $alle = array();
+            foreach ($alle_med_vakt as $k => $a) {
+                $alle[] = $a;
+            }
+
+            $i = 0;
+            $j = count($alle) - 1;
+            $first = $alle[0];
+            /* @var Beboer $first */
+            $last = $alle[$j];
+            /* @var Beboer $last */
+
+            while ($first->getBruker()->antallVakterIkkeOppsatt() - $last->getBruker()->antallVakterIkkeOppsatt() > 1) {
+                if(is_null(($vakt = $last->getBruker()->getRandomAutogenerertVakt()))) {
+                    break;
+                }
+                $st->execute(['bid' => $first->getBrukerId(), 'id' => $vakt->getId()]);
+
+                /**
+                 * TODO ta hensyn til kjipe vakter.
+                 */
+
+                $i++;
+                $j--;
+                $first = $alle[$i];
+                $last = $alle[$j];
+            }
+        }
+
 
         foreach (VaktListe::autogenerert() as $vakt) {
             $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
@@ -498,7 +545,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         if ($beboer->getBruker()->antallVakterHarSittet() > 0) {
             switch ($beboer->getRolle()->getNavn()) {
                 case Rolle::FULLVAKT:
-                    return floor($beboer->getRolle()->getVakterNow() / 3);
+                    return 2;
                     break;
                 case Rolle::HALV:
                     return 0;

@@ -19,6 +19,12 @@ class VaktListe
         return self::medPdoSt($st);
     }
 
+    public static function medBrukerIdAutogen($brukerId) {
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE bruker_id=:brukerId AND autogenerert=1;');
+        $st->bindParam(':brukerId', $brukerId);
+        return self::medPdoSt($st);
+    }
+
     public static function listeEtterDatoType($start_dato, $slutt_dato, $vakttype) {
         $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE (bruker_id IN (NULL, 0) AND dato >= :start AND dato <= :slutt AND vakttype = :vakttype)');
         $st->execute(['start'=>$start_dato, 'slutt'=>$slutt_dato, 'vakttype'=>$vakttype]);
