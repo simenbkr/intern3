@@ -41,6 +41,10 @@ $auth_arr = array('secret' => SHARED_SECRET);
 
 $postStr = http_build_query(array_merge($post, $auth_arr));
 $options = array(
+    'ssl' => array(
+        "verify_peer"=>false,
+        "verify_peer_name"=>false,
+    ),
     'http' => array(
         'method' => 'POST',
         'header' => 'Content-type: application/x-www-form-urlencoded',

@@ -59,7 +59,7 @@ class ExternCtrl extends AbstraktCtrl
                 $data .= $field;
             }
         }
-        
+
         $sig = Funk::urlsafe_b64enc(hash_hmac('sha256', $data, SHARED_SECRET, true));
 
         if($sig != $post['secret']) {
