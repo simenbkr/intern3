@@ -24,6 +24,7 @@ class ExternCtrl extends AbstraktCtrl
 
         //Sjekk om signaturene matcher.
         if ($local_sig != $sig) {
+            error_log("ERROR ERROR ERROR ExternCtrl->externAuth expected {$local_sig}. Received: {$sig}");
             return false;
         }
 
