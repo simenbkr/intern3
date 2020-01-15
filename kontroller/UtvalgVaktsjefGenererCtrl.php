@@ -528,7 +528,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          * Gjøre det kjemperettferdig mtp kjipe vakter.
          */
 
-        for($runder = 0; $runder < 10; $runder++) {
+        for($runder = 0; $runder < 20; $runder++) {
             $alle = self::sortedKjipe(BeboerListe::harVakt());
 
             $i = 0;
@@ -541,7 +541,11 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                 $vakt_2 = $last->getBruker()->getRandomAutogenerertVanligVakt();
 
                 if(is_null($vakt_1) || is_null($vakt_2)) {
-                    break;
+                    $i++;
+                    $j--;
+                    $first = $alle[$i];
+                    $last = $alle[$j];
+                    continue;
                 }
 
                 $vakt_1->setBruker($last->getBrukerId());
