@@ -485,7 +485,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          */
         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id = :bid WHERE id = :id');
 
-        for ($runder = 0; $runder < 3; $runder++) {
+        for ($runder = 0; $runder < 10; $runder++) {
 
             $alle_med_vakt = BeboerListe::harVakt();
             $alle = self::sortedOppsatte($alle_med_vakt);
@@ -528,7 +528,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          * Gjøre det kjemperettferdig mtp kjipe vakter.
          */
 
-        for($runder = 0; $runder < 20; $runder++) {
+        for($runder = 0; $runder < 30; $runder++) {
             $alle = self::sortedKjipe(BeboerListe::harVakt());
 
             $i = 0;
