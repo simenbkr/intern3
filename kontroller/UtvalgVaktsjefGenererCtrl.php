@@ -485,28 +485,10 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          */
         $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id = :bid WHERE id = :id');
 
-        for($runder = 0; $runder < 3; $runder++) {
+        for ($runder = 0; $runder < 3; $runder++) {
 
             $alle_med_vakt = BeboerListe::harVakt();
-            uasort($alle_med_vakt, function (Beboer $a, Beboer $b) {
-                if ($b->getBruker()->antallVakterIkkeOppsatt() == $a->getBruker()->antallVakterIkkeOppsatt()) {
-                    return 0;
-                }
-
-                if ($b->getBruker()->antallVakterIkkeOppsatt() > $a->getBruker()->antallVakterIkkeOppsatt()) {
-                    return 1;
-                }
-
-                return -1;
-            });
-
-            /**
-             * Må kopiere over for å kunne aksessere ved hjelp av integer-indekser fordi PHP :).
-             */
-            $alle = array();
-            foreach ($alle_med_vakt as $k => $a) {
-                $alle[] = $a;
-            }
+            $alle = self::sortedOppsatte($alle_med_vakt);
 
             $i = 0;
             $j = count($alle) - 1;
@@ -515,21 +497,63 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             $last = $alle[$j];
             /* @var Beboer $last */
 
-            while ($first->getBruker()->antallVakterIkkeOppsatt() - $last->getBruker()->antallVakterIkkeOppsatt() > 1) {
-                if(is_null(($vakt = $last->getBruker()->getRandomAutogenerertVakt()))) {
+            while (self::predicate('oppsatte', $first, $last)) {
+
+                if ($first->antallKjipeVakter() > 0.8 * $first->getRolle()->getVakterNow() && false) {
+
+                    if ($last->antallKjipeVakter() > 0.5 * $first->getRolle()->getVakterNow() && false) {
+                        $j--;
+                        $last = $alle[$j];
+                        continue;
+                    }
+
+                    $vakt = $last->getBruker()->getRandomAutogenerertVanligVakt();
+                } else {
+                    $vakt = $last->getBruker()->getRandomAutogenerertKjipVakt();
+                }
+
+                if (is_null($vakt)) {
                     break;
                 }
-                $st->execute(['bid' => $first->getBrukerId(), 'id' => $vakt->getId()]);
 
-                /**
-                 * TODO ta hensyn til kjipe vakter.
-                 */
+                $st->execute(['bid' => $first->getBrukerId(), 'id' => $vakt->getId()]);
 
                 $i++;
                 $j--;
                 $first = $alle[$i];
                 $last = $alle[$j];
             }
+        }
+        /**
+         * Gjøre det kjemperettferdig mtp kjipe vakter.
+         */
+
+        for($runder = 0; $runder < 10; $runder++) {
+            $alle = self::sortedKjipe(BeboerListe::harVakt());
+
+            $i = 0;
+            $j = count($alle) - 1;
+            $first = $alle[0];
+            $last = $alle[$j];
+
+            while(self::predicate('kjipe', $first, $last) || $i > 50) {
+                $vakt_1 = $first->getBruker()->getRandomAutogenerertKjipVakt();
+                $vakt_2 = $last->getBruker()->getRandomAutogenerertVanligVakt();
+
+                if(is_null($vakt_1) || is_null($vakt_2)) {
+                    break;
+                }
+
+                $vakt_1->setBruker($last->getBrukerId());
+                $vakt_2->setBruker($first->getBrukerId());
+
+                $i++;
+                $j--;
+                $first = $alle[$i];
+                $last = $alle[$j];
+
+            }
+
         }
 
 
@@ -540,88 +564,63 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
     }
 
-    private static function maksEkstraAntall(Beboer $beboer)
+    private static function predicate($op, Beboer $first, Beboer $last)
     {
-        if ($beboer->getBruker()->antallVakterHarSittet() > 0) {
-            switch ($beboer->getRolle()->getNavn()) {
-                case Rolle::FULLVAKT:
-                    return 2;
-                    break;
-                case Rolle::HALV:
-                    return 0;
-                    break;
-                default:
-                    return 0;
-            }
+        switch ($op) {
+            case 'oppsatte':
+                return ($first->getBruker()->antallVakterIkkeOppsatt() - $last->getBruker()->antallVakterIkkeOppsatt()) > 1;
+                break;
+            case 'kjipe':
+                return ($first->antallKjipeVakter() - $last->antallKjipeVakter()) > 1;
+                break;
         }
-
-        return 0;
     }
 
-
-    private function tildelVakter2()
+    private static function sortedOppsatte($liste)
     {
-        $brukere = array(0 => array(), 1 => array()); // Hvor mange flere vakter hver bruker har igjen under trekkinga
-        foreach (BeboerListe::harVakt() as $beboer) {
-            $brukere[1][$beboer->getBrukerId()] = Vakt::antallSkalSitteMedBrukerId($beboer->getBrukerId());
-            $brukere[0][$beboer->getBrukerId()] = round($brukere[1][$beboer->getBrukerId()] / 3);
-            $brukere[1][$beboer->getBrukerId()] -= $brukere[0][$beboer->getBrukerId()];
-        }
-        $margin = $_POST['varighet_sikkerhetsmargin'];
-        $vakter = array(0 => array(), 1 => VaktListe::autogenerert(), 2 => array());
-        foreach ($vakter[1] as $indeks => $vakt) {
-            if ($vakt->getVakttype() == 1) {
-                unset($vakter[1][$indeks]);
-                $vakter[0][] = $vakt;
+        uasort($liste, function (Beboer $a, Beboer $b) {
+            if ($b->getBruker()->antallVakterIkkeOppsatt() == $a->getBruker()->antallVakterIkkeOppsatt()) {
+                return 0;
             }
-        }
-        $vakter[1] = array_values($vakter[1]);
-        //print_r($brukere);
-        //var_dump(count($brukere), array_sum($brukere), count($vakter));
-        foreach (range(0, 1) as $omgang) {
-            while (array_sum($brukere[$omgang]) > 0 && $margin < count($vakter[$omgang])) {
-                do {
-                    $brukerTrekk = array_rand($brukere[$omgang]);
-                    //var_dump($netter[$brukerTrekk] . ' ' . max($netter));
-                    //break;
-                } while ($brukere[$omgang][$brukerTrekk] < max($brukere[$omgang]));
-                //} while($brukere[$brukerTrekk] < max($brukere) || $netter[$brukerTrekk] < max($netter) - 1);
-                //} while(
-                //		pow(max(0, max($brukere) - $brukere[$brukerTrekk]), 2)
-                //		+ pow(max(0, max($netter) - $netter[$brukerTrekk]), 2)
-                //		> 0
-                //);
-                do {
-                    $vaktTrekk = mt_rand(0, count($vakter[$omgang]) - 1);
-                    //var_dump($omgang . ' ' . count($vakter[$omgang]) . ' ' . count($brukere[$omgang]) . ' ' . $vakter[$omgang][$vaktTrekk]->getVakttype());
-                    //break;
-                } while ($omgang == 0 && $vakter[$omgang][$vaktTrekk]->getVakttype() <> '1');
-                $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id=:brukerId WHERE id=:id;');
-                $vaktId = $vakter[$omgang][$vaktTrekk]->getId();
-                $st->bindParam(':id', $vaktId);
-                $st->bindParam(':brukerId', $brukerTrekk);
-                $st->execute();
-                $brukere[$omgang][$brukerTrekk]--;
-                if ($brukere[$omgang][$brukerTrekk] == 0) {
-                    unset($brukere[$omgang][$brukerTrekk]);
-                }
-                unset($vakter[$omgang][$vaktTrekk]);
-                $vakter[$omgang] = array_values($vakter[$omgang]);
+
+            if ($b->getBruker()->antallVakterIkkeOppsatt() > $a->getBruker()->antallVakterIkkeOppsatt()) {
+                return 1;
             }
-            foreach ($brukere[$omgang] as $brukerId => $igjen) {
-                $brukere[$omgang][$brukerId] += $igjen;
+
+            return -1;
+        });
+
+        /**
+         * Må kopiere over for å kunne aksessere ved hjelp av integer-indekser fordi PHP :).
+         */
+        $alle = array();
+        foreach ($liste as $k => $a) {
+            $alle[] = $a;
+        }
+
+        return $alle;
+    }
+
+    private static function sortedKjipe($liste)
+    {
+        uasort($liste, function (Beboer $a, Beboer $b) {
+            if ($b->antallKjipeVakter() == $a->antallKjipeVakter()) {
+                return 0;
             }
-            $vakter[$omgang + 1] = array_merge($vakter[$omgang + 1], $vakter[$omgang]);
+
+            if ($b->antallKjipeVakter() > $a->antallKjipeVakter()) {
+                return 1;
+            }
+
+            return -1;
+        });
+
+        $alle = array();
+        foreach ($liste as $k => $a) {
+            $alle[] = $a;
         }
-        //print_r($brukere);
-        //var_dump(count($brukere), array_sum($brukere), count($vakter));
-        foreach ($vakter[1] as $vakt) {
-            $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
-            $vaktId = $vakt->getId();
-            $st->bindParam(':id', $vaktId);
-            $st->execute();
-        }
-        //exit();
+
+        return $alle;
     }
 
     private static function erITidsrom($typeStart, $datoStart, $typeSlutt, $datoSlutt, $typeTest, $datoTest)

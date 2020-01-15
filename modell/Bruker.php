@@ -392,4 +392,32 @@ class Bruker
         return $vakter[$i];
     }
 
+    public function getRandomAutogenerertKjipVakt(): ?Vakt
+    {
+        $vakter = shuffle(VaktListe::medBrukerIdAutogen($this->id));
+
+        foreach ($vakter as $vakt) {
+            /* @var Vakt $vakt */
+            if($vakt->erKjip()) {
+                return $vakt;
+            }
+        }
+
+        return $this->getRandomAutogenerertVakt();
+    }
+
+    public function getRandomAutogenerertVanligVakt(): ?Vakt
+    {
+        $vakter = shuffle(VaktListe::medBrukerIdAutogen($this->id));
+
+        foreach ($vakter as $vakt) {
+            /* @var Vakt $vakt */
+            if(!$vakt->erKjip()) {
+                return $vakt;
+            }
+        }
+
+        return $this->getRandomAutogenerertVakt();
+    }
+
 }
