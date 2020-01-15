@@ -480,11 +480,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             }
         }
 
-        /**
-         * Query for å bytte vakt.
-         */
-        $st = DB::getDB()->prepare('UPDATE vakt SET bruker_id = :bid WHERE id = :id');
-
         for ($runder = 0; $runder < 10; $runder++) {
 
             $alle_med_vakt = BeboerListe::harVakt();
@@ -499,24 +494,15 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
 
             while (self::predicate('oppsatte', $first, $last)) {
 
-                if ($first->antallKjipeVakter() > 0.8 * $first->getRolle()->getVakterNow() && false) {
-
-                    if ($last->antallKjipeVakter() > 0.5 * $first->getRolle()->getVakterNow() && false) {
-                        $j--;
-                        $last = $alle[$j];
-                        continue;
-                    }
-
-                    $vakt = $last->getBruker()->getRandomAutogenerertVanligVakt();
-                } else {
-                    $vakt = $last->getBruker()->getRandomAutogenerertKjipVakt();
-                }
+                $vakt = $last->getBruker()->getRandomAutogenerertKjipVakt();
 
                 if (is_null($vakt)) {
-                    break;
+                    $j--;
+                    $last = $alle[$j];
+                    continue;
                 }
 
-                $st->execute(['bid' => $first->getBrukerId(), 'id' => $vakt->getId()]);
+                $vakt->setBruker($first->getBrukerId());
 
                 $i++;
                 $j--;
@@ -524,11 +510,11 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                 $last = $alle[$j];
             }
         }
+
         /**
          * Gjøre det kjemperettferdig mtp kjipe vakter.
          */
-
-        for($runder = 0; $runder < 30; $runder++) {
+        for ($runder = 0; $runder < 30; $runder++) {
             $alle = self::sortedKjipe(BeboerListe::harVakt());
 
             $i = 0;
@@ -536,14 +522,18 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             $first = $alle[0];
             $last = $alle[$j];
 
-            while(self::predicate('kjipe', $first, $last) || $i > 50) {
+            while (self::predicate('kjipe', $first, $last) || $i > 50) {
                 $vakt_1 = $first->getBruker()->getRandomAutogenerertKjipVakt();
                 $vakt_2 = $last->getBruker()->getRandomAutogenerertVanligVakt();
 
-                if(is_null($vakt_1) || is_null($vakt_2)) {
+                if (is_null($vakt_1)) {
                     $i++;
-                    $j--;
                     $first = $alle[$i];
+                    continue;
+                }
+
+                if(is_null($vakt_2)) {
+                    $j--;
                     $last = $alle[$j];
                     continue;
                 }
@@ -559,7 +549,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             }
 
         }
-
 
         foreach (VaktListe::autogenerert() as $vakt) {
             $st = DB::getDB()->prepare('UPDATE vakt SET autogenerert=0 WHERE id=:id;');
@@ -599,6 +588,10 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
          */
         $alle = array();
         foreach ($liste as $k => $a) {
+            /* @var Beboer $a */
+            if ($a->getBruker()->antallVakterHarIgjen() < 2) {
+                continue;
+            }
             $alle[] = $a;
         }
 
