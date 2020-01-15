@@ -45,7 +45,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                 <td><?php echo $drikken->getPris(); ?></td>
                                 <td><?php echo $drikken->getAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                                 <td><?php echo $drikken->getFarge(); ?></td>
-                                <td><?php echo $drikken->getDrikke(); ?></td>
+                                <td><?php echo $drikken->getKommentar(); ?></td>
                             </tr>
                             <?php
                         }
@@ -71,8 +71,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <td><input class="form-control" type="color" name="farge" value="#000"></td>
                         </tr>
                         <tr>
-                            <td>Drikke:</td>
-                            <td><input class="form-control" type="text" name="drikke1" value="" placeholder="'Liste med tilhørende drikke...'"></td>
+                            <td>Kommentar:</td>
+                            <td><textarea class="form-control" name="kommentar" placeholder="'Liste med tilhørende drikke...'"></textarea></td>
                         </tr>
                         <tr>
                             <td></td>

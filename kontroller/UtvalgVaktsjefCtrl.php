@@ -383,10 +383,10 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         if (isset($post['pris']) && isset($post['farge'])) {
                             //Har bestemt at man ikke kan endre navn på drikker. Det er bedre å sette de som inaktive
                             //fordi da skaper man mindre forvirring for brukere (trolig).
-                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv, drikke=:drikke WHERE id=:id');
+                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv, kommentar=:kommentar WHERE id=:id');
                             $st->bindParam(':pris', $post['pris']);
                             $st->bindParam(':farge', $post['farge']);
-                            $st->bindParam(':drikke', $post['drikke1']);
+                            $st->bindParam(':kommentar', $post['kommentar']);
                             $aktiv = isset($post['aktiv']) && $post['aktiv'] == 'on' ? 1 : 0;
                             $st->bindParam(':aktiv', $aktiv);
                             $st->bindParam(':id', $this->cd->getSisteArg());
@@ -408,11 +408,11 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge']) && isset($post['drikke1'])
                     ) {
-                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge,drikke) VALUES(:navn,:pris,1,:farge,:drikke)');
+                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge,kommentar) VALUES(:navn,:pris,1,:farge,:kommentar)');
                         $st->bindParam(':navn', $post['navn']);
                         $st->bindParam(':pris', $post['pris']);
                         $st->bindParam(':farge', $post['farge']);
-                        $st->bindParam(':drikke', $post['drikke1']);
+                        $st->bindParam(':kommentar', $post['kommentar']);
                         $st->execute();
                         $_SESSION['success'] = 1;
                         $_SESSION['msg'] = "Du la til en ny drikke!";

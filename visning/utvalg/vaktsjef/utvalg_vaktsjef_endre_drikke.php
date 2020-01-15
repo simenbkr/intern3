@@ -22,12 +22,12 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <td><input type="color" name="farge" value="<?php echo $drikka->getFarge();?>"></td>
             </tr>
             <tr>
-                <td>Aktiv</td>
+                <td>Aktiv:</td>
                 <td><input type="checkbox" name="aktiv" <?php echo $drikka->getAktiv() ? 'checked=checked' :'';?>></td>
             </tr>
             <tr>
-                <td>Drikke</td>
-                <td><input class="form-control" type="text" name="drikke1" value="<?php echo $drikka->getDrikke();?>"></td>
+                <td>Kommentar:</td>
+                <td><textarea class="form-control" placeholder="'Liste med tilhørende drikke...'" name="kommentar"><?php echo $drikka->getKommentar();?></textarea></td>
             </tr>
             <tr>
                 <td></td>

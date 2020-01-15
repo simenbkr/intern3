@@ -11,7 +11,7 @@ $start = time();
 echo "Endring av drikke-tabell ved " . date('Y-m-d H:i:s');
 echo "\n";
 
-$sql = "ALTER TABLE `drikke` ADD `drikke` VARCHAR(255) NULL AFTER `farge`";
+$sql = "ALTER TABLE `drikke` ADD `kommentar` TEXT(255) NULL AFTER `farge`";
 
 
 DB::getDB()->query($sql);
