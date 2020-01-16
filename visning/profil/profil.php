@@ -105,7 +105,10 @@ if (isset($feil) && count($feil) > 0) {
                             }
 
                             ?>
-                        </select></td>
+                        </select>
+                        <p>eller</p>
+                        <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-nyttStudie" value="Legg til nytt studie"/>
+                    </td>
                 </tr>
                 <tr>
                     <th>Klassetrinn</th>
@@ -118,6 +121,35 @@ if (isset($feil) && count($feil) > 0) {
         </form>
     </div>
 
+    <div class="modal fade" aria-hidden="true" id="modal-nyttStudie" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Skriv inn navnet på ditt studie</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="?a=profil">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p><input class="form-control" name="slipp" id="studiet" placeholder="Ditt studie" type="text" required/></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <input type="submit" class="btn btn-md btn-primary" value="Legg til" name="tabell">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col-lg-3">
         <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
