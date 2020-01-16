@@ -10,6 +10,7 @@ class Drikke {
 	private $vin;
     private $aktiv;
     private $farge;
+    private $kommentar;
 
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM drikke WHERE id=:id;');
@@ -35,6 +36,7 @@ class Drikke {
 		$instance->vin = $rad['vin'];
         $instance->aktiv = $rad['aktiv'];
         $instance->farge = $rad['farge'];
+        $instance->kommentar = $rad['kommentar'];
 		return $instance;
 	}
 
@@ -60,6 +62,10 @@ class Drikke {
 
     public function getFarge(){
         return $this->farge;
+    }
+
+    public function getKommentar(){
+        return $this->kommentar;
     }
 
 	public static function alle(){
