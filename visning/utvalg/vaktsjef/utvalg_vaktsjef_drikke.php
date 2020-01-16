@@ -32,7 +32,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <th>Pris</th>
                             <th>Aktiv</th>
                             <th>Farge</th>
-                            <th>Drikke</th>
+                            <th>Kategori</th>
                         </tr>
                         </thead>
 
