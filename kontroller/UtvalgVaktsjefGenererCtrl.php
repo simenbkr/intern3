@@ -476,8 +476,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             }
         }
 
-        $ROUNDS = 10;
-        for ($runder = 0; $runder < $ROUNDS; $runder++) {
+        for ($runder = 0; $runder < 30; $runder++) {
 
             $alle_med_vakt = BeboerListe::harVakt();
             $alle = self::sortedOppsatte($alle_med_vakt);
@@ -506,71 +505,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                 $first = $alle[$i];
                 $last = $alle[$j];
             }
-        }
-
-        /**
-         * Gjøre det kjemperettferdig mtp kjipe vakter.
-         */
-        for ($runder = 0; $runder < $ROUNDS; $runder++) {
-            $alle = self::sortedKjipe(BeboerListe::harVakt());
-
-            $i = 0;
-            $j = count($alle) - 1;
-            $first = $alle[0];
-            $last = $alle[$j];
-
-            while (self::predicate('kjipe', $first, $last) || $i > 50) {
-                $vakt_1 = $first->getBruker()->getRandomAutogenerertKjipVakt();
-                $vakt_2 = $last->getBruker()->getRandomAutogenerertVanligVakt();
-
-                if (is_null($vakt_1)) {
-                    $i++;
-                    $first = $alle[$i];
-                    continue;
-                }
-
-                if(is_null($vakt_2)) {
-                    $j--;
-                    $last = $alle[$j];
-                    continue;
-                }
-
-                $first_vaktliste_trekk = $first->getBruker()->getKjipeVakter();
-                $first_vaktliste = $first->getBruker()->getVakter();
-                $last_vaktliste_trekk = $last->getBruker()->getVanligeVakter();
-                $last_vaktliste = $last->getBruker()->getVakter();
-
-                foreach ($last_vaktliste_trekk as $l_vakt) {
-                    /* @var Vakt $l_vakt */
-
-                    if($first->getBruker()->harVakterTett(array_merge($first_vaktliste, array($vakt_2)))) {
-                        break;
-                    }
-
-                    $vakt_2 = $l_vakt;
-                }
-
-                foreach ($first_vaktliste_trekk as $f_vakt) {
-                    /* @var Vakt $f_vakt */
-
-                    if($first->getBruker()->harVakterTett(array_merge($last_vaktliste, array($vakt_1)))) {
-                        break;
-                    }
-
-                    $vakt_2 = $f_vakt;
-                }
-
-
-                $vakt_1->setBruker($last->getBrukerId());
-                $vakt_2->setBruker($first->getBrukerId());
-
-                $i++;
-                $j--;
-                $first = $alle[$i];
-                $last = $alle[$j];
-
-            }
-
         }
 
         foreach (VaktListe::autogenerert() as $vakt) {
