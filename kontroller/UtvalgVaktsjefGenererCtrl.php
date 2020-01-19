@@ -396,23 +396,8 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         /* @var Beboer $beboeren */
 
                         /**
-                         * Sjekk at beboeren kan sitte flere vakter. Hvis ikke fjernes den fra denne omgangen.
-                         */
-
-                        /*if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
-                            || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
-
-                            if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall) {
-                                array_splice($beboere, $beboer_indeks, 1);
-                                array_splice($tmp, $beboer_indeks, 1);
-                                continue;
-                            }
-                        }*/
-
-                        /**
                          * Velg én tilfeldig vakt av de gjenværende vaktene.
                          */
-
                         $vakt_indeks = array_rand($vakter);
                         $vakta = $vakter[$vakt_indeks];
                         /* @var Vakt $vakta */
@@ -421,7 +406,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * Dersom det ikke er noen flere vakter, vil array_rand returnere null. Derfor breaker vi om dette
                          * skjer, fordi da er det på tide med neste omgang.
                          */
-
                         if (is_null($vakta)) {
                             break;
                         }
@@ -429,9 +413,8 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         /**
                          * Sjekk om beboeren har en vakt +/- 7 dager. Hvis det er tilfelle, forsøk å trekke på nytt.
                          */
-
-                        /*$i = 0;
-                        $max_attempts = min(count($vakter), 5);
+                        $i = 0;
+                        $max_attempts = 10;
                         while ($i++ < $max_attempts) {
                             $flag = true;
 
@@ -466,7 +449,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             $vakt_indeks = array_rand($vakter);
                             $vakta = $vakter[$vakt_indeks];
 
-                        }*/
+                        }
 
 
                         /**
@@ -493,7 +476,8 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
             }
         }
 
-        for ($runder = 0; $runder < 10; $runder++) {
+        $ROUNDS = 10;
+        for ($runder = 0; $runder < $ROUNDS; $runder++) {
 
             $alle_med_vakt = BeboerListe::harVakt();
             $alle = self::sortedOppsatte($alle_med_vakt);
@@ -527,7 +511,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         /**
          * Gjøre det kjemperettferdig mtp kjipe vakter.
          */
-        for ($runder = 0; $runder < 30; $runder++) {
+        for ($runder = 0; $runder < $ROUNDS; $runder++) {
             $alle = self::sortedKjipe(BeboerListe::harVakt());
 
             $i = 0;
@@ -550,6 +534,32 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                     $last = $alle[$j];
                     continue;
                 }
+
+                $first_vaktliste_trekk = $first->getBruker()->getKjipeVakter();
+                $first_vaktliste = $first->getBruker()->getVakter();
+                $last_vaktliste_trekk = $last->getBruker()->getVanligeVakter();
+                $last_vaktliste = $last->getBruker()->getVakter();
+
+                foreach ($last_vaktliste_trekk as $l_vakt) {
+                    /* @var Vakt $l_vakt */
+
+                    if($first->getBruker()->harVakterTett(array_merge($first_vaktliste, array($vakt_2)))) {
+                        break;
+                    }
+
+                    $vakt_2 = $l_vakt;
+                }
+
+                foreach ($first_vaktliste_trekk as $f_vakt) {
+                    /* @var Vakt $f_vakt */
+
+                    if($first->getBruker()->harVakterTett(array_merge($last_vaktliste, array($vakt_1)))) {
+                        break;
+                    }
+
+                    $vakt_2 = $f_vakt;
+                }
+
 
                 $vakt_1->setBruker($last->getBrukerId());
                 $vakt_2->setBruker($first->getBrukerId());

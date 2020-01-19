@@ -92,4 +92,30 @@ class VaktListe
         return self::medPdoSt($st);
     }
 
+    public static function autogenerertIkkeKjipVaktBrukerId($bruker_id)
+    {
+        $st = DB::getDB()->prepare('SELECT v.id FROM vakt as v WHERE v.id NOT IN (
+											(SELECT id FROM vakt WHERE 
+                                            (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
+                                            OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
+                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2))
+                                            OR vakttype = 1)
+                                          ) AND bruker_id = :bid');
+        $st->bindParam(':bid', $bruker_id);
+        return self::medPdoSt($st);
+    }
+
+    public static function autogenerertKjipVaktBrukerId($bruker_id)
+    {
+        $st = DB::getDB()->prepare('SELECT id FROM vakt WHERE ( 
+                                          (
+                                            (DAYOFWEEK(dato) = 6 AND vakttype IN (3, 4) ) 
+                                            OR (DAYOFWEEK(dato) = 7 AND vakttype IN (2,3,4) ) 
+                                            OR (DAYOFWEEK(dato) = 1 AND vakttype IN (2))
+                                            )
+                                          ) AND bruker_id = :bid');
+        $st->bindParam(':bid', $bruker_id);
+        return self::medPdoSt($st);
+    }
+
 }

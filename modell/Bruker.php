@@ -420,4 +420,24 @@ class Bruker
         return $this->getRandomAutogenerertVakt();
     }
 
+    public function getVakter() {
+        return VaktListe::medBrukerId($this->id);
+    }
+
+    public function getVanligeVakter() {
+        if(count(($lista = VaktListe::autogenerertIkkeKjipVaktBrukerId($this->id))) > 0) {
+            return $lista;
+        }
+
+        return $this->getVakter();
+    }
+
+    public function getKjipeVakter() {
+        if(count(($lista = VaktListe::autogenerertKjipVaktBrukerId($this->id))) > 0) {
+            return $lista;
+        }
+
+        return $this->getVakter();
+    }
+
 }
