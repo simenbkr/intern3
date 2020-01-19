@@ -399,7 +399,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * Sjekk at beboeren kan sitte flere vakter. Hvis ikke fjernes den fra denne omgangen.
                          */
 
-                        if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
+                        /*if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
                             || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
 
                             if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall) {
@@ -407,7 +407,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                                 array_splice($tmp, $beboer_indeks, 1);
                                 continue;
                             }
-                        }
+                        }*/
 
                         /**
                          * Velg én tilfeldig vakt av de gjenværende vaktene.
@@ -430,7 +430,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * Sjekk om beboeren har en vakt +/- 7 dager. Hvis det er tilfelle, forsøk å trekke på nytt.
                          */
 
-                        $i = 0;
+                        /*$i = 0;
                         $max_attempts = min(count($vakter), 5);
                         while ($i++ < $max_attempts) {
                             $flag = true;
@@ -466,7 +466,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                             $vakt_indeks = array_rand($vakter);
                             $vakta = $vakter[$vakt_indeks];
 
-                        }
+                        }*/
 
 
                         /**
