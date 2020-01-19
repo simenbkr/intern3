@@ -313,14 +313,28 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
         $forstevakter = VaktListe::autogenerertForstevakt();
         $fullvakt = BeboerListe::fullVakt();
         $halvvakt = BeboerListe::halvVakt();
-        $maks_kjipe = ceil(Vakt::antallKjipeAutogenererte() / (count($fullvakt) + count($halvvakt))) + 1;
+        $hv = array();
+        $fv = array();
+
+        foreach ($fullvakt as $b) {
+            /* @var Beboer $b */
+            if($b->getBruker()->antallVakterIkkeOppsatt() > 1) {
+                $fv[] = $b;
+            }
+        }
+
+        foreach ($halvvakt as $b) {
+            /* @var Beboer $b */
+            if($b->getBruker()->antallVakterIkkeOppsatt() > 1) {
+                $hv[] = $b;
+            }
+        }
+
+        $fullvakt = $fv;
+        $halvvakt = $hv;
+
         $margin = $_POST['varighet_sikkerhetsmargin'];
 
-        $number_vakter = count($vanlige_vakter) + count($kjipe_vakter) + count($forstevakter);
-        $number_full = count($fullvakt);
-        $number_halv = count($halvvakt);
-        $v_full = floor(($number_vakter / $number_full) * 0.4) + 1;
-        $v_halv = floor(($number_vakter / $number_halv) * 0.6) + 1;
 
         /**
          * Sett opp fordeling til bruk i hovedloop senere.
@@ -385,15 +399,14 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                          * Sjekk at beboeren kan sitte flere vakter. Hvis ikke fjernes den fra denne omgangen.
                          */
 
-                        $egendef_antall = $antall;
+                        if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall
+                            || $beboeren->getBruker()->antallVakterErOppsatt() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
 
-
-                        if ($beboeren->getBruker()->antallVakter() >= $egendef_antall
-                            || $beboeren->getBruker()->antallVakter() >= $beboeren->getBruker()->antallVakterSkalSitte()) {
-
-                            array_splice($beboere, $beboer_indeks, 1);
-                            array_splice($tmp, $beboer_indeks, 1);
-                            continue;
+                            if ($beboeren->getBruker()->antallVakterErOppsatt() >= $antall) {
+                                array_splice($beboere, $beboer_indeks, 1);
+                                array_splice($tmp, $beboer_indeks, 1);
+                                continue;
+                            }
                         }
 
                         /**
@@ -407,7 +420,6 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         /**
                          * Dersom det ikke er noen flere vakter, vil array_rand returnere null. Derfor breaker vi om dette
                          * skjer, fordi da er det på tide med neste omgang.
-                         * Hvis beboeren allerede har en vakt denne datoen, hopper vi til neste runde.
                          */
 
                         if (is_null($vakta)) {
@@ -415,11 +427,12 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         }
 
                         /**
-                         * Sjekk om beboeren har en vakt +/- 5 dager. Hvis det er tilfelle, forsøk å trekke på nytt.
+                         * Sjekk om beboeren har en vakt +/- 7 dager. Hvis det er tilfelle, forsøk å trekke på nytt.
                          */
 
                         $i = 0;
-                        while ($i++ < count($vakter)) {
+                        $max_attempts = min(count($vakter), 5);
+                        while ($i++ < $max_attempts) {
                             $flag = true;
 
                             foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
@@ -438,7 +451,7 @@ class UtvalgVaktsjefGenererCtrl extends AbstraktCtrl
                         }
 
                         $i = 0;
-                        while ($i++ < count($vakter)) {
+                        while ($i++ < $max_attempts) {
                             $flag = 0;
                             foreach ($oversikt[$beboeren->getBrukerId()] as $vakt) {
                                 if (Vakt::timeCompare($vakt, $vakta) < 3 * $week_seconds) {
