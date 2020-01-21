@@ -211,7 +211,7 @@ class ProfilCtrl extends AbstraktCtrl
     }
 
     public static function finnesStudie($studienavn) {
-        $st = DB::getDB()->prepare("SELECT count(*) as cnt FROM studie WHERE navn LIKE :navn");
+        $st = DB::getDB()->prepare("SELECT count(*) as cnt FROM studie WHERE navn LIKE LOWER(:navn)");
         $st->execute([ 'navn' => $studienavn]);
         $count = $st->fetch()['cnt'];
 
