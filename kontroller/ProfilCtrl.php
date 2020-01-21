@@ -30,6 +30,9 @@ class ProfilCtrl extends AbstraktCtrl
                     case 'prefs':
                         $feil = array_merge($feil, $this->endrePrefs());
                         break;
+                    case 'nyttStudie':
+                        $feil = array_merge($feil, $this->nyttStudie());
+                        break;
                 }
                 if (count($feil) == 0) {
                     header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -182,6 +185,31 @@ class ProfilCtrl extends AbstraktCtrl
             }
         }
         return $feil;
+    }
+
+    private function nyttStudie()
+    {
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $sql = DB::getDB()->prepare('SELECT navn FROM studie;');
+        $ts = $sql->execute();
+
+        $studiet = $post['studienavn'];
+
+        if (isset($studiet)) {
+            if (!in_array($studiet, $ts)) {
+                $st = DB::getDB()->prepare('INSERT INTO studie (navn) VALUES (:studie);');
+                $st->bindParam(':studie', $studiet);
+
+                $st->execute();
+                Funk::setSuccess($studiet . ' ble lagt til!');
+            } else {
+                Funk::setError($studiet . ' finnes allerede!');
+            }
+        } else {
+            Funk::setError('Skriv inn et gyldig navn!');
+        }
+
+        return null;
     }
 
     private function godkjennGenerellInfo()

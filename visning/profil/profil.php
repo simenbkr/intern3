@@ -129,16 +129,17 @@ if (isset($feil) && count($feil) > 0) {
                     <h4 class="modal-title">Skriv inn navnet på ditt studie</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="?a=profil">
+                    <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+                        <input type="hidden" name="endre" value="nyttStudie">
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <p><input class="form-control" name="slipp" id="studiet" placeholder="Ditt studie" type="text" required/></p>
+                                    <p><input class="form-control" name="studienavn" placeholder="Ditt studie" type="text" required/></p>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <input type="submit" class="btn btn-md btn-primary" value="Legg til" name="tabell">
+                                    <input type="submit" class="btn btn-md btn-primary" value="Legg til">
                                 </div>
                             </div>
                         </div>
