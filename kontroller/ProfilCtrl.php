@@ -190,13 +190,11 @@ class ProfilCtrl extends AbstraktCtrl
     private function nyttStudie()
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $sql = DB::getDB()->prepare('SELECT navn FROM studie;');
-        $ts = $sql->execute();
 
         $studiet = $post['studienavn'];
 
         if (isset($studiet)) {
-            if (!in_array($studiet, $ts)) {
+            if (!($this->finnesStudie($studiet))) {
                 $st = DB::getDB()->prepare('INSERT INTO studie (navn) VALUES (:studie);');
                 $st->bindParam(':studie', $studiet);
 
@@ -210,6 +208,18 @@ class ProfilCtrl extends AbstraktCtrl
         }
 
         return null;
+    }
+
+    public static function finnesStudie($studienavn) {
+        $st = DB::getDB()->prepare("SELECT count(*) as cnt FROM studie WHERE navn LIKE :navn");
+        $st->execute([ 'navn' => $studienavn]);
+        $count = $st->fetch()['cnt'];
+
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function godkjennGenerellInfo()
