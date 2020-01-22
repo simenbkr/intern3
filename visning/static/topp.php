@@ -196,6 +196,7 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                                 <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/nybeboer">Legg til ny
                                         beboer</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/epost">E-postlister</a></li>
+                                <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/veteran">Veteranliste</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>utvalg/romsjef/ansiennitet">Ansiennitet</a>
                                 </li>
                                 <li>
