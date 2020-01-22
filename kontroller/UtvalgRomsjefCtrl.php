@@ -110,7 +110,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
             $dok->vis('utvalg/romsjef/utvalg_romsjef_beboerliste.php');
             exit();
 
-        } else if($aktueltArg == 'eksporter') {
+        } elseif ($aktueltArg == 'eksporter') {
 
             $beboerListe = BeboerListe::aktive();
             $csv = BeboerListe::tilCSV($beboerListe);
@@ -121,14 +121,14 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
             header("Expires: 0");
 
             $output = fopen('php://output', 'wb');
-            foreach($csv as $line) {
+            foreach ($csv as $line) {
                 fputcsv($output, $line);
             }
 
             fclose($output);
             return;
 
-        } else if ($aktueltArg == 'flyttinn') {
+        } elseif ($aktueltArg == 'flyttinn') {
             $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             if (($beboer = Beboer::medId($post['id'])) != null && !in_array($beboer, BeboerListe::aktive())) {
                 $beboer->flyttInn();
@@ -139,7 +139,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
                 $_SESSION['error'] = 1;
                 $_SESSION['msg'] = "Hmm.. Noe galt skjedde - kan det hende beboeren er alt innflyttet?";
             }
-        } else if ($aktueltArg == 'nybeboer') {
+        } elseif ($aktueltArg == 'nybeboer') {
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -155,10 +155,20 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
                 }
 
 
-                $values = array('fornavn' => 'fornavn', 'etternavn' => 'etternavn',
-                    'fodselsdato' => 'fødselsdato', 'adresse' => 'adresse', 'postnummer' => 'postnummer',
-                    'mobil' => 'mobil', 'studie_id' => 'studie', 'skole_id' => 'skole', 'klasse' => 'klasse',
-                    'rolle_id' => 'rolle', 'epost' => 'e-post', 'rom_id' => 'rom');
+                $values = array(
+                    'fornavn' => 'fornavn',
+                    'etternavn' => 'etternavn',
+                    'fodselsdato' => 'fødselsdato',
+                    'adresse' => 'adresse',
+                    'postnummer' => 'postnummer',
+                    'mobil' => 'mobil',
+                    'studie_id' => 'studie',
+                    'skole_id' => 'skole',
+                    'klasse' => 'klasse',
+                    'rolle_id' => 'rolle',
+                    'epost' => 'e-post',
+                    'rom_id' => 'rom'
+                );
 
                 foreach ($values as $value => $key) {
 
@@ -182,7 +192,7 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
             $dok->vis('utvalg/romsjef/utvalg_romsjef_nybeboer.php');
 
 
-        } else if ($aktueltArg == 'gammelbeboer_tabell') {
+        } elseif ($aktueltArg == 'gammelbeboer_tabell') {
             $dok = new Visning($this->cd);
             $beboerListe = BeboerListe::ikkeAktive();
 
@@ -198,19 +208,22 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
             $dok->set('romListe', $romListe);
 
             $dok->vis('utvalg/romsjef/utvalg_romsjef_beboerliste.php');
-        } else if ($aktueltArg == 'epost') {
+        } elseif ($aktueltArg == 'epost') {
             $valgtCtrl = new UtvalgRomsjefEpostCtrl($this->cd->skiftArg());
             return $valgtCtrl->bestemHandling();
-        } else if ($aktueltArg == 'ansiennitet') {
+        } elseif ($aktueltArg == 'veteran') {
+            $valgtCtrl = new UtvalgRomsjefVeteranCtrl($this->cd->skiftArg());
+            return $valgtCtrl->bestemHandling();
+        } elseif ($aktueltArg == 'ansiennitet') {
             $valgtCtrl = new UtvalgRomsjefAnsiennitetCtrl($this->cd->skiftArg());
             return $valgtCtrl->bestemHandling();
-        } else if ($aktueltArg == 'storhybel') {
+        } elseif ($aktueltArg == 'storhybel') {
             $valgtCtrl = new UtvalgRomsjefStorhybelCtrl($this->cd->skiftArg());
             return $valgtCtrl->bestemHandling();
-        } else if ($aktueltArg == 'soknad') {
+        } elseif ($aktueltArg == 'soknad') {
             $valgtCtrl = new UtvalgRomsjefSoknadCtrl($this->cd->skiftArg());
             return $valgtCtrl->bestemHandling();
-        } else if (is_numeric($aktueltArg)) {
+        } elseif (is_numeric($aktueltArg)) {
             $beboer = Beboer::medId($aktueltArg);
             // Trenger feilhåndtering her.
             $dok = new Visning($this->cd);
@@ -272,11 +285,11 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         $st->bindParam(':kjonn', $post['kjonn']);
         $st->bindParam(':romhistorikk', $raden);
 
-        if($beboer->getKjonn() != ($kjonn = Beboer::$MULIGE_KJONN[$post['kjonn']])) {
+        if ($beboer->getKjonn() != ($kjonn = Beboer::$MULIGE_KJONN[$post['kjonn']])) {
             $beboer->updateLists('', false, true);
         }
 
-        if($beboer->getEpost() != $post['epost']) {
+        if ($beboer->getEpost() != $post['epost']) {
             $beboer->updateLists($post['epost'], true);
         }
 
