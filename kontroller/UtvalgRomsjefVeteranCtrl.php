@@ -26,7 +26,7 @@ class UtvalgRomsjefVeteranCtrl extends AbstraktCtrl
         } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             if (Funk::isValidEmail($this->cd->getSisteArg())) {
                 $group->removeFromGroup($this->cd->getSisteArg(), VETERAN);
-                print("Sletta {$this->cd->getSisteArg()} fra Rådets epostliste!");
+                print("Sletta {$this->cd->getSisteArg()} fra Veteranepostlista!");
                 exit();
             }
             print("Fikk ikke sletta denne eposten. Forsøk å gjøre det manuelt.");
