@@ -238,7 +238,22 @@ if (!isset($beboer) || $beboer == null) {
             </table>
         </form>
 
-        <div class="col-lg-3">
+        <div class="col-lg-6">
+        <?php
+        if ($beboer->erAktiv()) { ?>
+            <button class="btn btn-sm btn-danger" onclick="flyttUt(<?php echo $beboer->getId(); ?>)">Flytt ut</button>
+
+        <?php } else { ?>
+
+            <button class="btn btn-sm btn-danger" onclick="flyttinn(<?php echo $beboer->getId(); ?>)">Flytt inn</button>
+
+
+        <?php }
+
+          ?>
+        </div>
+
+        <div class="col-lg-6">
             <?php if (strlen($beboer->getBilde()) > 0) { ?>
                 <img style="width: 200px;" src="profilbilder/<?php echo $beboer->getBilde(); ?>">
             <?php } ?>
@@ -256,19 +271,6 @@ if (!isset($beboer) || $beboer == null) {
                 </table>
             </form>
         </div>
-
-        <?php
-        if ($beboer->erAktiv()) { ?>
-            <button class="btn btn-sm btn-danger" onclick="flyttUt(<?php echo $beboer->getId(); ?>)">Flytt ut</button>
-
-        <?php } else { ?>
-
-            <button class="btn btn-sm btn-danger" onclick="flyttinn(<?php echo $beboer->getId(); ?>)">Flytt inn</button>
-
-
-        <?php }
-
-          ?>
 
 
     </div>
