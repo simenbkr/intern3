@@ -229,6 +229,7 @@ if (!isset($beboer) || $beboer == null) {
                         </select>
                     </td>
                 </tr>
+
                 <tr>
                     <td></td>
                     <td><input class="btn btn-primary" type="submit"
@@ -236,6 +237,26 @@ if (!isset($beboer) || $beboer == null) {
                 </tr>
             </table>
         </form>
+
+        <div class="col-lg-3">
+            <?php if (strlen($beboer->getBilde()) > 0) { ?>
+                <img style="width: 200px;" src="profilbilder/<?php echo $beboer->getBilde(); ?>">
+            <?php } ?>
+            <form action="?a=utvalg/romsjef/endrebilde/<?php echo $beboer->getId(); ?>" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="endre" value="bilde">
+                <table class="table table-bordered table-responsive">
+                    <tr>
+                        <td>Bilde:</td>
+                        <td><input type="file" class="form-control" name="image"/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input class="btn btn-primary" type="submit" value="Endre bilde"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
         <?php
         if ($beboer->erAktiv()) { ?>
             <button class="btn btn-sm btn-danger" onclick="flyttUt(<?php echo $beboer->getId(); ?>)">Flytt ut</button>

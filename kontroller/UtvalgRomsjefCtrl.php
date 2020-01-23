@@ -36,7 +36,18 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
 
         $aktueltArg = $this->cd->getAktueltArg();
 
-        if ($aktueltArg == 'beboerliste') {
+        if ($aktueltArg == 'endrebilde') {
+
+            if($_SERVER['REQUEST_METHOD'] === 'POST' && ($beboer = Beboer::medId($this->cd->getSisteArg()))) {
+                $this->endreBilde($beboer);
+                header('Location: ?a=utvalg/romsjef/beboerliste/' . $beboer->getId());
+                exit();
+            }
+
+            header('Location: ?a=utvalg/romsjef/beboerliste');
+
+
+        } elseif ($aktueltArg == 'beboerliste') {
             $dok = new Visning($this->cd);
             $sisteArg = $this->cd->getSisteArg();
 
@@ -294,7 +305,33 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
         }
 
         $st->execute();
+    }
 
+    private function endreBilde(Beboer $beboer)
+    {
+        $tillatte_filtyper = array('jpg', 'jpeg', 'png', 'gif');
+        if (isset($_FILES['image'])) {
+
+            $file_name = $_FILES['image']['name'];
+            $file_size = $_FILES['image']['size'];
+            $tmp_file = $_FILES['image']['tmp_name'];
+            $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+
+            if (in_array($file_ext, $tillatte_filtyper) && $file_size > 10 && $file_size < 1000000000) {
+                $bildets_navn = md5($file_name . Funk::generatePassword(15) . time()) . '.' . $file_ext;
+                move_uploaded_file($tmp_file, "profilbilder/" . $bildets_navn);
+                chmod("profilbilder/" . $bildets_navn, 0644);
+                $id = $beboer->getId();
+                $st = DB::getDB()->prepare('UPDATE beboer SET bilde=:bilde WHERE id=:id');
+                $st->execute(['bilde' => $bildets_navn, 'id' => $id]);
+            } else {
+                Funk::setError("Det var ikke et gyldig bilde!");
+            }
+        } else {
+            Funk::setError("Du valgte ikke et bilde!");
+        }
+        return;
     }
 
 }
+
