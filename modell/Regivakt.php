@@ -57,9 +57,19 @@ class Regivakt
         return $this->dato;
     }
 
+    public function setDato($dato)
+    {
+        $this->dato = $dato;
+    }
+
     public function getStartTid()
     {
         return $this->start_tid;
+    }
+
+    public function setStartTid($start_tid)
+    {
+        $this->start_tid = $start_tid;
     }
 
     public function getSluttTid()
@@ -67,9 +77,19 @@ class Regivakt
         return $this->slutt_tid;
     }
 
+    public function setSluttTid($slutt_tid)
+    {
+        $this->slutt_tid = $slutt_tid;
+    }
+
     public function getNokkelord(): string
     {
         return $this->nokkelord;
+    }
+
+    public function setNokkelord($nokkelord)
+    {
+        $this->nokkelord = $nokkelord;
     }
 
     public function getBrukerIder()
@@ -92,6 +112,11 @@ class Regivakt
         return $this->beskrivelse;
     }
 
+    public function setBeskrivelse($beskrivelse)
+    {
+        $this->beskrivelse = $beskrivelse;
+    }
+
     public function getStatusInt(): int
     {
         return $this->status;
@@ -102,12 +127,38 @@ class Regivakt
         return self::STATUS_TEKST[$this->status];
     }
 
-    public function getAntall() : int {
+    public function setStatusInt($status_int)
+    {
+        if (is_null(intval($status_int))) {
+            return;
+        }
+
+        $this->status = intval($status_int);
+    }
+
+    public function getAntall(): int
+    {
         return $this->antall;
     }
 
-    public function harPlass() : bool {
+    public function harPlass(): bool
+    {
         return $this->antall > count($this->bruker_ider);
+    }
+
+    public function lagre()
+    {
+        $st = DB::getDB()->prepare('
+UPDATE regivakt SET dato = :dato, start_tid = :start, slutt_tid = :slutt, beskrivelse = :beskrivelse, nokkelord = :nokkelord, antall = :antall WHERE id = :id');
+        $st->execute([
+            'dato' => $this->dato,
+            'start' => $this->start_tid,
+            'slutt' => $this->slutt_tid,
+            'beskrivelse' => $this->beskrivelse,
+            'nokkelord' => $this->nokkelord,
+            'antall' => $this->antall,
+            'id' => $this->id
+        ]);
     }
 
 
@@ -136,6 +187,9 @@ class Regivakt
 
         $this->bruker_ider = $nye_ider;
         $nye_ider = json_encode($nye_ider);
+        if (count($this->bruker_ider) === 0) {
+            $nye_ider = '';
+        }
 
         $st = DB::getDB()->prepare('UPDATE regivakt SET bruker_ider = :bider WHERE id = :id');
         $st->execute(['bider' => $nye_ider, 'id' => $this->id]);
@@ -162,13 +216,14 @@ VALUES(:dato, :start, :slutt, :beskrivelse,:nokkelord, :antall)');
         return self::init($st);
     }
 
-    public static function listeMedDato($dato) : array {
+    public static function listeMedDato($dato): array
+    {
         $res = array();
 
         $st = DB::getDB()->prepare('SELECT * FROM regivakt WHERE dato = :dato');
         $st->execute(['dato' => $dato]);
 
-        for($i = 0; $i < $st->rowCount(); $i++) {
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $res[] = self::init($st);
         }
 

@@ -40,6 +40,7 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
                 return;
             case 'administrer':
                 $dok->set('rv', Regivakt::medId($this->cd->getSisteArg()));
+                $dok->set('beboere', BeboerListe::aktiveMedRegi());
                 $dok->vis('utvalg/regisjef/regivakt/administrer_modal.php');
                 return;
         }
@@ -49,13 +50,42 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
     private function handlePOST()
     {
 
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         switch ($this->cd->getAktueltArg()) {
 
             case 'add':
-                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 Regivakt::ny($post['dato'], $post['start'], $post['slutt'], $post['beskrivelse'], $post['nokkelord'], $post['antall']);
                 Funk::setSuccess('La til en ny regivakt!');
                 return;
+
+            case 'fjern':
+                if(($bruker = Bruker::medId($post['brid'])) != null && ($rv = Regivakt::medId($post['rvid'])) != null) {
+                    $rv->removeBrukerId($bruker->getId());
+                }
+                return;
+
+            case 'endre':
+                if(is_null(($rv = Regivakt::medId($post['rvid'])))) {
+                    return;
+                }
+
+                $rv->setBeskrivelse($post['beskrivelse']);
+                $rv->setDato($post['dato']);
+                $rv->setSluttTid($post['slutt']);
+                $rv->setStartTid($post['start']);
+                $rv->setStatusInt($post['status']);
+                $rv->setNokkelord($post['nokkelord']);
+                $rv->lagre();
+
+                Funk::setSuccess('Endret regivakten!');
+
+            case 'add_bruker':
+                if(is_null(($rv = Regivakt::medId($post['rvid'])))) {
+                    return;
+                }
+
+                $rv->addBrukerId($post['brid']);
+
         }
 
     }
