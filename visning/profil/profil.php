@@ -105,7 +105,8 @@ if (isset($feil) && count($feil) > 0) {
                             }
 
                             ?>
-                        </select></td>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <th>Klassetrinn</th>
@@ -117,7 +118,6 @@ if (isset($feil) && count($feil) > 0) {
             <p><input type="submit" class="btn btn-primary" value="Lagre"></p>
         </form>
     </div>
-
 
     <div class="col-lg-3">
         <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">

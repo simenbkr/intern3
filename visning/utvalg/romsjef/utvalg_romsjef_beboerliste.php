@@ -9,7 +9,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <p>[ Beboerliste ] [ <a href="<?php echo $cd->getBase(); ?>beboer/utskrift">Utskriftsvennlig</a> ] [ <a
                 href="<?php echo $cd->getBase(); ?>beboer/statistikk">Statistikk</a> ]</p>
     <p></p>
-
+    <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
     <?php if ($showTable) { ?>
 
         <div class="col-sm-6">
@@ -40,8 +40,8 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <?php }
       ?>
 
-    <a href="?a=utvalg/romsjef/eksporter"><button class="btn btn-warning pull-right">Eksporter til CSV</button></a>
-
+    <a href="?a=utvalg/romsjef/eksporter"><button class="btn btn-warning pull-right">Eksporter til CSV</button></a> <br/> <br/>
+    <input type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-nyttStudie" value="Legg til nytt studie"/>
 
     <table class="table-bordered table" id="tabellen">
         <thead>
@@ -105,6 +105,37 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         ?>
         </tbody>
     </table>
+
+    <div class="modal fade" aria-hidden="true" id="modal-nyttStudie" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Skriv inn navnet på nytt studie</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+                        <input type="hidden" value="studienavn">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p><input class="form-control" name="studienavn" placeholder="Nytt studie" type="text" required/></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <input type="submit" class="btn btn-md btn-primary" value="Legg til">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>

@@ -38,6 +38,22 @@ class Studie {
 		return $this->navn;
 	}
 
+    public static function nyttStudie($studienavn)
+    {
+        $st = DB::getDB()->prepare('INSERT INTO studie (navn) VALUES (:studie);');
+        $st->bindParam(':studie', $studienavn);
+        $st->execute();
+
+        return null;
+    }
+
+    public static function finnesStudie($studienavn) {
+        $st = DB::getDB()->prepare("SELECT count(*) as cnt FROM studie WHERE navn LIKE LOWER(:navn)");
+        $st->execute([ 'navn' => $studienavn]);
+
+        return $st->fetch()['cnt'] > 0;
+    }
+
 }
 
 ?>
