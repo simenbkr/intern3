@@ -216,6 +216,11 @@ class JournalCtrl extends AbstraktCtrl
                     $drikke_farger = array();
                     $forste = $drikker[1]->getId();
                     foreach ($drikker as $drikke) {
+
+                        if($drikke->erForst()) {
+                            $forste = $drikke->getId();
+                        }
+
                         $drikke_navn[$drikke->getId()] = $drikke->getNavn();
                         $drikke_farger[$drikke->getId()] = $drikke->getFarge();
                     }

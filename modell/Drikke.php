@@ -11,6 +11,7 @@ class Drikke {
     private $aktiv;
     private $farge;
     private $kommentar;
+    private $forst;
 
 	public static function medId($id) {
 		$st = DB::getDB()->prepare('SELECT * FROM drikke WHERE id=:id;');
@@ -37,6 +38,7 @@ class Drikke {
         $instance->aktiv = $rad['aktiv'];
         $instance->farge = $rad['farge'];
         $instance->kommentar = $rad['kommentar'];
+        $instance->forst = $rad['forst'];
 		return $instance;
 	}
 
@@ -133,6 +135,16 @@ class Drikke {
         return false;
     }
 
-}
+    public function erForst() : bool {
+	    return $this->forst == 1;
+    }
 
-?>
+    public function setForst() {
+	    $st = DB::getDB()->prepare('UPDATE drikke SET forst = 1 WHERE id = :id');
+	    $st->execute(['id' => $this->id]);
+
+        $st = DB::getDB()->prepare('UPDATE drikke SET forst = 0 WHERE id != :id');
+        $st->execute(['id' => $this->id]);
+    }
+
+}

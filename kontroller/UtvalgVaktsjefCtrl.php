@@ -350,7 +350,7 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
 
                 if ('krysserapportutskrift' !== $periode) {
                     $ts = strtotime($periode);
-                    if($ts > strtotime($sistFakturert)) {
+                    if ($ts > strtotime($sistFakturert)) {
                         $krysseListeMonthListe = Krysseliste::getAllIkkeFakturertFDato(date('Y-m-d H:i:s', $ts));
                         $dok->set('dato', date('Y-m-d H:i:s', $ts));
                     }
@@ -375,6 +375,14 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                 $dok->set('alleKryss', $alleKryss);
                 $dok->vis('utvalg/vaktsjef/utvalg_vaktsjef_kryss.php');
                 break;
+            case 'drekkefolge':
+                // Endre rekkefølge. 'drekke' er slang for drikke. Det er morsomt, okay.
+                if(!is_null(($drikken = Drikke::medId($this->cd->getSisteArg())))) {
+                    $drikken->setForst();
+                    print "Nice";
+                    Funk::setSuccess("Satte {$drikken->getNavn()} til å være først i Journalen.");
+                }
+                break;
             case 'endre_drikke':
                 if (($drikken = Drikke::medId($this->cd->getSisteArg())) != null) {
 
@@ -383,18 +391,21 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                         if (isset($post['pris']) && isset($post['farge'])) {
                             //Har bestemt at man ikke kan endre navn på drikker. Det er bedre å sette de som inaktive
                             //fordi da skaper man mindre forvirring for brukere (trolig).
-                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge, aktiv=:aktiv, kommentar=:kommentar WHERE id=:id');
-                            $st->bindParam(':pris', $post['pris']);
-                            $st->bindParam(':farge', $post['farge']);
-                            $st->bindParam(':kommentar', $post['kommentar']);
+                            $st = DB::getDB()->prepare('UPDATE drikke SET pris=:pris, farge=:farge,
+                                                                    aktiv=:aktiv, kommentar=:kommentar WHERE id=:id');
+
                             $aktiv = isset($post['aktiv']) && $post['aktiv'] == 'on' ? 1 : 0;
-                            $st->bindParam(':aktiv', $aktiv);
-                            $st->bindParam(':id', $this->cd->getSisteArg());
-                            $st->execute();
-                            $_SESSION['success'] = 1;
-                            $_SESSION['msg'] = "Du oppdaterte en drikke!";
+                            $st->execute([
+                                'pris' => $post['pris'],
+                                'farge' => $post['farge'],
+                                'kommentar' => $post['kommentar'],
+                                'aktiv' => $aktiv,
+                                'id' => $this->cd->getSisteArg()
+                            ]);
+
+                            Funk::setSuccess('Du oppdaterte en drikke!');
                         }
-                        header('Location: ?a=utvalg/vaktsjef/endre_drikke');
+                        header('Location: ?a=utvalg/vaktsjef/drikke');
                         exit();
                     }
                     $dok = new Visning($this->cd);
@@ -403,19 +414,21 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     break;
                 }
             case 'drikke':
-                $drikke = Drikke::alle();
-                if (isset($_POST)) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                     if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge']) && isset($post['drikke1'])
                     ) {
-                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge,kommentar) VALUES(:navn,:pris,1,:farge,:kommentar)');
-                        $st->bindParam(':navn', $post['navn']);
-                        $st->bindParam(':pris', $post['pris']);
-                        $st->bindParam(':farge', $post['farge']);
-                        $st->bindParam(':kommentar', $post['kommentar']);
-                        $st->execute();
-                        $_SESSION['success'] = 1;
-                        $_SESSION['msg'] = "Du la til en ny drikke!";
+                        $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge,kommentar) 
+                                                              VALUES(:navn,:pris,1,:farge,:kommentar)');
+
+                        $st->execute([
+                           'navn' => $post['navn'],
+                           'pris' => $post['pris'],
+                           'farge' => $post['farge'],
+                           'kommentar' => $post['kommentar']
+                        ]);
+
+                        Funk::setSuccess('Du la til en ny drikke!');
 
                         $drikkeId = DB::getDB()->lastInsertId();
                         $denne_vakta = AltJournal::getLatest();
