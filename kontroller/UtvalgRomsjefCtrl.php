@@ -37,11 +37,20 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
         $aktueltArg = $this->cd->getAktueltArg();
 
         if ($aktueltArg == 'beboerliste') {
+
             $dok = new Visning($this->cd);
             $sisteArg = $this->cd->getSisteArg();
 
-            if ($sisteArg != $aktueltArg && is_numeric($sisteArg)) {
+            if(isset($_POST['studienavn']) && !(Studie::finnesStudie($_POST['studienavn']))){
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
+                Studie::nyttStudie($post['studienavn']);
+                Funk::setSuccess('Nytt studie ble lagt til');
+            } else if (isset($_POST['studienavn']) && Studie::finnesStudie($_POST['studienavn'])){
+                Funk::setError('Studiet finnes allerede');
+            }
+
+            if ($sisteArg != $aktueltArg && is_numeric($sisteArg)) {
 
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -64,7 +73,6 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
                     $this->visEndreTabell($dok, $beboer);
                     exit();
                 }
-
 
             }
             $beboerListe = BeboerListe::aktive();

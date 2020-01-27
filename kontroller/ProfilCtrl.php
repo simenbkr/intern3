@@ -30,9 +30,6 @@ class ProfilCtrl extends AbstraktCtrl
                     case 'prefs':
                         $feil = array_merge($feil, $this->endrePrefs());
                         break;
-                    case 'nyttStudie':
-                        $feil = array_merge($feil, $this->nyttStudie());
-                        break;
                 }
                 if (count($feil) == 0) {
                     header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -185,41 +182,6 @@ class ProfilCtrl extends AbstraktCtrl
             }
         }
         return $feil;
-    }
-
-    private function nyttStudie()
-    {
-        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        $studiet = $post['studienavn'];
-
-        if (isset($studiet)) {
-            if (!($this->finnesStudie($studiet))) {
-                $st = DB::getDB()->prepare('INSERT INTO studie (navn) VALUES (:studie);');
-                $st->bindParam(':studie', $studiet);
-
-                $st->execute();
-                Funk::setSuccess($studiet . ' ble lagt til!');
-            } else {
-                Funk::setError($studiet . ' finnes allerede!');
-            }
-        } else {
-            Funk::setError('Skriv inn et gyldig navn!');
-        }
-
-        return null;
-    }
-
-    public static function finnesStudie($studienavn) {
-        $st = DB::getDB()->prepare("SELECT count(*) as cnt FROM studie WHERE navn LIKE LOWER(:navn)");
-        $st->execute([ 'navn' => $studienavn]);
-        $count = $st->fetch()['cnt'];
-
-        if ($count > 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private function godkjennGenerellInfo()
