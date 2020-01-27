@@ -33,6 +33,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                             <th>Aktiv</th>
                             <th>Farge</th>
                             <th>Kommentar</th>
+                            <th>Først</th>
                         </tr>
                         </thead>
 
@@ -46,6 +47,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                                 <td><?php echo $drikken->getAktiv() ? 'Aktiv' : 'Inaktiv'; ?></td>
                                 <td><?php echo $drikken->getFarge(); ?></td>
                                 <td><?php echo $drikken->getKommentar(); ?></td>
+                                <td><?php echo $drikken->erForst() ? 'Først!' : ''; ?></td>
                             </tr>
                             <?php
                         }
