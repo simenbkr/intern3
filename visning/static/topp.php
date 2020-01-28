@@ -67,6 +67,7 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                             <li><a href="<?php echo $cd->getBase(); ?>regi/oppgave">Oppgaver</a></li>
                             <!--<li><a href="<?php echo $cd->getBase(); ?>regi/rapport">Rapporter</a></li>-->
                             <li><a href="<?php echo $cd->getBase(); ?>regi/minregi">Min regi</a></li>
+                            <li><a href="<?php echo $cd->getBase(); ?>regi/regivakt">Regivakt</a></li>
                             <?php /*<li><a href="<?php echo $cd->getBase(); ?>regi/registatus">Registatus</a></li>*/ ?>
                         </ul>
                     </li>

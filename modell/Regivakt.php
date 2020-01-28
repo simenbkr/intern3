@@ -6,8 +6,8 @@ class Regivakt
 {
     private int $id;
     private string $dato;
-    private int $start_tid;
-    private int $slutt_tid;
+    private string $start_tid;
+    private string $slutt_tid;
     private ?array $bruker_ider;
     private string $beskrivelse;
     private int $status;
@@ -28,8 +28,8 @@ class Regivakt
         $instance = new self();
         $instance->id = intval($rad['id']);
         $instance->dato = $rad['dato'];
-        $instance->start_tid = intval($rad['start_tid']);
-        $instance->slutt_tid = intval($rad['slutt_tid']);
+        $instance->start_tid = $rad['start_tid'];
+        $instance->slutt_tid = $rad['slutt_tid'];
         $instance->bruker_ider = json_decode($rad['bruker_ider']);
         $instance->nokkelord = $rad['nokkelord'];
         $instance->beskrivelse = $rad['beskrivelse'];
@@ -105,6 +105,10 @@ class Regivakt
         }
 
         return $brukere;
+    }
+
+    public function getAntallPameldte() : int {
+        return count($this->bruker_ider);
     }
 
     public function getBeskrivelse(): string

@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../../topp_utvalg.php');
+require_once(__DIR__ . '/../../static/topp.php');
 
 if ($_SESSION['semester'] == "var") {
     $ukeStart = strtotime('2 January');
@@ -12,33 +12,30 @@ if ($_SESSION['semester'] == "var") {
     $ukeStart = strtotime('5 August');
     $ukeSlutt = strtotime('1 January + 1 year');
 }
+
 $ukeStart = strtotime('last week', $ukeStart);
 
 ?>
-    <script src="js/moment.min.js"></script>
-    <script src="js/bootstrap-datetimepicker.min.js"></script>
     <div class="container">
         <div class="col-lg-12">
-            <h1>Regisjef » Regivakt</h1>
+            <h1>Regi » Regivakt</h1>
 
             <hr>
 
-            <div class="btn-group" role="group">
-                <div class="btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Semester <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" onclick="setVar()">Vår</a></li>
-                        <li><a href="#" onclick="setHost()">Høst</a></li>
-                    </ul>
-                </div>
+            <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+
+
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
+                    <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" onclick="setVar()">Vår</a></li>
+                    <li><a href="#" onclick="setHost()">Høst</a></li>
+                    <li><a href="#" onclick="fraNa()">Fra nå til semesterslutt</a></li>
+                </ul>
             </div>
-            <hr>
 
-            <p></p>
-            <?php require_once(__DIR__ . '/../../../static/tilbakemelding.php'); ?>
+            <hr>
 
 
             <table class="table-bordered table table-responsive">
@@ -81,23 +78,25 @@ $ukeStart = strtotime('last week', $ukeStart);
 
                         <?php foreach (range(0, 6) as $dag) { ?>
                             <td>
-                                <?php foreach (\intern3\Regivakt::listeMedDato(date('Y-m-d',
-                                    $ukeStart + $dag * 86400)) as $rv) { ?>
 
-                                    <button class="btn btn-warning btn-sm navbar-btn"
-                                            onclick="administrer(<?php echo $rv->getId(); ?>)">
-                                        Påmeldte: <?php $str = "{$rv->getAntallPameldte()}/{$rv->getAntall()} - {$rv->getNokkelord()}";
-                                        echo substr($str, 0, 20);
-                                        ?>
-                                    </button>
-                                    <br>
+                                <?php
 
-                                <?php }
-                                  ?>
-                                <button class="btn btn-primary btn-sm"
-                                        onclick="vis('<?php echo date('Y-m-d', $ukeStart + $dag * 86400); ?>')">
-                                    Legg til vakt
-                                </button>
+                                $lista = \intern3\Regivakt::listeMedDato(date('Y-m-d', $ukeStart + $dag * 86400));
+                                if (count($lista) > 0) { ?>
+
+                                    <?php foreach ($lista as $rv) { ?>
+
+                                        <button class="btn btn-primary btn-sm navbar-btn"
+                                                onclick="vis(<?php echo $rv->getId(); ?>)">
+                                            Påmeldte: <?php $str = "{$rv->getAntallPameldte()}/{$rv->getAntall()} - {$rv->getNokkelord()}";
+                                            echo substr($str, 0, 20);
+                                            ?>
+                                        </button>
+
+                                    <?php }
+                                }
+                                  ?>c
+
                             </td>
                         <?php }
                           ?>
@@ -106,6 +105,7 @@ $ukeStart = strtotime('last week', $ukeStart);
 
                 <?php }
                   ?>
+
 
         </div>
     </div>
@@ -134,13 +134,8 @@ $ukeStart = strtotime('last week', $ukeStart);
 
     <script>
 
-        function vis(dato) {
-            $("#mod").load("?a=utvalg/regisjef/regivakt/vis/" + dato);
-            $("#modal-modal").modal("show");
-        }
-
-        function administrer(id) {
-            $("#mod").load("?a=utvalg/regisjef/regivakt/administrer/" + id);
+        function vis(id) {
+            $("#mod").load("?a=regi/regivakt/vis/" + id);
             $("#modal-modal").modal("show");
         }
 
@@ -148,7 +143,7 @@ $ukeStart = strtotime('last week', $ukeStart);
             $.ajax({
                 cache: false,
                 type: 'POST',
-                url: '?a=utvalg/vaktsjef/setvar',
+                url: '?a=vakt/setvar',
                 success: function (data) {
                     location.reload();
                 }
@@ -159,14 +154,27 @@ $ukeStart = strtotime('last week', $ukeStart);
             $.ajax({
                 cache: false,
                 type: 'POST',
-                url: '?a=utvalg/vaktsjef/sethost',
+                url: '?a=vakt/sethost',
                 success: function (data) {
                     location.reload();
                 }
             });
         }
 
+        function fraNa() {
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '?a=vakt/setna',
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        }
     </script>
+
 <?php
 
-require_once(__DIR__ . '/../../../static/bunn.php');
+require_once(__DIR__ . '/../../static/bunn.php');
+
+
