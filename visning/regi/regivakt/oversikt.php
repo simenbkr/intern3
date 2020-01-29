@@ -14,28 +14,53 @@ if ($_SESSION['semester'] == "var") {
 }
 
 $ukeStart = strtotime('last week', $ukeStart);
-
 ?>
     <div class="container">
         <div class="col-lg-12">
             <h1>Regi » Regivakt</h1>
-
             <hr>
+            <p>
+                Her kan du melde deg på Regivakter. Klikk på knappene for å se detaljer.
+                Du kan melde deg på så lenge det er plass, inntil dagen før vakten er satt.
+                Når du har meldt deg på, kan du ikke melde deg av, men du kan bytte på byttemarkedet.
+            </p>
 
             <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
+            <hr>
+            <div class="col-md-2">
 
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
-                    <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                    <li><a href="#" onclick="setVar()">Vår</a></li>
-                    <li><a href="#" onclick="setHost()">Høst</a></li>
-                    <li><a href="#" onclick="fraNa()">Fra nå til semesterslutt</a></li>
-                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick="setVar()">Vår</a></li>
+                        <li><a href="#" onclick="setHost()">Høst</a></li>
+                        <li><a href="#" onclick="fraNa()">Fra nå til semesterslutt</a></li>
+                    </ul>
+                </div>
             </div>
 
-            <hr>
+            <div class="col-md-5">
+                <h3>Dine regivakter:</h3>
+                <table class="table table-responsive table-bordered table-condensed">
+                    <?php foreach ($mine_vakter as $rv) {
+                        /* @var \intern3\Regivakt $rv */
+                        ?>
+                        <tr>
+                            <td><?php echo $rv->getNokkelord(); ?></td>
+                            <td>Tidspunkt:</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" onclick="vis('<?php echo $rv->getId(); ?>')">
+                                    <?php echo "{$rv->getDato()} {$rv->getStartTid()}-{$rv->getSluttTid()}"; ?>
+                                </button>
+                            </td>
+                        </tr>
+                    <?php } ?>
+
+                </table>
+                <hr>
+            </div>
 
 
             <table class="table-bordered table table-responsive">
@@ -84,9 +109,27 @@ $ukeStart = strtotime('last week', $ukeStart);
                                 $lista = \intern3\Regivakt::listeMedDato(date('Y-m-d', $ukeStart + $dag * 86400));
                                 if (count($lista) > 0) { ?>
 
-                                    <?php foreach ($lista as $rv) { ?>
+                                    <?php foreach ($lista as $rv) {
+                                        if (strtotime($rv->getDato()) - strtotime(date('Y-m-d')) < 86400) {
+                                            $rv->setStatusInt(1);
+                                            $rv->lagre();
+                                        }
 
-                                        <button class="btn btn-primary btn-sm navbar-btn"
+                                        $class = 'btn-primary';
+                                        switch ($rv->getStatusInt()) {
+                                            case '1':
+                                                $class = 'btn-default';
+                                                break;
+                                            case '2':
+                                                $class = 'btn-success';
+                                                break;
+                                            case '3':
+                                                $class = 'btn-danger';
+                                                break;
+                                        }
+                                        ?>
+
+                                        <button class="btn <?php echo $class; ?> btn-sm navbar-btn"
                                                 onclick="vis(<?php echo $rv->getId(); ?>)">
                                             Påmeldte: <?php $str = "{$rv->getAntallPameldte()}/{$rv->getAntall()} - {$rv->getNokkelord()}";
                                             echo substr($str, 0, 20);
@@ -95,7 +138,7 @@ $ukeStart = strtotime('last week', $ukeStart);
 
                                     <?php }
                                 }
-                                  ?>c
+                                  ?>
 
                             </td>
                         <?php }

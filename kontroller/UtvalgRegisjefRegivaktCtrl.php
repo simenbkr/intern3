@@ -8,6 +8,9 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
 {
     public function bestemHandling()
     {
+        if (!$this->cd->getAktivBruker()->getPerson()->harUtvalgVerv()) {
+            return;
+        }
 
         switch ($_SERVER['REQUEST_METHOD']) {
 
@@ -52,20 +55,41 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
 
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         switch ($this->cd->getAktueltArg()) {
-
+            case 'underkjenn':
+                if (!is_null(($rv = Regivakt::medId($post['rvid']))) && in_array($rv->getStatusInt(), [0, 1, 2])) {
+                    $rv->underkjenn();
+                    Funk::setSuccess('Regivakten ble underkjent!');
+                    return;
+                }
+                break;
+            case 'godkjenn':
+                if (!is_null(($rv = Regivakt::medId($post['rvid']))) && in_array($rv->getStatusInt(), [0, 1, 3])) {
+                    $rv->godkjenn();
+                    Funk::setSuccess('Regivakten ble godkjent, og regi ført for deltakerene.');
+                    return;
+                }
+                break;
+            case 'slett':
+                if (!is_null(($rv = Regivakt::medId($post['rvid'])))) {
+                    $rv->slett();
+                    Funk::setSuccess('Slettet regivakten!');
+                    return;
+                }
+                break;
             case 'add':
-                Regivakt::ny($post['dato'], $post['start'], $post['slutt'], $post['beskrivelse'], $post['nokkelord'], $post['antall']);
+                Regivakt::ny($post['dato'], $post['start'], $post['slutt'], $post['beskrivelse'], $post['nokkelord'],
+                    $post['antall']);
                 Funk::setSuccess('La til en ny regivakt!');
                 return;
 
             case 'fjern':
-                if(($bruker = Bruker::medId($post['brid'])) != null && ($rv = Regivakt::medId($post['rvid'])) != null) {
+                if (($bruker = Bruker::medId($post['brid'])) != null && ($rv = Regivakt::medId($post['rvid'])) != null) {
                     $rv->removeBrukerId($bruker->getId());
                 }
                 return;
 
             case 'endre':
-                if(is_null(($rv = Regivakt::medId($post['rvid'])))) {
+                if (is_null(($rv = Regivakt::medId($post['rvid'])))) {
                     return;
                 }
 
@@ -80,7 +104,7 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
                 Funk::setSuccess('Endret regivakten!');
 
             case 'add_bruker':
-                if(is_null(($rv = Regivakt::medId($post['rvid'])))) {
+                if (is_null(($rv = Regivakt::medId($post['rvid'])))) {
                     return;
                 }
 

@@ -6,6 +6,10 @@
 
 <table class="table table-condensed table-responsive" id="t">
     <tr>
+        <td>Status:</td>
+        <td><?php echo $rv->getStatus(); ?></td>
+    </tr>
+    <tr>
         <td>Dato:</td>
         <td><?php echo $rv->getDato(); ?></td>
     </tr>
@@ -46,10 +50,14 @@
 
 </table>
 
-<button class="btn btn-danger" onclick="blimed('<?php echo $rv->getId(); ?>')">Bli med</button>
+<?php
+if($rv->getStatusInt() == 0 && $rv->harPlass()) { ?>
+
+<button class="btn btn-primary" onclick="blimed('<?php echo $rv->getId(); ?>')">Bli med</button>
+
+<?php } ?>
 
 <script>
-
     function blimed(id) {
         $.ajax({
             method: 'POST',
@@ -61,5 +69,4 @@
             }
         });
     }
-
 </script>

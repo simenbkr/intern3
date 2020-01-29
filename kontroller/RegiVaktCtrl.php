@@ -33,6 +33,7 @@ class RegiVaktCtrl extends AbstraktCtrl implements CtrlInterface
                 break;
             case '':
             default:
+                $dok->set('mine_vakter', Regivakt::regivakterDetteSemesteretBruker($this->cd->getAktivBruker()->getId()));
                 $dok->vis('regi/regivakt/oversikt.php');
         }
     }
@@ -47,6 +48,8 @@ class RegiVaktCtrl extends AbstraktCtrl implements CtrlInterface
                     $rv->addBrukerId($this->cd->getAktivBruker()->getId());
                     Funk::setSuccess("Du meldte deg på regivakta!");
                     return;
+                } else {
+                    Funk::setError('Du kan ikke bli med på denne regivakten!');
                 }
                 break;
 

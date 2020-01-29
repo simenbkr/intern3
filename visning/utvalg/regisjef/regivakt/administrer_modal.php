@@ -2,8 +2,18 @@
 
 /* @var \intern3\Regivakt $rv */
 
+if(strtotime($rv->getDato()) - strtotime(date('Y-m-d')) < 86400) {
+    $rv->setStatusInt(1);
+    $rv->lagre();
+}
+
+
 ?>
 <table class="table table-condensed table-responsive" id="t">
+    <tr>
+        <td>Status:</td>
+        <td><?php echo $rv->getStatus(); ?></td>
+    </tr>
     <tr>
         <td>Dato:</td>
         <td>
@@ -59,7 +69,7 @@
                     <?php foreach ($rv->getBrukere() as $bruker) {
                         /* @var \intern3\Bruker $bruker */
 
-                        if(is_null($bruker)) {
+                        if (is_null($bruker)) {
                             continue;
                         }
 
@@ -79,14 +89,16 @@
         </td>
     </tr>
 
+<?php if(in_array($rv->getStatusInt(), [0])) { ?>
+
     <tr>
         <td>Meld på:</td>
         <td>
-            <select class="form-control" onchange="leggTil('<?php echo $rv->getId();?>',this)">Velg
-                <option> - </option>
+            <select class="form-control" onchange="leggTil('<?php echo $rv->getId(); ?>',this)">Velg
+                <option> -</option>
                 <?php foreach ($beboere as $beboer) {
 
-                    if(in_array($beboer->getBrukerId(), $rv->getBrukerIder())) {
+                    if (in_array($beboer->getBrukerId(), $rv->getBrukerIder())) {
                         continue;
                     }
 
@@ -97,10 +109,64 @@
             </select>
         </td>
     </tr>
+    <?php } ?>
 
 </table>
 
+<?php
+if(in_array($rv->getStatusInt(), [0, 1])) {
+?>
+<button class="btn btn-danger" onclick="slett('<?php echo $rv->getId(); ?>')">Slett</button>
+
+<?php } ?>
+
+<?php
+if(in_array($rv->getStatusInt(), [0, 1, 3])) {
+?>
+<button class="btn btn-success" onclick="godkjenn('<?php echo $rv->getId(); ?>')">Godkjenn</button>
+<?php } ?>
+
+<?php
+if(in_array($rv->getStatusInt(), [0, 1, 2])) { ?>
+<button class="btn btn-warning" onclick="underkjenn('<?php echo $rv->getId(); ?>')">Underkjenn</button>
+<?php
+}
+?>
+
 <script>
+
+    function underkjenn(id) {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/regivakt/underkjenn/',
+            data: 'rvid=' + id,
+            success: function (html) {
+                location.reload();
+            }
+        });
+    }
+
+    function godkjenn(id) {
+        $.ajax({
+           type: 'POST',
+           url: '?a=utvalg/regisjef/regivakt/godkjenn/',
+           data: 'rvid=' + id,
+           success: function (html) {
+               location.reload();
+           }
+        });
+    }
+
+    function slett(id) {
+        $.ajax({
+            type: 'POST',
+            url: '?a=utvalg/regisjef/regivakt/godkjenn/',
+            data: 'rvid=' + id,
+            success: function (html) {
+                location.reload();
+            }
+        });
+    }
 
     function leggTil(rvid, elem) {
         var brid = elem.options[elem.selectedIndex].value;
@@ -120,8 +186,6 @@
     }
 
     function endre(rvid) {
-        console.log(rvid);
-
         var dato = document.getElementById('dato-modalen').value;
         var start = document.getElementById('start-modalen').value;
         var slutt = document.getElementById('slutt-modalen').value;

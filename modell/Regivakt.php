@@ -107,7 +107,8 @@ class Regivakt
         return $brukere;
     }
 
-    public function getAntallPameldte() : int {
+    public function getAntallPameldte(): int
+    {
         return count($this->bruker_ider);
     }
 
@@ -152,8 +153,14 @@ class Regivakt
 
     public function lagre()
     {
-        $st = DB::getDB()->prepare('
-UPDATE regivakt SET dato = :dato, start_tid = :start, slutt_tid = :slutt, beskrivelse = :beskrivelse, nokkelord = :nokkelord, antall = :antall WHERE id = :id');
+        $st = DB::getDB()->prepare('UPDATE regivakt SET dato = :dato,
+start_tid = :start,
+slutt_tid = :slutt,
+beskrivelse = :beskrivelse,
+nokkelord = :nokkelord,
+antall = :antall,
+status = :status 
+WHERE id = :id');
         $st->execute([
             'dato' => $this->dato,
             'start' => $this->start_tid,
@@ -161,6 +168,7 @@ UPDATE regivakt SET dato = :dato, start_tid = :start, slutt_tid = :slutt, beskri
             'beskrivelse' => $this->beskrivelse,
             'nokkelord' => $this->nokkelord,
             'antall' => $this->antall,
+            'status' => $this->status,
             'id' => $this->id
         ]);
     }
@@ -232,6 +240,89 @@ VALUES(:dato, :start, :slutt, :beskrivelse,:nokkelord, :antall)');
         }
 
         return $res;
+    }
+
+    public function slett()
+    {
+
+        $st = DB::getDB()->prepare('DELETE FROM regivakt WHERE id = :id');
+        $st->execute(['id' => $this->id]);
+
+        //$st = DB::getDB()->prepare('DELETE FROM regivakt_bytte WHERE regivakt_id = :id');
+        //$st->execute(['id' => $this->id]);
+
+    }
+
+    public function godkjenn()
+    {
+
+        $tid_brukt = strtotime($this->slutt_tid) - strtotime($this->start_tid);
+        $kommentar = "Regivakt: {$this->getNokkelord()}. Beskrivelse: {$this->beskrivelse}.";
+        $dato = $this->dato;
+        $tid_registrert = date('Y-m-d H:i:s');
+        $tid_godkjent = $tid_registrert;
+        $godkjent_bruker_id = Session::getAktivBruker()->getId();
+
+        foreach ($this->getBrukere() as $bruker) {
+            /* @var Bruker $bruker */
+
+            $st = DB::getDB()->prepare('INSERT INTO 
+arbeid(bruker_id, polymorfkategori_id, polymorfkategori_velger, tid_registrert, sekunder_brukt, tid_utfort, kommentar, godkjent, tid_godkjent, godkjent_bruker_id)
+VALUES(:bid, 1, 0, :tid_reg, :sek_brukt, :tid_utfort, :kommentar, 1, :tid_godkjent, :godkjenner)');
+
+            $st->execute([
+                'bid' => $bruker->getId(),
+                'tid_reg' => $tid_registrert,
+                'sek_brukt' => $tid_brukt,
+                'tid_utfort' => $dato,
+                'kommentar' => $kommentar,
+                'tid_godkjent' => $tid_godkjent,
+                'godkjenner' => $godkjent_bruker_id
+            ]);
+        }
+
+        $this->setStatusInt(2);
+        $this->lagre();
+    }
+
+    public function underkjenn()
+    {
+        $this->status = 3;
+        $this->lagre();
+
+        $tid_brukt = strtotime($this->slutt_tid) - strtotime($this->start_tid);
+        $kommentar = "Regivakt: {$this->getNokkelord()}. Beskrivelse: {$this->beskrivelse}.";
+
+        $st = DB::getDB()->prepare('DELETE FROM arbeid WHERE 
+(sekunder_brukt = :sek_brukt AND kommentar = :kommentar AND bruker_id = :bruker_id)');
+
+        foreach ($this->getBrukere() as $bruker) {
+            $st->execute([
+                'bruker_id' => $bruker->getId(),
+                'sek_brukt' => $tid_brukt,
+                'kommentar' => $kommentar,
+            ]);
+        }
+
+    }
+
+    public static function regivakterDetteSemesteretBruker($bruker_id) {
+
+        $start = Funk::getSemesterStart(Funk::generateSemesterString(date('Y-m-d')));
+        $slutt = Funk::getSemesterEnd(Funk::generateSemesterString(date('Y-m-d')));
+
+        $st = DB::getDB()->prepare('SELECT * FROM regivakt WHERE (dato >= :start AND dato <= :slutt)');
+        $st->execute([
+            'start' => $start,
+            'slutt' => $slutt
+        ]);
+
+        $vakter = array();
+        for($i = 0; $i < $st->rowCount(); $i++) {
+            $vakter[] = self::init($st);
+        }
+
+        return $vakter;
     }
 
 }
