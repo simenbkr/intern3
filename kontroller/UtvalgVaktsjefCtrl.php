@@ -416,8 +416,9 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
             case 'drikke':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-                    if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge']) && isset($post['drikke1'])
+                    if (count($post) > 0 && isset($post['navn']) && isset($post['pris']) && isset($post['farge']) && isset($post['kommentar'])
                     ) {
+
                         $st = DB::getDB()->prepare('INSERT INTO drikke (navn,pris,aktiv,farge,kommentar) 
                                                               VALUES(:navn,:pris,1,:farge,:kommentar)');
 
