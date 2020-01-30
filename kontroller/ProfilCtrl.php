@@ -171,7 +171,7 @@ class ProfilCtrl extends AbstraktCtrl
                     $st->bindValue($navn, $verdi);
                 }
 
-                if ($post['epost'] != $brukeren->getPerson()->getEpost()) {
+                if ($post['epost'] != $this->cd->getAktivBruker()->getPerson()->getEpost()) {
                     $brukeren->getPerson()->updateLists($post['epost'], true);
                 }
 
