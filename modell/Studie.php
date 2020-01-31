@@ -54,6 +54,31 @@ class Studie {
         return $st->fetch()['cnt'] > 0;
     }
 
+    public static function slettStudie($id) {
+	    $st = DB::getDB()->prepare("DELETE FROM studie WHERE id=:id;");
+	    $st->bindParam(':id', $id);
+	    $st->execute();
+
+	    return null;
+    }
+
+    public static function endreStudie($id, $nyttnavn) {
+	    $st = DB::getDB()->prepare("UPDATE studie SET navn = :nyttnavn WHERE id = :id; ");
+	    $st->bindParam('id', $id);
+	    $st->bindParam('nyttnavn', $nyttnavn);
+	    $st->execute();
+
+	    return null;
+    }
+
+    public static function brukesStudie($studieId) {
+	    $st = DB::getDB()->prepare("SELECT COUNT(studie_id) as cnt FROM `beboer` WHERE romhistorikk LIKE '%\"utflyttet\":null%' AND studie_id = :studieId");
+	    $st->bindParam('studieId', $studieId);
+	    $st->execute();
+
+	    return $st->fetch()['cnt'] > 0;
+    }
+
 }
 
 ?>
