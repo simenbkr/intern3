@@ -29,6 +29,7 @@ $sql = "CREATE TABLE `regivakt`(
 `nokkelord` TEXT NULL , 
 `antall` INT(10) NOT NULL , 
 `status` INT(10) NOT NULL , 
+`bytte` TINYINT(1) NULL DEFAULT '0'
 PRIMARY KEY (`id`));";
 
 

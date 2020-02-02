@@ -13,6 +13,7 @@ class Regivakt
     private int $status;
     private string $nokkelord;
     private int $antall;
+    private bool $bytte;
 
     const STATUS_TEKST = array(0 => 'Planlagt', 1 => 'Ferdig', 2 => 'Godkjent', 3 => 'Underkjent');
 
@@ -35,6 +36,7 @@ class Regivakt
         $instance->beskrivelse = $rad['beskrivelse'];
         $instance->status = intval($rad['status']);
         $instance->antall = intval($rad['antall']);
+        $instance->bytte = (intval($rad['bytte']) == 1);
         $instance->brukere = array();
 
         return $instance;
@@ -151,6 +153,16 @@ class Regivakt
         return $this->antall > count($this->bruker_ider);
     }
 
+    public function setBytte(bool $bytte)
+    {
+        $this->bytte = $bytte;
+    }
+
+    public function byttes(): bool
+    {
+        return $this->bytte;
+    }
+
     public function lagre()
     {
         $st = DB::getDB()->prepare('UPDATE regivakt SET dato = :dato,
@@ -159,7 +171,8 @@ slutt_tid = :slutt,
 beskrivelse = :beskrivelse,
 nokkelord = :nokkelord,
 antall = :antall,
-status = :status 
+status = :status,
+bytte = :bytte
 WHERE id = :id');
         $st->execute([
             'dato' => $this->dato,
@@ -169,6 +182,7 @@ WHERE id = :id');
             'nokkelord' => $this->nokkelord,
             'antall' => $this->antall,
             'status' => $this->status,
+            'bytte' => ($this->bytte ? 1 : 0),
             'id' => $this->id
         ]);
     }
@@ -177,9 +191,9 @@ WHERE id = :id');
     public function addBrukerId($bruker_id)
     {
         $ider = $this->bruker_ider;
-        $ider[] = $bruker_id;
+        $ider[] = (string) $bruker_id;
         $this->bruker_ider = $ider;
-        $ider = json_encode($ider);
+        $ider = json_encode($ider, true);
         $st = DB::getDB()->prepare('UPDATE regivakt SET bruker_ider = :bider WHERE id = :id');
         $st->execute([
             'bider' => $ider,
@@ -198,7 +212,7 @@ WHERE id = :id');
         }
 
         $this->bruker_ider = $nye_ider;
-        $nye_ider = json_encode($nye_ider);
+        $nye_ider = json_encode($nye_ider, true);
         if (count($this->bruker_ider) === 0) {
             $nye_ider = '';
         }
@@ -248,8 +262,8 @@ VALUES(:dato, :start, :slutt, :beskrivelse,:nokkelord, :antall)');
         $st = DB::getDB()->prepare('DELETE FROM regivakt WHERE id = :id');
         $st->execute(['id' => $this->id]);
 
-        //$st = DB::getDB()->prepare('DELETE FROM regivakt_bytte WHERE regivakt_id = :id');
-        //$st->execute(['id' => $this->id]);
+        $st = DB::getDB()->prepare('DELETE FROM regivakt_bytte WHERE regivakt_id = :id');
+        $st->execute(['id' => $this->id]);
 
     }
 
@@ -306,23 +320,51 @@ VALUES(:bid, 1, 0, :tid_reg, :sek_brukt, :tid_utfort, :kommentar, 1, :tid_godkje
 
     }
 
-    public static function regivakterDetteSemesteretBruker($bruker_id) {
+    public static function regivakterDetteSemesteretBruker($bruker_id)
+    {
 
         $start = Funk::getSemesterStart(Funk::generateSemesterString(date('Y-m-d')));
         $slutt = Funk::getSemesterEnd(Funk::generateSemesterString(date('Y-m-d')));
 
-        $st = DB::getDB()->prepare('SELECT * FROM regivakt WHERE (dato >= :start AND dato <= :slutt)');
+        $st = DB::getDB()->prepare('SELECT * FROM regivakt WHERE (dato >= :start AND dato <= :slutt AND bruker_ider LIKE :bid)');
         $st->execute([
             'start' => $start,
-            'slutt' => $slutt
+            'slutt' => $slutt,
+            'bid' => "%\"{$bruker_id}\"%"
         ]);
 
         $vakter = array();
-        for($i = 0; $i < $st->rowCount(); $i++) {
+        for ($i = 0; $i < $st->rowCount(); $i++) {
             $vakter[] = self::init($st);
         }
 
         return $vakter;
+    }
+
+    public function toString()
+    {
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::TRADITIONAL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+        return $df->format(strtotime($this->getDato()));
+    }
+
+    public function shortToString()
+    {
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::FULL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+
+        return ucfirst($df->format(strtotime($this->dato)));
+    }
+
+    public function medToString()
+    {
+        $df = new \IntlDateFormatter('nb_NO',
+            \IntlDateFormatter::FULL, \IntlDateFormatter::NONE,
+            'Europe/Oslo');
+
+        return ucfirst($df->format(strtotime($this->dato)));
     }
 
 }

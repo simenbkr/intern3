@@ -2,6 +2,10 @@
 
 require_once(__DIR__ . '/../../static/topp.php');
 
+$df = new \IntlDateFormatter('nb_NO',
+    \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE,
+    'Europe/Oslo');
+
 if ($_SESSION['semester'] == "var") {
     $ukeStart = strtotime('2 January');
     $ukeSlutt = strtotime('1 July');
@@ -19,6 +23,10 @@ $ukeStart = strtotime('last week', $ukeStart);
         <div class="col-lg-12">
             <h1>Regi » Regivakt</h1>
             <hr>
+
+            <p>[ Oversikt ] | [ <a href="?a=regi/regivakt/bytte">Bytte</a> ]</p>
+
+            <hr>
             <p>
                 Her kan du melde deg på Regivakter. Klikk på knappene for å se detaljer.
                 Du kan melde deg på så lenge det er plass, inntil dagen før vakten er satt.
@@ -28,18 +36,6 @@ $ukeStart = strtotime('last week', $ukeStart);
             <?php require_once(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
             <hr>
-            <div class="col-md-2">
-
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
-                        <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" onclick="setVar()">Vår</a></li>
-                        <li><a href="#" onclick="setHost()">Høst</a></li>
-                        <li><a href="#" onclick="fraNa()">Fra nå til semesterslutt</a></li>
-                    </ul>
-                </div>
-            </div>
 
             <div class="col-md-5">
                 <h3>Dine regivakter:</h3>
@@ -52,7 +48,7 @@ $ukeStart = strtotime('last week', $ukeStart);
                             <td>Tidspunkt:</td>
                             <td>
                                 <button class="btn btn-info btn-sm" onclick="vis('<?php echo $rv->getId(); ?>')">
-                                    <?php echo "{$rv->getDato()} {$rv->getStartTid()}-{$rv->getSluttTid()}"; ?>
+                                    <?php echo "{$df->format(strtotime($rv->getDato()))} {$rv->getStartTid()}-{$rv->getSluttTid()}"; ?>
                                 </button>
                             </td>
                         </tr>
@@ -61,6 +57,22 @@ $ukeStart = strtotime('last week', $ukeStart);
                 </table>
                 <hr>
             </div>
+
+            <div class="col-md-12">
+
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Semester
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick="setVar()">Vår</a></li>
+                        <li><a href="#" onclick="setHost()">Høst</a></li>
+                        <li><a href="#" onclick="fraNa()">Fra nå til semesterslutt</a></li>
+                    </ul>
+                </div>
+
+                <hr>
+            </div>
+
 
 
             <table class="table-bordered table table-responsive">

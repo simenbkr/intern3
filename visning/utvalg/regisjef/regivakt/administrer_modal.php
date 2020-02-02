@@ -160,7 +160,7 @@ if(in_array($rv->getStatusInt(), [0, 1, 2])) { ?>
     function slett(id) {
         $.ajax({
             type: 'POST',
-            url: '?a=utvalg/regisjef/regivakt/godkjenn/',
+            url: '?a=utvalg/regisjef/regivakt/slett/',
             data: 'rvid=' + id,
             success: function (html) {
                 location.reload();
