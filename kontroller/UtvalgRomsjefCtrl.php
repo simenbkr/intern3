@@ -61,6 +61,30 @@ class UtvalgRomsjefCtrl extends AbstraktCtrl
                 Funk::setError('Studiet finnes allerede');
             }
 
+            if ($_POST['slett'] == 'Slett') {
+                if ($_POST['studie_id'] == '23' || $_POST['studie_id'] == '0') {
+                    Funk::setError('Denne kan ikke slettes!');
+                } else if (!(Studie::brukesStudie($_POST['studie_id']))) {
+                    $studienavn = Studie::medId($_POST['studie_id'])->getNavn();
+                    Studie::slettStudie($_POST['studie_id']);
+                    Funk::setSuccess($studienavn . ' ble slettet');
+
+                } else {
+                    Funk::setError('Studie er i bruk og kan ikke slettes');
+
+                }
+            } else if ($_POST['endre'] == 'Endre navn') {
+                if ($_POST['nyttStudienavn'] !== "" && $_POST['studie_id'] !== "23" && $_POST['studie_id'] !== "0") {
+                    $gammeltNavn = Studie::medId($_POST['studie_id'])->getNavn();
+                    Studie::endreStudie($_POST['studie_id'], $_POST['nyttStudienavn']);
+                    Funk::setSuccess('"' . $gammeltNavn . '" endret navn til "' . $_POST['nyttStudienavn'] . '"');
+
+                } else {
+                    Funk::setError('Ugyldig input eller studie');
+
+                }
+            }
+
             if ($sisteArg != $aktueltArg && is_numeric($sisteArg)) {
 
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
