@@ -172,7 +172,7 @@ class ProfilCtrl extends AbstraktCtrl
                 }
 
                 if ($post['epost'] != $this->cd->getAktivBruker()->getPerson()->getEpost()) {
-                    $brukeren->getPerson()->updateLists($post['epost'], true);
+                    $this->cd->getAktivBruker()->getPerson()->updateLists($post['epost'], true);
                 }
 
 
@@ -275,7 +275,7 @@ class ProfilCtrl extends AbstraktCtrl
 
             $bruker = $this->cd->getAktivBruker();
 
-            if(is_null($bruker)) {
+            if (is_null($bruker)) {
                 return array('Noe gikk galt ved endring av passord.');
             }
 
