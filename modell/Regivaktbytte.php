@@ -36,8 +36,8 @@ class Regivaktbytte
         $instans->gisbort = (intval($rad['gisbort']) === 1);
         $instans->passord = $rad['passord'];
         $instans->har_passord = (strlen($instans->passord) > 0);
-        $instans->forslag_ider = strlen($rad['forslag']) > 0 ? json_decode($rad['forslag'], true) : array();
-        $instans->forslag_vakter = null;
+        //$instans->forslag_ider = strlen($rad['forslag']) > 0 ? json_decode($rad['forslag'], true) : array();
+        $instans->forslag_vakter = RegiBytteForslag::listeForBytte($instans->id);
         $instans->merknad = $rad['merknad'];
         $instans->slipp = $rad['slipp'];
         $instans->bruker = null;
@@ -48,14 +48,13 @@ class Regivaktbytte
     public function lagre()
     {
         $st = DB::getDB()->prepare('UPDATE regivakt_bytte SET bruker_id = :bid, 
-regivakt_id = :rvid, gisbort = :gisbort, passord = :passord, forslag = :forslag, merknad = :merknad, slipp = :slipp WHERE id = :id');
+regivakt_id = :rvid, gisbort = :gisbort, passord = :passord, merknad = :merknad, slipp = :slipp WHERE id = :id');
         $st->execute([
             'id' => $this->id,
             'bid' => $this->bruker_id,
             'rvid' => $this->regivakt_id,
             'gisbort' => $this->gisbort,
             'passord' => $this->passord,
-            'forslag' => json_encode($this->forslag_ider, true),
             'merknad' => $this->merknad,
             'slipp' => $this->slipp
         ]);
@@ -143,15 +142,11 @@ regivakt_id = :rvid, gisbort = :gisbort, passord = :passord, forslag = :forslag,
         return $this->passord === $passord;
     }
 
-    public function getForslagIderAssoc(): array
-    {
-        return $this->forslag_ider;
-    }
-
     public function getForslagIder() : array {
         $arr = array();
-        foreach($this->forslag_ider as $id => $bruker) {
-            $arr[] = $id;
+        foreach($this->forslag_vakter as $forslag) {
+            /* @var RegiBytteForslag $forslag */
+            $arr[] = $forslag->getRegivaktId();
         }
 
         return $arr;
@@ -159,47 +154,21 @@ regivakt_id = :rvid, gisbort = :gisbort, passord = :passord, forslag = :forslag,
 
     public function getForslagVakter(): array
     {
-        if (is_null($this->forslag_vakter)) {
-            $tmp = array();
-            foreach ($this->forslag_ider as $rvid => $forslager) {
-                $tmp[] = Regivakt::medId($rvid);
-            }
-            $this->forslag_vakter = $tmp;
-        }
-
         return $this->forslag_vakter;
     }
-
-    public function getForslagVakterAssoc(): array
-    {
-        if (is_null($this->forslag_vakter)) {
-            $tmp = array();
-            foreach ($this->forslag_ider as $rvid => $forslager) {
-                $tmp[$forslager] = Regivakt::medId($rvid);
-            }
-            $this->forslag_vakter = $tmp;
-        }
-
-        return $this->forslag_vakter;
-    }
-
 
     public function leggTilForslag($bruker_id, $id)
     {
-        $this->forslag_ider[$id] = $bruker_id;
-        $this->lagre();
+        $this->forslag_vakter[] = RegiBytteForslag::leggTilForslag($this->id, $id, $bruker_id);
     }
 
     public function slettForslag($bruker_id, $id) {
-        $ny_array = array();
-        foreach($this->forslag_ider as $fid => $bid) {
-            if($fid == $id && $bruker_id == $bid) {
-                continue;
+        foreach ($this->forslag_vakter as $forslag) {
+            /* @var RegiBytteForslag $forslag */
+            if ($forslag->getRegivaktId() == $id && $forslag->getBrukerId() == $bruker_id) {
+                RegiBytteForslag::slettForslag($forslag->getId());
             }
-            $ny_array[] = $fid;
         }
-        $this->forslag_ider = $ny_array;
-        $this->lagre();
     }
 
     public function getMerknad(): string
@@ -242,7 +211,6 @@ VALUES(:bid, :rvid, :gisbort, :passord, :merknad)');
 
     public static function liste()
     {
-
         $lista = array();
         //$start = Funk::getSemesterStart(Funk::generateSemesterString(date('Y-m-d')));
         $slutt = Funk::getSemesterEnd(Funk::generateSemesterString(date('Y-m-d')));
@@ -284,5 +252,18 @@ VALUES(:bid, :rvid, :gisbort, :passord, :merknad)');
         return self::init($st);
     }
 
+    public static function fjernFraBytter($bruker_id, $rvid) {
+        $st = DB::getDB()->prepare('DELETE FROM regivakt_bytte_forslag WHERE regivakt_id = :rvid AND bruker_id = :bid');
+        $st->execute([
+            'rvid' => $rvid,
+            'bid' => $bruker_id
+        ]);
+    }
 
+    public static function slettBytteFraVakt($regivakt_id) {
+        $st = DB::getDB()->prepare('DELETE FROM regivakt_bytte WHERE regivakt_id = :regivakt_id');
+        $st->execute([
+            'regivakt_id' => $regivakt_id
+        ]);
+    }
 }

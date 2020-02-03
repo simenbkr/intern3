@@ -42,11 +42,19 @@ $sql = "CREATE TABLE `regivakt_bytte` (
 `regivakt_id` INT(10) NULL , 
 `gisbort` TINYINT(1) NULL DEFAULT '0' , 
 `passord` VARCHAR(512) NULL , 
-`forslag` TEXT NULL , 
 `merknad` TEXT NULL , 
 `slipp` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
 PRIMARY KEY (`id`));";
 
+
+$db->query($sql);
+
+$sql = "CREATE TABLE `regivakt_bytte_forslag` ( 
+`id` INT(10) NOT NULL AUTO_INCREMENT ,
+`regivakt_bytte_id` INT(10) NOT NULL , 
+`regivakt_id` INT NOT NULL , 
+`bruker_id` INT NOT NULL 
+PRIMARY KEY (`id`))";
 
 $db->query($sql);
 

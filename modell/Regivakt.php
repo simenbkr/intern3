@@ -267,6 +267,7 @@ VALUES(:dato, :start, :slutt, :beskrivelse,:nokkelord, :antall)');
 
     }
 
+
     public function godkjenn()
     {
 

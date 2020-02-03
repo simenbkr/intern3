@@ -108,7 +108,7 @@ $df = new \IntlDateFormatter('nb_NO',
                                 </td>
                             <?php } elseif ($aktiv_bruker->getId() == $bytte->getBrukerId()) { ?>
                                 <td>
-                                    <button class="btn btn-primary" <?php echo $disabled; ?>
+                                    <button class="btn btn-primary"
                                             onclick="bytte('<?php echo $bytte->getId(); ?>')">
                                         <span title="Byttes" class="glyphicon glyphicon-refresh"></span>
                                         Se forslag

@@ -97,16 +97,23 @@ class RegiVaktCtrl extends AbstraktCtrl implements CtrlInterface
                         exit("Woopsidaisy");
                     }
 
+
                     $forslaget->removeBrukerId($bruker_id);
                     $forslaget->addBrukerId($bytte->getBrukerId());
                     $forslaget->setBytte(false);
                     $forslaget->lagre();
+
+                    Regivaktbytte::fjernFraBytter($this->cd->getAktivBruker()->getId(), $bytte->getRegivakt()->getId());
 
                     $bytte->getRegivakt()->removeBrukerId($bytte->getBrukerId());
                     $bytte->getRegivakt()->addBrukerId($bruker_id);
                     $bytte->getRegivakt()->setBytte(false);
                     $bytte->getRegivakt()->lagre();
                     $bytte->slett();
+
+                    Regivaktbytte::fjernFraBytter($bruker_id, $rvid);
+                    Regivaktbytte::slettBytteFraVakt($rvid);
+                    Regivaktbytte::slettBytteFraVakt($forslaget->getId());
 
                     Funk::setSuccess("Godtok bytteforslaget! Du er nå satt opp på {$forslaget->toString()}!");
                     header('Location: ?a=regi/regivakt/bytte');
@@ -181,7 +188,8 @@ class RegiVaktCtrl extends AbstraktCtrl implements CtrlInterface
 
             case 'fjern':
                 if (!is_null($rv = Regivakt::medId($this->cd->getSisteArg()))
-                    && !is_null(($rvb = Regivaktbytte::medRegivaktIdBrukerId($rv->getId(), $this->cd->getAktivBruker()->getId())))
+                    && !is_null(($rvb = Regivaktbytte::medRegivaktIdBrukerId($rv->getId(),
+                        $this->cd->getAktivBruker()->getId())))
                     && $rvb->getBrukerId() == $this->cd->getAktivBruker()->getId()) {
 
                     $rvb->slett();
