@@ -66,6 +66,7 @@ class RegiVaktCtrl extends AbstraktCtrl implements CtrlInterface
                 return;
             case 'vis':
                 if (!is_null($rv = Regivakt::medId($this->cd->getSisteArg()))) {
+                    $dok->set('aktiv_bruker', $this->cd->getAktivBruker());
                     $dok->set('rv', $rv);
                     $dok->vis('regi/regivakt/detaljer_modal.php');
                     return;
@@ -199,7 +200,8 @@ class RegiVaktCtrl extends AbstraktCtrl implements CtrlInterface
                 }
                 break;
             case 'blimed':
-                if (!is_null(($rv = Regivakt::medId($post['id']))) && $rv->harPlass()) {
+                if (!is_null(($rv = Regivakt::medId($post['id']))) && $rv->harPlass() && !in_array($this->cd->getAktivBruker()->getId(),
+                        $rv->getBrukerIder()) && $rv->getStatusInt() == 0) {
                     $rv->addBrukerId($this->cd->getAktivBruker()->getId());
                     Funk::setSuccess("Du meldte deg på regivakta!");
                     return;

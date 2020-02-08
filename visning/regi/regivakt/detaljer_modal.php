@@ -51,7 +51,7 @@
 </table>
 
 <?php
-if($rv->getStatusInt() == 0 && $rv->harPlass()) { ?>
+if($rv->getStatusInt() == 0 && $rv->harPlass() && !in_array($aktiv_bruker->getId(), $rv->getBrukerIder())) { ?>
 
 <button class="btn btn-primary" onclick="blimed('<?php echo $rv->getId(); ?>')">Bli med</button>
 
