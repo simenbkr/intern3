@@ -55,6 +55,12 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
 
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         switch ($this->cd->getAktueltArg()) {
+            case 'vis_alle':
+                $_SESSION['regivakt'] = 'ALLE';
+                break;
+            case 'vis_aktive':
+                $_SESSION['regivakt'] = 'AKTIVE';
+                break;
             case 'underkjenn':
                 if (!is_null(($rv = Regivakt::medId($post['rvid']))) && in_array($rv->getStatusInt(), [0, 1, 2])) {
                     $rv->underkjenn();
@@ -99,12 +105,13 @@ class UtvalgRegisjefRegivaktCtrl extends AbstraktCtrl
                 $rv->setStartTid($post['start']);
                 $rv->setStatusInt($post['status']);
                 $rv->setNokkelord($post['nokkelord']);
+                $rv->setAntall($post['antall']);
                 $rv->lagre();
 
                 Funk::setSuccess('Endret regivakten!');
-
+                break;
             case 'add_bruker':
-                if (is_null(($rv = Regivakt::medId($post['rvid'])))) {
+                if (is_null(($rv = Regivakt::medId($post['rvid']))) || is_null(Bruker::medId($post['brid']))) {
                     return;
                 }
 

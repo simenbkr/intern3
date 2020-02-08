@@ -35,6 +35,18 @@ $ukeStart = strtotime('last week', $ukeStart);
                     </ul>
                 </div>
             </div>
+
+            <?php switch($_SESSION['regivakt']) {
+                case 'AKTIVE': ?>
+                    <button class="btn btn-default" onclick="setAlle()">Vis alle vakter</button>
+            <?php
+                    break;
+                case 'ALLE':
+                default: ?>
+                    <button class="btn btn-default" onclick="setAktive()">Vis bare aktive vakter</button>
+            <?php
+            }
+?>
             <hr>
 
             <p></p>
@@ -82,9 +94,32 @@ $ukeStart = strtotime('last week', $ukeStart);
                         <?php foreach (range(0, 6) as $dag) { ?>
                             <td>
                                 <?php foreach (\intern3\Regivakt::listeMedDato(date('Y-m-d',
-                                    $ukeStart + $dag * 86400)) as $rv) { ?>
+                                    $ukeStart + $dag * 86400)) as $rv) {
+                                    /* @var \intern3\Regivakt $rv */
 
-                                    <button class="btn btn-warning btn-sm navbar-btn"
+                                    if($_SESSION['regivakt'] == 'AKTIVE' && in_array($rv->getStatusInt(), [2,3])) {
+                                        continue;
+                                    }
+
+                                    switch($rv->getStatusInt()) {
+                                        case 0:
+                                            $klassen = 'btn-info';
+                                            break;
+                                        case 1:
+                                            $klassen = 'btn-warning';
+                                            break;
+                                        case 2:
+                                            $klassen = 'btn-success';
+                                            break;
+                                        case 3:
+                                        default:
+                                            $klassen = 'btn-danger';
+                                            break;
+
+                                    }
+                                    ?>
+
+                                    <button class="btn <?php echo $klassen; ?> btn-sm navbar-btn"
                                             onclick="administrer(<?php echo $rv->getId(); ?>)">
                                         Påmeldte: <?php $str = "{$rv->getAntallPameldte()}/{$rv->getAntall()} - {$rv->getNokkelord()}";
                                         echo substr($str, 0, 20);
@@ -160,6 +195,28 @@ $ukeStart = strtotime('last week', $ukeStart);
                 cache: false,
                 type: 'POST',
                 url: '?a=utvalg/vaktsjef/sethost',
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        }
+
+        function setAktive() {
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '?a=utvalg/regisjef/regivakt/vis_aktive',
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        }
+
+        function setAlle() {
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: '?a=utvalg/regisjef/regivakt/vis_alle',
                 success: function (data) {
                     location.reload();
                 }

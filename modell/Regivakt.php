@@ -148,6 +148,13 @@ class Regivakt
         return $this->antall;
     }
 
+    public function setAntall($antall)
+    {
+        if (intval($antall) > 0) {
+            $this->antall = $antall;
+        }
+    }
+
     public function harPlass(): bool
     {
         return $this->antall > count($this->bruker_ider);
@@ -191,7 +198,7 @@ WHERE id = :id');
     public function addBrukerId($bruker_id)
     {
         $ider = $this->bruker_ider;
-        $ider[] = (string) $bruker_id;
+        $ider[] = (string)$bruker_id;
         $this->bruker_ider = $ider;
         $ider = json_encode($ider, true);
         $st = DB::getDB()->prepare('UPDATE regivakt SET bruker_ider = :bider WHERE id = :id');
@@ -258,13 +265,14 @@ VALUES(:dato, :start, :slutt, :beskrivelse,:nokkelord, :antall)');
 
     public function slett()
     {
-
         $st = DB::getDB()->prepare('DELETE FROM regivakt WHERE id = :id');
         $st->execute(['id' => $this->id]);
 
         $st = DB::getDB()->prepare('DELETE FROM regivakt_bytte WHERE regivakt_id = :id');
         $st->execute(['id' => $this->id]);
 
+        $st = DB::getDB()->prepare('DELETE FROM regivakt_bytte_forslag WHERE regivakt_id = :id');
+        $st->execute(['id' => $this->id]);
     }
 
 
