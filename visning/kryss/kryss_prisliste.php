@@ -7,7 +7,7 @@ require_once(__DIR__ . '/../static/topp.php');
 <script type="text/javascript" src="js/dataTables.js"></script>
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
 <div class="col-md-12">
-    <h1>Kryss &raquo; Historikk</h1>
+    <h1>Kryss &raquo; Prisliste</h1>
 
     [ <a href="?a=kryss">Kryss historikk</a> ] | [ <a href="?a=kryss/statistikk">Kryssestatistikk</a> ] | [ Prisliste ]
 
