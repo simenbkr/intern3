@@ -1,6 +1,7 @@
 <table class="table table-bordered table-striped">
     <tr>
         <th>Drikke</th>
+        <th>Pris</th>
         <th>Antall</th>
         <th>Prisanslag (stemmer ikke nødvendigvis)</th>
     </tr>
@@ -18,6 +19,7 @@
         ?>
         <tr>
             <td><?php echo $navn; ?></td>
+            <td><?php echo round($drikke[$navn], 2); ?>kr</td>
             <td><?php echo $antall; ?></td>
             <td><?php echo ($pris = $drikke[$navn] * $antall);
                 $totalt += $pris;
@@ -37,6 +39,7 @@
         ?>
         <tr>
             <td><?php echo $kryss['aktuell_vin']->getNavn(); ?></td>
+            <td><?php echo $kryss['kostnad']; ?></td>
             <td><?php echo $kryss['antall']; ?></td>
             <td><?php echo round($kryss['kostnad'], 2); ?>kr</td>
         </tr>
@@ -45,6 +48,7 @@
     ?>
     <tr>
         <td><b>TOTALT</b></td>
+        <td></td>
         <td><b><?php echo $antallet; ?></b></td>
         <td><b><?php echo $totalt; ?>kr</b></td>
     </tr>

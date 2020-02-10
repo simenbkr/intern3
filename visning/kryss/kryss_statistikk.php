@@ -28,57 +28,43 @@ $df = new \IntlDateFormatter('nb_NO',
         <div class="col-lg-12">
 
             <div class="col-lg-6">
-
                 Forrige periode, som var fra <?php echo $df->format(strtotime($periode->getStart())); ?> til
                 <?php echo $df->format(strtotime($periode->getSlutt())); ?>
                 ble det krysset:
 
                 <table class="table table-bordered" id="tabellen">
                     <thead>
-                    <th>Drikke</th>
-                    <th>Antall</th>
+                        <th>Drikke</th>
+                        <th>Antall</th>
                     </thead>
-
                     <tbody>
+                        <?php foreach ($totalt as $navn => $antall) {
+                            if($antall < 1) {
+                                continue;
+                            }
 
-                    <?php foreach ($totalt as $navn => $antall) {
-                        if($antall < 1) {
-                            continue;
-                        }
+                            $sum += $antall;
+                            ?>
+                            <tr>
+                                <td><?php echo $navn; ?></td>
+                                <td><?php echo $antall; ?></td>
+                            </tr>
+                        <?php } ?>
 
-                        $sum += $antall;
-                        ?>
                         <tr>
-                            <td><?php echo $navn; ?></td>
-                            <td><?php echo $antall; ?></td>
+                            <td><b>Totalt</b></td>
+                            <td><b><?php echo $sum > 0 ? $sum : 0; ?></b></td>
                         </tr>
-                    <?php } ?>
-
-                    <tr>
-                        <td><b>Totalt</b></td>
-                        <td><b><?php echo $sum > 0 ? $sum : 0; ?></b></td>
-                    </tr>
                     </tbody>
-
                 </table>
-
-
             </div>
-
             <div class="col-lg-12">
-
                 <div id="visu"></div>
-
-
             </div>
-
-
         </div>
     </div>
 
     <script>
-
-
         var container = document.getElementById('visu');
         var groups = new vis.DataSet();
         var items = [];
@@ -91,17 +77,12 @@ $df = new \IntlDateFormatter('nb_NO',
         <?php
 
         foreach ($dato_liste as $dato => $drikke_array) {
-
             foreach ($drikke_array as $navn => $antall) {
-
                 if ($antall < 1) {
                     continue;
                 }
-
-
                 echo "items.push({x: '$dato', y: $antall, group: $drikke_assoc[$navn], label: {content: '$antall'}});\n\t";
             }
-
         }
 
         ?>
