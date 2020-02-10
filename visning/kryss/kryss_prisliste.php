@@ -66,7 +66,7 @@ require_once(__DIR__ . '/../static/topp.php');
 <script>
     $(document).ready(function () {
         $('#prisKjeller').DataTable({
-            "scrollY": "200px",
+            "scrollY": "400px",
             "scrollCollapse": true,
         });
         $('.dataTables_length').addClass('bs-select');
