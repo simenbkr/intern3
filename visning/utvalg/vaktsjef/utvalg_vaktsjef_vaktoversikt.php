@@ -23,19 +23,30 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         });
     }
 </script>
-<div class="col-md-6">
+<div class="col-md-12">
     <h1>Utvalget &raquo; Vaktsjef &raquo; Vaktoversikt</h1>
+    <hr>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
 
-    <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+        <table class="table table-bordered">
+            <tr>
+                <th scope="row">Antall vakter:</th>
+                <td><?php echo $antallVakter; ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Ufordelte vakter:</th>
+                <td><?php echo $antallUfordelte; ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Ubekreftede vakter:</th>
+                <td><?php echo $antallUbekreftet; ?></td>
+            </tr>
+        </table>
 
-    <p>
-    <h2>Antall vakter: <?php echo $antallVakter; ?></h2></p>
-    <p>
-    <h2>Ufordelte vakter: <?php echo $antallUfordelte; ?></h2></p>
-    <p>
-    <h2>Ubekreftede vakter: <?php echo $antallUbekreftet; ?></h2></p>
-
-    <p>En kjip vakt er en vakt som oppfyller én eller flere av følgende krav:
+        <p>En kjip vakt er en vakt som oppfyller én eller flere av følgende krav:
         <ul>
             <li>Førstevakt</li>
             <li>Lørdagsvakt</li>
@@ -44,43 +55,46 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </ul>
         Dette utgjør 13 av 28 vakter i løpet av en uke.
 
-    </p>
+        </p>
 
-</div>
-<div class="col-md-3" id="kake">
-    <table class="table table-bordered table-responsive small">
-        <tr>
-            <th>Rolle</th>
-            <th>Vakter Høst</th>
-            <th>Vakter Vår</th>
-        </tr>
-        <?php foreach ($roller as $rollen) {
-            if ($rollen->getNavn() == "Full regi") {
-                continue;
-            } ?>
+    </div>
+    <div class="col-md-4" id="kake">
+        <table class="table table-bordered table-responsive small">
             <tr>
-                <td><?php echo $rollen->getNavn(); ?></td>
-                <td><input class="form-control" type="text" name="host" id="<?php echo $rollen->getId(); ?>h"
-                           value="<?php echo $rollen->getVakterH(); ?>" size="1"></td>
-                <td><input class="form-control" type="text" name="vaar" id="<?php echo $rollen->getId(); ?>v"
-                           value="<?php echo $rollen->getVakterV(); ?>" size="1"></td>
+                <th>Rolle</th>
+                <th>Vakter Høst</th>
+                <th>Vakter Vår</th>
             </tr>
-            <?php
-        }
-        ?>
-        <tr>
-            <td></td>
-            <td>
-                <button class="btn btn-primary btn-sm" onclick="endreVakter()">Endre</button>
-            </td>
-            <td></td>
-        </tr>
-    </table>
+            <?php foreach ($roller as $rollen) {
+                if ($rollen->getNavn() == "Full regi") {
+                    continue;
+                } ?>
+                <tr>
+                    <td><?php echo $rollen->getNavn(); ?></td>
+                    <td><input class="form-control" type="text" name="host" id="<?php echo $rollen->getId(); ?>h"
+                               value="<?php echo $rollen->getVakterH(); ?>" size="1"></td>
+                    <td><input class="form-control" type="text" name="vaar" id="<?php echo $rollen->getId(); ?>v"
+                               value="<?php echo $rollen->getVakterV(); ?>" size="1"></td>
+                </tr>
+                <?php
+            }
+            ?>
+            <tr>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="endreVakter()">Endre</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
 </div>
 
-<div class="col-md-12">
+<div class="container">
 
-    <table class="table table-bordered" id="tabellen">
+
+<div class="col-md-12 table-responsive">
+    <table class=" table-bordered " id="tabellen">
         <thead>
         <tr>
             <th>Navn</th>
@@ -97,6 +111,16 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         </thead>
         <tbody>
         <?php
+        $sumStraffevakter = 0;
+        $sumSkalSitte = 0;
+        $sumHarSittet = 0;
+        $sumErOppsatt = 0;
+        $sumForstevakter = 0;
+        $sumKjipevakter = 0;
+        $sumVakterIgjen = 0;
+        $sumIkkeOppsatt = 0;
+        $sumIkkeBekreftet = 0;
+
         foreach ($beboerListe as $beboer) {
             /* @var $beboer \intern3\Beboer */
             $bruker = $beboer->getBruker();
@@ -114,23 +138,38 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                     <span class="glyphicon glyphicon-glyphicon-off" title="Det ser ut som denne beboeren har for mange førstevakter."></span>
                     <?php } ?>
                 </td>
-                <td><?php echo $bruker->antallStraffevakter(); ?></td>
-                <td><?php echo $bruker->antallVakterSkalSitte(); ?></td>
-                <td><?php echo $bruker->antallVakterHarSittet(); ?></td>
-                <td><?php echo $bruker->antallVakterErOppsatt(); ?></td>
-                <td><?php echo $bruker->antallForstevakter(); ?></td>
-                <td><?php echo $bruker->getPerson()->antallKjipeVakter(); ?></td>
-                <td><?php echo $bruker->antallVakterHarIgjen(); ?></td>
-                <td><?php echo $bruker->antallVakterIkkeOppsatt(); ?></td>
-                <td><?php echo $bruker->antallVakterIkkeBekreftet(); ?></td>
+                <td><?php echo $bruker->antallStraffevakter(); $sumStraffevakter += $bruker->antallStraffevakter(); ?></td>
+                <td><?php echo $bruker->antallVakterSkalSitte(); $sumSkalSitte += $bruker->antallVakterSkalSitte(); ?></td>
+                <td><?php echo $bruker->antallVakterHarSittet(); $sumHarSittet += $bruker->antallVakterHarSittet(); ?></td>
+                <td><?php echo $bruker->antallVakterErOppsatt(); $sumErOppsatt += $bruker->antallVakterErOppsatt(); ?></td>
+                <td><?php echo $bruker->antallForstevakter(); $sumForstevakter += $bruker->antallForstevakter(); ?></td>
+                <td><?php echo $bruker->getPerson()->antallKjipeVakter(); $sumKjipevakter += $bruker->getPerson()->antallKjipeVakter(); ?></td>
+                <td><?php echo $bruker->antallVakterHarIgjen(); $sumVakterIgjen += $bruker->antallVakterHarIgjen(); ?></td>
+                <td><?php echo $bruker->antallVakterIkkeOppsatt(); $sumIkkeOppsatt += $bruker->antallVakterIkkeOppsatt(); ?></td>
+                <td><?php echo $bruker->antallVakterIkkeBekreftet(); $sumIkkeBekreftet += $bruker->antallVakterIkkeBekreftet(); ?></td>
             </tr>
             <?php
         }
 
         ?>
         </tbody>
+        <tfoot>
+            <tr>
+                <th>SUM</th>
+                <td><?php echo $sumStraffevakter?></td>
+                <td><?php echo $sumSkalSitte?></td>
+                <td><?php echo $sumHarSittet?></td>
+                <td><?php echo $sumErOppsatt?></td>
+                <td><?php echo $sumForstevakter?></td>
+                <td><?php echo $sumKjipevakter?></td>
+                <td><?php echo $sumVakterIgjen?></td>
+                <td><?php echo $sumIkkeOppsatt?></td>
+                <td><?php echo $sumIkkeBekreftet?></td>
+            </tr>
+        </tfoot>
     </table>
 
+</div>
 </div>
 
 <link rel="stylesheet" type="text/css" href="css/dataTables.css"/>
@@ -139,12 +178,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 <script>
 
     $(document).ready(function () {
-        var table = $('#tabellen').DataTable({
+        $('#tabellen').DataTable({
             "paging": false,
             "searching": true,
-            "scrollY": "80vh",
-            "scrollCollapse": true,
-            //"scrollY": "500px"
+            "scrollY": "500px",
+            "scrollCollapse": true
         });
     });
 
