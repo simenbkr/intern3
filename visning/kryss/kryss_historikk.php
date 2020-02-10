@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../static/topp.php');
 <div class="col-md-12">
     <h1>Kryss &raquo; Historikk</h1>
 
-    [ Kryss historikk ] | [ <a href="?a=kryss/statistikk">Kryssestatistikk</a> ]
+    [ Kryss historikk ] | [ <a href="?a=kryss/statistikk">Kryssestatistikk</a> ] | [ <a href="?a=kryss/prisliste">Prisliste</a> ]
 
     <?php /*<p>[ <a href="?a=kryss">Nylig kryssing</a> ] [ <a href="?a=kryss/historikk">Historikk</a> ] [ <a href="?a=kryss/statistikk">Statistikk</a> ]</p>*/ ?>
     <hr>
@@ -26,9 +26,9 @@ require_once(__DIR__ . '/../static/topp.php');
     <h2>Alle transaksjoner</h2>
     <table class="table table-bordered" id="tabellen">
         <thead>
-        <th data-sortable="true">Tid</th>
-        <th>Antall</th>
-        <th>Drikke</th>
+            <th data-sortable="true">Tid</th>
+            <th>Antall</th>
+            <th>Drikke</th>
         </thead>
         <?php
 

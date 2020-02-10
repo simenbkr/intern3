@@ -21,7 +21,7 @@ $df = new \IntlDateFormatter('nb_NO',
     <div class="container">
         <h1>Kryss &raquo; Statistikk</h1>
 
-        [ <a href="?a=kryss">Kryss historikk</a> ] | [ Kryssestatistikk ]
+        [ <a href="?a=kryss">Kryss historikk</a> ] | [ Kryssestatistikk ] | [ <a href="?a=kryss/prisliste">Prisliste</a> ]
 
         <hr>
 

@@ -95,6 +95,11 @@ class Vin
         return $this->beskrivelse;
     }
 
+    public function getSlettet()
+    {
+        return $this->slettet;
+    }
+
     public function erSlettet(){
         return $this->slettet == 1;
     }

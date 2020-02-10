@@ -80,7 +80,16 @@ class KryssCtrl extends AbstraktCtrl
                 $this->visPeriode($mndkryss, $periodekryss);
 
                 break;
+            case 'prisliste':
 
+                $drikker = Drikke::alle();
+                $vin = Vin::getAlle();
+
+                $dok = new Visning($this->cd);
+                $dok->set('drikker', $drikker);
+                $dok->set('vin', $vin);
+                $dok->vis('kryss/kryss_prisliste.php');
+                break;
             case 'prehistorisk':
 
                 $og_periode = Periode::getForste();
