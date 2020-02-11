@@ -4,34 +4,41 @@ require_once(__DIR__ . '/../topp_utvalg.php');
 
 ?>
 <script>
+    function toggleInfo() {
+        let x = document.getElementById("info");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+
     $(function () {
         $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
     });
-
 </script>
-
-
 
 <div class="col-md-12">
     <h1>Utvalget &raquo; Vaktsjef &raquo; Generer vaktliste</h1>
     <hr>
 
     <?php require_once (__DIR__ . '/../../static/tilbakemelding.php'); ?>
-
-    <p>Denne siden brukes for å generere vaktlister. Ved starten av hvert semester (august/januar), burde tabellen (fra forrige semester) tømmes ved å benytte
-    knappen under. Deretter burde vaktene genereres. Vaktene genereres så rettferdig som mulig.</p>
-
+    <div class="col-sm-6">
+        <p>
+            Denne siden brukes for å generere vaktlister. <br/>
+            Ved starten av hvert semester (august/januar), burde tabellen (fra forrige semester) tømmes ved å benytte
+            knappen under. Deretter burde vaktene genereres. Vaktene genereres så rettferdig som mulig.
+        </p>
+    </div>
 </div>
 
-<div class="col-lg-12">
+<div class="col-md-12">
     <hr>
-
-    <button class="btn btn-danger" data-toggle="modal" data-target="#modal-tøm">Tøm vakttabell</button>
-
-    <button class="btn btn-warning" data-toggle="modal" data-target="#modal-tømperiode">Velg periode for tømming</button>
-
+        <button class="btn btn-danger" data-toggle="modal" data-target="#modal-tøm">Tøm vakttabell</button>
+        <button class="btn btn-warning" data-toggle="modal" data-target="#modal-tømperiode">Velg periode for tømming</button>
     <hr>
 </div>
+
 <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
 
     <div class="col-md-4 col-sm-12">
@@ -103,10 +110,13 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 </td>
             </tr>
             <tr>
-                <th>Sikkerhetsmargin</th>
+                <th>
+                    Sikkerhetsmargin<button onmousedown="toggleInfo()" class="btn btn-xs btn-info pull-right">!</button>
+                    <br>
+                    <h5 id="info" style="display: none">Skriv inn hvor mange vakter som ikke skal tildeles. De velges da tilfeldig.</h5>
+                </th>
                 <td colspan="2"><input type="text" name="varighet_sikkerhetsmargin" size="2"
-                                       value="<?php echo isset($_POST['varighet_sikkerhetsmargin']) && $_POST['varighet_sikkerhetsmargin'] ? $_POST['varighet_sikkerhetsmargin'] : '2'; ?>"><br>Her
-                    menes det hvor mange vakter som ikke skal tildeles. De velges tilfeldig.
+                                       value="<?php echo isset($_POST['varighet_sikkerhetsmargin']) && $_POST['varighet_sikkerhetsmargin'] ? $_POST['varighet_sikkerhetsmargin'] : '2'; ?>">
                 </td>
             </tr>
         </table>
@@ -140,7 +150,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
         <table class="table-bordered table">
             <thead>
             <tr>
-                <th><input type="button" class="btn btn-xs btn-info pull-right" value="Flere"
+                <th><input type="button" class="btn btn-xs btn-info pull-right" value="+"
                            onclick="flereEnkeltvakter();">Type og dato
                 </th>
             </tr>
@@ -178,7 +188,7 @@ require_once(__DIR__ . '/../topp_utvalg.php');
             <thead>
             <tr>
                 <th>Fra og med</th>
-                <th><input type="button" class="btn btn-xs btn-info pull-right" value="Flere"
+                <th><input type="button" class="btn btn-xs btn-info pull-right" value="+"
                            onclick="flereVaktperioder();">Til og med
                 </th>
             </tr>
