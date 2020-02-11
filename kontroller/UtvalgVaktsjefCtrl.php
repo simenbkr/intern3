@@ -236,6 +236,12 @@ class UtvalgVaktsjefCtrl extends AbstraktCtrl
                     }
                 }
                 break;
+            case 'vaktstyring_fjernfrabyttemarked':
+                $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+                if (isset($post['vaktId'])) {
+                    Vakt::fjernFraByttemarked($post['vaktId']);
+                }
+                break;
             case 'ukerapport':
                 $Uke = $this->cd->getArg($this->cd->getAktuellArgPos() + 1);
                 $Aar = $this->cd->getArg($this->cd->getAktuellArgPos() + 2);
