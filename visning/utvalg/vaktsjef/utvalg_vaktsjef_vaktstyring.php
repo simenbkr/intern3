@@ -260,45 +260,46 @@ foreach (range(date('W', $ukeStart), date('W', $ukeSlutt)) as $uke){
 			<td><?php echo $vakttype; ?>.<span class="hidden-sm hidden-xs">&nbsp;vakt</span><br>&nbsp;</td>
 <?php
 		foreach (range(0, 6) as $ukedag) {
-      $unix = strtotime('+' . $ukedag . ' day', $ukeStart);
-      $dato = date('Y-m-d', $unix);
-			$vakt = intern3\Vakt::medDatoVakttype($dato, $vakttype);
-      $modalId = 'modal-' . $dato . '-' . $vakttype;
+              $unix = strtotime('+' . $ukedag . ' day', $ukeStart);
+              $dato = date('Y-m-d', $unix);
+              $vakt = intern3\Vakt::medDatoVakttype($dato, $vakttype);
+              $modalId = 'modal-' . $dato . '-' . $vakttype;
 			if ($vakt == null) {
 				echo '			<td style="text-align: center;"><input type="button" onclick="lagVakt(\'' . $modalId . '\')" class="btn btn-sm btn-info" value="Legg til vakt">' . PHP_EOL;
+			} else {
+                if ($vakt->erLedig()) {
+                    echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
+                } else {
+                     if ($vakt->getBruker() == null) {
+                        echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-warning" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
+                     } else {
+                         $bruker = $vakt->getBruker();
+                         if ($vakt->erDobbelvakt()) {
+                            echo '			<td class="celle_blaa">';
+                         } else {
+                             if ($vakt->erStraffevakt()) {
+                                echo '			<td class="celle_oransje">';
+                             } else {
+                                 if ($vakt->vilBytte()) {
+                                     echo '			<td class="celle_lyseblaa">';
+                                 } else {
+                                    echo '			<td>';
+                                 }
+                             }
+                         }
+                         if ($bruker == null || $bruker->getPerson() == null) {
+                             echo ' ';
+                         } else {
+                                echo '			 <a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
+                                if(!$bruker->getPerson()->erBeboer()){
+                                    echo "(UTFLYTTET) ";
+                                }
+                                  echo $bruker->getPerson()->getFulltNavn();
+                                  echo '</a>' . PHP_EOL;
+                         }
+                     }
+                }
 			}
-			else {if ($vakt->erLedig()) {
-				echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-info" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
-			}
-      else {if ($vakt->getBruker() == null) {
-        echo '			<td style="text-align: center;"><input type="button" onclick="modal.call(this)" class="btn btn-sm btn-warning" value="Endre" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
-      }
-      else {
-  			$bruker = $vakt->getBruker();
-        if ($vakt->erDobbelvakt()) {
-          echo '			<td class="celle_blaa">';
-        }
-        else {if ($vakt->erStraffevakt()) {
-          echo '			<td class="celle_oransje">';
-        }
-        else {if ($vakt->vilBytte()) {
-          echo '			<td class="celle_lyseblaa">';
-        }
-        else {
-          echo '			<td>';
-        }}}
-  			if ($bruker == null || $bruker->getPerson() == null) {
-  				echo ' ';
-  			}
-  			else {
-          echo '			 <a href="JavaScript:void(0);" onclick="modal.call(this)" data-target="' . $modalId . '" data-type="' . $vakttype . '" data-unix="' . $unix . '" data-id="' . $vakt->getId() . '">' . PHP_EOL;
-          if(!$bruker->getPerson()->erBeboer()){
-              echo "(UTFLYTTET) ";
-          }
-          echo $bruker->getPerson()->getFulltNavn();
-          echo '</a>' . PHP_EOL;
-  			}
-      }}}
       echo '			 <div id="get-' . $modalId . '">' . PHP_EOL;
 ?>
       </div>
