@@ -22,6 +22,9 @@ class RegiCtrl extends AbstraktCtrl
             case 'rapport':
                 $valgtCtrl = new RegiRapportCtrl($this->cd->skiftArg());
                 break;
+            case 'regivakt':
+                $valgtCtrl = new RegiVaktCtrl($this->cd->skiftArg());
+                break;
             case 'minregi':
                 $valgtCtrl = new RegiMinregiCtrl($this->cd->skiftArg());
                 break;
@@ -43,5 +46,3 @@ class RegiCtrl extends AbstraktCtrl
         $valgtCtrl->bestemHandling();
     }
 }
-
-?>

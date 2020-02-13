@@ -8,6 +8,9 @@ class UtvalgRegisjefCtrl extends AbstraktCtrl
     {
         $aktueltArg = $this->cd->getAktueltArg();
         switch ($aktueltArg) {
+            case 'regivakt':
+                $valgtCtrl = new UtvalgRegisjefRegivaktCtrl($this->cd->skiftArg());
+                break;
             case 'registatus':
                 $dok = new Visning($this->cd);
 
