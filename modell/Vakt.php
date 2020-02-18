@@ -539,6 +539,14 @@ class Vakt
         return abs(strtotime($a->getDato()) - strtotime($b->getDato()));
     }
 
+    public static function fjernFraByttemarked($vaktId) {
+        $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE vakt_id=:id');
+        $st->execute(['id'=>$vaktId]);
+
+        $st_1 = DB::getDB()->prepare('UPDATE vakt SET vaktbytte_id=0, bytte=0 WHERE id=:id');
+        $st_1->execute(['id'=>$vaktId]);
+    }
+
     public function toggleByttemarked($slipp = NULL) {
         if ($this->getBytte() && $this->getVaktbytte() != NULL) {
             $st = DB::getDB()->prepare('DELETE FROM vaktbytte WHERE id=:id');

@@ -27,10 +27,23 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     <h1>Utvalget &raquo; Vaktsjef &raquo; Vaktoversikt</h1>
     <hr>
 </div>
+<div class="container">
 <div class="row">
-    <div class="col-md-6">
-        <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
+    <div class="col-md-4">
+        <p>
+            En kjip vakt er en vakt som oppfyller én eller flere av følgende krav:
+        <ul>
+            <li>1. vakt</li>
+            <li>3. og 4. vakt fredag</li>
+            <li>Lørdagsvakt</li>
+            <li>2. vakt søndag</li>
+        </ul>
+        Dette utgjør 13 av 28 vakter i løpet av en uke.
+        </p>
+    </div>
 
+    <!-- Tabell med oversikt: -->
+    <div class="col-sm-4">
         <table class="table table-bordered">
             <tr>
                 <th scope="row">Antall vakter:</th>
@@ -45,20 +58,11 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <td><?php echo $antallUbekreftet; ?></td>
             </tr>
         </table>
-
-        <p>En kjip vakt er en vakt som oppfyller én eller flere av følgende krav:
-        <ul>
-            <li>Førstevakt</li>
-            <li>Lørdagsvakt</li>
-            <li>2. vakt søndag</li>
-            <li>3., 4. vakt fredag</li>
-        </ul>
-        Dette utgjør 13 av 28 vakter i løpet av en uke.
-
-        </p>
-
+        <?php include(__DIR__ . '/../../static/tilbakemelding.php'); ?>
     </div>
-    <div class="col-md-4" id="kake">
+
+    <!-- Form til endring av full vakt og halv vakt -->
+    <div class="col-md-4" style="float: right" id="kake">
         <table class="table table-bordered table-responsive small">
             <tr>
                 <th>Rolle</th>
@@ -72,9 +76,9 @@ require_once(__DIR__ . '/../topp_utvalg.php');
                 <tr>
                     <td><?php echo $rollen->getNavn(); ?></td>
                     <td><input class="form-control" type="text" name="host" id="<?php echo $rollen->getId(); ?>h"
-                               value="<?php echo $rollen->getVakterH(); ?>" size="1"></td>
+                               value="<?php echo $rollen->getVakterH(); ?>" size="1"/></td>
                     <td><input class="form-control" type="text" name="vaar" id="<?php echo $rollen->getId(); ?>v"
-                               value="<?php echo $rollen->getVakterV(); ?>" size="1"></td>
+                               value="<?php echo $rollen->getVakterV(); ?>" size="1"/></td>
                 </tr>
                 <?php
             }
@@ -90,7 +94,6 @@ require_once(__DIR__ . '/../topp_utvalg.php');
     </div>
 </div>
 
-<div class="container">
 
 
 <div class="col-md-12 table-responsive">

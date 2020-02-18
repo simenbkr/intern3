@@ -11,8 +11,8 @@ if(isset($_POST['modalId']) && isset($_POST['vakttype']) && isset($_POST['unix']
 <script>
 function settVakt(id) {
   document.getElementById('lagre').style.display = "block";
-  var vaktId_1 = '<?php echo $vaktId_1; ?>';
-  $.ajax({
+    const vaktId_1 = '<?php echo $vaktId_1; ?>';
+    $.ajax({
     cache: false,
     type: 'POST',
     url: '?a=utvalg/vaktsjef/vaktstyring_settvakt',
@@ -27,8 +27,8 @@ function byttVakt(id) {
     $('#byttvakt').html(' ');
   }
   else {
-    var vaktId_1 = '<?php echo $vaktId_1; ?>';
-    $.ajax({
+      const vaktId_1 = '<?php echo $vaktId_1; ?>';
+      $.ajax({
       cache: false,
       type: 'POST',
       url: '?a=utvalg/vaktsjef/vaktstyring_byttvakt',
@@ -40,8 +40,8 @@ function byttVakt(id) {
   }
 }
 function dobbelvakt() {
-  var vaktId_1 = '<?php echo $vaktId_1; ?>';
-  $.ajax({
+    const vaktId_1 = '<?php echo $vaktId_1; ?>';
+    $.ajax({
     cache: false,
     type: 'POST',
     url: '?a=utvalg/vaktsjef/vaktstyring_dobbelvakt',
@@ -52,8 +52,8 @@ function dobbelvakt() {
   });
 }
 function straffevakt() {
-  var vaktId_1 = '<?php echo $vaktId_1; ?>';
-  $.ajax({
+    const vaktId_1 = '<?php echo $vaktId_1; ?>';
+    $.ajax({
     cache: false,
     type: 'POST',
     url: '?a=utvalg/vaktsjef/vaktstyring_straffevakt',
@@ -64,8 +64,8 @@ function straffevakt() {
   });
 }
 function slettVakt() {
-  var vaktId_1 = '<?php echo $vaktId_1; ?>';
-  $.ajax({
+    const vaktId_1 = '<?php echo $vaktId_1; ?>';
+    $.ajax({
     cache: false,
     type: 'POST',
     url: '?a=utvalg/vaktsjef/vaktstyring_slettvakt',
@@ -76,8 +76,8 @@ function slettVakt() {
   });
 }
 function torildVakt() {
-  var vaktId_1 = '<?php echo $vaktId_1; ?>';
-  $.ajax({
+    const vaktId_1 = '<?php echo $vaktId_1; ?>';
+    $.ajax({
     cache: false,
     type: 'POST',
     url: '?a=utvalg/vaktsjef/vaktstyring_torildvakt',
@@ -89,8 +89,8 @@ function torildVakt() {
 }
 
 function settBytteMarked(){
-  var vaktId = '<?php echo $vaktId_1; ?>';
-  $.ajax({
+    const vaktId = '<?php echo $vaktId_1; ?>';
+    $.ajax({
     cache: false,
     type: 'POST',
     url: '?a=utvalg/vaktsjef/vaktstyring_byttemarked',
@@ -102,16 +102,16 @@ function settBytteMarked(){
 }
 
 function test() {
-    var shownVal = document.getElementById("tekstinput").value;
-    var beboerId = document.querySelector("#beboere option[value='"+shownVal+"']").dataset.value;
+    const shownVal = document.getElementById("tekstinput").value;
+    const beboerId = document.querySelector("#beboere option[value='" + shownVal + "']").dataset.value;
     //registrer(gjestid, 1);
     settVakt(beboerId);
     document.getElementById("tekstinput").value = "";
 }
 
 function test2() {
-    var shownVal = document.getElementById("tekstinput2").value;
-    var beboerId = document.querySelector("#beboere option[value='"+shownVal+"']").dataset.value;
+    const shownVal = document.getElementById("tekstinput2").value;
+    const beboerId = document.querySelector("#beboere option[value='" + shownVal + "']").dataset.value;
     //registrer(gjestid, 1);
     byttVakt(beboerId);
     //document.getElementById("tekstinput2").value = "";
