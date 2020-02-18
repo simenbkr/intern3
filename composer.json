@@ -18,9 +18,9 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "aferrandini/phpqrcode": "1.0.1",
-        "simenbkr/groupmanage": "^1.05",
+        "simenbkr/groupmanage": "^1.06",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-intl": "*",
