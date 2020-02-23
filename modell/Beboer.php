@@ -933,4 +933,13 @@ klassetrinn=:klassetrinn,alkoholdepositum=:alko,rolle_id=:rolle,epost=:epost,rom
 
     }
 
+    public function erJubileumsAnsvarlig() {
+        foreach($this->getVervListe() as $verv) {
+            /* @var \intern3\Verv $verv */
+            if($verv->getNavn() == 'Jubileum') {
+                return true;
+            }
+        }
+        return false || $this->harDataVerv() || $this->id == 568;
+    }
 }

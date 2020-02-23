@@ -50,6 +50,9 @@ class HovedCtrl extends AbstraktCtrl
     public function bestemKontroller()
     {
         switch ($this->cd->getAktueltArg()) {
+            case 'jubileum':
+                $valgtCtrl = new JubileumCtrl($this->cd->skiftArg());
+                break;
             case 'storhybel':
                 $valgtCtrl = new StorhybelCtrl($this->cd->skiftArg());
                 break;

@@ -63,7 +63,7 @@ class Rolle {
 	public function getVakterNow(){
         $sem = Funk::generateSemesterString(date('Y-m-d'));
 
-        if(strpos($sem, "host")) {
+        if(strpos($sem, "host") !== false) {
             return $this->vakterH;
         }
         return $this->vakterV;
@@ -71,5 +71,3 @@ class Rolle {
     }
 
 }
-
-?>

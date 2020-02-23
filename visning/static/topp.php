@@ -76,6 +76,13 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                     <li><a href="<?php echo $cd->getBase(); ?>wiki">Wiki</a></li>
                     <!--<li><a href="<?php echo $cd->getBase(); ?>utleie">Utleie</a></li>-->
 
+
+                    <?php if($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->erJubileumsAnsvarlig()) { ?>
+                        <li><a href="<?php echo $cd->getBase(); ?>jubileum">Jubileum</a></li>
+
+                    <?php
+                    } ?>
+
                     <?php
                     //if ($cd->getAktivBruker() != null && $cd->getAktivBruker()->getPerson()->erHelgaGeneral()) {
                     if ($_SESSION['helga']) {
