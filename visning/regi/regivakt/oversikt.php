@@ -6,7 +6,21 @@ $df = new \IntlDateFormatter('nb_NO',
     \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE,
     'Europe/Oslo');
 
-if ($_SESSION['semester'] == "var") {
+if (!isset($_SESSION['semester'])) {
+    $sem = \intern3\Funk::generateSemesterString(date('Y-m-d'));
+
+    if (strpos('var', $sem)) {
+        $_SESSION['semester'] = 'var';
+    } else {
+        $_SESSION['semester'] = 'host';
+    }
+}
+
+if ($_SESSION['semester'] == 'frana') {
+    $ukeStart = strtotime('now');
+    $slutt = \intern3\Funk::getSemesterEnd(\intern3\Funk::generateSemesterString(date('Y-m-d')));
+    $ukeSlutt = strtotime($slutt);
+} elseif ($_SESSION['semester'] == "var") {
     $ukeStart = strtotime('2 January');
     $ukeSlutt = strtotime('1 July');
     if (date('W', $ukeStart) == 53) {
@@ -72,7 +86,6 @@ $ukeStart = strtotime('last week', $ukeStart);
 
                 <hr>
             </div>
-
 
 
             <table class="table-bordered table table-responsive">
