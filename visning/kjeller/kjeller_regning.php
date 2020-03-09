@@ -64,6 +64,7 @@ require_once(__DIR__ . '/../static/topp.php');
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a> ]
         [ Regning] [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a> ]
+        [ <a href="<?php echo $cd->getBase(); ?>kjeller/svinn_oversikt">Registrert svinn</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/lister/beboere_vin">Fakturer</a> ]
         [ <a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a> ]
     </p>

@@ -550,6 +550,12 @@ class KjellerCtrl extends AbstraktCtrl
                 $dok->set('transaksjoner', $transaksjoner);
                 $dok->vis('kjeller/kjeller_kryss_oversikt.php');
                 break;
+            case 'svinn_oversikt':
+                $svinn = Vinsvinn::alle();
+
+                $dok->set('svinn', $svinn);
+                $dok->vis('kjeller/svinn_oversikt.php');
+                break;
             default:
                 $dok->vis('kjeller/kjeller_hoved.php');
         }
