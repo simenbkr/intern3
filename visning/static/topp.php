@@ -129,7 +129,8 @@ require_once(__DIR__ . '/../../ink/autolast.php');
                                 <li><a href="<?php echo $cd->getBase(); ?>kjeller/pafyll">Påfyll</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>kjeller/lister">Lister</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>kjeller/regning">Registrer regning</a></li>
-                                <li><a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Registrer svinn</a></li>
+                                <li><a href="<?php echo $cd->getBase(); ?>kjeller/svinn">Svinn</a></li>
+                                <li><a href="<?php echo $cd->getBase(); ?>kjeller/svinn_oversikt">Registrert svinn</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>kjeller/oversikt">Oversikt</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>kjeller/regler">Regler</a></li>
                                 <li><a href="<?php echo $cd->getBase(); ?>vinkjeller/">Vinkjelleren</a></li>
