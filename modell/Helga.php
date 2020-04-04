@@ -326,7 +326,8 @@ class Helga
 
     public static function fraSQLRad($rad)
     {
-        return new self($rad['aar'], $rad['start_dato'], $rad['slutt_dato'], $rad['generaler'], $rad['tema'], $rad['klar'], $rad['max_gjest']);
+        return new self($rad['aar'], $rad['start_dato'], $rad['slutt_dato'], $rad['generaler'], $rad['tema'],
+            $rad['klar'], $rad['max_gjest']);
     }
 
     public static function getLatestHelga()
@@ -400,15 +401,15 @@ class Helga
         $st->execute(['beboer_id' => $beboer_id, 'aar' => $this->getAar()]);
         $count = $st->fetch()['cnt'];
 
-        if($count < 1) {
+        if ($count < 1) {
             $arr = array('torsdag' => $torsdag, 'fredag' => $fredag, 'lordag' => $lordag);
-            foreach($arr as $str => $val) {
-                if($this->erSameMax()) {
-                    if($val < $this->getMaxAlle()) {
+            foreach ($arr as $str => $val) {
+                if ($this->erSameMax()) {
+                    if ($val < $this->getMaxAlle()) {
                         $val = $this->getMaxAlle();
                     }
                 } else {
-                    if($val < $this->getMaxGjester()[$str]) {
+                    if ($val < $this->getMaxGjester()[$str]) {
                         $val = $this->getMaxGjester()[$str];
                     }
                 }
@@ -430,14 +431,15 @@ class Helga
         }
     }
 
-    public function medEgendefinertAntall() {
+    public function medEgendefinertAntall()
+    {
 
         $array = array();
 
         $st = DB::getDB()->prepare('SELECT * FROM helga_gjestantall WHERE aar = :aar');
         $st->execute(['aar' => $this->getAar()]);
 
-        while(($rad = $st->fetch())) {
+        while (($rad = $st->fetch())) {
 
             $array[$rad['beboer_id']] = array(
                 'beboer' => Beboer::medId($rad['beboer_id']),
@@ -451,19 +453,46 @@ class Helga
         return $array;
     }
 
-    public function harEgendefinert($beboer_id) : bool {
+    public function harEgendefinert($beboer_id): bool
+    {
         $st = DB::getDB()->prepare('SELECT COUNT(*) as cnt FROM helga_gjestantall WHERE beboer_id = :beboer_id');
         $st->execute(['beboer_id' => $beboer_id]);
         return $st->fetch()['cnt'] > 0;
     }
 
-    public function slettEgendefinert($beboer_id) {
+    public function slettEgendefinert($beboer_id)
+    {
         $st = DB::getDB()->prepare('DELETE FROM helga_gjestantall WHERE (aar = :aar AND beboer_id = :beboer_id)');
         $st->execute(['aar' => $this->getAar(), 'beboer_id' => $beboer_id]);
 
     }
 
-    public function kanLeggeTil($beboer_id, $dag) {
-        return HelgaGjesteListe::getGjesteCountDagBeboer($dag, $beboer_id, $this->aar) < $this->getMaxGjest($beboer_id, $dag);
+    public function kanLeggeTil($beboer_id, $dag)
+    {
+        return HelgaGjesteListe::getGjesteCountDagBeboer($dag, $beboer_id, $this->aar) < $this->getMaxGjest($beboer_id,
+                $dag);
+    }
+
+    public function getDag()
+    {
+
+        $now = strtotime(date('Y-m-d H:i:s'));
+        $start = strtotime($this->getStartDato() . "+12 hours");
+        $fredag = strtotime($this->getStartDato() . '+36 hours');
+        $lordag = strtotime($this->getStartDato() . '+60 hours');
+        $slutt = strtotime($this->getStartDato() . '+84 hours');
+
+        if ($now > $start && $now < $fredag) {
+            return 0;
+        }
+
+        if ($now > $fredag && $now < $lordag) {
+            return 1;
+        }
+
+        if ($now > $lordag && $now < $slutt) {
+            return 2;
+        }
+        return -1;
     }
 }

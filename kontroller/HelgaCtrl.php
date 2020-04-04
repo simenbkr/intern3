@@ -360,6 +360,7 @@ class HelgaCtrl extends AbstraktCtrl
             case 'reg':
                 $sisteArg = $this->cd->getSisteArg();
                 if ($sisteArg != 'reg' && strlen($sisteArg) == 128) {
+                    $helga = Helga::getLatestHelga();
                     $dok = new Visning($this->cd);
 
                     $st = DB::getDB()->prepare('SELECT * FROM helgagjest WHERE api_nokkel=:nokkel');
@@ -368,7 +369,7 @@ class HelgaCtrl extends AbstraktCtrl
                     $gjesten = null;
                     if ($st->rowCount() > 0) {
                         $gjesten = HelgaGjest::init($st);
-                        if ($gjesten != null) {
+                        if ($gjesten != null && $gjesten->getDag() == $helga->getDag()) {
                             $dok->set('gjesten', $gjesten);
                             $dok->set('success', 1);
                             $gjesten->setInne(1);
